@@ -138,6 +138,80 @@ npx shadcn@latest add button input card dialog
 
 > 💡 **Tip:** Browse all available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components)
 
+### Axios & Next-Logger (Pino)
+
+Axios is a promise-based HTTP client, and Pino provides structured logging for Next.js.
+
+```bash
+# Install all packages together
+npm install axios next-logger pino pino-pretty
+```
+
+**Axios usage example:**
+
+```typescript
+import axios from "axios";
+
+// GET request
+const response = await axios.get("/api/users");
+
+// POST request with Bearer token
+const response = await axios.post(
+  "/api/users",
+  { name: "John" },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  },
+);
+```
+
+**Create a logger utility** (`src/lib/logger.ts`):
+
+```typescript
+import pino from "pino";
+
+const isDev = process.env.NODE_ENV === "development";
+
+const logger = pino({
+  level: isDev ? "debug" : "info",
+  transport: isDev
+    ? {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+          translateTime: "SYS:standard",
+        },
+      }
+    : undefined,
+});
+
+export default logger;
+
+// Create a child logger with context
+export const createLogger = (context: string) => {
+  return logger.child({ context });
+};
+```
+
+**Usage in services:**
+
+```typescript
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("UserService");
+
+// Log info
+logger.info({ userId: 1 }, "User fetched successfully");
+
+// Log errors
+logger.error({ err: error }, "Failed to fetch user");
+
+// Log with additional context
+logger.warn({ email: "test@example.com" }, "Login attempt failed");
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
