@@ -1,4 +1,4 @@
-const XXX_BASEURL = process.env.XXX_BASEURL ?? "http://localhost:8080";
+const XXX_BASEURL = process.env.XXX_BASEURL ?? "http://localhost:8081";
 const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000";
 const HOST_NAME = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost";
 const XXX_BASE_V1 = `${XXX_BASEURL}/api/v1`;

@@ -46,7 +46,7 @@ export function Footer() {
             {/* Social Links */}
             <div className="flex gap-4 mt-6">
               <a
-                href="https://github.com/Elanrif/kickstart-nextjs-template"
+                href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"

@@ -183,7 +183,7 @@ export default function Home() {
                   asChild
                 >
                   <a
-                    href="https://github.com/Elanrif/kickstart-nextjs-template"
+                    href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -491,13 +491,13 @@ export default function Home() {
                       <span className="text-emerald-400">$</span>
                       <code className="text-gray-300 group-hover:text-white transition-colors">
                         git clone
-                        https://github.com/Elanrif/kickstart-nextjs-template
+                        https://github.com/Elanrif/kickstart-nextjs-betterauth-template
                       </code>
                     </div>
                     <div className="flex items-start gap-2 group">
                       <span className="text-emerald-400">$</span>
                       <code className="text-gray-300 group-hover:text-white transition-colors">
-                        cd kickstart-nextjs-template
+                        cd kickstart-nextjs-betterauth-template
                       </code>
                     </div>
                     <div className="flex items-start gap-2 group">
@@ -529,7 +529,7 @@ export default function Home() {
                   asChild
                 >
                   <a
-                    href="https://vercel.com/new/clone?repository-url=https://github.com/Elanrif/kickstart-nextjs-template"
+                    href="https://vercel.com/new/clone?repository-url=https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -550,7 +550,7 @@ export default function Home() {
                   asChild
                 >
                   <a
-                    href="https://github.com/Elanrif/kickstart-nextjs-template"
+                    href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -616,7 +616,7 @@ export default function Home() {
                     asChild
                   >
                     <a
-                      href="https://github.com/Elanrif/kickstart-nextjs-template"
+                      href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

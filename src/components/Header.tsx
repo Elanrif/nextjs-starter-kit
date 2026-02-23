@@ -69,7 +69,7 @@ export function Header() {
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
               <a
-                href="https://github.com/Elanrif/kickstart-nextjs-template"
+                href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -145,7 +145,7 @@ export function Header() {
             <div className="flex gap-2 pt-2 px-3">
               <Button variant="outline" size="sm" className="flex-1" asChild>
                 <a
-                  href="https://github.com/Elanrif/kickstart-nextjs-template"
+                  href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
                   target="_blank"
                   rel="noopener"
                 >

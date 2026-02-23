@@ -1,12 +1,5 @@
 export const ROUTES = {
   HOME: "/",
-  CATALOGUE: `/catalogue`,
-  CATALOGUE_CATEGORY: `/catalogue/category`,
-  CANAL_PLUS: "/canalplus",
-  SERVICES_CHECKOUT: "/services/checkout",
-  SERVICES_STRIPE_PAYMENT_VALIDATION:
-    "/services/checkout/:checkoutId/payment/summary",
-  SERVICES_THANK_YOU: "/services/thank-you/:orderId",
   CHECKOUT: "/checkout",
   CONTACT: "/contact",
   DASHBOARD: "/dashboard",
@@ -27,8 +20,8 @@ export const ROUTES = {
   HELP_CENTER: "/accounts/help-center",
   LEGAL_NOTICE: "/accounts/legal-notice",
   NOTIFICATION: "/accounts/notification",
-  SIGNIN: "/signin",
-  SIGNUP: "/signup",
+  SIGNIN: "/sign-in",
+  SIGNUP: "/sign-up",
   SEARCH: "/search",
   PRODUCTS: "/products",
   WISHLIST: "/accounts/wishlist",
