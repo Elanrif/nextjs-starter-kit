@@ -9,11 +9,8 @@ const logger = getLogger();
 const SAFE_URLS = [
   apiConfig.graphql.endpoint,
   apiConfig.rest.endpoints.categories,
-  apiConfig.rest.endpoints.contact,
-  apiConfig.rest.endpoints.contacts,
   apiConfig.rest.endpoints.passwordReset,
   apiConfig.rest.endpoints.products,
-  apiConfig.rest.endpoints.productAttributes,
   apiConfig.rest.endpoints.register,
 ];
 

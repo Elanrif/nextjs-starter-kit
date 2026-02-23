@@ -1,11 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ProductFiltersParams } from "@lib/product/models/product.model";
+import { ProductFiltersParams } from "@/lib/products/models/product.model";
 import { fetchProductsAction } from "./product-actions";
-import { getLogger } from "@config/logger.config";
-
-const logger = getLogger();
 
 /**
  * Query key factory for products

@@ -3,14 +3,14 @@ import {
   Product,
   ProductCreate,
   ProductUpdate,
-  ProductFilters,
+  ProductFiltersParams,
   Category,
   CategoryCreate,
   CategoryUpdate,
-} from "@lib/product/models/product.model";
+} from "@/lib/products/models/product.model";
 import { Page } from "@lib/shared/models/response.model";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
-import * as productService from "@lib/product/services/product.client.service";
+import * as productService from "@/lib/products/services/product.client.service";
 
 const logger = getLogger();
 
@@ -22,7 +22,7 @@ const logger = getLogger();
  * Fetch products action
  */
 export async function fetchProductsAction(
-  filters?: ProductFilters,
+  filters?: ProductFiltersParams,
 ): Promise<Page<Product[]> | CrudApiError | undefined> {
   try {
     return await productService.fetchProducts(filters);

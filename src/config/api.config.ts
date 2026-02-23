@@ -1,5 +1,5 @@
 import httpClient from "@config/axios.config";
-import { slashInterceptor } from "@config/interceptors/slash.interceptor";
+//import { slashInterceptor } from "@config/interceptors/slash.interceptor";
 import { redirectionInterceptor } from "@config/interceptors/redirect.interceptor";
 import {
   anonTokenInterceptor,
@@ -33,7 +33,7 @@ export default function apiClient(anon?: boolean, config?: Config) {
   const instance = httpClient({
     logger: apiLogger(config),
   });
-  instance.interceptors.request.use(slashInterceptor);
+  //instance.interceptors.request.use(slashInterceptor);
   instance.interceptors.request.use(redirectionInterceptor);
   instance.interceptors.request.use(
     anon ? anonTokenInterceptor : (c) => ownTokenInterceptor(c, config?.token),

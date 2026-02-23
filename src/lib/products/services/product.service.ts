@@ -9,10 +9,7 @@ import {
   ProductCreate,
   ProductUpdate,
   ProductFiltersParams,
-  Category,
-  CategoryCreate,
-  CategoryUpdate,
-} from "@lib/product/models/product.model";
+} from "@/lib/products/models/product.model";
 
 /**
  * Product Service (Server-side)
@@ -27,7 +24,7 @@ import {
 const {
   api: {
     rest: {
-      endpoints: { products: PRODUCTS_URL, categories: CATEGORIES_URL },
+      endpoints: { products: PRODUCTS_URL },
     },
   },
 } = environment;
@@ -83,7 +80,7 @@ export async function fetchProduct(
   id: number,
 ): Promise<Product | CrudApiError> {
   try {
-    const res = await apiClient(false, config).get<
+    const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Product>
     >(`${PRODUCTS_URL}/${id}`);
@@ -110,7 +107,7 @@ export async function createProduct(
   product: ProductCreate,
 ): Promise<Product | CrudApiError> {
   try {
-    const res = await apiClient(false, config).post<
+    const res = await apiClient(true, config).post<
       unknown,
       AxiosResponse<Product>
     >(PRODUCTS_URL, product);
@@ -138,7 +135,7 @@ export async function updateProduct(
   product: ProductUpdate,
 ): Promise<Product | CrudApiError> {
   try {
-    const res = await apiClient(false, config).patch<
+    const res = await apiClient(true, config).patch<
       unknown,
       AxiosResponse<Product>
     >(`${PRODUCTS_URL}/${id}`, product);
@@ -166,7 +163,7 @@ export async function deleteProduct(
   id: number,
 ): Promise<{ success: boolean } | CrudApiError> {
   try {
-    await apiClient(false, config).delete(`${PRODUCTS_URL}/${id}`);
+    await apiClient(true, config).delete(`${PRODUCTS_URL}/${id}`);
     logger.info("Product deleted", { id });
     return { success: true };
   } catch (error) {
@@ -179,143 +176,6 @@ export async function deleteProduct(
     return {
       statusCode: err.response?.status || 500,
       message: "Failed to delete product",
-    };
-  }
-}
-
-// ============================================================================
-// Categories
-// ============================================================================
-
-/**
- * Fetch all categories
- */
-export async function fetchCategories(
-  config: Config,
-): Promise<Category[] | CrudApiError> {
-  try {
-    const res = await apiClient(false, config).get<
-      unknown,
-      AxiosResponse<Category[]>
-    >(CATEGORIES_URL);
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching categories", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Failed to fetch categories",
-    };
-  }
-}
-
-/**
- * Fetch a single category by ID
- */
-export async function fetchCategory(
-  config: Config,
-  id: number,
-): Promise<Category | CrudApiError> {
-  try {
-    const res = await apiClient(false, config).get<
-      unknown,
-      AxiosResponse<Category>
-    >(`${CATEGORIES_URL}/${id}`);
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Category not found",
-    };
-  }
-}
-
-/**
- * Create a new category
- */
-export async function createCategory(
-  config: Config,
-  category: CategoryCreate,
-): Promise<Category | CrudApiError> {
-  try {
-    const res = await apiClient(false, config).post<
-      unknown,
-      AxiosResponse<Category>
-    >(CATEGORIES_URL, category);
-    logger.info("Category created", { id: res.data.id, name: res.data.name });
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error creating category", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Failed to create category",
-    };
-  }
-}
-
-/**
- * Update an existing category
- */
-export async function updateCategory(
-  config: Config,
-  id: number,
-  category: CategoryUpdate,
-): Promise<Category | CrudApiError> {
-  try {
-    const res = await apiClient(false, config).patch<
-      unknown,
-      AxiosResponse<Category>
-    >(`${CATEGORIES_URL}/${id}`, category);
-    logger.info("Category updated", { id, name: res.data.name });
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error updating category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Failed to update category",
-    };
-  }
-}
-
-/**
- * Delete a category
- */
-export async function deleteCategory(
-  config: Config,
-  id: number,
-): Promise<{ success: boolean } | CrudApiError> {
-  try {
-    await apiClient(false, config).delete(`${CATEGORIES_URL}/${id}`);
-    logger.info("Category deleted", { id });
-    return { success: true };
-  } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error deleting category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Failed to delete category",
     };
   }
 }

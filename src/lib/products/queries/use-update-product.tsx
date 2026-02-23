@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ProductUpdate } from "@lib/product/models/product.model";
+import { ProductUpdate } from "@/lib/products/models/product.model";
 import { updateProductAction } from "./product-actions";
 import { productKeys } from "./use-products";
 import { getLogger } from "@config/logger.config";

@@ -7,8 +7,8 @@ const environment = {
   name: process.env.ENV,
   baseUrl: BASE_URL,
   rootDomain: HOST_NAME,
-  apiBaseUrl: `${BASE_URL}/api-proxy`,
-  apiProxyBase: `/api-proxy`,
+  apiBaseUrl: `${BASE_URL}/api`,
+  apiProxyBase: `/api`,
   baApiBaseUrl: XXX_BASEURL,
   defaultCurrency: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || "EUR",
   api: {
@@ -17,39 +17,13 @@ const environment = {
     },
     rest: {
       endpoints: {
-        // market
-        basket: `${XXX_BASE_V1}/basket`,
-        baskets: `${XXX_BASE_V1}/baskets`,
         categories: `${XXX_BASE_V1}/categories`,
-        orders: `${XXX_BASE_V1}/orders`,
-        checkout: `${XXX_BASE_V1}/checkout`,
         products: `${XXX_BASE_V1}/products`,
-        productAttributes: `${XXX_BASE_V1}/productattributes`,
+        products_slug: `${XXX_BASE_V1}/products/slug`,
 
-        // client/location/address
-        beneficiaries: `${XXX_BASE_V1}/beneficiaries`,
-        countries: `${XXX_BASE_V1}/countries`,
-        regions: `${XXX_BASE_V1}/regions`,
-        options: `${XXX_BASE_V1}/options`,
-        forms: `${XXX_BASE_V1}/forms`,
-
-        contact: `${XXX_BASE_V1}/contact`,
-        contacts: `${XXX_BASE_V1}/contacts`,
-
-        // Telecom
-        telecomProducts: `${XXX_BASE_V1}/telecom/products`,
-        telecomForfaitContract: `${XXX_BASE_V1}/telecom/contract`,
-
-        territories: `${XXX_BASE_V1}/territories`,
-
-        // search
-        search: `${XXX_BASE_V1}/products/search`,
-
-        // user AND password
+        // Managed user endpoints
         auth: `${XXX_BASE_V1}/auth`,
         users: `${XXX_BASE_V1}/users`,
-        useraddresses: `${XXX_BASE_V1}/useraddresses`,
-        userstats: `${XXX_BASE_V1}/userstats`,
         passwordChange: `${XXX_BASE_V1}/password-change`,
         passwordReset: `${XXX_BASE_V1}/password-reset`,
         emailVerification: `${XXX_BASE_V1}/email-verification`,
@@ -72,9 +46,6 @@ const environment = {
         clientID: process.env.AUTH_KEYS_OWN_CLIENT_ID!,
         clientSecret: process.env.AUTH_KEYS_OWN_CLIENT_SECRET!,
       },
-    },
-    strapi: {
-      token: process.env.STRAPI_AUTH_TOKEN || "",
     },
   },
   format: {

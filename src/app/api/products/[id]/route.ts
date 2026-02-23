@@ -5,8 +5,8 @@ import {
   fetchProduct,
   updateProduct,
   deleteProduct,
-} from "@lib/product/services/product.service";
-import { ProductUpdate } from "@lib/product/models/product.model";
+} from "@/lib/products/services/product.service";
+import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";

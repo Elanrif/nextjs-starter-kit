@@ -1,14 +1,14 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  fetchCategories,
-  createCategory,
-} from "@lib/product/services/product.service";
-import { CategoryCreate } from "@lib/product/models/product.model";
+import { CategoryCreate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  createCategory,
+  fetchCategories,
+} from "@/lib/categories/services/category.service";
 
 const logger = getLogger("server");
 

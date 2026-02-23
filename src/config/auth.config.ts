@@ -1,7 +1,7 @@
 import httpClient, { baseRequestConfig } from "@config/axios.config";
 import environment from "@config/environment.config";
 import moment from "moment";
-import { slashInterceptor } from "@config/interceptors/slash.interceptor";
+//import { slashInterceptor } from "@config/interceptors/slash.interceptor";
 //import { ApiError } from "@lib/shared/helpers/CrudApiError";
 import { getLogger } from "./logger.config";
 import { Token } from "@config/auth.utils";
@@ -29,7 +29,7 @@ const authClient = () => {
   const instance = httpClient({
     logger,
   });
-  instance.interceptors.request.use(slashInterceptor);
+  //instance.interceptors.request.use(slashInterceptor);
   return instance;
 };
 

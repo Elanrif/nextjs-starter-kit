@@ -11,7 +11,7 @@ import {
   Category,
   CategoryCreate,
   CategoryUpdate,
-} from "@lib/product/models/product.model";
+} from "@/lib/products/models/product.model";
 
 /**
  * Product Client Service (Client-side)

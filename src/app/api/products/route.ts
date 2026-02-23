@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   fetchProducts,
   createProduct,
-} from "@lib/product/services/product.service";
+} from "@/lib/products/services/product.service";
 import {
   ProductCreate,
   ProductFiltersParams,
-} from "@lib/product/models/product.model";
+} from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
+    //const products = await fetchProducts(config, filters);
     const products = await fetchProducts(config, filters);
 
     if ("statusCode" in products) {
