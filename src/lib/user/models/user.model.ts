@@ -28,8 +28,10 @@ export interface UserWithToken extends User {
   token: Token;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
 interface Session {
   user: UserWithToken;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
 type JWT = UserWithToken;
