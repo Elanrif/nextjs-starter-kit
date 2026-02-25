@@ -1,6 +1,6 @@
 ---
 name: Release Docker image
-run-name: Release website ${{ github.event.inputs.environment }}
+run-name: Release kickstart-nextjs ${{ github.event.inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -51,7 +51,7 @@ jobs:
           docker-registry: ${{ vars.DOCKER_REGISTRY }}
           docker-username: ${{ vars.DOCKER_USERNAME }}
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
-          docker-image-name: ${{ vars.DOCKER_NAMESPACE }}/website
+          docker-image-name: ${{ vars.DOCKER_NAMESPACE }}/kickstart-nextjs
           docker-image-tag: ${{ env.RELEASE_TAG }}
           docker-build-args: |
             USER_GID=${{ env.DOCKER_USER_GID }}
