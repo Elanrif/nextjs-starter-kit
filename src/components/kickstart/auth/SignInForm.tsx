@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth/auth-client";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
 
 /**
  * Sign In Form Component
@@ -16,6 +16,11 @@ export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const fillDemo = () => {
+    setEmail("elanrif@gmail.com");
+    setPassword("Elanrif123456");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +115,7 @@ export function SignInForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-full hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30"
+        className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-full hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30"
       >
         {isLoading ? (
           "Signing in..."
@@ -126,6 +131,10 @@ export function SignInForm() {
       <div className="flex items-center gap-4 pt-2">
         <span className="text-gray-400 text-sm">Or</span>
         <div className="flex gap-3">
+          {/* clickable person icon to autofill */}
+          <div className="hover:bg-blue-300 bg-blue-400 duration-300 text-white flex p-2 rounded-full border items-center gap-2">
+            <User onClick={fillDemo} className="size-6" />
+          </div>
           <SocialButton icon="facebook" />
           <SocialButton icon="google" />
         </div>

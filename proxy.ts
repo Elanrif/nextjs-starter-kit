@@ -137,7 +137,7 @@ export function forceToLoginOnProtectedRoutes(
     const nextQuery = new URLSearchParams({
       next: `${req.nextUrl.pathname}${nextQueryParams.toString() ? `?${nextQueryParams}` : ""}`,
     });
-    const redirectUrl = new URL(`${ROUTES.SIGNIN}?${nextQuery}`, req.url);
+    const redirectUrl = new URL(`${ROUTES.SIGN_IN}?${nextQuery}`, req.url);
 
     console.warn(`   => Redirecting to '${redirectUrl}'`);
     return () => NextResponse.redirect(redirectUrl);
@@ -170,8 +170,8 @@ function updateResponseHeaders(request: NextRequest, response: NextResponse) {
  */
 function isLoggedIn(req: NextRequest, isAuthenticated: boolean) {
   return (
-    (req.nextUrl.pathname.startsWith(`${ROUTES.SIGNIN}`) ||
-      req.nextUrl.pathname.startsWith(`${ROUTES.SIGNUP}`)) &&
+    (req.nextUrl.pathname.startsWith(`${ROUTES.SIGN_IN}`) ||
+      req.nextUrl.pathname.startsWith(`${ROUTES.SIGN_UP}`)) &&
     isAuthenticated
   );
 }

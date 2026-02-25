@@ -32,7 +32,7 @@ export function getRequestPath(request: NextRequest) {
 }
 
 export function getProtectedPathsStarting() {
-  return [`/${ROUTES.CHECKOUT}`, `/accounts/`];
+  return [`/accounts/`];
 }
 
 export function forceLoginIfNotConnected(path: string, token: Token | null) {
@@ -42,7 +42,7 @@ export function forceLoginIfNotConnected(path: string, token: Token | null) {
     return;
   }
   const nextQuery = new URLSearchParams({ next: path });
-  const url = `${ROUTES.SIGNIN}?${nextQuery.toString()}`;
+  const url = `${ROUTES.SIGN_IN}?${nextQuery.toString()}`;
   redirect(url, RedirectType.push);
 }
 

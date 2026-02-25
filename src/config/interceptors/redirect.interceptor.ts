@@ -3,7 +3,7 @@ import { InternalAxiosRequestConfig } from "axios";
 
 const { api: apiConfig } = environment;
 
-const REDIRECTED_URLS = [apiConfig.rest.endpoints.checkout];
+const REDIRECTED_URLS = [apiConfig.rest.endpoints.emailVerification];
 
 const isRedirectedUrl = (candidate: string): boolean => {
   return REDIRECTED_URLS.some((url: string) => candidate.startsWith(url));

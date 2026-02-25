@@ -6,7 +6,18 @@ import {
   Category,
   CategoryCreate,
   CategoryUpdate,
-} from "@/lib/products/models/product.model";
+} from "@/lib/categories/models/category.model";
+
+// ============================================================================
+// Categories Client Service (Client-side)
+// ============================================================================
+
+/**
+ * Use this service in:
+ * - Client Components ('use client')
+ * - React Query mutations/queries
+ * - Browser-side operations
+ */
 
 // API endpoints from proxy config
 const {
@@ -14,6 +25,10 @@ const {
     endpoints: { categories: CATEGORIES_URL },
   },
 } = proxyEnvironment;
+
+// ============================================================================
+// Categories CRUD
+// ============================================================================
 
 /**
  * Fetch all categories (client-side)

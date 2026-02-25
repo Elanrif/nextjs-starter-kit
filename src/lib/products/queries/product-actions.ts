@@ -4,11 +4,8 @@ import {
   ProductCreate,
   ProductUpdate,
   ProductFiltersParams,
-  Category,
-  CategoryCreate,
-  CategoryUpdate,
+  PageProduct,
 } from "@/lib/products/models/product.model";
-import { Page } from "@lib/shared/models/response.model";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
 import * as productService from "@/lib/products/services/product.client.service";
 
@@ -23,7 +20,7 @@ const logger = getLogger();
  */
 export async function fetchProductsAction(
   filters?: ProductFiltersParams,
-): Promise<Page<Product[]> | CrudApiError | undefined> {
+): Promise<PageProduct<Product[]> | CrudApiError | undefined> {
   try {
     return await productService.fetchProducts(filters);
   } catch (error) {
@@ -85,81 +82,6 @@ export async function deleteProductAction(
     return await productService.deleteProduct(id);
   } catch (error) {
     logger.debug("Delete product failed", { error, id });
-    return undefined;
-  }
-}
-
-// ============================================================================
-// Category Actions
-// ============================================================================
-
-/**
- * Fetch categories action
- */
-export async function fetchCategoriesAction(): Promise<
-  Category[] | CrudApiError | undefined
-> {
-  try {
-    return await productService.fetchCategories();
-  } catch (error) {
-    logger.debug("Fetch categories failed", { error });
-    return undefined;
-  }
-}
-
-/**
- * Fetch single category action
- */
-export async function fetchCategoryAction(
-  id: number,
-): Promise<Category | CrudApiError | undefined> {
-  try {
-    return await productService.fetchCategory(id);
-  } catch (error) {
-    logger.debug("Fetch category failed", { error, id });
-    return undefined;
-  }
-}
-
-/**
- * Create category action
- */
-export async function createCategoryAction(
-  category: CategoryCreate,
-): Promise<Category | CrudApiError | undefined> {
-  try {
-    return await productService.createCategory(category);
-  } catch (error) {
-    logger.debug("Create category failed", { error });
-    return undefined;
-  }
-}
-
-/**
- * Update category action
- */
-export async function updateCategoryAction(
-  id: number,
-  category: CategoryUpdate,
-): Promise<Category | CrudApiError | undefined> {
-  try {
-    return await productService.updateCategory(id, category);
-  } catch (error) {
-    logger.debug("Update category failed", { error, id });
-    return undefined;
-  }
-}
-
-/**
- * Delete category action
- */
-export async function deleteCategoryAction(
-  id: number,
-): Promise<{ success: boolean } | CrudApiError | undefined> {
-  try {
-    return await productService.deleteCategory(id);
-  } catch (error) {
-    logger.debug("Delete category failed", { error, id });
     return undefined;
   }
 }

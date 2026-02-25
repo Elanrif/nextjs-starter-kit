@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CategoryCreate,
   CategoryUpdate,
-} from "@/lib/products/models/product.model";
+} from "@/lib/categories/models/category.model";
 import {
   fetchCategories,
   fetchCategory,

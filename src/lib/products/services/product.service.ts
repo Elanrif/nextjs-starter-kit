@@ -1,7 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
-import { Page } from "@lib/shared/models/response.model";
 import { getLogger } from "@config/logger.config";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
 import {
@@ -9,11 +8,14 @@ import {
   ProductCreate,
   ProductUpdate,
   ProductFiltersParams,
+  PageProduct,
 } from "@/lib/products/models/product.model";
 
+// ============================================================================
+// Products API Service (Server-side)
+// ============================================================================
+
 /**
- * Product Service (Server-side)
- *
  * Use this service in:
  * - Server Components
  * - Route Handlers (API routes)
@@ -41,7 +43,7 @@ const logger = getLogger("server");
 export async function fetchProducts(
   config: Config,
   filters?: ProductFiltersParams,
-): Promise<Page<Product[]> | CrudApiError> {
+): Promise<PageProduct<Product[]> | CrudApiError> {
   try {
     const params = new URLSearchParams();
 
@@ -56,7 +58,7 @@ export async function fetchProducts(
 
     const res = await apiClient(true, config).get<
       unknown,
-      AxiosResponse<Page<Product[]>>
+      AxiosResponse<PageProduct<Product[]>>
     >(url);
     return res.data;
   } catch (error) {

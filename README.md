@@ -64,6 +64,40 @@ ESLint is already configured in this project. To install or reinstall it:
 npm install eslint --save-dev
 ```
 
+### Cross-platform env scripts (shx)
+
+This project uses small npm scripts to copy environment files (e.g. `env/.env.local` → `.env`). To make those scripts work the same on macOS/Linux and Windows we use `shx` (a cross-platform shell utility).
+
+Install it as a dev-dependency using the `-D` shorthand:
+
+```bash
+npm install -D shx
+# or
+yarn add -D shx
+```
+
+After installing, the package scripts (e.g. `npm run env:local`) use `shx cp -f env/.env.local .env` so you can run them on any platform.
+
+### Tip: prefer rimraf for recursive clean/remove tasks
+
+For removing build output or `node_modules` recursively, `rimraf` is more reliable than using `shx rm -rf` on Windows and in CI. `rimraf` is a dedicated Node utility designed to handle Windows-specific edge cases (locked files, long paths, ENOTEMPTY errors) and is commonly used in npm scripts.
+
+- Why use `rimraf`:
+  - Handles Windows file/permission edge cases more robustly
+  - Widely used and battle-tested in CI environments
+  - Simple to call from npm scripts via `npx` or as a devDependency
+
+- Example script (package.json):
+
+```json
+"scripts": {
+  "clean": "npx rimraf .next dist build out node_modules",
+  "bootstrap": "npm run clean && npm install && npm run env:local"
+}
+```
+
+Use `shx` for lightweight file ops (copy, chmod) and `rimraf` for destructive recursive deletes.
+
 ### Husky
 
 Husky allows you to set up Git hooks easily. To install and configure it:

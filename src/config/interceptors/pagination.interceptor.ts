@@ -3,13 +3,7 @@ import { InternalAxiosRequestConfig } from "axios";
 
 const { api: apiConfig, pagination: paginationConfig } = environment;
 
-const PAGINATED_URLS = [
-  apiConfig.rest.endpoints.beneficiaries,
-  apiConfig.rest.endpoints.orders,
-  apiConfig.rest.endpoints.products,
-  apiConfig.rest.endpoints.telecomProducts,
-  apiConfig.rest.endpoints.useraddresses,
-];
+const PAGINATED_URLS = [apiConfig.rest.endpoints.products];
 
 const isPaginatedUrl = (candidate: string): boolean => {
   return PAGINATED_URLS.some((url: string) => candidate.startsWith(url));

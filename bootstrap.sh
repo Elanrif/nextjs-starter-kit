@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash# Convert to Unix lformat if needed: dos2unix bootstrap.sh
 
 OS=$(uname)
 Color_Off='\033[0m'
@@ -30,7 +30,7 @@ echo "Install node modules"
 npm install
 
 echo "Setup husky..."
-npx husky install
+npx husky
 chmod +x ./.husky/pre-commit
 chmod +x ./.husky/_/husky.sh
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "@/lib/auth/auth-client";
+import { ROUTES } from "@/utils/routes";
 
 interface SignOutButtonProps {
   /** Text to display on the button */
@@ -39,7 +40,7 @@ interface SignOutButtonProps {
  */
 export function SignOutButton({
   children = "Sign Out",
-  redirectTo = "/",
+  redirectTo = ROUTES.HOME,
   className = "",
   variant = "default",
 }: SignOutButtonProps) {

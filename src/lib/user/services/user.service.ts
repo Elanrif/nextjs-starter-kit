@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
-import { User, UserStats } from "@lib/user/models/user.model";
+import { User } from "@lib/user/models/user.model";
 import { Page } from "@lib/shared/models/response.model";
 import { UpdateUser } from "@lib/user/queries/use-update-customer";
 import { getLogger } from "@config/logger.config";
@@ -10,7 +10,7 @@ import { ApiError, CrudApiError } from "@/lib/shared/helpers/crud-api-error";
 const {
   api: {
     rest: {
-      endpoints: { users: usersUrl, userstats: usersStatsUrl },
+      endpoints: { users: usersUrl },
     },
   },
 } = environment;
@@ -33,11 +33,6 @@ export async function fetchUser(config: Config): Promise<User | CrudApiError> {
     };
   }
 }
-
-export const fetchStats = async (config: Config): Promise<UserStats> =>
-  apiClient(false, config)
-    .get<any, AxiosResponse<UserStats>>(usersStatsUrl)
-    .then((response) => response.data);
 
 export async function updateUser(
   config: Config,

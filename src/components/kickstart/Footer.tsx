@@ -1,3 +1,4 @@
+import { ROUTES } from "@/utils/routes";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,16 +22,16 @@ const footerLinks = {
     { label: "Reddit", href: "https://reddit.com/r/nextjs" },
   ],
 };
-
+const { HOME } = ROUTES;
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-muted/30">
+    <footer className="border-t border-border bg-gray-200/95 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
         <div className="py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href={HOME} className="flex items-center gap-2 mb-4">
               <Image
                 src="/next.svg"
                 alt="Next.js Logo"

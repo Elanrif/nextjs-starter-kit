@@ -79,8 +79,8 @@ export function ModalProvider({ children }: ModalProviderProps) {
       confirmText: "Sign In",
       onConfirm: () => {
         hideModal();
-        // Redirect to login or handle sign in
-        window.location.href = "/login";
+        // Redirect to sign-in or handle sign in
+        window.location.href = "/sign-in";
       },
     });
   }, [showModal, hideModal]);

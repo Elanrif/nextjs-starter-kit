@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { CategoryCreate } from "@/lib/products/models/product.model";
+import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";

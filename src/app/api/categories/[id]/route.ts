@@ -5,8 +5,8 @@ import {
   fetchCategory,
   updateCategory,
   deleteCategory,
-} from "@/lib/products/services/product.service";
-import { CategoryUpdate } from "@/lib/products/models/product.model";
+} from "@/lib/categories/services/category.service";
+import { CategoryUpdate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";

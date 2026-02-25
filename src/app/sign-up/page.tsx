@@ -1,6 +1,7 @@
-import { SignUpForm } from "@/components/auth";
+import { SignUpForm } from "@/components/kickstart/auth";
 import Link from "next/link";
 import { ArrowLeft, Key } from "lucide-react";
+import { ROUTES } from "@/utils/routes";
 
 export const metadata = {
   title: "Sign Up",
@@ -11,6 +12,7 @@ export const metadata = {
  * Sign Up Page
  * Modern split-screen layout with decorative right panel
  */
+const { HOME, SIGN_IN } = ROUTES;
 export default function SignUpPage() {
   return (
     <div className="min-h-screen flex">
@@ -19,7 +21,7 @@ export default function SignUpPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
           <Link
-            href="/"
+            href={HOME}
             className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft className="h-5 w-5 text-gray-600" />
@@ -27,7 +29,7 @@ export default function SignUpPage() {
           <p className="text-sm text-gray-600">
             Already member?{" "}
             <Link
-              href="/sign-in"
+              href={SIGN_IN}
               className="text-emerald-600 font-medium hover:underline"
             >
               Sign in

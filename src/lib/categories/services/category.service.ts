@@ -7,8 +7,20 @@ import {
   Category,
   CategoryCreate,
   CategoryUpdate,
-} from "@/lib/products/models/product.model";
+} from "@lib/categories/models/category.model";
 
+// ============================================================================
+// Categories API Service (Server-side)
+// ============================================================================
+
+/**
+ * Use this service in:
+ * - Server Components
+ * - Route Handlers (API routes)
+ * - Server Actions
+ */
+
+// API endpoints from environment config
 const {
   api: {
     rest: {
@@ -19,6 +31,10 @@ const {
 
 const logger = getLogger("server");
 
+// ============================================================================
+// Products CRUD
+// ============================================================================
+
 /**
  * Fetch all categories
  */
@@ -26,6 +42,7 @@ export async function fetchCategories(
   config: Config,
 ): Promise<Category[] | CrudApiError> {
   try {
+    // Use anonymous credentials for public category fetch
     const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Category[]>
@@ -52,6 +69,7 @@ export async function fetchCategory(
   id: number,
 ): Promise<Category | CrudApiError> {
   try {
+    // Use anonymous credentials for public category fetch
     const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Category>
