@@ -28,13 +28,13 @@ export async function GET(request: NextRequest) {
   // Build filters from query params
   const filters: ProductFiltersParams = {};
   if (searchParams.get("search")) filters.search = searchParams.get("search")!;
-  if (searchParams.get("category_id"))
-    filters.categoryId = Number(searchParams.get("category_id"));
-  if (searchParams.get("is_active"))
-    filters.isActive = searchParams.get("is_active") === "true";
-  if (searchParams.get("sort_by"))
+  if (searchParams.get("categoryId"))
+    filters.categoryId = Number(searchParams.get("categoryId"));
+  if (searchParams.get("isActive"))
+    filters.isActive = searchParams.get("isActive") === "true";
+  if (searchParams.get("sortBy"))
     filters.sortBy = searchParams.get(
-      "sort_by",
+      "sortBy",
     ) as ProductFiltersParams["sortBy"];
 
   const reqHeaders = new Headers(request.headers);

@@ -1,10 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  fetchProducts,
-  deleteProduct,
-} from "@/lib/products/services/product.client.service";
+import { deleteProduct } from "@/lib/products/services/product.client.service";
 import { Product } from "@/lib/products/models/product.model";
 import {
   DataTable,
@@ -18,7 +15,13 @@ import { ROUTES } from "@/utils/routes";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
-export function ProductListPage() {
+type ProductListPageProps = {
+  initialProducts?: Product[];
+};
+
+export function ProductListPage({
+  initialProducts = [],
+}: ProductListPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -27,23 +30,38 @@ export function ProductListPage() {
 
   useEffect(() => {
     let mounted = true;
-    fetchProducts().then((res) => {
+    const timer = setTimeout(() => {
       if (!mounted) return;
-      /*
-       * We cannot do res.content if we type response as Page<Product[]>
-       * because it causes TypeScript to expect a 'content' property on the response, which doesn't exist on CrudApiError.
-       * Type guard: Only set products if 'content' exists and is an array (pagination response)
-       * This ensures we only set products when the API returns a paginated response.
-       */
-      if ("content" in res && Array.isArray(res.content))
-        setProducts(res.content);
-      else setProducts([]);
+      setProducts(initialProducts);
       setLoading(false);
-    });
+    }, 500);
+
     return () => {
       mounted = false;
+      clearTimeout(timer);
     };
-  }, []);
+  }, [initialProducts]);
+
+  // useEffect(() => {
+  //   let mounted = true;
+  //   // Client Side fetching
+  //   fetchProducts().then((res) => {
+  //     if (!mounted) return;
+  //     /*
+  //      * We cannot do res.content if we type response as Page<Product[]>
+  //      * because it causes TypeScript to expect a 'content' property on the response, which doesn't exist on CrudApiError.
+  //      * Type guard: Only set products if 'content' exists and is an array (pagination response)
+  //      * This ensures we only set products when the API returns a paginated response.
+  //      */
+  //     if ("content" in res && Array.isArray(res.content))
+  //       setProducts(res.content);
+  //     else setProducts([]);
+  //     setLoading(false);
+  //   });
+  //   return () => {
+  //     mounted = false;
+  //   };
+  // }, []);
 
   const handleDelete = async () => {
     if (!deleteId) return;

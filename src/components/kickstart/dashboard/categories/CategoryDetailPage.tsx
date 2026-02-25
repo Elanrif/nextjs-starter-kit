@@ -2,24 +2,38 @@
 import { useEffect, useState } from "react";
 import { DashboardButton } from "@/components/kickstart/dashboard/DashboardButton";
 import Link from "next/link";
-import { fetchCategory } from "@/lib/categories/services/category.client.service";
 import { Category } from "@/lib/categories/models/category.model";
 import LoadingPage from "@/components/kickstart/loading-page";
 import { ROUTES } from "@/utils/routes";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
-export function CategoryDetailPage({ id }: { id: string }) {
+export function CategoryDetailPage({ data }: { data: Category | null }) {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCategory(Number(id)).then((res) => {
-      if ("id" in res) setCategory(res);
-      else setCategory(null);
+    let mounted = true;
+    const timer = setTimeout(() => {
+      if (!mounted) return;
+      setCategory(data);
       setLoading(false);
-    });
-  }, [id]);
+    }, 500);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
+  }, [data]);
+
+  // useEffect(() => {
+  //   // Client Side fetching
+  //   fetchCategory(Number(id)).then((res) => {
+  //     if ("id" in res) setCategory(res);
+  //     else setCategory(null);
+  //     setLoading(false);
+  //   });
+  // }, [id]);
 
   if (loading)
     return (

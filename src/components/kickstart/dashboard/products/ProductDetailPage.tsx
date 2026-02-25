@@ -1,11 +1,11 @@
 "use client";
 import LoadingPage from "@/components/kickstart/loading-page";
 import { useEffect, useState } from "react";
-import { fetchProduct } from "@/lib/products/services/product.client.service";
 import { Product } from "@/lib/products/models/product.model";
 import { DashboardButton } from "@/components/kickstart/dashboard/DashboardButton";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
+import { fetchProduct } from "@/lib/products/services/product.client.service";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -14,6 +14,7 @@ export function ProductDetailPage({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Client Side fetching
     fetchProduct(Number(id)).then((res) => {
       if ("id" in res) setProduct(res);
       setLoading(false);

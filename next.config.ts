@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  output: "standalone",
+  //output: "standalone",
   images: {
     qualities: [25, 50, 75],
     dangerouslyAllowLocalIP: true,

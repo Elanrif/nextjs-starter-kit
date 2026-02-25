@@ -2,10 +2,7 @@
 import LoadingPage from "@/components/kickstart/loading-page";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  fetchProduct,
-  updateProduct,
-} from "@/lib/products/services/product.client.service";
+import { updateProduct } from "@/lib/products/services/product.client.service";
 import { DashboardButton } from "@/components/kickstart/dashboard/DashboardButton";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
@@ -14,12 +11,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   productCreateSchema,
   ProductCreateInput,
+  Product,
 } from "@/lib/products/models/product.model";
 import { ROUTES } from "@/utils/routes";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
-export function ProductEditPage({ id }: { id: string }) {
+export function ProductEditPage({
+  loadedProduct,
+}: {
+  loadedProduct: Product | null;
+}) {
   const {
     register,
     handleSubmit,
@@ -46,30 +48,58 @@ export function ProductEditPage({ id }: { id: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    fetchProduct(Number(id)).then((res) => {
-      if ("id" in res) {
-        // reset form with fetched product
-        reset({
-          name: res.name || "",
-          slug: res.slug || "",
-          description: res.description || "",
-          price: res.price || 0,
-          stock: res.stock || 0,
-          isActive: res.isActive ?? true,
-          categoryId: res.categoryId || 0,
-        });
-      }
-      setLoading(false);
-    });
+    if (loadedProduct && "id" in loadedProduct) {
+      reset({
+        name: loadedProduct?.name || "",
+        slug: loadedProduct?.slug || "",
+        description: loadedProduct?.description || "",
+        price: loadedProduct?.price || 0,
+        stock: loadedProduct?.stock || 0,
+        isActive: loadedProduct?.isActive ?? true,
+        categoryId: loadedProduct?.categoryId || 0,
+      });
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(false);
+
+    // Client Side fetching for categories
     fetchCategories().then((res) => {
       if (Array.isArray(res))
         setCategories(res.map((c) => ({ id: c.id, name: c.name })));
     });
-  }, [id, reset]);
+  }, [loadedProduct, reset]);
+
+  // useEffect(() => {
+  //   // Client Side fetching
+  //   fetchProduct(Number(id)).then((res) => {
+  //     if ("id" in res) {
+  //       // reset form with fetched product
+  //       reset({
+  //         name: res.name || "",
+  //         slug: res.slug || "",
+  //         description: res.description || "",
+  //         price: res.price || 0,
+  //         stock: res.stock || 0,
+  //         isActive: res.isActive ?? true,
+  //         categoryId: res.categoryId || 0,
+  //       });
+  //     }
+  //     setLoading(false);
+  //   });
+  //   // Client Side fetching for categories
+  //   fetchCategories().then((res) => {
+  //     if (Array.isArray(res))
+  //       setCategories(res.map((c) => ({ id: c.id, name: c.name })));
+  //   });
+  // }, [id, reset]);
 
   const onSubmit = async (data: ProductCreateInput) => {
+    if (!loadedProduct) {
+      toast.error("Produit introuvable.");
+      return;
+    }
     setLoading(true);
-    const anyRes = (await updateProduct(Number(id), {
+    const anyRes = (await updateProduct(Number(loadedProduct.id), {
       ...data,
       price: Number(data.price),
       stock: Number(data.stock),
@@ -154,6 +184,9 @@ export function ProductEditPage({ id }: { id: string }) {
           <input
             {...register("price", { valueAsNumber: true })}
             type="number"
+            step="0.01"
+            min={0}
+            inputMode="decimal"
             placeholder="Prix"
             className="w-full border px-3 py-2 rounded"
           />
@@ -168,6 +201,8 @@ export function ProductEditPage({ id }: { id: string }) {
           <input
             {...register("stock", { valueAsNumber: true })}
             type="number"
+            step={1}
+            min={0}
             placeholder="Stock"
             className="w-full border px-3 py-2 rounded"
           />
