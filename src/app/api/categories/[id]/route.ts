@@ -1,5 +1,3 @@
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
   fetchCategory,
@@ -83,24 +81,22 @@ export async function PATCH(
     return NextResponse.json({ message }, { status });
   }
 
-  // Check authentication
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // // Check authentication
+  // const session = await getServerSession(request);
 
-  if (!session?.user) {
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
+  // if (!session?.user) {
+  //   const status = 401;
+  //   const message = "You must be logged in";
+  //   reqLogger.error("Unauthorized", { status, message });
+  //   return NextResponse.json({ message }, { status });
+  // }
 
   const body = (await request.json()) as CategoryUpdate;
 
   if (Object.keys(body).length === 0) {
     const status = 400;
     const message = "Request body cannot be empty";
-    reqLogger.error(`[${session.user.id}] - Bad Request`, { status, message });
+    reqLogger.error("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -125,7 +121,6 @@ export async function PATCH(
 
     reqLogger.info("Category updated", {
       categoryId,
-      userId: session.user.id,
     });
     return NextResponse.json(category, { status: 200 });
   } catch {
@@ -155,17 +150,15 @@ export async function DELETE(
     return NextResponse.json({ message }, { status });
   }
 
-  // Check authentication
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // // Check authentication
+  // const session = await getServerSession(request);
 
-  if (!session?.user) {
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
+  // if (!session?.user) {
+  //   const status = 401;
+  //   const message = "You must be logged in";
+  //   reqLogger.error("Unauthorized", { status, message });
+  //   return NextResponse.json({ message }, { status });
+  // }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -188,7 +181,6 @@ export async function DELETE(
 
     reqLogger.info("Category deleted", {
       categoryId,
-      userId: session.user.id,
     });
     return NextResponse.json(
       { message: "Category deleted successfully" },

@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth/auth-client";
 import {
   User,
   Mail,
@@ -13,6 +12,7 @@ import {
   Circle,
   ArrowRight,
 } from "lucide-react";
+import { signUp } from "@/lib/auth/auth.service";
 
 /**
  * Password validation rules
@@ -69,7 +69,7 @@ export function SignUpForm() {
     setIsLoading(true);
 
     try {
-      const result = await signUp.email({
+      const result = await signUp({
         email,
         password,
         name,

@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Dashboard",

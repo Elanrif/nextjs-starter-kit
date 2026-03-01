@@ -7,11 +7,8 @@ import { getLogger } from "@config/logger.config";
 const { api: apiConfig, auth: authConfig } = environment;
 const logger = getLogger();
 const SAFE_URLS = [
-  apiConfig.graphql.endpoint,
-  apiConfig.rest.endpoints.categories,
-  apiConfig.rest.endpoints.passwordReset,
-  apiConfig.rest.endpoints.products,
   apiConfig.rest.endpoints.register,
+  apiConfig.rest.endpoints.login,
 ];
 
 const isSafeUrl = (candidate: string): boolean => {
@@ -23,10 +20,7 @@ export const anonTokenInterceptor = async (
 ) => {
   const { url } = config;
   if (url && isSafeUrl(url)) {
-    config.auth = {
-      username: authConfig.keys.anonymous.clientID,
-      password: authConfig.keys.anonymous.clientSecret,
-    };
+    logger.info(`Request to safe URL ${url}, skipping token interceptor`);
   }
   return config;
 };

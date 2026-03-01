@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signOut } from "@/lib/auth/auth-client";
 import { ROUTES } from "@/utils/routes";
+import { signOut } from "./betterAuthOptions";
 
 interface SignOutButtonProps {
   /** Text to display on the button */

@@ -1,5 +1,3 @@
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
@@ -54,17 +52,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
 
-  // Check authentication
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // // Check authentication
+  // const session = await getServerSession(request);
 
-  if (!session?.user) {
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
+  // if (!session?.user) {
+  //   const status = 401;
+  //   const message = "You must be logged in";
+  //   reqLogger.error("Unauthorized", { status, message });
+  //   return NextResponse.json({ message }, { status });
+  // }
 
   const body = (await request.json()) as CategoryCreate;
 
@@ -72,7 +68,7 @@ export async function POST(request: NextRequest) {
   if (!body?.name) {
     const status = 400;
     const message = "Field `name` is required";
-    reqLogger.error(`[${session.user.id}] - Bad Request`, { status, message });
+    reqLogger.error("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 

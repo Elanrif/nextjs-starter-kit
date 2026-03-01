@@ -16,11 +16,34 @@ const {
 } = environment;
 const logger = getLogger("server");
 
-export async function fetchUser(config: Config): Promise<User | CrudApiError> {
+export async function fetchAllUser(
+  config: Config,
+): Promise<User[] | CrudApiError> {
   try {
     const res = await apiClient(false, config) //
-      .get<any, AxiosResponse<Page<User[]>>>(usersUrl);
-    return res.data.results[0];
+      .get<any, AxiosResponse<User[]>>(usersUrl);
+    return res.data;
+  } catch (error) {
+    const err = error as AxiosError;
+    logger.error("Error fetching users", {
+      status: err.response?.status,
+      message: err.response?.data,
+    });
+    return {
+      statusCode: (error as AxiosError).response?.status || 500,
+      message: "Erreur de récupération des utilisateurs",
+    };
+  }
+}
+
+export async function fetchUserById(
+  id: number,
+  config: Config,
+): Promise<User | CrudApiError> {
+  try {
+    const res = await apiClient(false, config) //
+      .get<any, AxiosResponse<User>>(`${usersUrl}/${id}`);
+    return res.data;
   } catch (error) {
     const err = error as AxiosError;
     logger.error("Error fetching user", {
@@ -29,7 +52,7 @@ export async function fetchUser(config: Config): Promise<User | CrudApiError> {
     });
     return {
       statusCode: (error as AxiosError).response?.status || 500,
-      message: "Problème d'authentification",
+      message: "Erreur de récupération de l'utilisateur",
     };
   }
 }

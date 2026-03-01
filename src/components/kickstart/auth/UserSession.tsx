@@ -1,4 +1,4 @@
-import { getServerSession } from "@/lib/auth/auth";
+import { getServerSession } from "../../../lib/auth/auth";
 import { SignOutButton } from "./SignOutButton";
 
 /**

@@ -137,7 +137,7 @@ export function Header() {
             <div className="flex gap-2 pt-2 px-3">
               <Button variant="outline" size="sm" className="flex-1" asChild>
                 <a
-                  href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
+                  href="https://github.com/Elanrif/kickstart-nextjs-starter-kit"
                   target="_blank"
                   rel="noopener"
                 >

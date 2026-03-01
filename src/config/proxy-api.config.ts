@@ -5,17 +5,10 @@ const { baseUrl, apiBaseUrl, apiProxyBase } = environment;
 export const protectedPaths = {
   // Basket
   cart: `/cart`,
-  addToCart: `/cart/add`,
 
   // checkout
   checkout: `/checkout`,
   order: `/order`,
-  users: `/users`,
-  usersUpdate: `/users/update`,
-
-  //passwords
-  passwordReset: `/password-reset`,
-  passwordChange: `/password-change`,
 };
 
 export const proxyEnvironment = {
@@ -29,7 +22,9 @@ export const proxyEnvironment = {
 
       products: `/products`,
       productById: `/products/:id`,
+      login: `/login`,
       register: `/register`,
+      passwordChange: `/password-change`,
     },
   },
 };

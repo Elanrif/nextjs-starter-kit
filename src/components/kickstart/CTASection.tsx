@@ -50,7 +50,7 @@ export default function CTASection() {
                 asChild
               >
                 <a
-                  href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
+                  href="https://github.com/Elanrif/kickstart-nextjs-starter-kit"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

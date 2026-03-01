@@ -64,13 +64,13 @@ export default function GettingStartedSection() {
                   <span className="text-emerald-400">$</span>
                   <code className="text-gray-300 group-hover:text-white transition-colors">
                     git clone
-                    https://github.com/Elanrif/kickstart-nextjs-betterauth-template
+                    https://github.com/Elanrif/kickstart-nextjs-starter-kit
                   </code>
                 </div>
                 <div className="flex items-start gap-2 group">
                   <span className="text-emerald-400">$</span>
                   <code className="text-gray-300 group-hover:text-white transition-colors">
-                    cd kickstart-nextjs-betterauth-template
+                    cd kickstart-nextjs-starter-kit
                   </code>
                 </div>
                 <div className="flex items-start gap-2 group">
@@ -101,7 +101,7 @@ export default function GettingStartedSection() {
               asChild
             >
               <a
-                href="https://vercel.com/new/clone?repository-url=https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
+                href="https://vercel.com/new/clone?repository-url=https://github.com/Elanrif/kickstart-nextjs-starter-kit"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -122,7 +122,7 @@ export default function GettingStartedSection() {
               asChild
             >
               <a
-                href="https://github.com/Elanrif/kickstart-nextjs-betterauth-template"
+                href="https://github.com/Elanrif/kickstart-nextjs-starter-kit"
                 target="_blank"
                 rel="noopener noreferrer"
               >

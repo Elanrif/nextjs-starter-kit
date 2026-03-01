@@ -1,7 +1,4 @@
-import { ROUTES } from "@utils/routes";
-import { redirect, RedirectType } from "next/navigation";
 import { NextRequest } from "next/server";
-import { Token } from "@config/auth.utils";
 
 export const emailRegex =
   /^(([^\s"(),.:;<>@[\\\]]+(\.[^\s"(),.:;<>@[\\\]]+)*)|(".+"))@((\[(?:\d{1,3}\.){3}\d{1,3}])|(([\dA-Za-z-]+\.)+[A-Za-z]{2,}))$/;
@@ -33,17 +30,6 @@ export function getRequestPath(request: NextRequest) {
 
 export function getProtectedPathsStarting() {
   return [`/accounts/`];
-}
-
-export function forceLoginIfNotConnected(path: string, token: Token | null) {
-  if (
-    !(!token && getProtectedPathsStarting().some((p) => path.startsWith(p)))
-  ) {
-    return;
-  }
-  const nextQuery = new URLSearchParams({ next: path });
-  const url = `${ROUTES.SIGN_IN}?${nextQuery.toString()}`;
-  redirect(url, RedirectType.push);
 }
 
 export function capitalize(str: string) {

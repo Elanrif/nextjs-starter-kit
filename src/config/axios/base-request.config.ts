@@ -1,9 +1,6 @@
-import environment from "@config/environment.config";
-
-const { http: httpConfig } = environment;
 export const baseRequestConfig = {
   baseURL: "",
-  timeout: httpConfig.request.timeout,
+  timeout: 60_000,
   headers: {
     Accept: "application/json",
     "Cache-Control": "no-cache, no-store, must-revalidate",
