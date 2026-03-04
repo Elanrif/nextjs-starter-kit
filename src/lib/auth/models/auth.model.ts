@@ -14,3 +14,12 @@ export interface Login extends AuthSignIn {
   email: string;
   password: string;
 }
+
+export interface Session {
+  token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}

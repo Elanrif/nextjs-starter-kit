@@ -22,9 +22,9 @@ export const proxyEnvironment = {
 
       products: `/products`,
       productById: `/products/:id`,
-      login: `/login`,
-      register: `/register`,
-      passwordChange: `/password-change`,
+      login: `/auth/login`,
+      register: `/auth/register`,
+      passwordChange: `/auth/password-change`,
     },
   },
 };

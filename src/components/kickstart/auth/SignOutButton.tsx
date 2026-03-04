@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
-import { signOut } from "./betterAuthOptions";
+import { useAuth } from "@/lib/auth/auth-client";
 
 interface SignOutButtonProps {
   /** Text to display on the button */
@@ -46,18 +46,14 @@ export function SignOutButton({
 }: SignOutButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { signOut } = useAuth();
 
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push(redirectTo);
-            router.refresh();
-          },
-        },
-      });
+      await signOut();
+      router.push(redirectTo);
+      router.refresh();
     } catch (error) {
       console.error("Failed to sign out:", error);
     } finally {

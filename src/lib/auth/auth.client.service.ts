@@ -2,8 +2,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { CrudApiError } from "@lib/shared/helpers/crud-api-error";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
-import { User } from "@lib/user/models/user.model";
-import { Login, Registrer } from "./models/auth.model";
+import { Login, Registrer, Session } from "./models/auth.model";
 
 const {
   api: {
@@ -18,9 +17,9 @@ const {
 /**
  * Sign in a user with email and password.
  */
-export async function signIn(login: Login): Promise<User | CrudApiError> {
+export async function signIn(login: Login): Promise<Session | CrudApiError> {
   try {
-    const result = await frontendHttp().post<any, AxiosResponse<User>>(
+    const result = await frontendHttp().post<any, AxiosResponse<Session>>(
       loginUrl,
       login,
     );
@@ -39,7 +38,7 @@ export async function signIn(login: Login): Promise<User | CrudApiError> {
  */
 export async function signUp(
   registration: Registrer,
-): Promise<User | CrudApiError> {
+): Promise<Session | CrudApiError> {
   try {
     await frontendHttp().post<any, AxiosResponse<any>>(
       registerUrl,
@@ -73,10 +72,10 @@ export async function changeUserPassword({
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
-}): Promise<User | CrudApiError> {
+}): Promise<Session | CrudApiError> {
   try {
     const body = { oldPassword, newPassword, confirmPassword };
-    const result = await frontendHttp().patch<any, AxiosResponse<User>>(
+    const result = await frontendHttp().patch<any, AxiosResponse<Session>>(
       passwordChangeUrl,
       body,
     );

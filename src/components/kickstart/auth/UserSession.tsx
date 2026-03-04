@@ -1,4 +1,4 @@
-import { getServerSession } from "../../../lib/auth/auth";
+import { getServerSession } from "@/lib/auth/auth";
 import { SignOutButton } from "./SignOutButton";
 
 /**
@@ -24,8 +24,8 @@ import { SignOutButton } from "./SignOutButton";
  * }
  * ```
  */
-export async function UserSession() {
-  const session = await getServerSession();
+export async function UserSession(req: any) {
+  const session = await getServerSession(req);
 
   if (!session?.user) {
     return (
@@ -76,8 +76,8 @@ export async function UserSession() {
  * User Avatar Component
  * A smaller component that just displays the user avatar
  */
-export async function UserAvatar() {
-  const session = await getServerSession();
+export async function UserAvatar(req: any) {
+  const session = await getServerSession(req);
 
   if (!session?.user) {
     return null;

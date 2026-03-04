@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "../../../lib/auth/auth-client";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
+import { signIn } from "@/lib/auth/auth.client.service";
+import { saveSession } from "@/lib/auth/auth-client";
+// import { signIn } from "@/lib/auth/auth.service";
 
 /**
  * Sign In Form Component
@@ -28,14 +30,20 @@ export function SignInForm() {
     setIsLoading(true);
 
     try {
-      const result = await signIn.email({
+      const result = await signIn({
+        action: "SIGN_IN",
         email,
         password,
       });
 
-      if (result.error) {
-        setError(result.error.message || "Failed to sign in");
+      if ("statusCode" in result && result.statusCode !== 200) {
+        setError(result.message || "Failed to sign in");
         return;
+      }
+
+      // Save cookies data if available
+      if ("token" in result && "user" in result) {
+        saveSession(result);
       }
 
       const callbackUrl =

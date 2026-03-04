@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "../../../lib/auth/auth-client";
+import { useAuth } from "@/lib/auth/auth-client";
 
 /**
  * Client Session Hook
@@ -24,7 +24,7 @@ import { useAuth } from "../../../lib/auth/auth-client";
  * ```
  */
 export function useClientSession() {
-  const { data: session, isPending, error } = useAuth();
+  const { session, isPending, error } = useAuth();
 
   return {
     /** The full session object */

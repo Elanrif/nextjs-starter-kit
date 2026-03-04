@@ -6,7 +6,7 @@ import { Header } from "@/components/kickstart/Header";
 import Hero from "@/components/kickstart/Hero";
 
 export const metadata = {
-  title: "Kickstart Next.js Template",
+  title: "Nextjs Starter Kit",
   description:
     "A template for building Next.js applications with Tailwind CSS and TypeScript",
 };

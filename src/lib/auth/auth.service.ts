@@ -45,18 +45,22 @@ export async function signIn(
 export async function signUp(
   registration: Registrer,
   config?: Config,
-): Promise<User> {
+): Promise<User | CrudApiError> {
   try {
     // try to register the user
     await apiClient(true, config).post<any, AxiosResponse<any>>(
       registerUrl,
       registration,
     );
-  } catch (error_) {
-    const error = error_ as AxiosError;
+  } catch (error) {
+    const err = error as AxiosError;
+    logger.error("Error signing up user", {
+      status: err.response?.status,
+      message: err.response?.data,
+    });
     const errorMessage =
-      typeof error.response?.data === "string"
-        ? error.response.data
+      typeof err.response?.data === "string"
+        ? err.response.data
         : "Registration failed";
     throw new ApiError(errorMessage, 400);
   }
@@ -67,13 +71,6 @@ export async function signUp(
     throw new Error(maybeUser.message);
   }
   return maybeUser;
-}
-
-function getCrudAPiError(error: CrudApiError | ApiError) {
-  return {
-    statusCode: error.statusCode,
-    message: error.message,
-  };
 }
 
 export async function changeUserPassword(

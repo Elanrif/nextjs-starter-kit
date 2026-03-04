@@ -17,8 +17,8 @@ export const metadata = {
  * The middleware also protects this route, but we add a server-side
  * check as an additional security layer.
  */
-export default async function DashboardPage() {
-  const session = await getServerSession();
+export default async function DashboardPage(req: any) {
+  const session = await getServerSession(req);
 
   // Server-side protection (middleware also handles this)
   if (!session?.user) {

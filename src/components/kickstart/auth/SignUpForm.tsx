@@ -12,7 +12,8 @@ import {
   Circle,
   ArrowRight,
 } from "lucide-react";
-import { signUp } from "@/lib/auth/auth.service";
+import { signUp } from "@/lib/auth/auth.client.service";
+import { saveSession } from "@/lib/auth/auth-client";
 
 /**
  * Password validation rules
@@ -34,13 +35,17 @@ function usePasswordValidation(password: string) {
  */
 export function SignUpForm() {
   const router = useRouter();
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const fillDemo = () => {
-    setName("Elanrif");
+    setFirstName("Elan");
+    setLastName("Rif");
+    setPhoneNumber("1234567890");
     setEmail("elanrif@gmail.com");
     setPassword("Elanrif123456");
     setConfirmPassword("Elanrif123456");
@@ -56,6 +61,11 @@ export function SignUpForm() {
     e.preventDefault();
     setError(null);
 
+    if (!isEmailValid) {
+      setError("Invalid email address");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -70,16 +80,24 @@ export function SignUpForm() {
 
     try {
       const result = await signUp({
+        action: "SIGN_UP",
+        firstName,
+        lastName,
+        phoneNumber,
         email,
         password,
-        name,
       });
 
-      if (result.error) {
-        setError(result.error.message || "Failed to create account");
+      if ("statusCode" in result && result.statusCode !== 200) {
+        setError(result.message || "Failed to create account");
         return;
       }
 
+      // Save session data if available
+      if ("token" in result && "user" in result) {
+        saveSession(result);
+      }
+      
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -97,115 +115,143 @@ export function SignUpForm() {
         </div>
       )}
 
-      {/* Name Field */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <User className="h-5 w-5 text-gray-400" />
-        </div>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Full Name"
-          required
-          disabled={isLoading}
-          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
-        />
-        {name && (
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <Check className="h-5 w-5 text-emerald-500" />
+      <label className="flex items-center gap-4">
+        {/* First Name Field */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <User className="h-5 w-5 text-gray-400" />
           </div>
-        )}
-      </div>
-
-      {/* Email Field */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Mail className="h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
+            required
+            disabled={isLoading}
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          />
         </div>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email Address"
-          required
-          disabled={isLoading}
-          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
-        />
-        {email && isEmailValid && (
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <Check className="h-5 w-5 text-emerald-500" />
-          </div>
-        )}
-      </div>
 
-      {/* Password Field */}
-      <div>
+        {/* Last Name Field */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <User className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
+            required
+            disabled={isLoading}
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          />
+        </div>
+      </label>
+
+      <label className="flex items-center gap-4">
+        {/* Phone Number Field */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <User className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="Phone Number"
+            required
+            disabled={isLoading}
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          />
+        </div>
+
+        {/* Email Field */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Mail className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email Address"
+            required
+            disabled={isLoading}
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          />
+          {email && isEmailValid && (
+            <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+              <Check className="h-5 w-5 text-emerald-500" />
+            </div>
+          )}
+        </div>
+      </label>
+
+      <label className="flex items-start gap-4">
+        {/* Password Field */}
+        <div>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Lock className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              disabled={isLoading}
+              className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Password Requirements */}
+          {password && (
+            <div className="mt-3 space-y-1.5 text-sm">
+              <ValidationItem
+                valid={validation.minLength}
+                text="Least 8 characters"
+              />
+              <ValidationItem
+                valid={validation.hasNumber}
+                text="Least one number (0-9) or a symbol"
+              />
+              <ValidationItem
+                valid={validation.hasCase}
+                text="Lowercase (a-z) and uppercase (A-Z)"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Confirm Password Field */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Lock className="h-5 w-5 text-gray-400" />
           </div>
           <input
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Re-Type Password"
             required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
-          >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
-          </button>
         </div>
-
-        {/* Password Requirements */}
-        {password && (
-          <div className="mt-3 space-y-1.5 text-sm">
-            <ValidationItem
-              valid={validation.minLength}
-              text="Least 8 characters"
-            />
-            <ValidationItem
-              valid={validation.hasNumber}
-              text="Least one number (0-9) or a symbol"
-            />
-            <ValidationItem
-              valid={validation.hasCase}
-              text="Lowercase (a-z) and uppercase (A-Z)"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Confirm Password Field */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Lock className="h-5 w-5 text-gray-400" />
-        </div>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Re-Type Password"
-          required
-          disabled={isLoading}
-          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
-        />
-        {confirmPassword && password === confirmPassword && (
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <Check className="h-5 w-5 text-emerald-500" />
-          </div>
-        )}
-      </div>
+      </label>
 
       {/* Submit Button */}
       <button

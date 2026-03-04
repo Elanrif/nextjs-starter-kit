@@ -19,8 +19,8 @@ const environment = {
         // Managed user endpoints
         auth: `${XXX_BASE_V1}/auth`,
         users: `${XXX_BASE_V1}/users`,
-        login: `${XXX_BASE_V1}/login`,
-        register: `${XXX_BASE_V1}/register`,
+        login: `${XXX_BASE_V1}/auth/login`,
+        register: `${XXX_BASE_V1}/auth/register`,
       },
     },
   },

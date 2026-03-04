@@ -39,7 +39,7 @@ export default function SignUpPage() {
 
         {/* Form Content */}
         <div className="flex-1 flex items-center ps-20">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-lg">
             <div className="mb-8">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign Up</h1>
               <p className="text-gray-500">
