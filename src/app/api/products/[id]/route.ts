@@ -40,7 +40,7 @@ export async function GET(
   try {
     const product = await fetchProduct(config, productId);
 
-    if ("status" in product) {
+    if ("error" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Product not found", {
         productId,
@@ -108,7 +108,7 @@ export async function PATCH(
   try {
     const product = await updateProduct(config, productId, body);
 
-    if ("status" in product) {
+    if ("error" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Failed to update product", {
         productId,
@@ -168,7 +168,7 @@ export async function DELETE(
   try {
     const result = await deleteProduct(config, productId);
 
-    if ("status" in result) {
+    if ("error" in result) {
       const error = result as CrudApiError;
       reqLogger.error("Failed to delete product", {
         productId,

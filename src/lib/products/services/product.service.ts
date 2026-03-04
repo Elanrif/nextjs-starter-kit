@@ -1,8 +1,8 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import {
   Product,
   ProductCreate,
@@ -62,15 +62,7 @@ export async function fetchProducts(
     >(url);
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching products", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to fetch products",
-    };
+    return crudApiErrorResponse(error, "fetchProducts");
   }
 }
 
@@ -88,16 +80,7 @@ export async function fetchProduct(
     >(`${PRODUCTS_URL}/${id}`);
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching product", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Product not found",
-    };
+    return crudApiErrorResponse(error, "fetchProduct");
   }
 }
 
@@ -116,15 +99,7 @@ export async function createProduct(
     logger.info("Product created", { id: res.data.id, name: res.data.name });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error creating product", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to create product",
-    };
+    return crudApiErrorResponse(error, "createProduct");
   }
 }
 
@@ -144,16 +119,7 @@ export async function updateProduct(
     logger.info("Product updated", { id, name: res.data.name });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error updating product", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to update product",
-    };
+    return crudApiErrorResponse(error, "updateProduct");
   }
 }
 
@@ -169,15 +135,6 @@ export async function deleteProduct(
     logger.info("Product deleted", { id });
     return { success: true };
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error deleting product", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to delete product",
-    };
+    return crudApiErrorResponse(error, "deleteProduct");
   }
 }

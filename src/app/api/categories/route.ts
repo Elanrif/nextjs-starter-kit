@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   try {
     const categories = await fetchCategories(config);
 
-    if ("status" in categories) {
+    if ("error" in categories) {
       const error = categories as CrudApiError;
       reqLogger.error("Failed to fetch categories", {
         status: error.status,
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   try {
     const category = await createCategory(config, body);
 
-    if ("status" in category) {
+    if ("error" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Failed to create category", {
         status: error.status,

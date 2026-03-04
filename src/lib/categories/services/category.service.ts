@@ -1,8 +1,8 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import {
   Category,
   CategoryCreate,
@@ -47,17 +47,10 @@ export async function fetchCategories(
       unknown,
       AxiosResponse<Category[]>
     >(CATEGORIES_URL);
+    logger.info("Fetched categories", { count: res.data.length });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching categories", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to fetch categories",
-    };
+    return crudApiErrorResponse(error, "fetchCategories");
   }
 }
 
@@ -74,18 +67,10 @@ export async function fetchCategory(
       unknown,
       AxiosResponse<Category>
     >(`${CATEGORIES_URL}/${id}`);
+    logger.info("Fetched category", { id, name: res.data.name });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Category not found",
-    };
+    return crudApiErrorResponse(error, "fetchCategory");
   }
 }
 
@@ -104,15 +89,7 @@ export async function createCategory(
     logger.info("Category created", { id: res.data.id, name: res.data.name });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error creating category", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to create category",
-    };
+    return crudApiErrorResponse(error, "createCategory");
   }
 }
 
@@ -132,16 +109,7 @@ export async function updateCategory(
     logger.info("Category updated", { id, name: res.data.name });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error updating category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to update category",
-    };
+    return crudApiErrorResponse(error, "updateCategory");
   }
 }
 
@@ -157,15 +125,6 @@ export async function deleteCategory(
     logger.info("Category deleted", { id });
     return { success: true };
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error deleting category", {
-      id,
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to delete category",
-    };
+    return crudApiErrorResponse(error, "deleteCategory");
   }
 }

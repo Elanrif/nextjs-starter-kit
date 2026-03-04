@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   try {
     const users = await fetchAllUser(config);
 
-    if ("status" in users) {
+    if ("error" in users) {
       const error = users as CrudApiError;
       reqLogger.error("Failed to fetch users", {
         status: error.status,

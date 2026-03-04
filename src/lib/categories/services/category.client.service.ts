@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
@@ -8,45 +8,26 @@ import {
   CategoryUpdate,
 } from "@/lib/categories/models/category.model";
 
-// ============================================================================
-// Categories Client Service (Client-side)
-// ============================================================================
-
 /**
- * Use this service in:
- * - Client Components ('use client')
- * - React Query mutations/queries
- * - Browser-side operations
+ * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
+ * Auth client service for handling user authentication operations.
+ * This service interacts with the proxy API endpoints for authentication.
  */
 
-// API endpoints from proxy config
 const {
   api: {
     endpoints: { categories: CATEGORIES_URL },
   },
 } = proxyEnvironment;
 
-// ============================================================================
-// Categories CRUD
-// ============================================================================
-
 /**
  * Fetch all categories (client-side)
  */
 export async function fetchCategories(): Promise<Category[] | CrudApiError> {
-  try {
-    const res = await frontendHttp().get<unknown, AxiosResponse<Category[]>>(
-      CATEGORIES_URL,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error fetching categories", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to fetch categories",
-    };
-  }
+  const res = await frontendHttp().get<unknown, AxiosResponse<Category[]>>(
+    CATEGORIES_URL,
+  );
+  return res.data;
 }
 
 /**
@@ -55,19 +36,10 @@ export async function fetchCategories(): Promise<Category[] | CrudApiError> {
 export async function fetchCategory(
   id: number,
 ): Promise<Category | CrudApiError> {
-  try {
-    const res = await frontendHttp().get<unknown, AxiosResponse<Category>>(
-      `${CATEGORIES_URL}/${id}`,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error fetching category", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Category not found",
-    };
-  }
+  const res = await frontendHttp().get<unknown, AxiosResponse<Category>>(
+    `${CATEGORIES_URL}/${id}`,
+  );
+  return res.data;
 }
 
 /**
@@ -76,20 +48,11 @@ export async function fetchCategory(
 export async function createCategory(
   category: CategoryCreate,
 ): Promise<Category | CrudApiError> {
-  try {
-    const res = await frontendHttp().post<unknown, AxiosResponse<Category>>(
-      CATEGORIES_URL,
-      category,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error creating category", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to create category",
-    };
-  }
+  const res = await frontendHttp().post<unknown, AxiosResponse<Category>>(
+    CATEGORIES_URL,
+    category,
+  );
+  return res.data;
 }
 
 /**
@@ -99,20 +62,11 @@ export async function updateCategory(
   id: number,
   category: CategoryUpdate,
 ): Promise<Category | CrudApiError> {
-  try {
-    const res = await frontendHttp().patch<unknown, AxiosResponse<Category>>(
-      `${CATEGORIES_URL}/${id}`,
-      category,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error updating category", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to update category",
-    };
-  }
+  const res = await frontendHttp().patch<unknown, AxiosResponse<Category>>(
+    `${CATEGORIES_URL}/${id}`,
+    category,
+  );
+  return res.data;
 }
 
 /**
@@ -121,15 +75,6 @@ export async function updateCategory(
 export async function deleteCategory(
   id: number,
 ): Promise<{ success: boolean } | CrudApiError> {
-  try {
-    await frontendHttp().delete(`${CATEGORIES_URL}/${id}`);
-    return { success: true };
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error deleting category", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to delete category",
-    };
-  }
+  await frontendHttp().delete(`${CATEGORIES_URL}/${id}`);
+  return { success: true };
 }

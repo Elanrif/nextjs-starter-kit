@@ -1,11 +1,13 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { User } from "@lib/user/models/user.model";
-import { Page } from "@lib/shared/models/response.model";
 import { UpdateUser } from "@lib/user/queries/use-update-customer";
 import { getLogger } from "@config/logger.config";
-import { ApiError, CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
 
 const {
   api: {
@@ -22,17 +24,10 @@ export async function fetchAllUser(
   try {
     const res = await apiClient(false, config) //
       .get<any, AxiosResponse<User[]>>(usersUrl);
+    logger.info("Fetched users", { count: res.data.length });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching users", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: (error as AxiosError).response?.status || 500,
-      message: "Erreur de récupération des utilisateurs",
-    };
+    return crudApiErrorResponse(error, "fetchAllUser");
   }
 }
 
@@ -45,15 +40,7 @@ export async function fetchUserById(
       .get<any, AxiosResponse<User>>(`${usersUrl}/${id}`);
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error fetching user", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      status: (error as AxiosError).response?.status || 500,
-      message: "Erreur de récupération de l'utilisateur",
-    };
+    return crudApiErrorResponse(error, "fetchUserById");
   }
 }
 
@@ -67,9 +54,6 @@ export async function updateUser(
       .patch<any, AxiosResponse<User>>(`${usersUrl}/${id}`, user);
     return res.data;
   } catch (error) {
-    return {
-      status: (error as ApiError).status || 500,
-      message: "Erreur du serveur",
-    };
+    return crudApiErrorResponse(error, "updateUser");
   }
 }

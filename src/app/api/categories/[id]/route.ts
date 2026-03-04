@@ -40,7 +40,7 @@ export async function GET(
   try {
     const category = await fetchCategory(config, categoryId);
 
-    if ("status" in category) {
+    if ("error" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Category not found", {
         categoryId,
@@ -106,7 +106,7 @@ export async function PATCH(
   try {
     const category = await updateCategory(config, categoryId, body);
 
-    if ("status" in category) {
+    if ("error" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Failed to update category", {
         categoryId,
@@ -166,7 +166,7 @@ export async function DELETE(
   try {
     const result = await deleteCategory(config, categoryId);
 
-    if ("status" in result) {
+    if ("error" in result) {
       const error = result as CrudApiError;
       reqLogger.error("Failed to delete category", {
         categoryId,

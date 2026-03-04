@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     //const products = await fetchProducts(config, filters);
     const products = await fetchProducts(config, filters);
 
-    if ("status" in products) {
+    if ("error" in products) {
       const error = products as CrudApiError;
       reqLogger.error("Failed to fetch products", {
         status: error.status,
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
   try {
     const product = await createProduct(config, body);
 
-    if ("status" in product) {
+    if ("error" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Failed to create product", {
         status: error.status,

@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
@@ -10,27 +10,17 @@ import {
   PageProduct,
 } from "@/lib/products/models/product.model";
 
-// ============================================================================
-// Products Client Service (Client-side)
-// ============================================================================
-
 /**
- * Use this service in:
- * - Client Components ('use client')
- * - React Query mutations/queries
- * - Browser-side operations
+ * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
+ * Auth client service for handling user authentication operations.
+ * This service interacts with the proxy API endpoints for authentication.
  */
 
-// API endpoints from proxy config
 const {
   api: {
     endpoints: { products: PRODUCTS_URL },
   },
 } = proxyEnvironment;
-
-// ============================================================================
-// Products CRUD
-// ============================================================================
 
 /**
  * Fetch all products with optional filters (client-side)
@@ -38,31 +28,22 @@ const {
 export async function fetchProducts(
   filters?: ProductFiltersParams,
 ): Promise<PageProduct<Product[]> | CrudApiError> {
-  try {
-    const params = new URLSearchParams();
+  const params = new URLSearchParams();
 
-    if (filters?.search) params.append("search", filters.search);
-    if (filters?.categoryId)
-      params.append("categoryId", String(filters.categoryId));
-    if (filters?.isActive !== undefined)
-      params.append("isActive", String(filters.isActive));
-    if (filters?.sortBy) params.append("sortBy", filters.sortBy);
+  if (filters?.search) params.append("search", filters.search);
+  if (filters?.categoryId)
+    params.append("categoryId", String(filters.categoryId));
+  if (filters?.isActive !== undefined)
+    params.append("isActive", String(filters.isActive));
+  if (filters?.sortBy) params.append("sortBy", filters.sortBy);
 
-    const url = params.toString() ? `${PRODUCTS_URL}?${params}` : PRODUCTS_URL;
+  const url = params.toString() ? `${PRODUCTS_URL}?${params}` : PRODUCTS_URL;
 
-    const res = await frontendHttp().get<
-      unknown,
-      AxiosResponse<PageProduct<Product[]>>
-    >(url);
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error fetching products", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to fetch products",
-    };
-  }
+  const res = await frontendHttp().get<
+    unknown,
+    AxiosResponse<PageProduct<Product[]>>
+  >(url);
+  return res.data;
 }
 
 /**
@@ -71,19 +52,10 @@ export async function fetchProducts(
 export async function fetchProduct(
   id: number,
 ): Promise<Product | CrudApiError> {
-  try {
-    const res = await frontendHttp().get<unknown, AxiosResponse<Product>>(
-      `${PRODUCTS_URL}/${id}`,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error fetching product", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Product not found",
-    };
-  }
+  const res = await frontendHttp().get<unknown, AxiosResponse<Product>>(
+    `${PRODUCTS_URL}/${id}`,
+  );
+  return res.data;
 }
 
 /**
@@ -92,20 +64,11 @@ export async function fetchProduct(
 export async function createProduct(
   product: ProductCreate,
 ): Promise<Product | CrudApiError> {
-  try {
-    const res = await frontendHttp().post<unknown, AxiosResponse<Product>>(
-      PRODUCTS_URL,
-      product,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error creating product", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to create product",
-    };
-  }
+  const res = await frontendHttp().post<unknown, AxiosResponse<Product>>(
+    PRODUCTS_URL,
+    product,
+  );
+  return res.data;
 }
 
 /**
@@ -115,20 +78,11 @@ export async function updateProduct(
   id: number,
   product: ProductUpdate,
 ): Promise<Product | CrudApiError> {
-  try {
-    const res = await frontendHttp().patch<unknown, AxiosResponse<Product>>(
-      `${PRODUCTS_URL}/${id}`,
-      product,
-    );
-    return res.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error updating product", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to update product",
-    };
-  }
+  const res = await frontendHttp().patch<unknown, AxiosResponse<Product>>(
+    `${PRODUCTS_URL}/${id}`,
+    product,
+  );
+  return res.data;
 }
 
 /**
@@ -137,15 +91,6 @@ export async function updateProduct(
 export async function deleteProduct(
   id: number,
 ): Promise<{ success: boolean } | CrudApiError> {
-  try {
-    await frontendHttp().delete(`${PRODUCTS_URL}/${id}`);
-    return { success: true };
-  } catch (error) {
-    const err = error as AxiosError;
-    console.error("Error deleting product", err.response?.data);
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to delete product",
-    };
-  }
+  await frontendHttp().delete(`${PRODUCTS_URL}/${id}`);
+  return { success: true };
 }

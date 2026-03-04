@@ -9,7 +9,6 @@ const logger = getLogger("server");
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-
   const body = (await req.json()) as Login;
 
   // Validate required fields
@@ -26,7 +25,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await signIn(body, config);
 
-    if ("status" in user) {
+    if ("error" in user) {
       logger.warn("[Proxy API] [LOGIN] Failed to sign in", {
         status: user.status,
         message: user.message,
