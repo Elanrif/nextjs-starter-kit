@@ -16,4 +16,5 @@ export interface User {
   avatarUrl: string | null;
   role: "USER" | "ADMIN";
   isActive: boolean;
+  [key: string]: any; // Allow additional properties
 }

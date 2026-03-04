@@ -1,3 +1,4 @@
+import { verifySession } from "@/lib/auth/session/dal";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -16,23 +17,22 @@ export const metadata = {
  * The middleware also protects this route, but we add a server-side
  * check as an additional security layer.
  */
-export default async function DashboardPage(req: any) {
-  const session = {
-    user: {
-      id: "1234567890",
-      name: "Elanrif",
-      email: "elanrif@gmail.com",
-      emailVerified: true,
-      expiresAt: "2023-12-31T23:59:59Z",
-    },
-  }; // mock session for testing
+export default async function DashboardPage() {
+  const session = await verifySession();
 
-  // Server-side protection (middleware also handles this)
-  if (!session?.user) {
+  // Redirect to sign-in if the session is invalid
+  if (!session || !session.user) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
-  const { user } = session;
+  const user = session.user;
+  user["emailVerified"] = Boolean(false);
+  const userRole = user.role;
+
+  // Redirect if the user is not an admin
+  if (userRole !== "ADMIN") {
+    redirect("/sign-in?callbackUrl=/dashboard");
+  }
 
   return (
     <div className="flex-1 flex flex-col">
@@ -41,7 +41,7 @@ export default async function DashboardPage(req: any) {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {user.name?.[0]?.toUpperCase() ||
+            {user.firstName?.[0]?.toUpperCase() ||
               user.email?.[0]?.toUpperCase() ||
               "U"}
           </div>
@@ -49,7 +49,7 @@ export default async function DashboardPage(req: any) {
           {/* User Info */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
-              Welcome back, {user.name || "User"}!
+              Welcome back, {user.firstName || "User"}!
             </h2>
             <p className="text-gray-600">{user.email}</p>
           </div>
@@ -75,7 +75,7 @@ export default async function DashboardPage(req: any) {
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Name</span>
-            <span className="text-gray-900">{user.name || "Not set"}</span>
+            <span className="text-gray-900">{user.firstName || "Not set"}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
@@ -94,8 +94,8 @@ export default async function DashboardPage(req: any) {
           <div className="flex justify-between py-2">
             <span className="text-gray-600">Session Expires</span>
             <span className="text-gray-900">
-              {session.user?.expiresAt
-                ? new Date(session.user.expiresAt).toLocaleString()
+              {session.expiresAt
+                ? new Date(session.expiresAt).toLocaleString()
                 : "N/A"}
             </span>
           </div>

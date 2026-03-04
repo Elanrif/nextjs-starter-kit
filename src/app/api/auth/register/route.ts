@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { signUp } from "@/lib/auth/auth.service";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
-import { createSession } from "@/lib/auth/session";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { createSession } from "@/lib/auth/session";
 
 const logger = getLogger("server");
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     logger.info("[Proxy API] [REGISTER] User registered successfully, creating session", {
       userId,
     });
-    await createSession(userId);
+    await createSession(res);
 
     logger.info("[Proxy API] [REGISTER] Registration completed", { userId });
     return NextResponse.json(res, { status: 200 });
