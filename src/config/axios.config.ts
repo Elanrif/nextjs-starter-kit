@@ -12,7 +12,7 @@ export default function httpClient({ logger }: { logger: Logger }) {
   instance.interceptors.request.use(
     requestLoggerInterceptor(logger),
     (error: any) => {
-      logger.error("[SpringBoot API] Request error:", { error: error.message });
+      logger.error("[SpringBoot API] [Request Interceptor error]:", { error: error.message });
       return Promise.reject(error);
     },
   );
@@ -21,12 +21,17 @@ export default function httpClient({ logger }: { logger: Logger }) {
     (error: AxiosError) => {
       let message: string;
       try {
+        /**
+         * Intetionally strigify the error response data to ensure it's always a string.
+         * This is because error.response.data can be of various types (object, string, etc.)
+         * depending on the API and error. Stringifying it ensures we can log it consistently.
+         */
         message = JSON.stringify(error.response?.data) || "";
       } catch {
         // @ts-expect-error: false positive error, it is always a string
         message = error.response?.data ?? "";
       }
-      logger.error("[SpringBoot API] Response error:", { error: error.message, message });
+      logger.error("[SpringBoot API] [Response Interceptor error]:", { error: error.message, message });
       return Promise.reject(error);
     },
   );

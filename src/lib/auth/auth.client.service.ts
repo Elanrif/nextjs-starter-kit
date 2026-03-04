@@ -1,9 +1,14 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { CrudApiError } from "@lib/shared/helpers/crud-api-error";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { Login, Registrer } from "./models/auth.model";
 
+/**
+ * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
+ * Auth client service for handling user authentication operations.
+ * This service interacts with the proxy API endpoints for authentication.
+ */
 const {
   api: {
     endpoints: {
@@ -18,19 +23,11 @@ const {
  * Sign in a user with email and password.
  */
 export async function signIn(login: Login): Promise<any | CrudApiError> {
-  try {
-    const result = await frontendHttp().post<any, AxiosResponse<any>>(
-      loginUrl,
-      login,
-    );
-    return result.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    return {
-      status: err.response?.status || 500,
-      message: "Failed to sign in user",
-    };
-  }
+  const result = await frontendHttp().post<any, AxiosResponse<any>>(
+    loginUrl,
+    login,
+  );
+  return result.data;
 }
 
 /**
@@ -39,26 +36,11 @@ export async function signIn(login: Login): Promise<any | CrudApiError> {
 export async function signUp(
   registration: Registrer,
 ): Promise<any | CrudApiError> {
-  try {
-    await frontendHttp().post<any, AxiosResponse<any>>(
-      registerUrl,
-      registration,
-    );
-    const maybeUser = await signIn({
-      email: registration.email,
-      password: registration.password,
-    });
-    if ("status" in maybeUser) {
-      throw new Error(maybeUser.message);
-    }
-    return maybeUser;
-  } catch (error) {
-    const err = error as AxiosError;
-    return {
-      status: err.response?.status || 400,
-      message: "Registration failed",
-    };
-  }
+  const res = await frontendHttp().post<any, AxiosResponse<any>>(
+    registerUrl,
+    registration,
+  );
+  return res.data;
 }
 
 /**
@@ -73,18 +55,10 @@ export async function changeUserPassword({
   newPassword: string;
   confirmPassword: string;
 }): Promise<any | CrudApiError> {
-  try {
-    const body = { oldPassword, newPassword, confirmPassword };
-    const result = await frontendHttp().patch<any, AxiosResponse<any>>(
-      passwordChangeUrl,
-      body,
-    );
-    return result.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    return {
-      status: err.response?.status || 500,
-      message: "An error occurred while trying to change password",
-    };
-  }
+  const body = { oldPassword, newPassword, confirmPassword };
+  const result = await frontendHttp().patch<any, AxiosResponse<any>>(
+    passwordChangeUrl,
+    body,
+  );
+  return result.data;
 }

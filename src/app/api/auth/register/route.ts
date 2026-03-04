@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signUp } from "@/lib/auth/auth.service";
 import { getLogger } from "@/config/logger.config";
-import { RequestLogger } from "@/config/loggers/request.logger";
 import { Registrer } from "@/lib/auth/models/auth.model";
 import { createSession } from "@/lib/auth/session";
-import { ApiError } from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const reqLogger = new RequestLogger(logger, req);
 
   const body = (await req.json()) as Registrer;
 
   // Validate required fields
   if (!body.email || !body.password) {
+    logger.warn("[Proxy API] [REGISTER] Missing email or password", { body });
     return NextResponse.json(
       { message: "Email and password are required" },
       { status: 400 },
@@ -26,40 +25,32 @@ export async function POST(req: NextRequest) {
   const reqHeaders = new Headers(req.headers);
   const config = { headers: reqHeaders };
   try {
-    // Call the signUp service
-    const user = await signUp(body, config);
+    const res = await signUp(body, config);
 
-    if ("status" in user) {
-      return NextResponse.json(
-        {
-          status: user.status,
-          timestamp: new Date().toISOString(),
-          message: user.message || "Failed to sign up",
-          error: user.status === 400 ? "Bad Request" : "Error",
-        },
-        { status: user.status },
-      );
+    if ("error" in res) {
+      logger.warn("[Proxy API] [REGISTER] Registration failed", {
+        status: res.status,
+        message: res.message,
+      });
+      const errMsg = crudApiErrorResponse(res, "signUp");
+      return NextResponse.json(errMsg, { status: res.status });
     }
 
-    // Create session for the newly registered user
-    const userId = user.id.toString();
-    logger.info("User registered successfully, creating session", { userId });
+    const userId = res.id?.toString();
+    logger.info("[Proxy API] [REGISTER] User registered successfully, creating session", {
+      userId,
+    });
     await createSession(userId);
 
-    return NextResponse.json(user, { status: 200 });
+    logger.info("[Proxy API] [REGISTER] Registration completed", { userId });
+    return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    const status = error instanceof ApiError ? error.status : 500;
-    const message =
-      error instanceof ApiError ? error.message : "Could not sign in user";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json(
-      {
-        status,
-        timestamp: new Date().toISOString(),
-        message,
-        error: status === 400 ? "Bad Request" : "Error",
-      },
-      { status },
-    );
+    const errMsg = crudApiErrorResponse(error, "register");
+    const status = errMsg.status || 500;
+    logger.error("[Proxy API] [REGISTER] Error during registration", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }

@@ -1,10 +1,11 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { User } from "@lib/user/models/user.model";
 import {
   ApiError,
   CrudApiError,
+  crudApiErrorResponse,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import { Login, Registrer } from "./models/auth.model";
@@ -19,64 +20,74 @@ const {
 const logger = getLogger("server");
 
 /**
- * Create a new product
+ * Attempts to perform the operation.
+ *
+ * On failure (`catch`), may return a value instead of throwing.
+ * This allows callers to handle errors using `"key" in res` checks.
+ *
+ * Example usage:
+ *   const res = await myFunction(params);
+ *   if ("key" in res) {
+ *     // handle the error here
+ *   } else {
+ *     // handle success here
+ *   }
  */
 export async function signIn(
   login: Login,
   config?: Config,
 ): Promise<User | CrudApiError> {
   try {
-    const res = await apiClient(true, config).post<
-      Login,
-      AxiosResponse<User>
-    >(loginUrl, login);
-    logger.info("User signed in", { email: res.data.email });
+    const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
+      loginUrl,
+      login,
+    );
+    logger.info("[SIGNIN] User signed in", res.data);
     return res.data;
   } catch (error) {
-    const err = error as AxiosError<CrudApiError>;
-    const errMessage = {
-      status: err.response?.status || 500,
-      message: err.message || "Unknown error",
-      error: "Error",
-      timestamp: new Date().toISOString(),
-    };
-
-    const errorMsg = err.response?.data || errMessage;
-
-    logger.error("Error signing in user", errorMsg);
-    // Normalize the error to a CrudApiError format
-    return err.response?.data || errMessage;
+    return crudApiErrorResponse(error, "signIn");
   }
 }
 
+/**
+ * Attempts to perform the operation.
+ *
+ * On failure (`catch`), throws an exception to be handled with try/catch.
+ *
+ * Example usage:
+ *   try {
+ *     const result = await myFunction(params);
+ *     // handle success here
+ *   } catch (error) {
+ *     // handle the error here
+ *   }
+ *
+ */
 export async function signUp(
   registration: Registrer,
   config?: Config,
 ): Promise<User | CrudApiError> {
   try {
-    // try to register the user
     await apiClient(true, config).post<any, AxiosResponse<any>>(
       registerUrl,
       registration,
     );
+    logger.info("[SIGNUP] User registered", { email: registration.email });
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error signing up user", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    const errorMessage =
-      typeof err.response?.data === "string"
-        ? err.response.data
-        : "Registration failed";
-    throw new ApiError(errorMessage, 400);
+    const {message, status, error: errorType} = crudApiErrorResponse(error, "signUp");
+    throw new ApiError(message, status, errorType);
   }
 
-  // if registration is successful, sign in
   const maybeUser = await signIn(registration, config);
-  if ("status" in maybeUser) {
+  if ("error" in maybeUser) {
+    logger.error("[SIGNUP] Error after registration during sign in", {
+      message: maybeUser.message,
+    });
     throw new Error(maybeUser.message);
   }
+  logger.info("[SIGNUP] User signed in after registration", {
+    email: registration.email,
+  });
   return maybeUser;
 }
 
@@ -94,10 +105,9 @@ export async function changeUserPassword(
     const url = `/${userId}`;
     const result = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(url, body);
+    logger.info("[CHANGE_PASSWORD] Password changed successfully", { userId });
     return result.data;
   } catch (error) {
-    const err = error as AxiosError<{ error: string }>;
-    const errorMsg = err.response?.data?.error || "Could not update password";
-    return { status: 400, message: errorMsg } as CrudApiError;
+    return crudApiErrorResponse(error, "changeUserPassword");
   }
 }
