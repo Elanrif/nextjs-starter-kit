@@ -2,7 +2,9 @@ import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { SessionPayload } from "@lib/auth/models/auth.model";
 import { cookies } from "next/headers";
+import { getLogger } from "@/config/logger.config";
 
+const logger = getLogger("server");
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
@@ -19,9 +21,10 @@ export async function decrypt(session: string | undefined = "") {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
+    logger.info("Session decrypted successfully", { userId: payload.userId });
     return payload;
   } catch (error) {
-    console.log("Failed to decrypt session:", error);
+    logger.error("Failed to decrypt session:", error);
   }
 }
 
@@ -37,4 +40,5 @@ export async function createSession(userId: string) {
     sameSite: "lax",
     path: "/",
   });
+  logger.info("Session created for user", { userId });
 }

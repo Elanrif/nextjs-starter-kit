@@ -46,8 +46,8 @@ export function SignUpForm() {
     setLastName("SAID BACO");
     setPhoneNumber("1234567890");
     setEmail("elanrif@gmail.com");
-    setPassword("12345678");
-    setConfirmPassword("12345678");
+    setPassword("Demo1234");
+    setConfirmPassword("Demo1234");
   };
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,11 +87,11 @@ export function SignUpForm() {
         password,
       });
 
-      if ("statusCode" in result && result.statusCode !== 200) {
+      if ("status" in result && result.status !== 200) {
         setError(result.message || "Failed to create account");
         return;
       }
-      
+
       router.push("/dashboard");
       router.refresh();
     } catch {

@@ -34,7 +34,7 @@ export function SignInForm() {
         password,
       });
 
-      if ("statusCode" in result && result.statusCode !== 200) {
+      if ("status" in result && result.status !== 200) {
         setError(result.message || "Failed to sign in");
         return;
       }

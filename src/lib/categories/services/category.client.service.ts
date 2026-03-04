@@ -43,7 +43,7 @@ export async function fetchCategories(): Promise<Category[] | CrudApiError> {
     const err = error as AxiosError;
     console.error("Error fetching categories", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to fetch categories",
     };
   }
@@ -64,7 +64,7 @@ export async function fetchCategory(
     const err = error as AxiosError;
     console.error("Error fetching category", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Category not found",
     };
   }
@@ -86,7 +86,7 @@ export async function createCategory(
     const err = error as AxiosError;
     console.error("Error creating category", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to create category",
     };
   }
@@ -109,7 +109,7 @@ export async function updateCategory(
     const err = error as AxiosError;
     console.error("Error updating category", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to update category",
     };
   }
@@ -128,7 +128,7 @@ export async function deleteCategory(
     const err = error as AxiosError;
     console.error("Error deleting category", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to delete category",
     };
   }

@@ -30,7 +30,7 @@ export async function fetchAllUser(
       message: err.response?.data,
     });
     return {
-      statusCode: (error as AxiosError).response?.status || 500,
+      status: (error as AxiosError).response?.status || 500,
       message: "Erreur de récupération des utilisateurs",
     };
   }
@@ -51,7 +51,7 @@ export async function fetchUserById(
       message: err.response?.data,
     });
     return {
-      statusCode: (error as AxiosError).response?.status || 500,
+      status: (error as AxiosError).response?.status || 500,
       message: "Erreur de récupération de l'utilisateur",
     };
   }
@@ -68,7 +68,7 @@ export async function updateUser(
     return res.data;
   } catch (error) {
     return {
-      statusCode: (error as ApiError).statusCode || 500,
+      status: (error as ApiError).status || 500,
       message: "Erreur du serveur",
     };
   }

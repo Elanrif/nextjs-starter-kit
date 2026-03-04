@@ -42,15 +42,15 @@ export async function GET(request: NextRequest) {
     //const products = await fetchProducts(config, filters);
     const products = await fetchProducts(config, filters);
 
-    if ("statusCode" in products) {
+    if ("status" in products) {
       const error = products as CrudApiError;
       reqLogger.error("Failed to fetch products", {
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 
@@ -98,15 +98,15 @@ export async function POST(request: NextRequest) {
   try {
     const product = await createProduct(config, body);
 
-    if ("statusCode" in product) {
+    if ("status" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Failed to create product", {
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 

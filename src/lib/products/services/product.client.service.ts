@@ -59,7 +59,7 @@ export async function fetchProducts(
     const err = error as AxiosError;
     console.error("Error fetching products", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to fetch products",
     };
   }
@@ -80,7 +80,7 @@ export async function fetchProduct(
     const err = error as AxiosError;
     console.error("Error fetching product", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Product not found",
     };
   }
@@ -102,7 +102,7 @@ export async function createProduct(
     const err = error as AxiosError;
     console.error("Error creating product", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to create product",
     };
   }
@@ -125,7 +125,7 @@ export async function updateProduct(
     const err = error as AxiosError;
     console.error("Error updating product", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to update product",
     };
   }
@@ -144,7 +144,7 @@ export async function deleteProduct(
     const err = error as AxiosError;
     console.error("Error deleting product", err.response?.data);
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to delete product",
     };
   }

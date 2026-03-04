@@ -21,15 +21,15 @@ export async function GET(request: NextRequest) {
   try {
     const users = await fetchAllUser(config);
 
-    if ("statusCode" in users) {
+    if ("status" in users) {
       const error = users as CrudApiError;
       reqLogger.error("Failed to fetch users", {
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 

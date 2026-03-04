@@ -40,16 +40,16 @@ export async function GET(
   try {
     const product = await fetchProduct(config, productId);
 
-    if ("statusCode" in product) {
+    if ("status" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Product not found", {
         productId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 
@@ -108,16 +108,16 @@ export async function PATCH(
   try {
     const product = await updateProduct(config, productId, body);
 
-    if ("statusCode" in product) {
+    if ("status" in product) {
       const error = product as CrudApiError;
       reqLogger.error("Failed to update product", {
         productId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 
@@ -168,16 +168,16 @@ export async function DELETE(
   try {
     const result = await deleteProduct(config, productId);
 
-    if ("statusCode" in result) {
+    if ("status" in result) {
       const error = result as CrudApiError;
       reqLogger.error("Failed to delete product", {
         productId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 

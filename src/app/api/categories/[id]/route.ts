@@ -40,16 +40,16 @@ export async function GET(
   try {
     const category = await fetchCategory(config, categoryId);
 
-    if ("statusCode" in category) {
+    if ("status" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Category not found", {
         categoryId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 
@@ -106,16 +106,16 @@ export async function PATCH(
   try {
     const category = await updateCategory(config, categoryId, body);
 
-    if ("statusCode" in category) {
+    if ("status" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Failed to update category", {
         categoryId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 
@@ -166,16 +166,16 @@ export async function DELETE(
   try {
     const result = await deleteCategory(config, categoryId);
 
-    if ("statusCode" in result) {
+    if ("status" in result) {
       const error = result as CrudApiError;
       reqLogger.error("Failed to delete category", {
         categoryId,
-        status: error.statusCode,
+        status: error.status,
         message: error.message,
       });
       return NextResponse.json(
         { message: error.message },
-        { status: error.statusCode },
+        { status: error.status },
       );
     }
 

@@ -27,7 +27,7 @@ export async function signIn(login: Login): Promise<any | CrudApiError> {
   } catch (error) {
     const err = error as AxiosError;
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to sign in user",
     };
   }
@@ -48,14 +48,14 @@ export async function signUp(
       email: registration.email,
       password: registration.password,
     });
-    if ("statusCode" in maybeUser) {
+    if ("status" in maybeUser) {
       throw new Error(maybeUser.message);
     }
     return maybeUser;
   } catch (error) {
     const err = error as AxiosError;
     return {
-      statusCode: err.response?.status || 400,
+      status: err.response?.status || 400,
       message: "Registration failed",
     };
   }
@@ -83,7 +83,7 @@ export async function changeUserPassword({
   } catch (error) {
     const err = error as AxiosError;
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "An error occurred while trying to change password",
     };
   }

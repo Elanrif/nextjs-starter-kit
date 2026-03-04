@@ -55,7 +55,7 @@ export async function fetchCategories(
       message: err.response?.data,
     });
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to fetch categories",
     };
   }
@@ -83,7 +83,7 @@ export async function fetchCategory(
       message: err.response?.data,
     });
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Category not found",
     };
   }
@@ -110,7 +110,7 @@ export async function createCategory(
       message: err.response?.data,
     });
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to create category",
     };
   }
@@ -139,7 +139,7 @@ export async function updateCategory(
       message: err.response?.data,
     });
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to update category",
     };
   }
@@ -164,7 +164,7 @@ export async function deleteCategory(
       message: err.response?.data,
     });
     return {
-      statusCode: err.response?.status || 500,
+      status: err.response?.status || 500,
       message: "Failed to delete category",
     };
   }

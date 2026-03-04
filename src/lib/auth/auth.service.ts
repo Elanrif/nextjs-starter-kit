@@ -2,7 +2,10 @@ import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosError, AxiosResponse } from "axios";
 import { User } from "@lib/user/models/user.model";
-import { ApiError, CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  ApiError,
+  CrudApiError,
+} from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import { Login, Registrer } from "./models/auth.model";
 
@@ -24,21 +27,25 @@ export async function signIn(
 ): Promise<User | CrudApiError> {
   try {
     const res = await apiClient(true, config).post<
-      unknown,
+      Login,
       AxiosResponse<User>
     >(loginUrl, login);
     logger.info("User signed in", { email: res.data.email });
     return res.data;
   } catch (error) {
-    const err = error as AxiosError;
-    logger.error("Error signing in user", {
-      status: err.response?.status,
-      message: err.response?.data,
-    });
-    return {
-      statusCode: err.response?.status || 500,
-      message: "Failed to sign in user",
+    const err = error as AxiosError<CrudApiError>;
+    const errMessage = {
+      status: err.response?.status || 500,
+      message: err.message || "Unknown error",
+      error: "Error",
+      timestamp: new Date().toISOString(),
     };
+
+    const errorMsg = err.response?.data || errMessage;
+
+    logger.error("Error signing in user", errorMsg);
+    // Normalize the error to a CrudApiError format
+    return err.response?.data || errMessage;
   }
 }
 
@@ -67,7 +74,7 @@ export async function signUp(
 
   // if registration is successful, sign in
   const maybeUser = await signIn(registration, config);
-  if ("statusCode" in maybeUser) {
+  if ("status" in maybeUser) {
     throw new Error(maybeUser.message);
   }
   return maybeUser;
@@ -91,6 +98,6 @@ export async function changeUserPassword(
   } catch (error) {
     const err = error as AxiosError<{ error: string }>;
     const errorMsg = err.response?.data?.error || "Could not update password";
-    return { statusCode: 400, message: errorMsg } as CrudApiError;
+    return { status: 400, message: errorMsg } as CrudApiError;
   }
 }
