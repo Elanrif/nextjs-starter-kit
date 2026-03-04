@@ -25,6 +25,9 @@ export const proxyEnvironment = {
       login: `/auth/login`,
       register: `/auth/register`,
       passwordChange: `/auth/password-change`,
+      usersUpdate: `/users/update`,
+      users: `/users`,
+      userById: `/users/:id`,
     },
   },
 };

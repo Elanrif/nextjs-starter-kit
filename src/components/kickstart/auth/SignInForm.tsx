@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
 import { signIn } from "@/lib/auth/auth.client.service";
-import { saveSession } from "@/lib/auth/auth-client";
-// import { signIn } from "@/lib/auth/auth.service";
 
 /**
  * Sign In Form Component
@@ -39,11 +37,6 @@ export function SignInForm() {
       if ("statusCode" in result && result.statusCode !== 200) {
         setError(result.message || "Failed to sign in");
         return;
-      }
-
-      // Save cookies data if available
-      if ("token" in result && "user" in result) {
-        saveSession(result);
       }
 
       const callbackUrl =

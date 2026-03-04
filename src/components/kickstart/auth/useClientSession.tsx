@@ -1,7 +1,5 @@
 "use client";
 
-import { useAuth } from "@/lib/auth/auth-client";
-
 /**
  * Client Session Hook
  *
@@ -24,7 +22,11 @@ import { useAuth } from "@/lib/auth/auth-client";
  * ```
  */
 export function useClientSession() {
-  const { session, isPending, error } = useAuth();
+  const { session, isPending, error } = {
+    session: { user: { name: "Elanrif", email: "elanrif@gmail.com" } },
+    isPending: false,
+    error: null,
+  }; // mock session for testing
 
   return {
     /** The full session object */

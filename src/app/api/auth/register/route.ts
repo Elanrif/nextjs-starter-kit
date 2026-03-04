@@ -3,6 +3,7 @@ import { signUp } from "@/lib/auth/auth.service";
 import { getLogger } from "@/config/logger.config";
 import { RequestLogger } from "@/config/loggers/request.logger";
 import { Registrer } from "@/lib/auth/models/auth.model";
+import { createSession } from "@/lib/auth/session";
 
 const logger = getLogger("server");
 
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest) {
         { status: user.statusCode },
       );
     }
+
+    await createSession(user.email); // Create session for the newly registered user
 
     return NextResponse.json(user, { status: 200 });
   } catch {

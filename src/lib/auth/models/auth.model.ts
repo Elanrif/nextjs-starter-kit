@@ -15,11 +15,8 @@ export interface Login extends AuthSignIn {
   password: string;
 }
 
-export interface Session {
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
+export interface SessionPayload {
+  userId: string;
+  expiresAt: Date;
+  [key: string]: any;
 }

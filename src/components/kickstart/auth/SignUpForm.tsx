@@ -13,7 +13,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { signUp } from "@/lib/auth/auth.client.service";
-import { saveSession } from "@/lib/auth/auth-client";
 
 /**
  * Password validation rules
@@ -43,12 +42,12 @@ export function SignUpForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const fillDemo = () => {
-    setFirstName("Elan");
-    setLastName("Rif");
+    setFirstName("Elanrif");
+    setLastName("SAID BACO");
     setPhoneNumber("1234567890");
     setEmail("elanrif@gmail.com");
-    setPassword("Elanrif123456");
-    setConfirmPassword("Elanrif123456");
+    setPassword("12345678");
+    setConfirmPassword("12345678");
   };
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,11 +90,6 @@ export function SignUpForm() {
       if ("statusCode" in result && result.statusCode !== 200) {
         setError(result.message || "Failed to create account");
         return;
-      }
-
-      // Save session data if available
-      if ("token" in result && "user" in result) {
-        saveSession(result);
       }
       
       router.push("/dashboard");

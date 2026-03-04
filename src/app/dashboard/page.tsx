@@ -1,4 +1,3 @@
-import { getServerSession } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -18,7 +17,15 @@ export const metadata = {
  * check as an additional security layer.
  */
 export default async function DashboardPage(req: any) {
-  const session = await getServerSession(req);
+  const session = {
+    user: {
+      id: "1234567890",
+      name: "Elanrif",
+      email: "elanrif@gmail.com",
+      emailVerified: true,
+      expiresAt: "2023-12-31T23:59:59Z",
+    },
+  }; // mock session for testing
 
   // Server-side protection (middleware also handles this)
   if (!session?.user) {
@@ -87,8 +94,8 @@ export default async function DashboardPage(req: any) {
           <div className="flex justify-between py-2">
             <span className="text-gray-600">Session Expires</span>
             <span className="text-gray-900">
-              {session.session?.expiresAt
-                ? new Date(session.session.expiresAt).toLocaleString()
+              {session.user?.expiresAt
+                ? new Date(session.user.expiresAt).toLocaleString()
                 : "N/A"}
             </span>
           </div>

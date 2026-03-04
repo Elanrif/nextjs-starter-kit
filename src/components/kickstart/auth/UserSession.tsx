@@ -1,4 +1,3 @@
-import { getServerSession } from "@/lib/auth/auth";
 import { SignOutButton } from "./SignOutButton";
 
 /**
@@ -25,7 +24,7 @@ import { SignOutButton } from "./SignOutButton";
  * ```
  */
 export async function UserSession(req: any) {
-  const session = await getServerSession(req);
+  const session = { "user": { "name": "Elanrif", "email": "elanrif@gmail.com" } }; // mock session for testing
 
   if (!session?.user) {
     return (
@@ -77,7 +76,7 @@ export async function UserSession(req: any) {
  * A smaller component that just displays the user avatar
  */
 export async function UserAvatar(req: any) {
-  const session = await getServerSession(req);
+  const session = { "user": { "name": "Elanrif", "email": "elanrif@gmail.com" } }; // mock session for testing
 
   if (!session?.user) {
     return null;
