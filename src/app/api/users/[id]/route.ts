@@ -3,6 +3,7 @@ import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { fetchUserById, updateUser } from "@/lib/user/services/user.service";
 import { UserUpdate } from "@/lib/user/models/user.model";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
@@ -31,7 +32,7 @@ export async function GET(
 
   try {
     const user = await fetchUserById(userId, config);
-    if (!user) {
+    if (!user || "error" in user) {
       const status = 404;
       const message = "User not found";
       reqLogger.error("Not Found", { status, message });
@@ -39,10 +40,13 @@ export async function GET(
     }
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
-    const status = 500;
-    const message = "Could not fetch user";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+    const errMsg = crudApiErrorResponse(error, "fetchUserById");
+    const status = errMsg.status || 500;
+    logger.error("Error during user fetching", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }
 
@@ -86,14 +90,25 @@ export async function PATCH(
 
   try {
     const user = await updateUser(config, userId, body);
+    if ("error" in user) {
+      const error = user as CrudApiError;
+      reqLogger.error("Failed to update user", {
+        status: error.status,
+        message: error.message,
+      });
+      return NextResponse.json(
+        { message: error.message },
+        { status: error.status },
+      );
+    }
     return NextResponse.json(user, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not update user";
-    reqLogger.error("Internal Server Error", {
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "updateUser");
+    const status = errMsg.status || 500;
+    logger.error("Error during user update", {
       status,
-      message,
+      message: errMsg.message,
     });
-    return NextResponse.json({ message }, { status });
+    return NextResponse.json(errMsg, { status });
   }
 }

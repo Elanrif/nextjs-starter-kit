@@ -19,7 +19,7 @@ export function SignInForm() {
 
   const fillDemo = () => {
     setEmail("elanrif@gmail.com");
-    setPassword("Elanrif123456");
+    setPassword("Demo1234");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

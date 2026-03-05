@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import {
   createCategory,
   fetchCategories,
 } from "@/lib/categories/services/category.service";
+import { verifySession } from "@/lib/auth/session/dal";
 
 const logger = getLogger("server");
 
@@ -37,11 +38,14 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(categories, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not fetch categories";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "fetchCategories");
+    const status = errMsg.status || 500;
+    logger.error("Error during category fetching", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }
 
@@ -52,15 +56,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
 
-  // // Check authentication
-  // const session = await getServerSession(request);
+  // User authentication and role verification
+  const session = await verifySession();
 
-  // if (!session?.user) {
-  //   const status = 401;
-  //   const message = "You must be logged in";
-  //   reqLogger.error("Unauthorized", { status, message });
-  //   return NextResponse.json({ message }, { status });
-  // }
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    const status = 401;
+    const message = "You must be logged in";
+    reqLogger.error("Unauthorized", { status, message });
+    return new Response(null, { status: status });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.role !== "ADMIN") {
+    // User is authenticated but does not have the right permissions
+    const status = 403;
+    const message = "You do not have permission to perform this action";
+    reqLogger.error("Forbidden", { status, message });
+    return new Response(null, { status : status });
+  }
 
   const body = (await request.json()) as CategoryCreate;
 
@@ -92,10 +107,13 @@ export async function POST(request: NextRequest) {
 
     reqLogger.info("Category created", { categoryId: category.id });
     return NextResponse.json(category, { status: 201 });
-  } catch {
-    const status = 500;
-    const message = "Could not create category";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "createCategory");
+    const status = errMsg.status || 500;
+    logger.error("Error during category creation", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
+import { signOut } from "@/lib/auth/auth.client.service";
 
 interface SignOutButtonProps {
   /** Text to display on the button */
@@ -50,7 +51,7 @@ export function SignOutButton({
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      //await signOut();
+      await signOut();
       router.push(redirectTo);
       router.refresh();
     } catch (error) {

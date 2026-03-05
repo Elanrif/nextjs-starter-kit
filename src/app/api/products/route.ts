@@ -9,7 +9,11 @@ import {
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
+import { verifySession } from "@/lib/auth/session/dal";
 
 const logger = getLogger("server");
 
@@ -55,11 +59,14 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(products, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not fetch products";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "fetchProducts");
+    const status = errMsg.status || 500;
+    logger.error("Error during product fetching", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }
 
@@ -70,17 +77,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
 
-  // // Check authentication
-  // const session = await auth.api.getSession({
-  //   headers: await headers(),
-  // });
+  // User authentication and role verification
+  const session = await verifySession();
 
-  // if (!session?.user) {
-  //   const status = 401;
-  //   const message = "You must be logged in";
-  //   reqLogger.error("Unauthorized", { status, message });
-  //   return NextResponse.json({ message }, { status });
-  // }
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    const status = 401;
+    const message = "You must be logged in";
+    reqLogger.error("Unauthorized", { status, message });
+    return new Response(null, { status: status });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.role !== "ADMIN") {
+    // User is authenticated but does not have the right permissions
+    const status = 403;
+    const message = "You do not have permission to perform this action";
+    reqLogger.error("Forbidden", { status, message });
+    return new Response(null, { status: status });
+  }
 
   const body = (await request.json()) as ProductCreate;
 
@@ -112,10 +128,13 @@ export async function POST(request: NextRequest) {
 
     reqLogger.info("Product created", { productId: product.id });
     return NextResponse.json(product, { status: 201 });
-  } catch {
-    const status = 500;
-    const message = "Could not create product";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "createProduct");
+    const status = errMsg.status || 500;
+    logger.error("Error during product creation", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }

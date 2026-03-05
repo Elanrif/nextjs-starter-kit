@@ -16,4 +16,4 @@ export { SignOutButton } from "./SignOutButton";
 export { UserSession, UserAvatar } from "./UserSession";
 
 // Hooks (for Client Components)
-export { useClientSession } from "./useClientSession";
+export { useSession } from "./useSession";

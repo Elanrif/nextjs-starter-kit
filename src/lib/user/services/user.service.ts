@@ -22,7 +22,7 @@ export async function fetchAllUser(
   config: Config,
 ): Promise<User[] | CrudApiError> {
   try {
-    const res = await apiClient(false, config) //
+    const res = await apiClient(true, config) //
       .get<any, AxiosResponse<User[]>>(usersUrl);
     logger.info("Fetched users", { count: res.data.length });
     return res.data;
@@ -36,7 +36,7 @@ export async function fetchUserById(
   config: Config,
 ): Promise<User | CrudApiError> {
   try {
-    const res = await apiClient(false, config) //
+    const res = await apiClient(true, config) //
       .get<any, AxiosResponse<User>>(`${usersUrl}/${id}`);
     return res.data;
   } catch (error) {
@@ -50,7 +50,7 @@ export async function updateUser(
   user: UpdateUser,
 ): Promise<User | CrudApiError> {
   try {
-    const res = await apiClient(false, config) //
+    const res = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(`${usersUrl}/${id}`, user);
     return res.data;
   } catch (error) {

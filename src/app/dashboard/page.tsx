@@ -1,4 +1,4 @@
-import { verifySession } from "@/lib/auth/session/dal";
+import { getServerSession, verifySession } from "@/lib/auth/session/dal";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -21,18 +21,14 @@ export default async function DashboardPage() {
   const session = await verifySession();
 
   // Redirect to sign-in if the session is invalid
-  if (!session || !session.user) {
+  if (!session || !session.userId) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
-  const user = session.user;
-  user["emailVerified"] = Boolean(false);
-  const userRole = user.role;
-
-  // Redirect if the user is not an admin
-  if (userRole !== "ADMIN") {
+  const user = await getServerSession() as any;
+  /* if (!user || user.role !== "ADMIN") {
     redirect("/sign-in?callbackUrl=/dashboard");
-  }
+  } */
 
   return (
     <div className="flex-1 flex flex-col">
@@ -41,8 +37,8 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {user.firstName?.[0]?.toUpperCase() ||
-              user.email?.[0]?.toUpperCase() ||
+            {user.firstName?.toUpperCase() ||
+              user.email?.toUpperCase() ||
               "U"}
           </div>
 

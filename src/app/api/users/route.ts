@@ -2,7 +2,7 @@ import { fetchAllUser } from "@lib/user/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
@@ -34,10 +34,13 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(users, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not fetch products";
-    reqLogger.error("Internal Server Error", { status, message });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "createCategory");
+    const status = errMsg.status || 500;
+    logger.error("Error during category creation", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }

@@ -23,6 +23,8 @@ export const proxyEnvironment = {
       products: `/products`,
       productById: `/products/:id`,
       login: `/auth/login`,
+      signOut: `/auth/logout`,
+      session: `/auth/session`,
       register: `/auth/register`,
       passwordChange: `/auth/password-change`,
       usersUpdate: `/users/update`,

@@ -7,7 +7,11 @@ import {
 import { CategoryUpdate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
+import { verifySession } from "@/lib/auth/session/dal";
 
 const logger = getLogger("server");
 
@@ -34,6 +38,27 @@ export async function GET(
     return NextResponse.json({ message }, { status });
   }
 
+  // User authentication and role verification
+  const session = await verifySession();
+
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    const status = 401;
+    const message = "You must be logged in";
+    reqLogger.error("Unauthorized", { status, message });
+    return new Response(null, { status: status });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.role !== "ADMIN") {
+    // User is authenticated but does not have the right permissions
+    const status = 403;
+    const message = "You do not have permission to perform this action";
+    reqLogger.error("Forbidden", { status, message });
+    return new Response(null, { status: status });
+  }
+
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
@@ -54,11 +79,14 @@ export async function GET(
     }
 
     return NextResponse.json(category, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not fetch category";
-    reqLogger.error("Internal Server Error", { status, message, categoryId });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "fetchCategory");
+    const status = errMsg.status || 500;
+    logger.error("Error during category fetching", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }
 
@@ -81,15 +109,26 @@ export async function PATCH(
     return NextResponse.json({ message }, { status });
   }
 
-  // // Check authentication
-  // const session = await getServerSession(request);
+  // User authentication and role verification
+  const session = await verifySession();
 
-  // if (!session?.user) {
-  //   const status = 401;
-  //   const message = "You must be logged in";
-  //   reqLogger.error("Unauthorized", { status, message });
-  //   return NextResponse.json({ message }, { status });
-  // }
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    const status = 401;
+    const message = "You must be logged in";
+    reqLogger.error("Unauthorized", { status, message });
+    return new Response(null, { status: status });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.role !== "ADMIN") {
+    // User is authenticated but does not have the right permissions
+    const status = 403;
+    const message = "You do not have permission to perform this action";
+    reqLogger.error("Forbidden", { status, message });
+    return new Response(null, { status: status });
+  }
 
   const body = (await request.json()) as CategoryUpdate;
 
@@ -105,7 +144,6 @@ export async function PATCH(
 
   try {
     const category = await updateCategory(config, categoryId, body);
-
     if ("error" in category) {
       const error = category as CrudApiError;
       reqLogger.error("Failed to update category", {
@@ -123,11 +161,14 @@ export async function PATCH(
       categoryId,
     });
     return NextResponse.json(category, { status: 200 });
-  } catch {
-    const status = 500;
-    const message = "Could not update category";
-    reqLogger.error("Internal Server Error", { status, message, categoryId });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "updateCategory");
+    const status = errMsg.status || 500;
+    logger.error("Error during category update", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }
 
@@ -150,15 +191,26 @@ export async function DELETE(
     return NextResponse.json({ message }, { status });
   }
 
-  // // Check authentication
-  // const session = await getServerSession(request);
+  // User authentication and role verification
+  const session = await verifySession();
 
-  // if (!session?.user) {
-  //   const status = 401;
-  //   const message = "You must be logged in";
-  //   reqLogger.error("Unauthorized", { status, message });
-  //   return NextResponse.json({ message }, { status });
-  // }
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    const status = 401;
+    const message = "You must be logged in";
+    reqLogger.error("Unauthorized", { status, message });
+    return new Response(null, { status: status });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.role !== "ADMIN") {
+    // User is authenticated but does not have the right permissions
+    const status = 403;
+    const message = "You do not have permission to perform this action";
+    reqLogger.error("Forbidden", { status, message });
+    return new Response(null, { status: status });
+  }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -186,10 +238,13 @@ export async function DELETE(
       { message: "Category deleted successfully" },
       { status: 200 },
     );
-  } catch {
-    const status = 500;
-    const message = "Could not delete category";
-    reqLogger.error("Internal Server Error", { status, message, categoryId });
-    return NextResponse.json({ message }, { status });
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "deleteCategory");
+    const status = errMsg.status || 500;
+    logger.error("Error during category deletion", {
+      status,
+      message: errMsg.message,
+    });
+    return NextResponse.json(errMsg, { status });
   }
 }

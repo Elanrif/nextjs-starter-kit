@@ -1,5 +1,3 @@
-import { User } from "@/lib/user/models/user.model";
-
 export interface AuthSignIn {
   action?: "SIGN_IN" | "SIGN_UP";
 }
@@ -18,7 +16,9 @@ export interface Login extends AuthSignIn {
 }
 
 export interface SessionPayload {
-  user: User;
+  userId: number;
+  email: string;
+  role: string;
   expiresAt: Date;
   [key: string]: any;
 }

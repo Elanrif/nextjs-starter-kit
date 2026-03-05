@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   // Validate required fields
   if (!body.email || !body.password) {
-    logger.warn("[Proxy API] [REGISTER] Missing email or password", { body });
+    logger.warn("Missing email or password", { body });
     return NextResponse.json(
       { message: "Email and password are required" },
       { status: 400 },
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const res = await signUp(body, config);
 
     if ("error" in res) {
-      logger.warn("[Proxy API] [REGISTER] Registration failed", {
+      logger.warn("Registration failed", {
         status: res.status,
         message: res.message,
       });
@@ -37,17 +37,17 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = res.id?.toString();
-    logger.info("[Proxy API] [REGISTER] User registered successfully, creating session", {
+    logger.info("User registered successfully, creating session", {
       userId,
     });
-    await createSession(res);
+    await createSession(res.id, res.email, res.role);
 
-    logger.info("[Proxy API] [REGISTER] Registration completed", { userId });
+    logger.info("Registration completed", { userId });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
-    logger.error("[Proxy API] [REGISTER] Error during registration", {
+    logger.error("Error during registration", {
       status,
       message: errMsg.message,
     });

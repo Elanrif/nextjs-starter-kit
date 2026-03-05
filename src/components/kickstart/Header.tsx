@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useClientSession } from "@/components/kickstart/auth/useClientSession";
 import { SignOutButton } from "@components/kickstart/auth/SignOutButton";
 import { ROUTES } from "@/utils/routes";
+import { useSession } from "./auth/useSession";
 
 const navLinks = [
   { href: "#docs", label: "Docs" },
@@ -18,7 +18,7 @@ export function Header() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = useClientSession();
+  const session = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,7 +65,14 @@ export function Header() {
             </nav>
             {/* Auth Buttons (show/hide by session) */}
             <div className="flex items-center gap-4">
-              {!isAuthenticated && (
+              {session ? (
+                <>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </Button>
+                  <SignOutButton variant="destructive" />
+                </>
+              ) : (
                 <>
                   <Button variant="outline" size="sm" asChild>
                     <Link href={SIGN_IN}>Login</Link>
@@ -73,14 +80,6 @@ export function Header() {
                   <Button size="sm" asChild>
                     <Link href={SIGN_UP}>Register</Link>
                   </Button>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                  <SignOutButton variant="destructive" />
                 </>
               )}
             </div>

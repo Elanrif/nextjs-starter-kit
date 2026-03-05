@@ -3,6 +3,7 @@ import { CrudApiError } from "@lib/shared/helpers/crud-api-error";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { Login, Registrer } from "./models/auth.model";
+import { User } from "../user/models/user.model";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -15,6 +16,8 @@ const {
       passwordChange: passwordChangeUrl,
       register: registerUrl,
       login: loginUrl,
+      signOut: signOutUrl,
+      session: sessionUrl,
     },
   },
 } = proxyEnvironment;
@@ -42,6 +45,23 @@ export async function signUp(
   );
   return res.data;
 }
+
+/**
+ * Sign out the current user.
+ */
+export async function signOut(): Promise<any | CrudApiError> {
+  await frontendHttp().post<any, AxiosResponse<any>>(signOutUrl);
+  return { message: "Signed out successfully" };
+}
+
+/**
+ * Get the current user's session.
+ */
+export async function getClientSession(): Promise<User | CrudApiError> {
+  const result = await frontendHttp().get<any, AxiosResponse<User>>(sessionUrl);
+  return result.data;
+}
+
 
 /**
  * Change the password of an authenticated user.

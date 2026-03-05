@@ -3,6 +3,7 @@ import { signIn } from "@/lib/auth/auth.service";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { createSession } from "@/lib/auth/session";
 
 const logger = getLogger("server");
 
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   // Validate required fields
   if (!body.email || !body.password) {
-    logger.warn("[Proxy API] [LOGIN] Missing email or password", { body });
+    logger.warn("Missing email or password", { body });
     return NextResponse.json(
       { message: "Email and password are required" },
       { status: 400 },
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     const user = await signIn(body, config);
 
     if ("error" in user) {
-      logger.warn("[Proxy API] [LOGIN] Failed to sign in", {
+      logger.warn("Failed to sign in", {
         status: user.status,
         message: user.message,
       });
@@ -36,7 +37,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    logger.info("[Proxy API] [LOGIN] User signed in successfully", {
+    await createSession(user.id, user.email, user.role);
+    logger.info("User signed in successfully", {
       userId: user.id,
       email: user.email,
     });
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
-    logger.error("[Proxy API] [LOGIN] Error during sign in", {
+    logger.error("Error during sign in", {
       status,
       message: errMsg.message,
     });
