@@ -16,9 +16,24 @@ export interface Login extends AuthSignIn {
 }
 
 export interface SessionPayload {
-  userId: number;
-  email: string;
-  role: string;
+  user: {
+    userId: number;
+    email: string;
+    role: string;
+  };
   expiresAt: Date;
   [key: string]: any;
 }
+
+/**
+ * Type representing the result of session verification.
+ */
+export type Session = {
+  user: {
+    userId?: number;
+    email?: string;
+    role?: string;
+  };
+  isAuth: boolean;
+  expiresAt?: Date;
+};

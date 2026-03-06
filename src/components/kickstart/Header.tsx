@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@components/kickstart/auth/SignOutButton";
 import { ROUTES } from "@/utils/routes";
-import { useSession } from "./auth/useSession";
+import { useSession } from "@/hooks/use.session";
 
 const navLinks = [
   { href: "#docs", label: "Docs" },
@@ -18,7 +18,7 @@ export function Header() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const session = useSession();
+  const { session, isLoading, error } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {

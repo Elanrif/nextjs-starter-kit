@@ -14,18 +14,18 @@ export default async function proxy(req: NextRequest) {
 
   // 3. Decrypt the session from the cookie
   const cookie = await cookies();
-  const session_ = cookie.get("session")?.value;
-  const session = await decrypt(session_);
+  const res = cookie.get("session")?.value;
+  const session = await decrypt(res);
 
   // 4. Redirect to /sign-in if the user is not authenticated
-  if (isProtectedRoute && !session?.userId) {
+  if (isProtectedRoute && !session?.user?.userId) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
 
   // 4. Redirect to /dashboard if the user is authenticated
   if (
     isPublicRoute &&
-    session?.userId &&
+    session?.user?.userId &&
     !req.nextUrl.pathname.startsWith("/dashboard")
   ) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));

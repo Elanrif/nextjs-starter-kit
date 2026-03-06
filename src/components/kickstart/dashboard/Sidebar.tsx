@@ -1,11 +1,16 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { UserCircle } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
-import { useSession } from "../auth/useSession";
+import { useSession } from "@/hooks/use.session";
+import { useEffect, useState } from "react";
+import { User } from "@/lib/user/models/user.model";
+import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { getCurrentUser } from "@/lib/auth/session/dal.client.service";
 
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [
@@ -18,11 +23,64 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const session = useSession();
+  const {session, isLoading, error} = useSession();
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [useError, setUserError] = useState<CrudApiError | null>(null);
+  
+  useEffect(() => {
+    if (!session) return; // Si pas de session, ne fetch pas l'utilisateur
 
-  if (session && typeof session === "object" && "error" in session) {
-    console.error("Session error:", session.error);
-    return null;
+    setLoadingUser(true);
+    getCurrentUser()
+      .then((res) => {
+        if ("error" in res) {
+          setUserError(res as CrudApiError);
+          setUser(null);
+        } else {
+          setUser(res);
+          setUserError(null);
+        }
+      })
+      .finally(() => setLoadingUser(false));
+
+      return () => {
+        setUser(null);
+        setUserError(null);
+      }
+  }, [session]);
+
+  if (isLoading) {
+    return (
+      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
+        <span className="text-sm text-white/80">Loading...</span>
+      </aside>
+    );
+  }
+
+  if (error) {
+    return (
+      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
+        <span className="text-sm text-red-400">Failed to load session</span>
+      </aside>
+    );
+  }
+
+  if (!user || "error" in user) {
+    redirect(HOME);
+  }
+
+  if (!session) {
+    return (
+      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
+        <Link
+          href={ROUTES.SIGN_IN}
+          className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-semibold shadow"
+        >
+          Sign In
+        </Link>
+      </aside>
+    );
   }
 
   return (
@@ -34,15 +92,15 @@ export default function Sidebar() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-semibold shadow"
         >
           <UserCircle className="h-5 w-5" />
-          <span>{session?.firstName || "Admin"}</span>
+          <span>{user?.firstName || "Admin"}</span>
         </button>
         <span className="ml-auto font-bold text-lg tracking-tight">
-          {session?.lastName?.slice(0, 2)?.toUpperCase() || "AD"}
+          {user?.lastName?.slice(0, 2)?.toUpperCase() || "AD"}
         </span>
       </div>
-      {session?.email && (
+      {user?.email && (
         <div className="px-6 py-2 text-xs border-b bg-white text-muted-foreground border-emerald-700">
-          <span>{session.email}</span>
+          <span>{user.email}</span>
         </div>
       )}
       <nav className="flex-1 p-4 space-y-2">

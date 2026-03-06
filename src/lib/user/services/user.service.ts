@@ -33,7 +33,7 @@ export async function fetchAllUser(
 
 export async function fetchUserById(
   id: number,
-  config: Config,
+  config?: Config,
 ): Promise<User | CrudApiError> {
   try {
     const res = await apiClient(true, config) //

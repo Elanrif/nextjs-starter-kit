@@ -1,4 +1,4 @@
-import { getServerSession, verifySession } from "@/lib/auth/session/dal";
+import { getCurrentUser, verifySession } from "@/lib/auth/session/dal.service";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -19,16 +19,11 @@ export const metadata = {
  */
 export default async function DashboardPage() {
   const session = await verifySession();
+  const user = await getCurrentUser();
 
-  // Redirect to sign-in if the session is invalid
-  if (!session || !session.userId) {
+  if ("error" in user) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
-
-  const user = await getServerSession() as any;
-  /* if (!user || user.role !== "ADMIN") {
-    redirect("/sign-in?callbackUrl=/dashboard");
-  } */
 
   return (
     <div className="flex-1 flex flex-col">

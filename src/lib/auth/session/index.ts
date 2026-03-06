@@ -1,15 +1,27 @@
 import "server-only";
+
 import { SignJWT, jwtVerify } from "jose";
 import { SessionPayload } from "@lib/auth/models/auth.model";
 import { cookies } from "next/headers";
 import { getLogger } from "@/config/logger.config";
-import { AxiosError } from "axios";
 
+/**
+ * Session management utilities for authentication.
+ * Uses JWT for session encryption/decryption and cookie storage.
+ */
 const logger = getLogger("server");
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
+/**
+ * Encrypts a session payload into a JWT token.
+ * @param payload - SessionPayload object to encrypt
+ * @returns JWT token as string
+ */
 export async function encrypt(payload: SessionPayload) {
+  if (!secretKey) {
+    throw new Error("secret key is not defined");
+  }
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -19,6 +31,11 @@ export async function encrypt(payload: SessionPayload) {
   return token;
 }
 
+/**
+ * Decrypts a JWT session token into a SessionPayload.
+ * @param session - JWT token string
+ * @returns SessionPayload or undefined if invalid
+ */
 export async function decrypt(
   session?: string,
 ): Promise<SessionPayload | undefined> {
@@ -31,18 +48,23 @@ export async function decrypt(
     logger.info("Session decrypted successfully", payload);
     return payload;
   } catch (error) {
-    const err = error as AxiosError;
     logger.error("Failed to decrypt session:", error);
   }
 }
 
+/**
+ * Creates a session cookie for a user.
+ * @param userId - User ID
+ * @param email - User email
+ * @param role - User role
+ */
 export async function createSession(
   userId: number,
   email: string,
   role: string,
 ) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Expires in 7 days
-  const session = await encrypt({ userId, email, role, expiresAt });
+  const session = await encrypt({ user: { userId, email, role }, expiresAt });
   const cookieStore = await cookies();
 
   cookieStore.set("session", session, {
@@ -55,6 +77,10 @@ export async function createSession(
   logger.info("Session created for user", email);
 }
 
+/**
+ * Updates the session cookie, extending its expiration.
+ * @returns null if session is missing or invalid
+ */
 export async function updateSession() {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
@@ -74,9 +100,12 @@ export async function updateSession() {
     sameSite: "lax",
     path: "/",
   });
-  logger.info("Session updated for user", payload);
+  logger.info("Session updated for user", payload.user?.email);
 }
 
+/**
+ * Deletes the session cookie.
+ */
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");

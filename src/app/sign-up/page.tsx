@@ -1,7 +1,7 @@
-import { SignUpForm } from "@/components/kickstart/auth";
 import Link from "next/link";
 import { ArrowLeft, Key } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
+import { SignUpForm } from "@/components/kickstart/auth/SignUpForm";
 
 export const metadata = {
   title: "Sign Up",

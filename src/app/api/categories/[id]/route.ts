@@ -11,7 +11,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
 } from "@/lib/shared/helpers/crud-api-error";
-import { verifySession } from "@/lib/auth/session/dal";
+import { verifySession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
 
@@ -51,7 +51,7 @@ export async function GET(
   }
 
   // Check if the user has the 'admin' role
-  if (session.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN") {
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
@@ -122,7 +122,7 @@ export async function PATCH(
   }
 
   // Check if the user has the 'admin' role
-  if (session.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN") {
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
@@ -204,7 +204,7 @@ export async function DELETE(
   }
 
   // Check if the user has the 'admin' role
-  if (session.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN") {
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";

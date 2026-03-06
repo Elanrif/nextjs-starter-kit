@@ -7,7 +7,7 @@ import {
   createCategory,
   fetchCategories,
 } from "@/lib/categories/services/category.service";
-import { verifySession } from "@/lib/auth/session/dal";
+import { verifySession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Check if the user has the 'admin' role
-  if (session.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN") {
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
