@@ -6,23 +6,90 @@ import {
   BookOpen,
   Sparkles,
   Star,
+  Database,
+  Zap,
+  Shield,
+  Code2,
+  Palette,
+  Globe,
 } from "lucide-react";
+
+const features = [
+  {
+    icon: <Zap className="w-5 h-5" />,
+    title: "Performance First",
+    bgColor: "bg-yellow-50",
+    iconBg: "bg-yellow-500",
+    borderColor: "border-yellow-200",
+    items: [
+      "Next.js 15 App Router",
+      "Server Components",
+      "Image Optimization",
+      "Streaming & Suspense",
+    ],
+  },
+  {
+    icon: <Code2 className="w-5 h-5" />,
+    title: "Developer Experience",
+    bgColor: "bg-blue-50",
+    iconBg: "bg-blue-500",
+    borderColor: "border-blue-200",
+    items: ["TypeScript", "ESLint + Prettier", "Hot Reload", "Git Hooks"],
+  },
+  {
+    icon: <Palette className="w-5 h-5" />,
+    title: "Modern UI",
+    bgColor: "bg-purple-50",
+    iconBg: "bg-purple-500",
+    borderColor: "border-purple-200",
+    items: ["Tailwind CSS", "shadcn/ui", "Dark Mode", "Responsive Design"],
+  },
+  {
+    icon: <Shield className="w-5 h-5" />,
+    title: "Authentication",
+    bgColor: "bg-emerald-50",
+    iconBg: "bg-emerald-500",
+    borderColor: "border-emerald-200",
+    items: [
+      "JWT Sessions",
+      "Protected Routes",
+      "Middleware",
+      "Security Headers",
+    ],
+  },
+  {
+    icon: <Database className="w-5 h-5" />,
+    title: "Data Management",
+    bgColor: "bg-cyan-50",
+    iconBg: "bg-cyan-500",
+    borderColor: "border-cyan-200",
+    items: ["Modern ORM", "Type Safety", "Migrations", "Query Optimization"],
+  },
+  {
+    icon: <Globe className="w-5 h-5" />,
+    title: "Production Ready",
+    bgColor: "bg-rose-50",
+    iconBg: "bg-rose-500",
+    borderColor: "border-rose-200",
+    items: ["Vercel Deploy", "Docker Support", "CI/CD", "Analytics"],
+  },
+];
 
 export default function CTASection() {
   return (
-    <section className="py-20 sm:py-32 relative overflow-hidden">
+    <section className="py-10 sm:py-16 relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900" />
+      <div className="absolute inset-0 bg-slate-900" />
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "2s" }}
         />
       </div>
@@ -45,38 +112,67 @@ export default function CTASection() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20">
+        <div className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-sm border border-white/20">
           <div className="px-8 py-16 sm:px-16 sm:py-24 text-center">
             {/* Badge */}
             <div className="animate-fade-in-up mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
                 <Sparkles className="w-4 h-4 text-yellow-400" />
                 <span className="text-sm font-medium text-white">
-                  Prêt à démarrer ?
+                  Ready to Start?
                 </span>
               </div>
             </div>
 
             {/* Main Heading */}
             <h2 className="animate-fade-in-up animation-delay-100 text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-              Construisez quelque chose
+              Build Something
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                d'extraordinaire
-              </span>
+              <span className="text-blue-400">Amazing</span>
             </h2>
 
             {/* Subtitle */}
             <p className="animate-fade-in-up animation-delay-200 mt-8 text-xl text-blue-100/90 max-w-2xl mx-auto leading-relaxed">
-              Commencez votre prochain projet avec notre template et
-              concentrez-vous sur l'essentiel : créer des produits que vos
-              utilisateurs vont adorer.
+              Start your next project with our template and focus on what
+              matters: building products that your users will love.
             </p>
+
+            {/* Features Grid */}
+            <div className="animate-fade-in-up animation-delay-250 mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto mb-12">
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/15 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className={`w-8 h-8 ${feature.iconBg} rounded-lg flex items-center justify-center text-white shadow-md`}
+                    >
+                      {feature.icon}
+                    </div>
+                    <h3 className="font-semibold text-white text-sm">
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <ul className="space-y-1">
+                    {feature.items.slice(0, 2).map((item, itemIndex) => (
+                      <li
+                        key={itemIndex}
+                        className="text-xs text-blue-100/80 flex items-center gap-2"
+                      >
+                        <div className="w-1 h-1 bg-blue-400 rounded-full flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
 
             {/* Stats */}
             <div className="animate-fade-in-up animation-delay-300 mt-12 grid grid-cols-3 gap-8 max-w-md mx-auto mb-12">
               {[
-                { number: "15+", label: "Composants" },
+                { number: "15+", label: "Components" },
                 { number: "100%", label: "TypeScript" },
                 { number: "0", label: "Configuration" },
               ].map((stat, index) => (
@@ -103,7 +199,7 @@ export default function CTASection() {
                   className="flex items-center"
                 >
                   <Github className="mr-3 h-5 w-5" />
-                  Utiliser ce Template
+                  Use This Template
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </a>
               </Button>
@@ -124,7 +220,7 @@ export default function CTASection() {
             {/* Social Proof */}
             <div className="animate-fade-in-up animation-delay-500 mt-12 flex items-center justify-center gap-2 text-blue-200/80 text-sm">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span>Rejoint par 1000+ développeurs</span>
+              <span>Trusted by 1000+ developers</span>
             </div>
           </div>
 
@@ -132,7 +228,7 @@ export default function CTASection() {
           <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
             <div className="relative">
               <Rocket className="w-20 h-20 text-white/20 animate-float" />
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-xl opacity-30 animate-pulse" />
+              <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-30 animate-pulse" />
             </div>
           </div>
         </div>
