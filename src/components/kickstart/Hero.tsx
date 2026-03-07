@@ -98,7 +98,7 @@ export default function Hero() {
           </h1>
 
           {/* Subtitle */}
-          <p className="animate-fade-in-up animation-delay-200 mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-blue-100/90 mb-12">
+          <p className="px-5 sm:px-10 text-sm sm:text-lg animate-fade-in-up animation-delay-200 mx-auto mt-8 max-w-3xl leading-relaxed text-blue-100/90 mb-12">
             Kickstart your Next.js project with a modern boilerplate featuring
             basic authentication with JOE, dashboard, and more. Focus on
             building your product, not the setup.

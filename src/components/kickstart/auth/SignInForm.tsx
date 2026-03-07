@@ -62,7 +62,7 @@ export function SignInForm() {
       {/* Email Field */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Mail className="h-5 w-5 text-gray-400" />
+          <Mail className="h-5 w-5 text-gray-50" />
         </div>
         <input
           type="email"
@@ -71,14 +71,14 @@ export function SignInForm() {
           placeholder="Email Address"
           required
           disabled={isLoading}
-          className="w-full pl-12 pr-4 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          className="w-full pl-12 pr-4 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
         />
       </div>
 
       {/* Password Field */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Lock className="h-5 w-5 text-gray-400" />
+          <Lock className="h-5 w-5 text-gray-50" />
         </div>
         <input
           type={showPassword ? "text" : "password"}
@@ -87,12 +87,12 @@ export function SignInForm() {
           placeholder="Password"
           required
           disabled={isLoading}
-          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-800 placeholder-gray-400"
+          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-100 hover:text-gray-100"
         >
           {showPassword ? (
             <EyeOff className="h-5 w-5" />
@@ -106,7 +106,7 @@ export function SignInForm() {
       <div className="text-right">
         <a
           href="/forgot-password"
-          className="text-sm text-emerald-600 hover:text-emerald-700"
+          className="text-sm text-emerald-300 hover:text-emerald-400"
         >
           Forgot password?
         </a>
@@ -116,7 +116,9 @@ export function SignInForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-full hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30"
+        className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-600 to-teal-700 text-white font-medium rounded-full hover:from-emerald-400 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-300 
+        focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center
+         justify-center gap-2 shadow-lg shadow-emerald-300/30"
       >
         {isLoading ? (
           "Signing in..."
@@ -130,10 +132,10 @@ export function SignInForm() {
 
       {/* Social Login */}
       <div className="flex items-center gap-4 pt-2">
-        <span className="text-gray-400 text-sm">Or</span>
+        <span className="text-gray-50 text-sm">Or</span>
         <div className="flex gap-3">
           {/* clickable person icon to autofill */}
-          <div className="hover:bg-blue-300 bg-blue-400 duration-300 text-white flex p-2 rounded-full border items-center gap-2">
+          <div className="hover:bg-blue-700 bg-blue-500 duration-300 text-white flex p-2 rounded-full border items-center gap-2">
             <User onClick={fillDemo} className="size-6" />
           </div>
           <SocialButton icon="facebook" />
@@ -148,7 +150,8 @@ function SocialButton({ icon }: { icon: "facebook" | "google" }) {
   return (
     <button
       type="button"
-      className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+      className="w-11 h-11 rounded-full border border-gray-200
+       flex items-center justify-center hover:bg-gray-100 bg-white/80 transition-colors"
     >
       {icon === "facebook" ? (
         <svg

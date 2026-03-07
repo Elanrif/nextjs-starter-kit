@@ -15,22 +15,22 @@ export const metadata = {
 const { HOME, SIGN_IN } = ROUTES;
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col px-8 py-6 lg:px-16 lg:py-10">
+      <div className="flex-1 flex flex-col px-0 py-3 sm:px-8 sm:py-6 lg:px-16 lg:py-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
           <Link
             href={HOME}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="w-10 h-10 rounded-full border border-gray-50 flex items-center justify-center hover:bg-gray-50 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-gray-600" />
+            <ArrowLeft className="h-5 w-5" />
           </Link>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm">
             Already member?{" "}
             <Link
               href={SIGN_IN}
-              className="text-emerald-600 font-medium hover:underline"
+              className="text-emerald-300 font-medium hover:underline"
             >
               Sign in
             </Link>
@@ -38,11 +38,11 @@ export default function SignUpPage() {
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 flex items-center ps-20">
-          <div className="w-full max-w-lg">
+        <div className="flex-1 flex items-center px-5 sm:ps-20">
+          <div className="w-full max-w-7xl">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign Up</h1>
-              <p className="text-gray-500">
+              <h1 className="text-4xl font-bold mb-2">Sign Up</h1>
+              <p className="text-gray-50">
                 Create your account to get started
               </p>
             </div>
