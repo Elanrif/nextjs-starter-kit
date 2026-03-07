@@ -40,7 +40,12 @@ export function SignInForm() {
     setIsLoading(true);
     setError(null);
     try {
-      await signIn({ email: data.email, password: data.password });
+      const result = await signIn({ email: data.email, password: data.password });
+
+      if("error" in result) {
+        setError(result.message || "An error occurred during sign in.");
+        return;
+      }
       router.push("/dashboard");
     } catch (error_: any) {
       setError(error_?.message || "An error occurred during sign in.");

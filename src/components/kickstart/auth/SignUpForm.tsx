@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -13,20 +13,20 @@ import {
   ArrowRight,
   Phone,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/lib/auth/auth.client.service";
+import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
 
 /**
  * Password validation rules
  */
 function usePasswordValidation(password: string) {
-  return useMemo(
-    () => ({
-      minLength: password.length >= 8,
-      hasNumber: /\d/.test(password) || /[!"#$%&()*,.:<>?@^{|}]/.test(password),
-      hasCase: /[a-z]/.test(password) && /[A-Z]/.test(password),
-    }),
-    [password],
-  );
+  return {
+    minLength: password.length >= 8,
+    hasNumber: /\d/.test(password) || /[!"#$%&()*,.:<>?@^{|}]/.test(password),
+    hasCase: /[a-z]/.test(password) && /[A-Z]/.test(password),
+  };
 }
 
 /**
@@ -35,57 +35,52 @@ function usePasswordValidation(password: string) {
  */
 export function SignUpForm() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(RegisterSchema) as any,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const fillDemo = () => {
-    setFirstName("Elanrif");
-    setLastName("SAID BACO");
-    setPhoneNumber("1234567890");
-    setEmail("elanrif@gmail.com");
-    setPassword("Demo1234");
-    setConfirmPassword("Demo1234");
-  };
+  const password = watch("password");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const validation = usePasswordValidation(password);
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const fillDemo = () => {
+    setValue("firstName", "Elanrif");
+    setValue("lastName", "SAID BACO");
+    setValue("phoneNumber", "1234567890");
+    setValue("email", "elanrif@gmail.com");
+    setValue("password", "Demo1234");
+    setValue("confirmPassword", "Demo1234");
+  };
 
-    if (!isEmailValid) {
-      setError("Invalid email address");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (!validation.minLength || !validation.hasNumber || !validation.hasCase) {
-      setError("Password does not meet requirements");
-      return;
-    }
-
+  const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
+    setError(null);
 
     try {
       const result = await signUp({
         action: "SIGN_UP",
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        password: data.password,
       });
 
       if ("error" in result && result.status !== 200) {
@@ -95,15 +90,15 @@ export function SignUpForm() {
 
       router.push("/dashboard");
       router.refresh();
-    } catch {
-      setError("An unexpected error occurred");
+    } catch (error_: any) {
+      setError(error_?.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
           {error}
@@ -118,14 +113,17 @@ export function SignUpForm() {
           </div>
           <input
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            {...register("firstName")}
             placeholder="First Name"
-            required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300
              focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
+          {errors.firstName && (
+            <span className="text-red-500 text-sm">
+              {errors.firstName.message}
+            </span>
+          )}
         </div>
 
         {/* Last Name Field */}
@@ -135,13 +133,16 @@ export function SignUpForm() {
           </div>
           <input
             type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            {...register("lastName")}
             placeholder="Last Name"
-            required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
+          {errors.lastName && (
+            <span className="text-red-500 text-sm">
+              {errors.lastName.message}
+            </span>
+          )}
         </div>
       </label>
 
@@ -153,13 +154,16 @@ export function SignUpForm() {
           </div>
           <input
             type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            {...register("phoneNumber")}
             placeholder="Phone Number"
-            required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
+          {errors.phoneNumber && (
+            <span className="text-red-500 text-sm">
+              {errors.phoneNumber.message}
+            </span>
+          )}
         </div>
 
         {/* Email Field */}
@@ -169,17 +173,13 @@ export function SignUpForm() {
           </div>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
             placeholder="Email Address"
-            required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
-          {email && isEmailValid && (
-            <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-              <Check className="h-5 w-5 text-emerald-500" />
-            </div>
+          {errors.email && (
+            <span className="text-red-500 text-sm">{errors.email.message}</span>
           )}
         </div>
       </label>
@@ -193,13 +193,16 @@ export function SignUpForm() {
             </div>
             <input
               type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register("password")}
               placeholder="Password"
-              required
               disabled={isLoading}
               className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
             />
+            {errors.password && (
+              <span className="text-red-500 text-sm">
+                {errors.password.message}
+              </span>
+            )}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -239,13 +242,16 @@ export function SignUpForm() {
           </div>
           <input
             type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            {...register("confirmPassword")}
             placeholder="Re-Type Password"
-            required
             disabled={isLoading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
+          {errors.confirmPassword && (
+            <span className="text-red-500 text-sm">
+              {errors.confirmPassword.message}
+            </span>
+          )}
         </div>
       </label>
 
