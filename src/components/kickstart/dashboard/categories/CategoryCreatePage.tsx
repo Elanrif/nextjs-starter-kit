@@ -7,11 +7,8 @@ import { createCategory } from "@/lib/categories/services/category.client.servic
 import LoadingPage from "@/components/kickstart/loading-page";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  categoryCreateSchema,
-  CategoryCreateInput,
-} from "@/lib/categories/models/category.model";
 import { ROUTES } from "@/utils/routes";
+import { CategoryFormData, categorySchema } from "@/lib/categories/models/category.model";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
@@ -21,8 +18,8 @@ export function CategoryCreatePage() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<CategoryCreateInput>({
-    resolver: zodResolver(categoryCreateSchema) as any,
+  } = useForm<CategoryFormData>({
+    resolver: zodResolver(categorySchema) as any,
     defaultValues: {
       name: "",
       slug: "",
@@ -36,7 +33,7 @@ export function CategoryCreatePage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const onSubmit = async (data: CategoryCreateInput) => {
+  const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
     const anyRes = (await createCategory(data)) as any;
     setLoading(false);
@@ -49,7 +46,7 @@ export function CategoryCreatePage() {
     if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
       for (const d of anyRes.message.details) {
         if (d.field)
-          setError(d.field as any, { type: "server", message: d.message });
+          setError(d.field as keyof CategoryFormData, { type: "server", message: d.message });
       }
       toast.error("Erreur de validation côté serveur");
       return;

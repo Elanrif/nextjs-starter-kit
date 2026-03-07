@@ -47,7 +47,7 @@ export interface CategoryFilters {
   limit?: number;
 }
 
-export const categoryCreateSchema = z.object({
+export const categorySchema = z.object({
   name: z.string().min(2, "Le nom doit comporter au moins 2 caractères"),
   slug: z.string().min(2, "Le slug doit comporter au moins 2 caractères"),
   description: z.string().optional(),
@@ -56,4 +56,4 @@ export const categoryCreateSchema = z.object({
   sortOrder: z.coerce.number().optional(),
 });
 
-export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>;
+export type CategoryFormData = z.infer<typeof categorySchema>;

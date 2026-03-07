@@ -58,7 +58,7 @@ export interface PageProduct<T> {
   last: boolean;
 }
 
-export const productCreateSchema = z.object({
+export const productSchema = z.object({
   name: z.string().min(2, "Le nom doit comporter au moins 2 caractères"),
   slug: z.string().min(2, "Le slug doit comporter au moins 2 caractères"),
   description: z.string().optional(),
@@ -68,4 +68,4 @@ export const productCreateSchema = z.object({
   categoryId: z.coerce.number().min(1, "La catégorie est requise"),
 });
 
-export type ProductCreateInput = z.infer<typeof productCreateSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;

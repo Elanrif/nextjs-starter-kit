@@ -4,15 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/lib/products/services/product.client.service";
-import {
-  productCreateSchema,
-  ProductCreateInput,
-} from "@/lib/products/models/product.model";
 import { DashboardButton } from "@/components/kickstart/dashboard/DashboardButton";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import LoadingPage from "@/components/kickstart/loading-page";
 import { ROUTES } from "@/utils/routes";
+import { ProductFormData, productSchema } from "@/lib/products/models/product.model";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -21,8 +18,8 @@ export function ProductCreatePage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ProductCreateInput>({
-    resolver: zodResolver(productCreateSchema) as any,
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       name: "",
       slug: "",
@@ -48,7 +45,7 @@ export function ProductCreatePage() {
     });
   }, []);
 
-  const onSubmit = async (data: ProductCreateInput) => {
+  const onSubmit = async (data: ProductFormData) => {
     setLoading(true);
     const anyRes = (await createProduct({
       ...data,

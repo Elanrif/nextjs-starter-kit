@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { signIn } from "@/lib/auth/auth.client.service";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  LoginFormData,
+  LoginSchema,
+} from "@/lib/auth/models/auth.model";
 
 /**
  * Sign In Form Component
@@ -11,48 +17,43 @@ import { signIn } from "@/lib/auth/auth.client.service";
  */
 export function SignInForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema) as any,
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const fillDemo = () => {
-    setEmail("elanrif@gmail.com");
-    setPassword("Demo1234");
+    setValue("email", "admin@gmail.com");
+    setValue("password", "admin123456");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-
+    setError(null);
     try {
-      const result = await signIn({
-        action: "SIGN_IN",
-        email,
-        password,
-      });
-
-      if ("error" in result && result.status !== 200) {
-        setError(result.message || "Failed to sign in");
-        return;
-      }
-
-      const callbackUrl =
-        new URLSearchParams(window.location.search).get("callbackUrl") ||
-        "/dashboard";
-      router.push(callbackUrl);
-      router.refresh();
-    } catch {
-      setError("An unexpected error occurred");
+      await signIn({ email: data.email, password: data.password });
+      router.push("/dashboard");
+    } catch (error_: any) {
+      setError(error_?.message || "An error occurred during sign in.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 ">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 ">
       {error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
           {error}
@@ -66,13 +67,13 @@ export function SignInForm() {
         </div>
         <input
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register("email")}
           placeholder="Email Address"
-          required
-          disabled={isLoading}
           className="w-full pl-12 pr-4 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
         />
+        {errors.email && (
+          <span className="text-red-500 text-sm">{errors.email.message}</span>
+        )}
       </div>
 
       {/* Password Field */}
@@ -82,13 +83,15 @@ export function SignInForm() {
         </div>
         <input
           type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
+          {...register("password")}
           disabled={isLoading}
           className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
         />
+        {errors.password && (
+          <span className="text-red-500 text-sm">
+            {errors.password.message}
+          </span>
+        )}
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}

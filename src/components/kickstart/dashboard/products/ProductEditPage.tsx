@@ -8,12 +8,8 @@ import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  productCreateSchema,
-  ProductCreateInput,
-  Product,
-} from "@/lib/products/models/product.model";
 import { ROUTES } from "@/utils/routes";
+import { Product, ProductFormData, productSchema } from "@/lib/products";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -28,8 +24,8 @@ export function ProductEditPage({
     reset,
     setError,
     formState: { errors },
-  } = useForm<ProductCreateInput>({
-    resolver: zodResolver(productCreateSchema) as any,
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       name: "",
       slug: "",
@@ -93,7 +89,7 @@ export function ProductEditPage({
   //   });
   // }, [id, reset]);
 
-  const onSubmit = async (data: ProductCreateInput) => {
+  const onSubmit = async (data: ProductFormData) => {
     if (!loadedProduct) {
       toast.error("Produit introuvable.");
       return;
@@ -117,7 +113,7 @@ export function ProductEditPage({
     if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
       for (const d of anyRes.message.details) {
         if (d.field)
-          setError(d.field as keyof ProductCreateInput, {
+          setError(d.field as keyof ProductFormData, {
             type: "server",
             message: d.message,
           });
