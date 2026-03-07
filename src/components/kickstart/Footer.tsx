@@ -1,186 +1,206 @@
 import { ROUTES } from "@/utils/routes";
-import Image from "next/image";
 import Link from "next/link";
+import {
+  Sparkles,
+  Github,
+  Twitter,
+  Mail,
+  ExternalLink,
+  Heart,
+} from "lucide-react";
 
-const footerLinks = {
-  resources: [
-    { label: "Documentation", href: "https://nextjs.org/docs" },
-    { label: "Learn Next.js", href: "https://nextjs.org/learn" },
-    { label: "Templates", href: "https://vercel.com/templates" },
-    { label: "Blog", href: "https://nextjs.org/blog" },
+const footerSections = {
+  product: [
+    { label: "Fonctionnalités", href: "#features" },
+    { label: "Documentation", href: "#docs" },
+    { label: "Démarrer", href: "#getting-started" },
+    {
+      label: "Exemples",
+      href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit/tree/main/examples",
+    },
   ],
-  tools: [
+  resources: [
+    { label: "Next.js Docs", href: "https://nextjs.org/docs" },
     { label: "Tailwind CSS", href: "https://tailwindcss.com" },
     { label: "shadcn/ui", href: "https://ui.shadcn.com" },
     { label: "TypeScript", href: "https://typescriptlang.org" },
-    { label: "ESLint", href: "https://eslint.org" },
   ],
   community: [
-    { label: "GitHub", href: "https://github.com/vercel/next.js" },
+    {
+      label: "GitHub",
+      href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit",
+    },
     { label: "Discord", href: "https://discord.gg/nextjs" },
     { label: "Twitter", href: "https://twitter.com/nextjs" },
-    { label: "Reddit", href: "https://reddit.com/r/nextjs" },
+    {
+      label: "Discussions",
+      href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit/discussions",
+    },
+  ],
+  legal: [
+    {
+      label: "Licence MIT",
+      href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit/blob/main/LICENSE",
+    },
+    { label: "Confidentialité", href: "/privacy" },
+    { label: "Conditions", href: "/terms" },
+    { label: "Cookies", href: "/cookies" },
   ],
 };
+
 const { HOME } = ROUTES;
+
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-gray-200/95 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Main Footer */}
-        <div className="py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href={HOME} className="flex items-center gap-2 mb-4">
-              <Image
-                src="/next.svg"
-                alt="Next.js Logo"
-                width={80}
-                height={16}
-                className="dark:invert"
-              />
+    <footer className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Content */}
+        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+          {/* Brand Section */}
+          <div className="lg:col-span-2">
+            <Link href={HOME} className="flex items-center gap-3 mb-6 group">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full animate-pulse" />
+              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Kickstart
+              </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              A production-ready Next.js template with all the tools you need to
-              build amazing web applications.
+
+            <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-md">
+              Le boilerplate Next.js ultime pour créer des applications web
+              modernes, performantes et scalables en quelques minutes.
             </p>
+
             {/* Social Links */}
-            <div className="flex gap-4 mt-6">
-              <a
-                href="https://github.com/Elanrif/kickstart-nextjs-starter-kit"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="GitHub"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
+            <div className="flex gap-4">
+              {[
+                {
+                  icon: <Github className="w-5 h-5" />,
+                  href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit",
+                  label: "GitHub",
+                },
+                {
+                  icon: <Twitter className="w-5 h-5" />,
+                  href: "https://twitter.com",
+                  label: "Twitter",
+                },
+                {
+                  icon: <Mail className="w-5 h-5" />,
+                  href: "mailto:contact@kickstart.dev",
+                  label: "Email",
+                },
+              ].map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/20 transition-all duration-300 group"
+                  aria-label={social.label}
                 >
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Twitter"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-              <a
-                href="https://discord.gg"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Discord"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z" />
-                </svg>
-              </a>
+                  <span className="group-hover:scale-110 transition-transform duration-300">
+                    {social.icon}
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Resources */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              Resources
-            </h3>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Tools */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              Tools
-            </h3>
-            <ul className="space-y-3">
-              {footerLinks.tools.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Community */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              Community
-            </h3>
-            <ul className="space-y-3">
-              {footerLinks.community.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {/* Links Sections */}
+          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+            {Object.entries(footerSections).map(([sectionKey, links]) => (
+              <div key={sectionKey}>
+                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">
+                  {sectionKey === "product"
+                    ? "Produit"
+                    : sectionKey === "resources"
+                      ? "Ressources"
+                      : sectionKey === "community"
+                        ? "Communauté"
+                        : sectionKey === "legal"
+                          ? "Légal"
+                          : sectionKey}
+                </h3>
+                <ul className="space-y-4">
+                  {links.map((link, index) => (
+                    <li key={index}>
+                      <a
+                        href={link.href}
+                        target={
+                          link.href.startsWith("http") ? "_blank" : undefined
+                        }
+                        rel={
+                          link.href.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 group"
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform duration-200">
+                          {link.label}
+                        </span>
+                        {link.href.startsWith("http") && (
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-border py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Next.js Kickstart. Built with ❤️ using
-            Next.js.
-          </p>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span>Powered by</span>
-            <a
-              href="https://vercel.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-foreground hover:underline"
-            >
-              <Image
-                src="/vercel.svg"
-                alt="Vercel"
-                width={16}
-                height={16}
-                className="dark:invert"
-              />
-              Vercel
-            </a>
+        {/* Bottom Section */}
+        <div className="border-t border-white/10 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            {/* Copyright */}
+            <div className="flex items-center gap-2 text-gray-400">
+              <span>© {new Date().getFullYear()} Kickstart Next.js.</span>
+              <span>Créé avec</span>
+              <Heart className="w-4 h-4 text-red-400 animate-pulse" />
+              <span>par des développeurs passionnés</span>
+            </div>
+
+            {/* Tech Stack */}
+            <div className="flex items-center gap-6 text-sm text-gray-400">
+              <span>Propulsé par</span>
+              <div className="flex items-center gap-4">
+                {[
+                  { name: "Next.js", href: "https://nextjs.org" },
+                  { name: "Vercel", href: "https://vercel.com" },
+                  { name: "TypeScript", href: "https://typescriptlang.org" },
+                ].map((tech, index) => (
+                  <a
+                    key={index}
+                    href={tech.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    {tech.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Message */}
+          <div className="mt-6 pt-6 border-t border-white/5 text-center">
+            <p className="text-sm text-gray-500">
+              🚀 Commencez votre prochain projet avec le meilleur starter kit
+              Next.js
+            </p>
           </div>
         </div>
       </div>

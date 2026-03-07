@@ -1,51 +1,56 @@
-/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@components/kickstart/auth/SignOutButton";
 import { ROUTES } from "@/utils/routes";
 import { useSession } from "@/hooks/use.session";
+import { Sparkles } from "lucide-react";
 
 const navLinks = [
-  { href: "#docs", label: "Docs" },
-  { href: "#getting-started", label: "Get Started" },
+  { href: "#docs", label: "Documentation" },
+  { href: "#getting-started", label: "Démarrer" },
+  { href: "#features", label: "Fonctionnalités" },
 ];
+
 const { HOME, SIGN_IN, SIGN_UP } = ROUTES;
+
 export function Header() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { session, isLoading, error, invalidate } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gray-200/95 border-b border-border shadow-sm">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled 
+          ? 'bg-white/10 backdrop-blur-md border-b border-white/20 shadow-lg shadow-black/5'
+          : 'bg-transparent'
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link
             href={HOME}
-            className="flex items-center gap-2 transition-transform hover:scale-105"
+            className="flex items-center gap-3 group transition-transform hover:scale-105"
           >
-            <Image
-              src="/next.svg"
-              alt="Next.js Logo"
-              width={80}
-              height={16}
-              className="dark:invert"
-              priority
-            />
-            <span className="hidden sm:inline-block text-sm font-semibold text-muted-foreground">
+            <div className="relative">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full animate-pulse" />
+            </div>
+            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Kickstart
             </span>
           </Link>
