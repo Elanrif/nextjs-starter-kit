@@ -2,7 +2,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -14,6 +13,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getUserVerifiedSession } from "@/lib/auth/session/dal.service";
+import { ROUTES } from "@/utils/routes";
+import { HomeIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
@@ -38,9 +39,9 @@ export default async function DashboardLayout({children}: {children: React.React
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
+                  <HomeIcon href={ROUTES.HOME} size={18}>
                     Kickstart Nextjs
-                  </BreadcrumbLink>
+                  </HomeIcon>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

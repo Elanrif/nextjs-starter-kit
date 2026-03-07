@@ -28,7 +28,7 @@ import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
 
-const { DASHBOARD, PRODUCTS, CATEGORIES, USERS} = ROUTES;
+const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
 // This is sample data.
 const data = {
@@ -48,15 +48,15 @@ const data = {
       items: [
         {
           title: "Categories",
-          url: CATEGORIES,
+          url: `${DASHBOARD}${CATEGORIES}`,
         },
         {
           title: "Products",
-          url: PRODUCTS,
+          url: `${DASHBOARD}${PRODUCTS}`,
         },
         {
           title: "Users",
-          url: USERS,
+          url: `${DASHBOARD}${USERS}`,
         },
       ],
     },
