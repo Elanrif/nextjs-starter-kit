@@ -16,7 +16,7 @@ import { User } from "@/lib/user/models/user.model";
  */
 const {
   api: {
-    endpoints: { signOut: signOutUrl, session: sessionUrl, me: meUrl },
+    endpoints: { signOut: _signOutUrl, session: sessionUrl, me: meUrl },
   },
 } = proxyEnvironment;
 
@@ -27,7 +27,7 @@ export async function verifySession(): Promise<Session | CrudApiError> {
   return result.data;
 }
 
-export async function getCurrentUser(): Promise<User | CrudApiError> {
+export async function getUserVerifiedSession(): Promise<User | CrudApiError> {
   const result = await frontendHttp().get<any, AxiosResponse<User>>(meUrl);
   return result.data;
 }

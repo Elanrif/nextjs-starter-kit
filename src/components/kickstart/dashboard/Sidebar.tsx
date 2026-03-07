@@ -2,15 +2,14 @@
 "use client";
 
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { UserCircle } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
-import { useSession } from "@/hooks/use.session";
 import { useEffect, useState } from "react";
 import { User } from "@/lib/user/models/user.model";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
-import { getCurrentUser } from "@/lib/auth/session/dal.client.service";
+import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [
@@ -23,16 +22,13 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const {session, isLoading, error} = useSession();
   const [user, setUser] = useState<User | null>(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [useError, setUserError] = useState<CrudApiError | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [userError, setUserError] = useState<CrudApiError | null>(null);
   
   useEffect(() => {
-    if (!session) return; // Si pas de session, ne fetch pas l'utilisateur
-
-    setLoadingUser(true);
-    getCurrentUser()
+    setLoading(true);
+    getUserVerifiedSession()
       .then((res) => {
         if ("error" in res) {
           setUserError(res as CrudApiError);
@@ -42,15 +38,15 @@ export default function Sidebar() {
           setUserError(null);
         }
       })
-      .finally(() => setLoadingUser(false));
+      .finally(() => setLoading(false));
 
       return () => {
         setUser(null);
         setUserError(null);
       }
-  }, [session]);
+  }, []);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
         <span className="text-sm text-white/80">Loading...</span>
@@ -58,7 +54,7 @@ export default function Sidebar() {
     );
   }
 
-  if (error) {
+  if (userError) {
     return (
       <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
         <span className="text-sm text-red-400">Failed to load session</span>
@@ -66,22 +62,6 @@ export default function Sidebar() {
     );
   }
 
-  if (!user || "error" in user) {
-    redirect(HOME);
-  }
-
-  if (!session) {
-    return (
-      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
-        <Link
-          href={ROUTES.SIGN_IN}
-          className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-semibold shadow"
-        >
-          Sign In
-        </Link>
-      </aside>
-    );
-  }
 
   return (
     <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex flex-col shadow-lg">

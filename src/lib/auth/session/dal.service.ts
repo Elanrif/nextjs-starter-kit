@@ -51,11 +51,43 @@ export const verifySession = cache(async (): Promise<Session> => {
 });
 
 /**
+ * Retrieves the session from cookies without redirecting.
+ * Used for API routes that need to check session status.
+ * @returns Session object or null if no valid session
+ */
+export const getSession = cache(async (): Promise<Session | null> => {
+  try {
+    const cookie = await cookies();
+    const sess = cookie.get("session")?.value;
+    const session = await decrypt(sess);
+
+    if (!session?.user?.userId) {
+      logger.warn("No active session found during session check");
+      return null;
+    }
+
+    logger.info("Session found", session);
+    return {
+      user: {
+        userId: session.user?.userId,
+        email: session.user?.email,
+        role: session.user?.role,
+      },
+      isAuth: true,
+      expiresAt: session.expiresAt,
+    };
+  } catch (error) {
+    logger.error("Error retrieving session", error);
+    return null;
+  }
+});
+
+/**
  * Retrieves the authenticated user from the server session.
  * Returns null if user cannot be fetched or session is invalid.
  * @returns User object or null
  */
-export const getCurrentUser = cache(async () => {
+export const getUserVerifiedSession = cache(async () => {
   const {
     user: { userId },
   } = await verifySession();
@@ -65,5 +97,6 @@ export const getCurrentUser = cache(async () => {
     logger.warn("Invalid userId in session", { userId });
     return crudApiErrorResponse(error, "fetchUserById");
   }
+  logger.info("Fetching user by ID from session", { userId });
   return fetchUserById(userId);
 });

@@ -18,7 +18,7 @@ export function Header() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { session, isLoading, error } = useSession();
+  const { session, isLoading, error, invalidate } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,23 +65,41 @@ export function Header() {
             </nav>
             {/* Auth Buttons (show/hide by session) */}
             <div className="flex items-center gap-4">
-              {session ? (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                  <SignOutButton variant="destructive" />
-                </>
-              ) : (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href={SIGN_IN}>Login</Link>
-                  </Button>
-                  <Button size="sm" asChild>
-                    <Link href={SIGN_UP}>Register</Link>
-                  </Button>
-                </>
-              )}
+              {(() => {
+                if (isLoading) {
+                  return (
+                    <div className="flex items-center gap-4">
+                      <div className="h-8 w-20 bg-gray-300 animate-pulse rounded-md"></div>
+                      <div className="h-8 w-24 bg-gray-300 animate-pulse rounded-md"></div>
+                    </div>
+                  );
+                }
+
+                if (session && !error) {
+                  return (
+                    <>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href="/dashboard">Dashboard</Link>
+                      </Button>
+                      <SignOutButton
+                        variant="destructive"
+                        onSignOut={invalidate}
+                      />
+                    </>
+                  );
+                }
+
+                return (
+                  <>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={SIGN_IN}>Login</Link>
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link href={SIGN_UP}>Register</Link>
+                    </Button>
+                  </>
+                );
+              })()}
             </div>
           </div>
 

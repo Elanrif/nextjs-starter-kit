@@ -16,7 +16,7 @@ const {
       passwordChange: passwordChangeUrl,
       register: registerUrl,
       login: loginUrl,
-      signOut: signOutUrl,
+      signOut: _signOutUrl,
       session: sessionUrl,
     },
   },
@@ -49,10 +49,10 @@ export async function signUp(
 /**
  * Sign out the current user.
  */
-export async function signOut(): Promise<any | CrudApiError> {
+/* export async function signOut(): Promise<any | CrudApiError> {
   await frontendHttp().post<any, AxiosResponse<any>>(signOutUrl);
   return { message: "Signed out successfully" };
-}
+} */
 
 /**
  * Get the current user's session.

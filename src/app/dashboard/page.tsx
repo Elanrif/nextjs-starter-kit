@@ -1,4 +1,4 @@
-import { getCurrentUser, verifySession } from "@/lib/auth/session/dal.service";
+import { getUserVerifiedSession, verifySession } from "@/lib/auth/session/dal.service";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -19,9 +19,9 @@ export const metadata = {
  */
 export default async function DashboardPage() {
   const session = await verifySession();
-  const user = await getCurrentUser();
+  const auth = await getUserVerifiedSession();
 
-  if ("error" in user) {
+  if ("error" in auth) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
@@ -32,17 +32,17 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {user.firstName?.toUpperCase() ||
-              user.email?.toUpperCase() ||
+            {auth.firstName?.toUpperCase() ||
+              auth.email?.toUpperCase() ||
               "U"}
           </div>
 
           {/* User Info */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
-              Welcome back, {user.firstName || "User"}!
+              Welcome back, {auth.firstName || "User"}!
             </h2>
-            <p className="text-gray-600">{user.email}</p>
+            <p className="text-gray-600">{auth.email}</p>
           </div>
         </div>
       </div>
@@ -56,29 +56,29 @@ export default async function DashboardPage() {
         <div className="space-y-3">
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">User ID</span>
-            <span className="font-mono text-sm text-gray-900">{user.id}</span>
+            <span className="font-mono text-sm text-gray-900">{auth.id}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Email</span>
-            <span className="text-gray-900">{user.email}</span>
+            <span className="text-gray-900">{auth.email}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Name</span>
-            <span className="text-gray-900">{user.firstName || "Not set"}</span>
+            <span className="text-gray-900">{auth.firstName || "Not set"}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Email Verified</span>
             <span
               className={`px-2 py-1 rounded text-xs font-medium ${
-                user.emailVerified
+                auth.emailVerified
                   ? "bg-green-100 text-green-800"
                   : "bg-yellow-100 text-yellow-800"
               }`}
             >
-              {user.emailVerified ? "Verified" : "Not Verified"}
+              {auth.emailVerified ? "Verified" : "Not Verified"}
             </span>
           </div>
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
-import { signOut } from "@/lib/auth/auth.client.service";
+import { signOut } from "@/actions/logout";
 
 interface SignOutButtonProps {
   /** Text to display on the button */
@@ -14,6 +14,8 @@ interface SignOutButtonProps {
   className?: string;
   /** Variant style */
   variant?: "default" | "outline" | "ghost" | "destructive";
+  /** Callback after sign out */
+  onSignOut?: () => void;
 }
 
 /**
@@ -43,6 +45,7 @@ export function SignOutButton({
   redirectTo = ROUTES.HOME,
   className = "",
   variant = "default",
+  onSignOut,
 }: SignOutButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +55,7 @@ export function SignOutButton({
     setIsLoading(true);
     try {
       await signOut();
+      if (onSignOut) onSignOut();
       router.push(redirectTo);
       router.refresh();
     } catch (error) {
