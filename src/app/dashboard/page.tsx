@@ -1,4 +1,4 @@
-import { getUserVerifiedSession, verifySession } from "@/lib/auth/session/dal.service";
+import { getSession, getUserVerifiedSession } from "@/lib/auth/session/dal.service";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -18,7 +18,7 @@ export const metadata = {
  * check as an additional security layer.
  */
 export default async function DashboardPage() {
-  const session = await verifySession();
+  const session = await getSession();
   const auth = await getUserVerifiedSession();
 
   if ("error" in auth) {
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
           <div className="flex justify-between py-2">
             <span className="text-gray-600">Session Expires</span>
             <span className="text-gray-900">
-              {session.expiresAt
+              {session?.expiresAt
                 ? new Date(session.expiresAt).toLocaleString()
                 : "N/A"}
             </span>

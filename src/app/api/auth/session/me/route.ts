@@ -3,7 +3,7 @@ import { getLogger } from "@/config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { RequestLogger } from "@/config/loggers/request.logger";
 import { fetchUserById } from "@/lib/user/services/user.service";
-import { verifySession } from "@/lib/auth/session/dal.service";
+import { getSession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
 
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
   try {
-    const session = await verifySession();
+    const session = await getSession();
     const userId = session?.user?.userId;
 
     if (typeof userId !== "number") {

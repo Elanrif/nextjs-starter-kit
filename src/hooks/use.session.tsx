@@ -29,7 +29,7 @@ export const useSession = () => {
     {
       revalidateOnFocus: false,
       revalidateOnMount: true,
-      refreshInterval: 1000, // Rafraîchit toutes les 1 seconde
+      //refreshInterval: 1000, // Rafraîchit toutes les 1 seconde
       // shouldRetryOnError: false,
     },
   );

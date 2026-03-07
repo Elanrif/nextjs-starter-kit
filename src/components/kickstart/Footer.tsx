@@ -11,11 +11,11 @@ import {
 
 const footerSections = {
   product: [
-    { label: "Fonctionnalités", href: "#features" },
+    { label: "Features", href: "#features" },
     { label: "Documentation", href: "#docs" },
-    { label: "Démarrer", href: "#getting-started" },
+    { label: "Getting Started", href: "#getting-started" },
     {
-      label: "Exemples",
+      label: "Examples",
       href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit/tree/main/examples",
     },
   ],
@@ -39,24 +39,40 @@ const footerSections = {
   ],
   legal: [
     {
-      label: "Licence MIT",
+      label: "MIT License",
       href: "https://github.com/Elanrif/kickstart-nextjs-starter-kit/blob/main/LICENSE",
     },
-    { label: "Confidentialité", href: "/privacy" },
-    { label: "Conditions", href: "/terms" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
     { label: "Cookies", href: "/cookies" },
   ],
+};
+
+const sectionTitles: Record<string, string> = {
+  product: "Product",
+  resources: "Resources",
+  community: "Community",
+  legal: "Legal",
 };
 
 const { HOME } = ROUTES;
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white overflow-hidden">
+    <footer className="relative bg-slate-900 text-white overflow-hidden">
+      {/* Thin white top bar */}
+      <div className="absolute top-0 left-0 w-full h-0.5 bg-white/20" />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -66,19 +82,19 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href={HOME} className="flex items-center gap-3 mb-6 group">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full animate-pulse" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold text-blue-400">
                 Kickstart
               </span>
             </Link>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-md">
-              Le boilerplate Next.js ultime pour créer des applications web
-              modernes, performantes et scalables en quelques minutes.
+              The ultimate Next.js boilerplate for building modern, performant
+              and scalable web applications in minutes.
             </p>
 
             {/* Social Links */}
@@ -121,15 +137,7 @@ export function Footer() {
             {Object.entries(footerSections).map(([sectionKey, links]) => (
               <div key={sectionKey}>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">
-                  {sectionKey === "product"
-                    ? "Produit"
-                    : sectionKey === "resources"
-                      ? "Ressources"
-                      : sectionKey === "community"
-                        ? "Communauté"
-                        : sectionKey === "legal"
-                          ? "Légal"
-                          : sectionKey}
+                  {sectionTitles[sectionKey] ?? sectionKey}
                 </h3>
                 <ul className="space-y-4">
                   {links.map((link, index) => (
@@ -167,14 +175,14 @@ export function Footer() {
             {/* Copyright */}
             <div className="flex items-center gap-2 text-gray-400">
               <span>© {new Date().getFullYear()} Kickstart Next.js.</span>
-              <span>Créé avec</span>
+              <span>Built with</span>
               <Heart className="w-4 h-4 text-red-400 animate-pulse" />
-              <span>par des développeurs passionnés</span>
+              <span>by passionate developers</span>
             </div>
 
             {/* Tech Stack */}
             <div className="flex items-center gap-6 text-sm text-gray-400">
-              <span>Propulsé par</span>
+              <span>Powered by</span>
               <div className="flex items-center gap-4">
                 {[
                   { name: "Next.js", href: "https://nextjs.org" },
@@ -198,8 +206,7 @@ export function Footer() {
           {/* Bottom Message */}
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
             <p className="text-sm text-gray-500">
-              🚀 Commencez votre prochain projet avec le meilleur starter kit
-              Next.js
+              🚀 Start your next project with the best Next.js starter kit
             </p>
           </div>
         </div>

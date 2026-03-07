@@ -20,7 +20,7 @@ const {
   },
 } = proxyEnvironment;
 
-export async function verifySession(): Promise<Session | CrudApiError> {
+export async function getSession(): Promise<Session | CrudApiError> {
   const result = await frontendHttp().get<any, AxiosResponse<Session>>(
     sessionUrl,
   );

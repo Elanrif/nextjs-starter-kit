@@ -21,7 +21,7 @@ const logger = getLogger("server");
  * Redirects to sign-in if session is invalid or missing userId.
  * @returns Session object with authentication info
  */
-export const verifySession = cache(async (): Promise<Session> => {
+export const __verifySession = cache(async (): Promise<Session> => {
   const cookie = await cookies();
   const sess = cookie.get("session")?.value;
   const session = await decrypt(sess);
@@ -88,15 +88,15 @@ export const getSession = cache(async (): Promise<Session | null> => {
  * @returns User object or null
  */
 export const getUserVerifiedSession = cache(async () => {
-  const {
-    user: { userId },
-  } = await verifySession();
+  const session = await getSession();
 
-  if (typeof userId !== "number") {
+  if (!session?.user?.userId || typeof session.user.userId !== "number") {
     const error = new Error("Invalid userId in session");
-    logger.warn("Invalid userId in session", { userId });
+    logger.warn("Invalid userId in session", { userId: session?.user?.userId });
     return crudApiErrorResponse(error, "fetchUserById");
   }
-  logger.info("Fetching user by ID from session", { userId });
-  return fetchUserById(userId);
+  logger.info("Fetching user by ID from session", {
+    userId: session.user.userId,
+  });
+  return fetchUserById(session.user.userId);
 });

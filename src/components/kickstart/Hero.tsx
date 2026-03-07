@@ -8,7 +8,7 @@ export default function Hero() {
       {/* Animated Background */}
       <div className="absolute inset-0 z-0">
         {/* Gradient Background */}
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900" />
+        <div className="absolute inset-0 bg-linear-to-b from-slate-900 via-slate-800 to-slate-900" />
 
         {/* Animated Mesh Pattern */}
         <div className="absolute inset-0 opacity-30">
@@ -99,9 +99,9 @@ export default function Hero() {
 
           {/* Subtitle */}
           <p className="animate-fade-in-up animation-delay-200 mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-blue-100/90 mb-12">
-            Le boilerplate Next.js ultime pour démarrer vos projets rapidement.
-            Avec TypeScript, Tailwind CSS, shadcn/ui, authentification intégrée,
-            et toutes les meilleures pratiques pré-configurées.
+            Kickstart your Next.js project with a modern boilerplate featuring
+            basic authentication with JOE, dashboard, and more. Focus on
+            building your product, not the setup.
           </p>
 
           {/* Feature Pills */}

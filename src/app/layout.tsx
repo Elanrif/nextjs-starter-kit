@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ModalProvider } from "@components/providers/ModalProvider";
 import { ToastProvider } from "@components/ToastProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
       >
         <ModalProvider>
           <ToastProvider />
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </ModalProvider>
       </body>
     </html>

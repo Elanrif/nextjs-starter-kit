@@ -7,7 +7,7 @@ import {
   createCategory,
   fetchCategories,
 } from "@/lib/categories/services/category.service";
-import { verifySession } from "@/lib/auth/session/dal.service";
+import { getSession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
 
   // User authentication and role verification
-  const session = await verifySession();
+  const session = await getSession();
 
   // Check if the user is authenticated
   if (!session) {

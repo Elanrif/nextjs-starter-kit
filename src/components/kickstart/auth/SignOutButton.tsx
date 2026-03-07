@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
-import { signOut } from "@/actions/logout";
+import { signOut } from "@/lib/actions/logout";
 
 interface SignOutButtonProps {
   /** Text to display on the button */

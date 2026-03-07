@@ -15,7 +15,7 @@ export const metadata = {
 const { HOME, SIGN_UP } = ROUTES;
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-linear-to-b from-slate-50 via-blue-50 to-blue-100">
       {/* Left Side - Form */}
       <div className="flex-1 flex flex-col px-8 py-6 lg:px-16 lg:py-10">
         {/* Header */}

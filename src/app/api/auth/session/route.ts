@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
   try {
-    // Use getSession instead of verifySession to avoid redirects
+    // Use getSession instead of getSession to avoid redirects
     const session = await getSession();
     
     if (!session) {
