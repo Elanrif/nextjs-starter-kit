@@ -57,7 +57,9 @@ export const RegisterSchema = z
       .max(15, "Phone number must be at most 15 digits"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
+    confirmPassword: z
+      .string()
+      .min(6, "Confirm password must be at least 6 characters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

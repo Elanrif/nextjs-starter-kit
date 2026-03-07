@@ -6,19 +6,19 @@ import useSWR from "swr";
 
 const fetcher = async (url: string): Promise<Session | null> => {
   const res = await fetch(url, { credentials: "include" });
-  
+
   // 401 is expected when not authenticated - return null instead of throwing
   if (res.status === 401) {
     return null;
   }
-  
+
   if (!res.ok) {
     const errorData = await res
       .json()
       .catch(() => ({ message: "Failed to fetch session" }));
     throw crudApiErrorResponse(errorData, "fetchSession");
   }
-  
+
   return res.json();
 };
 

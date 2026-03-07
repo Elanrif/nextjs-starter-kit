@@ -25,7 +25,7 @@ export default function Sidebar() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [userError, setUserError] = useState<CrudApiError | null>(null);
-  
+
   useEffect(() => {
     setLoading(true);
     getUserVerifiedSession()
@@ -40,10 +40,10 @@ export default function Sidebar() {
       })
       .finally(() => setLoading(false));
 
-      return () => {
-        setUser(null);
-        setUserError(null);
-      }
+    return () => {
+      setUser(null);
+      setUserError(null);
+    };
   }, []);
 
   if (loading) {
@@ -61,7 +61,6 @@ export default function Sidebar() {
       </aside>
     );
   }
-
 
   return (
     <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex flex-col shadow-lg">

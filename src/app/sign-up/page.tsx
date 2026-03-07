@@ -42,9 +42,7 @@ export default function SignUpPage() {
           <div className="w-full max-w-7xl">
             <div className="mb-8">
               <h1 className="text-4xl font-bold mb-2">Sign Up</h1>
-              <p className="text-gray-50">
-                Create your account to get started
-              </p>
+              <p className="text-gray-50">Create your account to get started</p>
             </div>
 
             <SignUpForm />

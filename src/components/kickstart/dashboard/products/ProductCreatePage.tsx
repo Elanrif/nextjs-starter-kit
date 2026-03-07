@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import LoadingPage from "@/components/kickstart/loading-page";
 import { ROUTES } from "@/utils/routes";
-import { ProductFormData, productSchema } from "@/lib/products/models/product.model";
+import {
+  ProductFormData,
+  productSchema,
+} from "@/lib/products/models/product.model";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 

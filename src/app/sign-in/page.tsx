@@ -41,9 +41,7 @@ export default function SignInPage() {
         <div className="flex-1 flex items-center ps-20">
           <div className="w-full max-w-md">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold mb-2">
-                Welcome Back
-              </h1>
+              <h1 className="text-4xl font-bold mb-2">Welcome Back</h1>
               <p className="text-gray-50">
                 Sign in to continue to your account
               </p>

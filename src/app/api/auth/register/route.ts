@@ -10,7 +10,6 @@ const logger = getLogger("server");
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-
   const body = (await req.json()) as Registrer;
 
   // Validate required fields

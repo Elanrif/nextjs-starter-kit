@@ -13,12 +13,12 @@ export async function GET(request: NextRequest) {
   try {
     // Use getSession instead of getSession to avoid redirects
     const session = await getSession();
-    
+
     if (!session) {
       // Return 401 for unauthenticated requests instead of redirecting
       return NextResponse.json(
-        { message: "No active session", isAuth: false }, 
-        { status: 401 }
+        { message: "No active session", isAuth: false },
+        { status: 401 },
       );
     }
 

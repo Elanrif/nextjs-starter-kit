@@ -74,7 +74,11 @@ export async function signUp(
     );
     logger.info("[SIGNUP] User registered", { email: registration.email });
   } catch (error) {
-    const {message, status, error: errorType} = crudApiErrorResponse(error, "signUp");
+    const {
+      message,
+      status,
+      error: errorType,
+    } = crudApiErrorResponse(error, "signUp");
     throw new ApiError(message, status, errorType);
   }
 

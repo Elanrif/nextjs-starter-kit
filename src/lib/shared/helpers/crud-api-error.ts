@@ -41,7 +41,7 @@ export class ApiError extends Error {
   }
 }
 
-/* 
+/*
  * ApiError reponse format from the API SPRING BOOT
  * You can customize this based on your API response structure.
  */
@@ -68,7 +68,10 @@ export function crudApiErrorResponse(
       error: "Error",
       timestamp: new Date().toISOString(),
     };
-    logger.error(`Nodejs server [Axios Error] [${context ?? "unknown"}]:`, apiError);
+    logger.error(
+      `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
+      apiError,
+    );
     return apiError;
   }
 

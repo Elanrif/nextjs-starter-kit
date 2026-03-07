@@ -11,7 +11,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/utils/routes";
 import LoadingPage from "@/components/kickstart/loading-page";
-import { CategoryFormData, categorySchema } from "@/lib/categories/models/category.model";
+import {
+  CategoryFormData,
+  categorySchema,
+} from "@/lib/categories/models/category.model";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
@@ -66,7 +69,10 @@ export function CategoryEditPage({ id }: { id: string }) {
     if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
       for (const d of anyRes.message.details) {
         if (d.field)
-          setError(d.field as keyof CategoryFormData, { type: "server", message: d.message });
+          setError(d.field as keyof CategoryFormData, {
+            type: "server",
+            message: d.message,
+          });
       }
       toast.error("Erreur de validation côté serveur");
       return;

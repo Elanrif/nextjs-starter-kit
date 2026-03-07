@@ -32,9 +32,7 @@ export default function RootLayout({
       >
         <ModalProvider>
           <ToastProvider />
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </ModalProvider>
       </body>
     </html>

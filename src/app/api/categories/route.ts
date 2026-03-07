@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
 import {
   createCategory,
   fetchCategories,
@@ -74,7 +77,7 @@ export async function POST(request: NextRequest) {
     const status = 403;
     const message = "You do not have permission to perform this action";
     reqLogger.error("Forbidden", { status, message });
-    return new Response(null, { status : status });
+    return new Response(null, { status: status });
   }
 
   const body = (await request.json()) as CategoryCreate;

@@ -6,10 +6,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { signIn } from "@/lib/auth/auth.client.service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LoginFormData,
-  LoginSchema,
-} from "@/lib/auth/models/auth.model";
+import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 
 /**
  * Sign In Form Component

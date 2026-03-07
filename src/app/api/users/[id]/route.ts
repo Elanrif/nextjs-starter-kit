@@ -3,7 +3,10 @@ import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { fetchUserById, updateUser } from "@/lib/user/services/user.service";
 import { UserUpdate } from "@/lib/user/models/user.model";
-import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 

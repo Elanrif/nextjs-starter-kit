@@ -17,13 +17,16 @@ import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export default async function DashboardLayout({children}: {children: React.ReactNode}) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const auth = await getUserVerifiedSession();
 
   if ("error" in auth) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
-
 
   return (
     <SidebarProvider>
@@ -51,9 +54,7 @@ export default async function DashboardLayout({children}: {children: React.React
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

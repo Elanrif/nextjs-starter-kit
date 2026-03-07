@@ -69,12 +69,12 @@ export default async function DashboardPage() {
   // ✅ This works - server component can use server functions
   const cookieStore = await cookies();
   const session = cookieStore.get("session");
-  
+
   // ✅ Direct database access in server component
-  const user = await db.user.findUnique({ 
+  const user = await db.user.findUnique({
     where: { sessionToken: session?.value }
   });
-  
+
   return (
     <div>
       <h1>Welcome, {user?.name}!</h1>
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
 // This is also a Server Component (no "use client")
 async function UserStats({ userId }: { userId: number }) {
   const stats = await db.userStats.findUnique({ where: { userId } });
-  
+
   return (
     <div>
       <p>Posts: {stats?.totalPosts}</p>
@@ -125,50 +125,50 @@ import { db } from "@/lib/database";
 export async function getSessionData() {
   const cookieStore = await cookies();
   const headersList = await headers();
-  
+
   // Access cookies
   const session = cookieStore.get("session");
   const theme = cookieStore.get("theme");
-  
-  // Access headers  
+
+  // Access headers
   const userAgent = headersList.get("user-agent");
   const ip = headersList.get("x-forwarded-for") || headersList.get("x-real-ip");
-  
+
   if (!session) {
     return { isAuth: false, user: null, metadata: { userAgent, ip } };
   }
-  
+
   // Database operations (server-only)
-  const user = await db.user.findUnique({ 
+  const user = await db.user.findUnique({
     where: { sessionToken: session.value },
     include: { profile: true }
   });
-  
+
   if (!user) {
     return { isAuth: false, user: null, metadata: { userAgent, ip } };
   }
-  
-  return { 
-    isAuth: true, 
-    user: { 
-      id: user.id, 
+
+  return {
+    isAuth: true,
+    user: {
+      id: user.id,
       email: user.email,
-      profile: user.profile 
+      profile: user.profile
     },
     metadata: { userAgent, ip, theme: theme?.value },
-    session: session.value 
+    session: session.value
   };
 }
 
 export async function getUserPreferences(userId: number) {
   const headersList = await headers();
   const acceptLanguage = headersList.get("accept-language");
-  
+
   // Server-side database call
   const preferences = await db.userPreferences.findUnique({
     where: { userId }
   });
-  
+
   return {
     ...preferences,
     detectedLanguage: acceptLanguage?.split(",")[0] || "en"
@@ -223,23 +223,23 @@ export async function getSessionData() {
   // Same implementation as above...
   const cookieStore = await cookies();
   const headersList = await headers();
-  
+
   const session = cookieStore.get("session");
   const userAgent = headersList.get("user-agent");
-  
+
   if (!session) {
     return { isAuth: false, user: null, metadata: { userAgent } };
   }
-  
-  const user = await db.user.findUnique({ 
+
+  const user = await db.user.findUnique({
     where: { sessionToken: session.value }
   });
-  
-  return { 
-    isAuth: true, 
+
+  return {
+    isAuth: true,
     user: { id: user.id, email: user.email },
     metadata: { userAgent },
-    session: session.value 
+    session: session.value
   };
 }
 
@@ -291,18 +291,18 @@ import "server-only"; // Critical for security
 export async function trackUserAction(userId: number, action: string) {
   // This function contains sensitive logic that should never run on client
   const API_SECRET = process.env.ANALYTICS_SECRET_KEY; // ← Would be exposed without 'server-only'
-  
+
   await fetch("https://analytics.service.com/track", {
     method: "POST",
-    headers: { 
-      "Authorization": `Bearer ${API_SECRET}`,
-      "Content-Type": "application/json" 
+    headers: {
+      Authorization: `Bearer ${API_SECRET}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, action, timestamp: Date.now() })
+    body: JSON.stringify({ userId, action, timestamp: Date.now() }),
   });
 }
 
-// src/lib/server/email.service.ts  
+// src/lib/server/email.service.ts
 import "server-only";
 import { Resend } from "resend";
 
@@ -314,13 +314,14 @@ export async function sendWelcomeEmail(userEmail: string) {
     from: "noreply@yourapp.com",
     to: userEmail,
     subject: "Welcome!",
-    html: "<h1>Welcome to our app!</h1>"
+    html: "<h1>Welcome to our app!</h1>",
   });
 }
 ```
 
 **📋 Available Server-Only Functions:**
-- `cookies()` - Read/write HTTP cookies  
+
+- `cookies()` - Read/write HTTP cookies
 - `headers()` - Access request headers (User-Agent, IP, Accept-Language, etc.)
 - `redirect()` - Server-side redirects
 - `notFound()` - Return 404 pages

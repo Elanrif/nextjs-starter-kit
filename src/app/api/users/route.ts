@@ -2,7 +2,10 @@ import { fetchAllUser } from "@lib/user/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 

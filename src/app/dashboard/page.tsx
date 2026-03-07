@@ -1,4 +1,7 @@
-import { getSession, getUserVerifiedSession } from "@/lib/auth/session/dal.service";
+import {
+  getSession,
+  getUserVerifiedSession,
+} from "@/lib/auth/session/dal.service";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -32,9 +35,7 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {auth.firstName?.toUpperCase() ||
-              auth.email?.toUpperCase() ||
-              "U"}
+            {auth.firstName?.toUpperCase() || auth.email?.toUpperCase() || "U"}
           </div>
 
           {/* User Info */}

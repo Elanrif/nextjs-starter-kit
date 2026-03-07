@@ -62,7 +62,6 @@ export async function getClientSession(): Promise<User | CrudApiError> {
   return result.data;
 }
 
-
 /**
  * Change the password of an authenticated user.
  */
