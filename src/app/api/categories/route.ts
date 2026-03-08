@@ -21,7 +21,6 @@ export const dynamic = "force-dynamic";
  * Fetch all product categories
  */
 export async function GET(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
@@ -30,10 +29,6 @@ export async function GET(request: NextRequest) {
 
     if ("error" in categories) {
       const error = categories as CrudApiError;
-      reqLogger.error("Failed to fetch categories", {
-        status: error.status,
-        message: error.message,
-      });
       return NextResponse.json(
         { message: error.message },
         { status: error.status },

@@ -3,7 +3,6 @@ import { signUp } from "@/lib/auth/auth.service";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { createSession } from "@/lib/auth/session";
 
 const logger = getLogger("server");
 
@@ -27,21 +26,10 @@ export async function POST(req: NextRequest) {
     const res = await signUp(body, config);
 
     if ("error" in res) {
-      logger.warn("Registration failed", {
-        status: res.status,
-        message: res.message,
-      });
       const errMsg = crudApiErrorResponse(res, "signUp");
       return NextResponse.json(errMsg, { status: res.status });
     }
 
-    const userId = res.id?.toString();
-    logger.info("User registered successfully, creating session", {
-      userId,
-    });
-    await createSession(res.id, res.email, res.role);
-
-    logger.info("Registration completed", { userId });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");

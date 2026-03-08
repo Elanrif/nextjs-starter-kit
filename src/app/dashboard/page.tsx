@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const session = await getSession();
   const auth = await getUserVerifiedSession();
 
-  if ("error" in auth) {
+  if (!session || "error" in auth) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 

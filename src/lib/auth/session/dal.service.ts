@@ -6,7 +6,6 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { decrypt } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
 import { getLogger } from "@/config/logger.config";
 import { fetchUserById } from "@/lib/user/services/user.service";
 import { cache } from "react";
@@ -16,39 +15,6 @@ import { Session } from "@lib/auth/models/auth.model";
 /** Logger instance for session operations */
 const logger = getLogger("server");
 
-/**
- * Verifies the current session from cookies.
- * Redirects to sign-in if session is invalid or missing userId.
- * @returns Session object with authentication info
- */
-export const __verifySession = cache(async (): Promise<Session> => {
-  const cookie = await cookies();
-  const sess = cookie.get("session")?.value;
-  const session = await decrypt(sess);
-
-  /**
-   * This function enforces that a session exists.
-   * If the session is missing or invalid, it does not throw an error —
-   * instead, it immediately redirects the user to the sign-in page.
-   * Therefore, any code after calling this function is guaranteed to have a valid session.
-   * Think of it as "requireSession" rather than just "verifySession".
-   */
-  if (!session?.user?.userId) {
-    logger.warn("No active session found during session verification");
-    redirect("/sign-in?callbackUrl=/dashboard");
-  }
-
-  logger.info("Session verified", session);
-  return {
-    user: {
-      userId: session.user?.userId,
-      email: session.user?.email,
-      role: session.user?.role,
-    },
-    isAuth: true,
-    expiresAt: session.expiresAt,
-  };
-});
 
 /**
  * Retrieves the session from cookies without redirecting.
@@ -61,12 +27,11 @@ export const getSession = cache(async (): Promise<Session | null> => {
     const sess = cookie.get("session")?.value;
     const session = await decrypt(sess);
 
-    if (!session?.user?.userId) {
+    if (!session || !session.user?.userId) {
       logger.warn("No active session found during session check");
       return null;
     }
 
-    logger.info("Session found", session);
     return {
       user: {
         userId: session.user?.userId,
@@ -89,14 +54,12 @@ export const getSession = cache(async (): Promise<Session | null> => {
  */
 export const getUserVerifiedSession = cache(async () => {
   const session = await getSession();
+  // Distinguish between "no session" and "invalid session data" so we
+  // return an auth-related status (401) instead of a server 500.
+  if (session === null || !session.user?.userId) {
+    logger.warn("No active session during user verification");
+    return crudApiErrorResponse(new Error("No active session"), "session", { status: 401});
 
-  if (!session?.user?.userId || typeof session.user.userId !== "number") {
-    const error = new Error("Invalid userId in session");
-    logger.warn("Invalid userId in session", { userId: session?.user?.userId });
-    return crudApiErrorResponse(error, "fetchUserById");
   }
-  logger.info("Fetching user by ID from session", {
-    userId: session.user.userId,
-  });
-  return fetchUserById(session.user.userId);
+  return fetchUserById(session.user?.userId);
 });

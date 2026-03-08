@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/lib/auth/auth.client.service";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
+import { signUpAction } from "@/lib/actions/auth";
 
 /**
  * Password validation rules
@@ -74,7 +74,7 @@ export function SignUpForm() {
     setError(null);
 
     try {
-      const result = await signUp({
+      const result = await signUpAction({
         action: "SIGN_UP",
         firstName: data.firstName,
         lastName: data.lastName,
@@ -83,7 +83,7 @@ export function SignUpForm() {
         password: data.password,
       });
 
-      if ("error" in result && result.status !== 200) {
+      if ("error" in result) {
         setError(result.message || "Failed to create account");
         return;
       }

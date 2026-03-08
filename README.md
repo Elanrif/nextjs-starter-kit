@@ -1,3 +1,40 @@
+IMPORTANT: logger.error produces noisy Node console output
+
+> Note — if you use `logger.error(...)` in server code, it writes to
+> `console.error(...)` and will produce noisy logs visible in the Node console or your
+> hosting platform. Use `logger.error` sparingly for real server/internal errors (5xx).
+> For authentication or validation issues (401/400), prefer `logger.warn` or return an
+> error object with an appropriate HTTP status to avoid unwanted 500 responses.
+
+Example of the noisy console output you may see:
+
+```
+Console Error
+Server
+
+
+Nodejs server [HTTP Error] [session]
+src\config\loggers\default.logger.ts (37:19) @ Object.error
+
+
+  35 |       error: (message?: any, ...params: any[]) => {
+  36 |         if (getLogLevelInt(logConfig.level) <= getLogLevelInt("error")) {
+> 37 |           console.error(message, ...params);
+     |                   ^
+  38 |         }
+  39 |       },
+  40 |       warn: (message?: any, ...params: any[]) => {
+Call Stack
+13
+
+Show 9 ignore-listed frame(s)
+Object.error
+```
+
+This README continues below.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## NVM (Node Version Manager)

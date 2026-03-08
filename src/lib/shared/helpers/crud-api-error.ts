@@ -1,6 +1,11 @@
 import { getLogger } from "@/config/logger.config";
 import { AxiosError } from "axios";
 
+// NOTE: logger.error writes to console.error on the Node process. Using
+// logger.error for non-5xx conditions (auth/validation) will always produce
+// noisy server logs in the Node console / hosting platform. Use
+// logger.error prudently; prefer logger.warn for client/auth/validation
+// failures that shouldn't be treated as internal server errors.
 const logger = getLogger("server");
 
 /*
@@ -59,31 +64,47 @@ export type CrudApiError = {
 export function crudApiErrorResponse(
   error: unknown,
   context?: string,
+  override?: { status?: number; error?: string },
 ): CrudApiError {
   // Runtime check: is it really an Axios error?
   if (error instanceof AxiosError) {
     const apiError: CrudApiError = error.response?.data || {
-      status: error.response?.status || 500,
+      status: override?.status ?? error.response?.status ?? 500,
       message: error.message || "Unknown Axios error",
-      error: "Error",
+      error: override?.error ?? "Error",
       timestamp: new Date().toISOString(),
     };
-    logger.error(
-      `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
-      apiError,
-    );
+    // Log as warn for non-5xx statuses to avoid noisy server errors
+    if ((apiError.status ?? 500) >= 500) {
+      logger.error(
+        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
+        apiError,
+      );
+    } else {
+      logger.warn(
+        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
+        apiError,
+      );
+    }
     return apiError;
   }
 
   const fallbackError: CrudApiError = {
-    status: 500,
+    status: override?.status ?? 500,
     message: (error as Error)?.message || "Unknown error",
-    error: "Internal Error",
+    error: override?.error ?? "Internal Error",
     timestamp: new Date().toISOString(),
   };
-  logger.error(
-    `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
-    fallbackError,
-  );
+  if (fallbackError.status >= 500) {
+    logger.error(
+      `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
+      fallbackError,
+    );
+  } else {
+    logger.warn(
+      `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
+      fallbackError,
+    );
+  }
   return fallbackError;
 }

@@ -13,34 +13,27 @@ export async function GET(request: NextRequest) {
   const reqLogger = new RequestLogger(logger, request);
   try {
     const session = await getSession();
-    const userId = session?.user?.userId;
+
+    if (!session) {
+      return NextResponse.json(
+        { message: "No active session", isAuth: false },
+        { status: 401 },
+      );
+    }
+    const userId = session.user?.userId;
 
     if (typeof userId !== "number") {
       const error = new Error("Invalid userId in session");
-      logger.warn("Invalid userId in session", { userId });
       const errMsg = crudApiErrorResponse(error, "session");
       const status = errMsg.status || 500;
-      reqLogger.error("Error during session verification", {
-        status,
-        message: errMsg.message,
-      });
       return NextResponse.json(errMsg, { status });
     }
 
     const user = await fetchUserById(userId);
     if ("error" in user) {
-      logger.warn("Failed to fetch user by ID", {
-        status: user.status,
-        message: user.message,
-      });
       const error = new Error("Invalid userId in session");
-      logger.warn("Invalid userId in session", { userId });
       const errMsg = crudApiErrorResponse(error, "session");
       const status = errMsg.status || 500;
-      reqLogger.error("Error during session verification", {
-        status,
-        message: errMsg.message,
-      });
       return NextResponse.json(errMsg, { status });
     }
     return NextResponse.json(user, { status: 200 });

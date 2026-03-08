@@ -27,7 +27,7 @@ export async function encrypt(payload: SessionPayload) {
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(encodedKey);
-  logger.info("Session encrypted successfully:", `${token}`);
+    console.warn("token:", token);
   return token;
 }
 
@@ -45,7 +45,6 @@ export async function decrypt(
     const { payload } = (await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     })) as { payload: SessionPayload };
-    logger.info("Session decrypted successfully", payload);
     return payload;
   } catch (error) {
     logger.error("Failed to decrypt session:", error);
@@ -74,7 +73,6 @@ export async function createSession(
     sameSite: "lax",
     path: "/",
   });
-  logger.info("Session created for user", email);
 }
 
 /**
@@ -100,7 +98,6 @@ export async function updateSession() {
     sameSite: "lax",
     path: "/",
   });
-  logger.info("Session updated for user", payload.user?.email);
 }
 
 /**
@@ -109,5 +106,4 @@ export async function updateSession() {
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
-  logger.info("Session deleted");
 }

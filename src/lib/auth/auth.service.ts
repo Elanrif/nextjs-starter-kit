@@ -9,6 +9,7 @@ import {
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import { Login, Registrer } from "./models/auth.model";
+import { createSession } from "./session";
 
 const {
   api: {
@@ -38,12 +39,12 @@ export async function signIn(
   config?: Config,
 ): Promise<User | CrudApiError> {
   try {
-    const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
+    const {data} = await apiClient(true, config).post<any, AxiosResponse<User>>(
       loginUrl,
       login,
     );
-    logger.info("[SIGNIN] User signed in", res.data);
-    return res.data;
+    await createSession(data.id, data.email, data.role);
+    return data;
   } catch (error) {
     return crudApiErrorResponse(error, "signIn");
   }
@@ -72,7 +73,6 @@ export async function signUp(
       registerUrl,
       registration,
     );
-    logger.info("[SIGNUP] User registered", { email: registration.email });
   } catch (error) {
     const {
       message,
@@ -84,14 +84,11 @@ export async function signUp(
 
   const maybeUser = await signIn(registration, config);
   if ("error" in maybeUser) {
-    logger.error("[SIGNUP] Error after registration during sign in", {
+    logger.error("Error after registration during sign in", {
       message: maybeUser.message,
     });
     throw new Error(maybeUser.message);
   }
-  logger.info("[SIGNUP] User signed in after registration", {
-    email: registration.email,
-  });
   return maybeUser;
 }
 
@@ -109,7 +106,7 @@ export async function changeUserPassword(
     const url = `/${userId}`;
     const result = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(url, body);
-    logger.info("[CHANGE_PASSWORD] Password changed successfully", { userId });
+    logger.info("changeUserPassword", { userId });
     return result.data;
   } catch (error) {
     return crudApiErrorResponse(error, "changeUserPassword");
