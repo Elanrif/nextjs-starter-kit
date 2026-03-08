@@ -9,10 +9,7 @@ import {
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
@@ -44,21 +41,18 @@ export async function GET(request: NextRequest) {
 
   try {
     //const products = await fetchProducts(config, filters);
-    const products = await fetchProducts(config, filters);
+    const response = await fetchProducts(config, filters);
 
-    if ("error" in products) {
-      const error = products as CrudApiError;
+    if (!response.ok) {
+      const error = response.error!;
       reqLogger.error("Failed to fetch products", {
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    return NextResponse.json(products, { status: 200 });
+    return NextResponse.json({ ok: true, data: response.data }, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProducts");
     const status = errMsg.status || 500;
@@ -66,7 +60,7 @@ export async function GET(request: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error }, { status });
   }
 }
 
@@ -80,54 +74,45 @@ export async function POST(request: NextRequest) {
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
-  if (!session) {
-    // User is not authenticated
+  if (!session.ok) {
     const status = 401;
     const message = "You must be logged in";
     reqLogger.error("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
-  // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
+  if (session.data?.user?.role !== "ADMIN") {
     const status = 403;
     const message = "You do not have permission to perform this action";
     reqLogger.error("Forbidden", { status, message });
-    return new Response(null, { status: status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
   const body = (await request.json()) as ProductCreate;
 
-  // Validate required fields
   if (!body?.name || body?.price === undefined) {
     const status = 400;
     const message = "Fields `name` and `price` are required";
     reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const product = await createProduct(config, body);
+    const response = await createProduct(config, body);
 
-    if ("error" in product) {
-      const error = product as CrudApiError;
+    if (!response.ok) {
+      const error = response.error;
       reqLogger.error("Failed to create product", {
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    reqLogger.info("Product created", { productId: product.id });
-    return NextResponse.json(product, { status: 201 });
+    return NextResponse.json({ ok: true, data: response.data }, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createProduct");
     const status = errMsg.status || 500;
@@ -135,6 +120,6 @@ export async function POST(request: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

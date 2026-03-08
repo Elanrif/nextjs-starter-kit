@@ -2,7 +2,10 @@
  * DAL (Data Access Layer) for session management.
  * Provides server-side session verification and retrieval utilities.
  */
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  Result,
+} from "@/lib/shared/helpers/crud-api-error";
 import { Session } from "@lib/auth/models/auth.model";
 import { proxyEnvironment } from "@/config/proxy-api.config";
 import { AxiosResponse } from "axios";
@@ -20,14 +23,22 @@ const {
   },
 } = proxyEnvironment;
 
-export async function getSession(): Promise<Session | CrudApiError> {
-  const result = await frontendHttp().get<any, AxiosResponse<Session>>(
-    sessionUrl,
-  );
-  return result.data;
+export async function getSession(): Promise<Result<Session, CrudApiError>> {
+  const response = await frontendHttp().get<
+    any,
+    AxiosResponse<Result<Session, CrudApiError>>
+  >(sessionUrl);
+  // data is the type of AxiosResponse's data
+  return response.data;
 }
 
-export async function getUserVerifiedSession(): Promise<User | CrudApiError> {
-  const result = await frontendHttp().get<any, AxiosResponse<User>>(meUrl);
-  return result.data;
+export async function getUserVerifiedSession(): Promise<
+  Result<User, CrudApiError>
+> {
+  const response = await frontendHttp().get<
+    any,
+    AxiosResponse<Result<User, CrudApiError>>
+  >(meUrl);
+  // data is the type of AxiosResponse's data
+  return response.data;
 }

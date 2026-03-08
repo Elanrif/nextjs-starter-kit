@@ -34,7 +34,7 @@ export async function GET(
   if (Number.isNaN(categoryId)) {
     const status = 400;
     const message = "Invalid category ID";
-    reqLogger.error("Bad Request", { status, message });
+    reqLogger.warn("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -46,7 +46,7 @@ export async function GET(
     // User is not authenticated
     const status = 401;
     const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
+    reqLogger.warn("Unauthorized", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -55,7 +55,7 @@ export async function GET(
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
+    reqLogger.warn("Forbidden", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -63,11 +63,11 @@ export async function GET(
   const config = { headers: reqHeaders };
 
   try {
-    const category = await fetchCategory(config, categoryId);
+    const response = await fetchCategory(config, categoryId);
 
-    if ("error" in category) {
-      const error = category as CrudApiError;
-      reqLogger.error("Category not found", {
+    if ("error" in response) {
+      const error = response;
+      reqLogger.warn("Category not found", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -78,11 +78,11 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(category, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category fetching", {
+    logger.warn("Error during category fetching", {
       status,
       message: errMsg.message,
     });
@@ -105,7 +105,7 @@ export async function PATCH(
   if (Number.isNaN(categoryId)) {
     const status = 400;
     const message = "Invalid category ID";
-    reqLogger.error("Bad Request", { status, message });
+    reqLogger.warn("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -117,7 +117,7 @@ export async function PATCH(
     // User is not authenticated
     const status = 401;
     const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
+    reqLogger.warn("Unauthorized", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -126,7 +126,7 @@ export async function PATCH(
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
+    reqLogger.warn("Forbidden", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -135,7 +135,7 @@ export async function PATCH(
   if (Object.keys(body).length === 0) {
     const status = 400;
     const message = "Request body cannot be empty";
-    reqLogger.error("Bad Request", { status, message });
+    reqLogger.warn("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -143,10 +143,10 @@ export async function PATCH(
   const config = { headers: reqHeaders };
 
   try {
-    const category = await updateCategory(config, categoryId, body);
-    if ("error" in category) {
-      const error = category as CrudApiError;
-      reqLogger.error("Failed to update category", {
+    const response = await updateCategory(config, categoryId, body);
+    if ("error" in response) {
+      const error = response;
+      reqLogger.warn("Failed to update category", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -160,11 +160,11 @@ export async function PATCH(
     reqLogger.info("Category updated", {
       categoryId,
     });
-    return NextResponse.json(category, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category update", {
+    logger.warn("Error during category update", {
       status,
       message: errMsg.message,
     });
@@ -187,7 +187,7 @@ export async function DELETE(
   if (Number.isNaN(categoryId)) {
     const status = 400;
     const message = "Invalid category ID";
-    reqLogger.error("Bad Request", { status, message });
+    reqLogger.warn("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -199,7 +199,7 @@ export async function DELETE(
     // User is not authenticated
     const status = 401;
     const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
+    reqLogger.warn("Unauthorized", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -208,7 +208,7 @@ export async function DELETE(
     // User is authenticated but does not have the right permissions
     const status = 403;
     const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
+    reqLogger.warn("Forbidden", { status, message });
     return new Response(null, { status: status });
   }
 
@@ -220,7 +220,7 @@ export async function DELETE(
 
     if ("error" in result) {
       const error = result as CrudApiError;
-      reqLogger.error("Failed to delete category", {
+      reqLogger.warn("Failed to delete category", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -241,7 +241,7 @@ export async function DELETE(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category deletion", {
+    logger.warn("Error during category deletion", {
       status,
       message: errMsg.message,
     });

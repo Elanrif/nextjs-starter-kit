@@ -48,6 +48,7 @@ export async function decrypt(
     return payload;
   } catch (error) {
     logger.error("Failed to decrypt session:", error);
+    return undefined;
   }
 }
 

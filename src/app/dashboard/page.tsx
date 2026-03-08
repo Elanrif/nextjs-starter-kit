@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const session = await getSession();
   const auth = await getUserVerifiedSession();
 
-  if (!session || "error" in auth) {
+  if (!session.ok || !auth.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
@@ -35,15 +35,15 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {auth.firstName?.toUpperCase() || auth.email?.toUpperCase() || "U"}
+            {auth.data.firstName?.toUpperCase() || auth.data.email?.toUpperCase() || "U"}
           </div>
 
           {/* User Info */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
-              Welcome back, {auth.firstName || "User"}!
+              Welcome back, {auth.data.firstName || "User"}!
             </h2>
-            <p className="text-gray-600">{auth.email}</p>
+            <p className="text-gray-600">{auth.data.email}</p>
           </div>
         </div>
       </div>
@@ -57,37 +57,37 @@ export default async function DashboardPage() {
         <div className="space-y-3">
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">User ID</span>
-            <span className="font-mono text-sm text-gray-900">{auth.id}</span>
+            <span className="font-mono text-sm text-gray-900">{auth.data.id}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Email</span>
-            <span className="text-gray-900">{auth.email}</span>
+            <span className="text-gray-900">{auth.data.email}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Name</span>
-            <span className="text-gray-900">{auth.firstName || "Not set"}</span>
+            <span className="text-gray-900">{auth.data.firstName || "Not set"}</span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Email Verified</span>
             <span
               className={`px-2 py-1 rounded text-xs font-medium ${
-                auth.emailVerified
+                auth.data.emailVerified
                   ? "bg-green-100 text-green-800"
                   : "bg-yellow-100 text-yellow-800"
               }`}
             >
-              {auth.emailVerified ? "Verified" : "Not Verified"}
+              {auth.data.emailVerified ? "Verified" : "Not Verified"}
             </span>
           </div>
 
           <div className="flex justify-between py-2">
             <span className="text-gray-600">Session Expires</span>
             <span className="text-gray-900">
-              {session?.expiresAt
-                ? new Date(session.expiresAt).toLocaleString()
+              {session.data?.expiresAt
+                ? new Date(session.data?.expiresAt).toLocaleString()
                 : "N/A"}
             </span>
           </div>

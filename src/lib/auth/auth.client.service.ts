@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { CrudApiError } from "@lib/shared/helpers/crud-api-error";
+import { CrudApiError, Result } from "@lib/shared/helpers/crud-api-error";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { Login, Registrer } from "./models/auth.model";
@@ -25,11 +25,14 @@ const {
 /**
  * Sign in a user with email and password.
  */
-export async function signIn(login: Login): Promise<any | CrudApiError> {
-  const result = await frontendHttp().post<any, AxiosResponse<any>>(
-    loginUrl,
-    login,
-  );
+export async function signIn(
+  login: Login,
+): Promise<Result<User, CrudApiError>> {
+  const result = await frontendHttp().post<
+    any,
+    AxiosResponse<Result<User, CrudApiError>>
+  >(loginUrl, login);
+  // data is the type of AxiosResponse's data
   return result.data;
 }
 
@@ -38,27 +41,24 @@ export async function signIn(login: Login): Promise<any | CrudApiError> {
  */
 export async function signUp(
   registration: Registrer,
-): Promise<any | CrudApiError> {
-  const res = await frontendHttp().post<any, AxiosResponse<any>>(
-    registerUrl,
-    registration,
-  );
+): Promise<Result<User, CrudApiError>> {
+  const res = await frontendHttp().post<
+    any,
+    AxiosResponse<Result<User, CrudApiError>>
+  >(registerUrl, registration);
+  // data is the type of AxiosResponse's data
   return res.data;
 }
 
 /**
- * Sign out the current user.
- */
-/* export async function signOut(): Promise<any | CrudApiError> {
-  await frontendHttp().post<any, AxiosResponse<any>>(signOutUrl);
-  return { message: "Signed out successfully" };
-} */
-
-/**
  * Get the current user's session.
  */
-export async function getClientSession(): Promise<User | CrudApiError> {
-  const result = await frontendHttp().get<any, AxiosResponse<User>>(sessionUrl);
+export async function getClientSession(): Promise<Result<User, CrudApiError>> {
+  const result = await frontendHttp().get<
+    any,
+    AxiosResponse<Result<User, CrudApiError>>
+  >(sessionUrl);
+  // data is the type of AxiosResponse's data
   return result.data;
 }
 
@@ -73,11 +73,12 @@ export async function changeUserPassword({
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
-}): Promise<any | CrudApiError> {
+}): Promise<Result<User, CrudApiError>> {
   const body = { oldPassword, newPassword, confirmPassword };
-  const result = await frontendHttp().patch<any, AxiosResponse<any>>(
-    passwordChangeUrl,
-    body,
-  );
+  const result = await frontendHttp().patch<
+    any,
+    AxiosResponse<Result<User, CrudApiError>>
+  >(passwordChangeUrl, body);
+  // data is the type of AxiosResponse's data
   return result.data;
 }

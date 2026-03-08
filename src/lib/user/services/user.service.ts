@@ -7,6 +7,7 @@ import { getLogger } from "@config/logger.config";
 import {
   CrudApiError,
   crudApiErrorResponse,
+  Result,
 } from "@/lib/shared/helpers/crud-api-error";
 
 const {
@@ -20,27 +21,32 @@ const logger = getLogger("server");
 
 export async function fetchAllUser(
   config: Config,
-): Promise<User[] | CrudApiError> {
+): Promise<Result<User[], CrudApiError>> {
   try {
     const res = await apiClient(true, config) //
       .get<any, AxiosResponse<User[]>>(usersUrl);
     logger.info("Fetched users", { count: res.data.length });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "fetchAllUser");
+    logger.error("Error fetching users", error);
+    return { ok: false, error: crudApiErrorResponse(error, "fetchAllUser") };
   }
 }
 
 export async function fetchUserById(
   id: number,
   config?: Config,
-): Promise<User | CrudApiError> {
+): Promise<Result<User, CrudApiError>> {
   try {
     const res = await apiClient(true, config) //
       .get<any, AxiosResponse<User>>(`${usersUrl}/${id}`);
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "fetchUserById");
+    logger.error(`Error fetching user with ID ${id}`, {
+      status: error instanceof Error ? (error as any).status || 500 : 500,
+      message: error instanceof Error ? error.message : "Unknown error",
+    }); 
+    return { ok: false, error: crudApiErrorResponse(error, "fetchUserById") };
   }
 }
 
@@ -48,12 +54,17 @@ export async function updateUser(
   config: Config,
   id: number,
   user: UpdateUser,
-): Promise<User | CrudApiError> {
+): Promise<Result<User, CrudApiError>> {
   try {
     const res = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(`${usersUrl}/${id}`, user);
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "updateUser");
+    const errMsg = crudApiErrorResponse(error, "updateUser");
+    logger.error("Error updating user", {
+      status: errMsg.status,
+      message: errMsg.message,
+    });
+    return { ok: false, error: crudApiErrorResponse(error, "updateUser") };
   }
 }

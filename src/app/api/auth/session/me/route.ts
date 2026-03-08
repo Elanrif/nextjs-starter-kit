@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { ApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { RequestLogger } from "@/config/loggers/request.logger";
 import { fetchUserById } from "@/lib/user/services/user.service";
 import { getSession } from "@/lib/auth/session/dal.service";
@@ -14,29 +14,33 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
 
-    if (!session) {
+    if (!session.ok) {
+      const err = new ApiError("No active session", 401);
       return NextResponse.json(
-        { message: "No active session", isAuth: false },
+        {
+          ok: false,
+          error: crudApiErrorResponse(err, "session"),
+        },
         { status: 401 },
       );
     }
-    const userId = session.user?.userId;
+    const userId = session.data?.user?.userId;
 
     if (typeof userId !== "number") {
       const error = new Error("Invalid userId in session");
       const errMsg = crudApiErrorResponse(error, "session");
       const status = errMsg.status || 500;
-      return NextResponse.json(errMsg, { status });
+      return NextResponse.json({ ok: false, error: errMsg }, { status });
     }
 
-    const user = await fetchUserById(userId);
-    if ("error" in user) {
-      const error = new Error("Invalid userId in session");
+    const response = await fetchUserById(userId);
+    if (!response.ok) {
+      const error = response.error || new ApiError("Failed to fetch user", 500);
       const errMsg = crudApiErrorResponse(error, "session");
-      const status = errMsg.status || 500;
-      return NextResponse.json(errMsg, { status });
+      const status = response.error?.status || 500;
+      return NextResponse.json({ ok: false, error: errMsg }, { status });
     }
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json({ ok: true, data: response }, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "session");
     const status = errMsg.status || 500;
@@ -44,6 +48,6 @@ export async function GET(request: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

@@ -6,6 +6,7 @@ import {
   ApiError,
   CrudApiError,
   crudApiErrorResponse,
+  Result,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import { Login, Registrer } from "./models/auth.model";
@@ -37,16 +38,18 @@ const logger = getLogger("server");
 export async function signIn(
   login: Login,
   config?: Config,
-): Promise<User | CrudApiError> {
+): Promise<Result<User, CrudApiError>> {
   try {
     const {data} = await apiClient(true, config).post<any, AxiosResponse<User>>(
       loginUrl,
       login,
     );
     await createSession(data.id, data.email, data.role);
-    return data;
+    return { ok: true, data };
   } catch (error) {
-    return crudApiErrorResponse(error, "signIn");
+    logger.warn("Error during sign in", { error });
+    return { ok: false, error: crudApiErrorResponse(error, "signIn") };
+    
   }
 }
 
@@ -67,7 +70,7 @@ export async function signIn(
 export async function signUp(
   registration: Registrer,
   config?: Config,
-): Promise<User | CrudApiError> {
+): Promise<Result<User, CrudApiError>> {
   try {
     await apiClient(true, config).post<any, AxiosResponse<any>>(
       registerUrl,
@@ -83,11 +86,11 @@ export async function signUp(
   }
 
   const maybeUser = await signIn(registration, config);
-  if ("error" in maybeUser) {
+  if (!maybeUser.ok) {
     logger.error("Error after registration during sign in", {
-      message: maybeUser.message,
+      message: maybeUser.error.message,
     });
-    throw new Error(maybeUser.message);
+    throw new Error(maybeUser.error.message);
   }
   return maybeUser;
 }
@@ -97,7 +100,7 @@ export async function changeUserPassword(
   userId: number,
   oldPassword: string,
   newPassword: string,
-): Promise<User | CrudApiError> {
+): Promise<Result<User, CrudApiError>> {
   try {
     const body = {
       old_password: oldPassword,
@@ -107,8 +110,9 @@ export async function changeUserPassword(
     const result = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(url, body);
     logger.info("changeUserPassword", { userId });
-    return result.data;
+    return { ok: true, data: result.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "changeUserPassword");
+    logger.error("Error during changeUserPassword", { userId, error });
+    return { ok: false, error: crudApiErrorResponse(error, "changeUserPassword") };
   }
 }

@@ -25,17 +25,17 @@ export async function GET(request: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const categories = await fetchCategories(config);
+    const response = await fetchCategories(config);
 
-    if ("error" in categories) {
-      const error = categories as CrudApiError;
+    if ("error" in response) {
+      const error = response as CrudApiError;
       return NextResponse.json(
         { message: error.message },
         { status: error.status },
       );
     }
 
-    return NextResponse.json(categories, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategories");
     const status = errMsg.status || 500;

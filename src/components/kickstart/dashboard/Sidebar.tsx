@@ -30,12 +30,12 @@ export default function Sidebar() {
     setLoading(true);
     getUserVerifiedSession()
       .then((res) => {
-        if ("error" in res) {
-          setUserError(res as CrudApiError);
-          setUser(null);
-        } else {
-          setUser(res);
+        if (res.ok) {
           setUserError(null);
+          setUser(res.data);
+        } else {
+          setUserError(res.error);
+          setUser(null);
         }
       })
       .finally(() => setLoading(false));

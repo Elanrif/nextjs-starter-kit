@@ -5,6 +5,7 @@ import { getLogger } from "@config/logger.config";
 import {
   CrudApiError,
   crudApiErrorResponse,
+  Result,
 } from "@/lib/shared/helpers/crud-api-error";
 import {
   Product,
@@ -46,7 +47,7 @@ const logger = getLogger("server");
 export async function fetchProducts(
   config: Config,
   filters?: ProductFiltersParams,
-): Promise<PageProduct<Product[]> | CrudApiError> {
+): Promise<Result<PageProduct<Product[]>, CrudApiError>> {
   try {
     const params = new URLSearchParams();
 
@@ -63,9 +64,9 @@ export async function fetchProducts(
       unknown,
       AxiosResponse<PageProduct<Product[]>>
     >(url);
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "fetchProducts");
+    return { ok: false, error: crudApiErrorResponse(error, "fetchProducts") };
   }
 }
 
@@ -75,15 +76,15 @@ export async function fetchProducts(
 export async function fetchProduct(
   config: Config,
   id: number,
-): Promise<Product | CrudApiError> {
+): Promise<Result<Product, CrudApiError>> {
   try {
     const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Product>
     >(`${PRODUCTS_URL}/${id}`);
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "fetchProduct");
+    return { ok: false, error: crudApiErrorResponse(error, "fetchProduct") };
   }
 }
 
@@ -93,16 +94,16 @@ export async function fetchProduct(
 export async function createProduct(
   config: Config,
   product: ProductCreate,
-): Promise<Product | CrudApiError> {
+): Promise<Result<Product, CrudApiError>> {
   try {
     const res = await apiClient(true, config).post<
       unknown,
       AxiosResponse<Product>
     >(PRODUCTS_URL, product);
     logger.info("Product created", { id: res.data.id, name: res.data.name });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "createProduct");
+    return { ok: false, error: crudApiErrorResponse(error, "createProduct") };
   }
 }
 
@@ -113,16 +114,16 @@ export async function updateProduct(
   config: Config,
   id: number,
   product: ProductUpdate,
-): Promise<Product | CrudApiError> {
+): Promise<Result<Product, CrudApiError>> {
   try {
     const res = await apiClient(true, config).patch<
       unknown,
       AxiosResponse<Product>
     >(`${PRODUCTS_URL}/${id}`, product);
     logger.info("Product updated", { id, name: res.data.name });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
-    return crudApiErrorResponse(error, "updateProduct");
+    return { ok: false, error: crudApiErrorResponse(error, "updateProduct") };
   }
 }
 
@@ -132,12 +133,12 @@ export async function updateProduct(
 export async function deleteProduct(
   config: Config,
   id: number,
-): Promise<{ success: boolean } | CrudApiError> {
+): Promise<Result<{ success: boolean }, CrudApiError>> {
   try {
     await apiClient(true, config).delete(`${PRODUCTS_URL}/${id}`);
     logger.info("Product deleted", { id });
-    return { success: true };
+    return { ok: true, data: { success: true } };
   } catch (error) {
-    return crudApiErrorResponse(error, "deleteProduct");
+    return { ok: false, error: crudApiErrorResponse(error, "deleteProduct") };
   }
 }

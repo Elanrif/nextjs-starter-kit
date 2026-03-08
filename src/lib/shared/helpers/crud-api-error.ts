@@ -64,14 +64,13 @@ export type CrudApiError = {
 export function crudApiErrorResponse(
   error: unknown,
   context?: string,
-  override?: { status?: number; error?: string },
 ): CrudApiError {
   // Runtime check: is it really an Axios error?
   if (error instanceof AxiosError) {
     const apiError: CrudApiError = error.response?.data || {
-      status: override?.status ?? error.response?.status ?? 500,
+      status: error.response?.status ?? 500,
       message: error.message || "Unknown Axios error",
-      error: override?.error ?? "Error",
+      error: "Error",
       timestamp: new Date().toISOString(),
     };
     // Log as warn for non-5xx statuses to avoid noisy server errors
@@ -90,21 +89,17 @@ export function crudApiErrorResponse(
   }
 
   const fallbackError: CrudApiError = {
-    status: override?.status ?? 500,
+    status: 500,
     message: (error as Error)?.message || "Unknown error",
-    error: override?.error ?? "Internal Error",
+    error: "Internal Error",
     timestamp: new Date().toISOString(),
   };
-  if (fallbackError.status >= 500) {
-    logger.error(
-      `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
-      fallbackError,
-    );
-  } else {
-    logger.warn(
-      `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
-      fallbackError,
-    );
-  }
+  logger.warn(
+    `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
+    fallbackError,
+  );
   return fallbackError;
 }
+
+// Generic Result type for API responses, can be used to represent success or error outcomes
+export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };

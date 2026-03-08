@@ -153,12 +153,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const fetchAuthData = async () => {
       try {
         // Only fetch user if session is valid
-        const authData = await getUserVerifiedSession();
+        const response = await getUserVerifiedSession();
 
-        if ("error" in authData) {
+        if (!response.ok) {
           redirect("/sign-in?callbackUrl=/dashboard");
         }
-        setAuth(authData);
+        setAuth(response.data);
       } catch (error) {
         console.error("Auth error:", error);
         redirect("/sign-in?callbackUrl=/dashboard");

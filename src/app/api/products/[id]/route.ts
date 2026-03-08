@@ -8,7 +8,6 @@ import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import {
-  CrudApiError,
   crudApiErrorResponse,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/session/dal.service";
@@ -42,22 +41,21 @@ export async function GET(
   const config = { headers: reqHeaders };
 
   try {
-    const product = await fetchProduct(config, productId);
+    const response = await fetchProduct(config, productId);
 
-    if ("error" in product) {
-      const error = product as CrudApiError;
-      reqLogger.error("Product not found", {
-        productId,
+    if (!response.ok) {
+      const error = response.error!;
+      reqLogger.error("Failed to fetch products", {
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    return NextResponse.json(product, { status: 200 });
+    return NextResponse.json(
+      { ok: true, data: response.data },
+      { status: 200 },
+    );
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProduct");
     const status = errMsg.status || 500;
@@ -65,7 +63,7 @@ export async function GET(
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
 
@@ -122,23 +120,20 @@ export async function PATCH(
   const config = { headers: reqHeaders };
 
   try {
-    const product = await updateProduct(config, productId, body);
+    const response = await updateProduct(config, productId, body);
 
-    if ("error" in product) {
-      const error = product as CrudApiError;
+    if (!response.ok) {
+      const error = response.error;
       reqLogger.error("Failed to update product", {
         productId,
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
     reqLogger.info("Product updated", { productId });
-    return NextResponse.json(product, { status: 200 });
+    return NextResponse.json({ ok: true, data: response }, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateProduct");
     const status = errMsg.status || 500;
@@ -146,7 +141,7 @@ export async function PATCH(
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
 
@@ -166,7 +161,7 @@ export async function DELETE(
     const status = 400;
     const message = "Invalid product ID";
     reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
+    return NextResponse.json({ok: false, data: {message} }, { status });
   }
 
   // User authentication and role verification
@@ -178,7 +173,7 @@ export async function DELETE(
     const status = 401;
     const message = "You must be logged in";
     reqLogger.error("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
   // Check if the user has the 'admin' role
@@ -187,32 +182,27 @@ export async function DELETE(
     const status = 403;
     const message = "You do not have permission to perform this action";
     reqLogger.error("Forbidden", { status, message });
-    return new Response(null, { status: status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const result = await deleteProduct(config, productId);
+    const response = await deleteProduct(config, productId);
 
-    if ("error" in result) {
-      const error = result as CrudApiError;
-      reqLogger.error("Failed to delete product", {
+    if ("ok" in response && !response.ok) {
+      const error = response.error;
+      reqLogger.error("Failed to update product", {
         productId,
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
     reqLogger.info("Product deleted", { productId });
-    return NextResponse.json(
-      { message: "Product deleted successfully" },
-      { status: 200 },
+    return NextResponse.json({ ok: true }, { status: 200 }
     );
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteProduct");

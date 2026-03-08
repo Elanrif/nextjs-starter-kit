@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 import {
   Product,
   ProductCreate,
@@ -27,7 +27,7 @@ const {
  */
 export async function fetchProducts(
   filters?: ProductFiltersParams,
-): Promise<PageProduct<Product[]> | CrudApiError> {
+): Promise<Result<PageProduct<Product[]>, CrudApiError>> {
   const params = new URLSearchParams();
 
   if (filters?.search) params.append("search", filters.search);
@@ -41,8 +41,9 @@ export async function fetchProducts(
 
   const res = await frontendHttp().get<
     unknown,
-    AxiosResponse<PageProduct<Product[]>>
+    AxiosResponse<Result<PageProduct<Product[]>, CrudApiError>>
   >(url);
+  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -51,10 +52,12 @@ export async function fetchProducts(
  */
 export async function fetchProduct(
   id: number,
-): Promise<Product | CrudApiError> {
-  const res = await frontendHttp().get<unknown, AxiosResponse<Product>>(
-    `${PRODUCTS_URL}/${id}`,
-  );
+): Promise<Result<Product, CrudApiError>> {
+  const res = await frontendHttp().get<
+    unknown,
+    AxiosResponse<Result<Product, CrudApiError>>
+  >(`${PRODUCTS_URL}/${id}`);
+  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -63,11 +66,12 @@ export async function fetchProduct(
  */
 export async function createProduct(
   product: ProductCreate,
-): Promise<Product | CrudApiError> {
-  const res = await frontendHttp().post<unknown, AxiosResponse<Product>>(
-    PRODUCTS_URL,
-    product,
-  );
+): Promise<Result<Product, CrudApiError>> {
+  const res = await frontendHttp().post<
+    unknown,
+    AxiosResponse<Result<Product, CrudApiError>>
+  >(PRODUCTS_URL, product);
+  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -77,11 +81,12 @@ export async function createProduct(
 export async function updateProduct(
   id: number,
   product: ProductUpdate,
-): Promise<Product | CrudApiError> {
-  const res = await frontendHttp().patch<unknown, AxiosResponse<Product>>(
-    `${PRODUCTS_URL}/${id}`,
-    product,
-  );
+): Promise<Result<Product, CrudApiError>> {
+  const res = await frontendHttp().patch<
+    unknown,
+    AxiosResponse<Result<Product, CrudApiError>>
+  >(`${PRODUCTS_URL}/${id}`, product);
+  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -90,7 +95,7 @@ export async function updateProduct(
  */
 export async function deleteProduct(
   id: number,
-): Promise<{ success: boolean } | CrudApiError> {
+): Promise<Result<{ success: boolean }, CrudApiError>> {
   await frontendHttp().delete(`${PRODUCTS_URL}/${id}`);
-  return { success: true };
+  return { ok: true, data: { success: true } };
 }
