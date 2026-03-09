@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return;
   }
 
   return (

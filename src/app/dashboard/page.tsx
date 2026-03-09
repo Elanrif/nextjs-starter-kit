@@ -35,8 +35,8 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {auth.data.firstName?.toUpperCase() ||
-              auth.data.email?.toUpperCase() ||
+            {auth.data.firstName?.toUpperCase()?.slice(0, 2) ||
+              auth.data.email?.slice(0, 2)?.toUpperCase() ||
               "U"}
           </div>
 
