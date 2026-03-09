@@ -67,12 +67,14 @@ export function Header() {
                   );
                 }
 
-                if (session && !error) {
+                if (session && session.isAuth && !error) {
                   return (
                     <>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/dashboard">Dashboard</Link>
-                      </Button>
+                      <Link href={ROUTES.DASHBOARD}>
+                        <Button variant="outline" size="sm">
+                          Dashboard
+                        </Button>
+                      </Link>
                       <SignOutButton
                         variant="destructive"
                         onSignOut={invalidate}
@@ -83,12 +85,14 @@ export function Header() {
 
                 return (
                   <>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={SIGN_IN}>Login</Link>
-                    </Button>
-                    <Button size="sm" asChild>
-                      <Link href={SIGN_UP}>Register</Link>
-                    </Button>
+                    <Link href={SIGN_IN}>
+                      <Button variant="outline" size="sm">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href={SIGN_UP}>
+                      <Button size="sm">Register</Button>
+                    </Link>
                   </>
                 );
               })()}
@@ -144,20 +148,16 @@ export function Header() {
               </Link>
             ))}
             <div className="flex gap-2 pt-2 px-3">
-              <Button variant="outline" size="sm" className="flex-1" asChild>
-                <a
-                  href="https://github.com/Elanrif/kickstart-nextjs-starter-kit"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  GitHub
-                </a>
-              </Button>
-              <Button size="sm" className="flex-1" asChild>
-                <a href="https://vercel.com/new" target="_blank" rel="noopener">
-                  Deploy
-                </a>
-              </Button>
+              <Link href={SIGN_IN}>
+                <Button variant="outline" size="sm" className="flex-1" asChild>
+                  Sign in
+                </Button>
+              </Link>
+              <Link href={SIGN_UP}>
+                <Button size="sm" className="flex-1" asChild>
+                  Sign up
+                </Button>
+              </Link>
             </div>
           </nav>
         </div>

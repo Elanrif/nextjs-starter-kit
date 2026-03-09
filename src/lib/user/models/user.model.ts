@@ -6,6 +6,11 @@ export interface UserLogin {
 
 export type UserUpdate = Partial<User>;
 
+export enum UserRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}
+
 export interface User {
   id: number;
   email: string;
@@ -14,7 +19,7 @@ export interface User {
   phoneNumber: string;
   password: string;
   avatarUrl: string | null;
-  role: "USER" | "ADMIN";
+  role: UserRole;
   isActive: boolean;
   [key: string]: any; // Allow additional properties
 }

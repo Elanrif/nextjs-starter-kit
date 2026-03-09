@@ -5,8 +5,7 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
-  LogOut,
-  Sparkles,
+  User as UserIcon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,15 +24,55 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { User } from "@/lib/user/models/user.model";
+import { User, UserRole } from "@/lib/user/models/user.model";
 import { SignOutButton } from "./kickstart/auth/SignOutButton";
 import { useSession } from "@/hooks/use.session";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ROUTES } from "@/utils/routes";
 
-export function NavUser({ user }: { user: User | null }) {
+function renderAccountMenuItem(user: User, pathname?: string | null) {
+  // If user is missing, don't render
+  if (!user) return null;
+
+  // If user is non-admin and currently on /account, hide the dashboard link
+  if (pathname?.startsWith("/account") && user.role !== UserRole.ADMIN) {
+    return null;
+  }
+
+  // Default target based on role
+  let target =
+    user.role === UserRole.ADMIN ? ROUTES.DASHBOARD : ROUTES.USER_ACCOUNT;
+  let label =
+    user.role === UserRole.ADMIN ? "Admin dashboard" : "User dashboard";
+
+  // If current pathname is under /dashboard, switch to account
+  if (pathname?.startsWith("/dashboard")) {
+    target = ROUTES.USER_ACCOUNT;
+    label = "Account";
+  } else if (pathname?.startsWith("/account") && user.role === UserRole.ADMIN) {
+    // If current pathname is under /account and user is admin, link to dashboard
+    target = ROUTES.DASHBOARD;
+    label = "Dashboard";
+  }
+
+  // Render the menu item. Use a single appropriate icon (UserIcon) instead of two icons.
+  return (
+    <DropdownMenuItem className="bg-blue-50">
+      <Link href={target} className="flex items-center gap-2 w-full">
+        <UserIcon />
+        {label}
+      </Link>
+    </DropdownMenuItem>
+  );
+}
+
+export function NavUser({ user }: { user: User }) {
   const { session, error, invalidate } = useSession();
   const { isMobile } = useSidebar();
+  const pathname = usePathname();
 
-  if (!user) {
+  if (!user || !session) {
     return null;
   }
 
@@ -85,10 +124,7 @@ export function NavUser({ user }: { user: User | null }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
+              {renderAccountMenuItem(user, pathname)}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -112,10 +148,7 @@ export function NavUser({ user }: { user: User | null }) {
                   variant="destructive"
                   className="w-full flex justify-center items-center"
                   onSignOut={invalidate}
-                >
-                  <LogOut className="mr-2 text-white" />
-                  Sign Out
-                </SignOutButton>
+                />
               )}
             </DropdownMenuItem>
           </DropdownMenuContent>

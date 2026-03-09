@@ -1,14 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {
-  GalleryVerticalEnd,
-  HomeIcon,
-  PieChart,
-  SquareTerminal,
-} from "lucide-react";
+import { GalleryVerticalEnd, HomeIcon, PieChart, Settings } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -24,8 +18,9 @@ import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
+import { NavMainUser } from "./nav-main-user";
 
-const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
+const { USER_ACCOUNT, PRODUCTS, CATEGORIES } = ROUTES;
 
 // This is sample data.
 const data = {
@@ -39,26 +34,22 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: DASHBOARD,
+      url: USER_ACCOUNT,
       icon: HomeIcon,
     },
     {
-      title: "Store",
+      title: "Settings",
       url: "#",
-      icon: SquareTerminal,
+      icon: Settings,
       isActive: true,
       items: [
         {
-          title: "Categories",
-          url: `${DASHBOARD}${CATEGORIES}`,
+          title: "update profile",
+          url: `${USER_ACCOUNT}${CATEGORIES}`,
         },
         {
-          title: "Products",
-          url: `${DASHBOARD}${PRODUCTS}`,
-        },
-        {
-          title: "Users",
-          url: `${DASHBOARD}${USERS}`,
+          title: "change password",
+          url: `${USER_ACCOUNT}${PRODUCTS}`,
         },
       ],
     },
@@ -72,7 +63,9 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function UserSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const [auth, setAuth] = React.useState<User | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -107,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMainUser items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
