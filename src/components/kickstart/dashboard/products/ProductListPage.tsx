@@ -69,7 +69,7 @@ export function ProductListPage({
     const res = await deleteProduct(deleteId);
     setDeleteLoading(false);
     setModalOpen(false);
-    if ("success" in res && res.success) {
+    if (res.ok) {
       setProducts((prev) => prev.filter((p) => p.id !== deleteId));
       toast.success("Produit supprimé avec succès");
     } else {

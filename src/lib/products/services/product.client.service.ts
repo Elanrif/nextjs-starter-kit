@@ -95,7 +95,7 @@ export async function updateProduct(
  */
 export async function deleteProduct(
   id: number,
-): Promise<Result<{ success: boolean }, CrudApiError>> {
+): Promise<Result<{ success: boolean}, CrudApiError>> {
   await frontendHttp().delete(`${PRODUCTS_URL}/${id}`);
   return { ok: true, data: { success: true } };
 }
