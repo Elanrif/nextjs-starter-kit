@@ -28,11 +28,8 @@ export async function GET(request: NextRequest) {
     const response = await fetchCategories(config);
 
     if ("error" in response) {
-      const error = response as CrudApiError;
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      const error = response;
+      return NextResponse.json(error, { status: error.status });
     }
 
     return NextResponse.json(response, { status: 200 });
@@ -57,54 +54,50 @@ export async function POST(request: NextRequest) {
   // User authentication and role verification
   const session = await getSession();
 
-   if (!session.ok) {
-     const err = session.error;
-     return NextResponse.json({ ok: false, error: err }, { status: 401 });
-   }
+  if (!session.ok) {
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+  }
 
   if (session.data?.user?.role !== "ADMIN") {
     const err = {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", { status: err.status, message: err.message });
+    reqLogger.error("Forbidden", {
+      status: err.status,
+      message: err.message,
+    });
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const body = (await request.json()) as CategoryCreate;
 
-  // Validate required fields
-  if (!body?.name) {
-    const status = 400;
-    const message = "Field `name` is required";
-    reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const category = await createCategory(config, body);
+    const response = await createCategory(config, body);
 
-    if ("error" in category) {
-      const error = category as CrudApiError;
-      reqLogger.error("Failed to create category", {
-        status: error.status,
-        message: error.message,
-      });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+    if ("error" in response) {
+      const error = response as CrudApiError;
+      return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category created", { categoryId: category.id });
-    return NextResponse.json(category, { status: 201 });
+    reqLogger.info("Category created", { categoryId: response.id });
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category creation", {
+    reqLogger.error("Error during category creation", {
       status,
       message: errMsg.message,
     });

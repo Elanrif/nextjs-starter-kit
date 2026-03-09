@@ -37,15 +37,29 @@ export async function fetchUserById(
   id: number,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!id || id <= 0) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Invalid user ID",
+        error: "Bad Request",
+      },
+    };
+  }
+
   try {
-    const res = await apiClient(true, config) //
-      .get<any, AxiosResponse<User>>(`${usersUrl}/${id}`);
+    const res = await apiClient(true, config).get<any, AxiosResponse<User>>(
+      `${usersUrl}/${id}`,
+    );
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error(`Error fetching user with ID ${id}`, {
-      status: error instanceof Error ? (error as any).status || 500 : 500,
-      message: error instanceof Error ? error.message : "Unknown error",
-    }); 
+    logger.error("Failed to fetch user", { id });
     return { ok: false, error: crudApiErrorResponse(error, "fetchUserById") };
   }
 }
@@ -55,16 +69,123 @@ export async function updateUser(
   id: number,
   user: UpdateUser,
 ): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!id || id <= 0) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Invalid user ID",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  if (
+    !user?.firstName ||
+    !user?.lastName ||
+    !user?.email ||
+    !user?.phoneNumber
+  ) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message:
+          "Fields `firstName`, `lastName`, `email`, and `phoneNumber` are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
   try {
-    const res = await apiClient(true, config) //
-      .patch<any, AxiosResponse<User>>(`${usersUrl}/${id}`, user);
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+      `${usersUrl}/${id}`,
+      user,
+    );
+    logger.info("User updated successfully", { id });
     return { ok: true, data: res.data };
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "updateUser");
-    logger.error("Error updating user", {
-      status: errMsg.status,
-      message: errMsg.message,
-    });
+    logger.error("Failed to update user", { id });
     return { ok: false, error: crudApiErrorResponse(error, "updateUser") };
+  }
+}
+
+/**
+ * Create a new user
+ */
+export async function createUser(
+  config: Config,
+  user: Omit<User, "id">,
+): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (
+    !user?.firstName ||
+    !user?.lastName ||
+    !user?.email ||
+    !user?.phoneNumber
+  ) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message:
+          "Fields `firstName`, `lastName`, `email`, and `phoneNumber` are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
+      usersUrl,
+      user,
+    );
+    logger.info("User created successfully", { id: res.data.id });
+    return { ok: true, data: res.data };
+  } catch (error) {
+    logger.error("Failed to create user", { email: user.email });
+    return { ok: false, error: crudApiErrorResponse(error, "createUser") };
+  }
+}
+
+/**
+ * Delete a user
+ */
+export async function deleteUser(
+  config: Config,
+  id: number,
+): Promise<Result<{ success: boolean }, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!id || id <= 0) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Invalid user ID",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    await apiClient(true, config).delete(`${usersUrl}/${id}`);
+    logger.info("User deleted successfully", { id });
+    return { ok: true, data: { success: true } };
+  } catch (error) {
+    logger.error("Failed to delete user", { id });
+    return { ok: false, error: crudApiErrorResponse(error, "deleteUser") };
   }
 }

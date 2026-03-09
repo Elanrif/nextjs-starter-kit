@@ -9,6 +9,7 @@ import {
   ProductFiltersParams,
   PageProduct,
 } from "@/lib/products/models/product.model";
+import { buildProductsUrl } from "./product.service";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -28,22 +29,12 @@ const {
 export async function fetchProducts(
   filters?: ProductFiltersParams,
 ): Promise<Result<PageProduct<Product[]>, CrudApiError>> {
-  const params = new URLSearchParams();
-
-  if (filters?.search) params.append("search", filters.search);
-  if (filters?.categoryId)
-    params.append("categoryId", String(filters.categoryId));
-  if (filters?.isActive !== undefined)
-    params.append("isActive", String(filters.isActive));
-  if (filters?.sortBy) params.append("sortBy", filters.sortBy);
-
-  const url = params.toString() ? `${PRODUCTS_URL}?${params}` : PRODUCTS_URL;
+  const url = buildProductsUrl(PRODUCTS_URL, filters);
 
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<PageProduct<Product[]>, CrudApiError>>
   >(url);
-  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -57,7 +48,6 @@ export async function fetchProduct(
     unknown,
     AxiosResponse<Result<Product, CrudApiError>>
   >(`${PRODUCTS_URL}/${id}`);
-  // data is the type of AxiosResponse's data
   return res.data;
 }
 
@@ -95,7 +85,10 @@ export async function updateProduct(
  */
 export async function deleteProduct(
   id: number,
-): Promise<Result<{ success: boolean}, CrudApiError>> {
-  await frontendHttp().delete(`${PRODUCTS_URL}/${id}`);
-  return { ok: true, data: { success: true } };
+): Promise<Result<{ success: boolean }, CrudApiError>> {
+  const res = await frontendHttp().delete<
+    unknown,
+    AxiosResponse<Result<{ success: boolean }, CrudApiError>>
+  >(`${PRODUCTS_URL}/${id}`);
+  return res.data;
 }

@@ -45,10 +45,6 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const error = response.error!;
-      reqLogger.error("Failed to fetch products", {
-        status: error.status,
-        message: error.message,
-      });
       return NextResponse.json(response, { status: error.status });
     }
 
@@ -75,7 +71,16 @@ export async function POST(request: NextRequest) {
   const session = await getSession();
 
   if (!session.ok) {
-    return NextResponse.json(session, { status: 401 });
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -83,23 +88,14 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", { status: err.status, message: err.message });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
-  }
-
-  const body = (await request.json()) as ProductCreate;
-
-  if (!body?.name || body?.price === undefined) {
-    const err = {
-      status: 400,
-      message: "Fields `name` and `price` are required",
-    };
-    reqLogger.error("Bad Request", {
+    reqLogger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
+
+  const body = (await request.json()) as ProductCreate;
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -112,10 +108,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response, { status: error.status });
     }
 
-    return NextResponse.json(
-      { ok: true, data: response.data },
-      { status: 201 },
-    );
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createProduct");
     const status = errMsg.status || 500;

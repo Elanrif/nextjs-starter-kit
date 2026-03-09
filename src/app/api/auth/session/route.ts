@@ -22,7 +22,16 @@ export async function GET(
     const session = await getSession();
 
     if (!session.ok) {
-      return NextResponse.json(session, { status: 401 });
+      const err = {
+        error: "Unauthorized",
+        status: 401,
+        message: "You must be logged in",
+      };
+      reqLogger.error("Unauthorized", {
+        status: err.status,
+        message: err.message,
+      });
+      return NextResponse.json({ ok: false, error: err });
     }
 
     return NextResponse.json(session, { status: 200 });

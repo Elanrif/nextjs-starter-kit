@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  fetchProduct,
   updateProduct,
   deleteProduct,
+  fetchProductById,
 } from "@/lib/products/services/product.service";
 import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
@@ -28,36 +28,22 @@ export async function GET(
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(productId)) {
-    const status = 400;
-    const message = "Invalid product ID";
-    reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const response = await fetchProduct(config, productId);
+    const response = await fetchProductById(config, productId);
 
     if (!response.ok) {
       const error = response.error!;
-      reqLogger.error("Failed to fetch products", {
-        status: error.status,
-        message: error.message,
-      });
       return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    return NextResponse.json(
-      { ok: true, data: response.data },
-      { status: 200 },
-    );
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product fetching", {
+    reqLogger.error("Error during product fetching", {
       status,
       message: errMsg.message,
     });
@@ -77,23 +63,20 @@ export async function PATCH(
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(productId)) {
-    const status = 400;
-    const message = "Invalid product ID";
-    reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
   if (!session.ok) {
-    // User is not authenticated
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -131,11 +114,11 @@ export async function PATCH(
     }
 
     reqLogger.info("Product updated", { productId });
-    return NextResponse.json({ ok: true, data: response }, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product update", {
+    reqLogger.error("Error during product update", {
       status,
       message: errMsg.message,
     });
@@ -155,26 +138,22 @@ export async function DELETE(
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(productId)) {
-    const status = 400;
-    const message = "Invalid product ID";
-    reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
-  }
-
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
   if (!session.ok) {
-    // User is not authenticated
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
-  // Check if the user has the 'admin' role
   if (session.data?.user?.role !== "ADMIN") {
     const err = {
       status: 403,
@@ -193,22 +172,22 @@ export async function DELETE(
   try {
     const response = await deleteProduct(config, productId);
 
-    if ("ok" in response && !response.ok) {
+    if (!response.ok) {
       const error = response.error;
-      reqLogger.error("Failed to update product", {
+      reqLogger.error("Failed to delete product", {
         productId,
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json({ ok: false, error }, { status: error.status });
+      return NextResponse.json(response, { status: error.status });
     }
 
     reqLogger.info("Product deleted", { productId });
-    return NextResponse.json({ ok: true }, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product deletion", {
+    reqLogger.error("Error during product deletion", {
       status,
       message: errMsg.message,
     });

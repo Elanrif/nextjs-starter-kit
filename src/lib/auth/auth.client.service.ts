@@ -23,7 +23,7 @@ const {
 } = proxyEnvironment;
 
 /**
- * Sign in a user with email and password.
+ * Sign in a user with email and password (client-side)
  */
 export async function signIn(
   login: Login,
@@ -32,12 +32,11 @@ export async function signIn(
     any,
     AxiosResponse<Result<User, CrudApiError>>
   >(loginUrl, login);
-  // data is the type of AxiosResponse's data
   return result.data;
 }
 
 /**
- * Register a new user.
+ * Register a new user (client-side)
  */
 export async function signUp(
   registration: Registrer,
@@ -46,24 +45,24 @@ export async function signUp(
     any,
     AxiosResponse<Result<User, CrudApiError>>
   >(registerUrl, registration);
-  // data is the type of AxiosResponse's data
   return res.data;
 }
 
 /**
- * Get the current user's session.
+ * Get the current user's session (client-side)
  */
-export async function getClientSession(): Promise<Result<User, CrudApiError>> {
+export async function getClientSession(): Promise<
+  Result<User, CrudApiError>
+> {
   const result = await frontendHttp().get<
     any,
     AxiosResponse<Result<User, CrudApiError>>
   >(sessionUrl);
-  // data is the type of AxiosResponse's data
   return result.data;
 }
 
 /**
- * Change the password of an authenticated user.
+ * Change the password of an authenticated user (client-side)
  */
 export async function changeUserPassword({
   oldPassword,
@@ -79,6 +78,5 @@ export async function changeUserPassword({
     any,
     AxiosResponse<Result<User, CrudApiError>>
   >(passwordChangeUrl, body);
-  // data is the type of AxiosResponse's data
   return result.data;
 }

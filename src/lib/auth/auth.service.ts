@@ -3,7 +3,6 @@ import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
 import { User } from "@lib/user/models/user.model";
 import {
-  ApiError,
   CrudApiError,
   crudApiErrorResponse,
   Result,
@@ -12,6 +11,18 @@ import { getLogger } from "@/config/logger.config";
 import { Login, Registrer } from "./models/auth.model";
 import { createSession } from "./session";
 
+// ============================================================================
+// Auth API Service (Server-side)
+// ============================================================================
+
+/**
+ * Use this service in:
+ * - Server Components
+ * - Route Handlers (API routes)
+ * - Server Actions
+ */
+
+// API endpoints from environment config
 const {
   api: {
     rest: {
@@ -21,73 +32,84 @@ const {
 } = environment;
 const logger = getLogger("server");
 
+// ============================================================================
+// Auth CRUD
+// ============================================================================
+
 /**
- * Attempts to perform the operation.
- *
- * On failure (`catch`), may return a value instead of throwing.
- * This allows callers to handle errors using `"key" in res` checks.
- *
- * Example usage:
- *   const res = await myFunction(params);
- *   if ("key" in res) {
- *     // handle the error here
- *   } else {
- *     // handle success here
- *   }
+ * Sign in a user with email and password
  */
 export async function signIn(
   login: Login,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!login?.email || !login?.password) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Email and password are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
   try {
-    const {data} = await apiClient(true, config).post<any, AxiosResponse<User>>(
-      loginUrl,
-      login,
-    );
+    const { data } = await apiClient(true, config).post<
+      any,
+      AxiosResponse<User>
+    >(loginUrl, login);
     await createSession(data.id, data.email, data.role);
+    logger.info("User signed in successfully", { email: data.email });
     return { ok: true, data };
   } catch (error) {
-    logger.warn("Error during sign in", { error });
+    logger.error("Failed to sign in", { email: login.email });
     return { ok: false, error: crudApiErrorResponse(error, "signIn") };
-    
   }
 }
 
 /**
- * Attempts to perform the operation.
- *
- * On failure (`catch`), throws an exception to be handled with try/catch.
- *
- * Example usage:
- *   try {
- *     const result = await myFunction(params);
- *     // handle success here
- *   } catch (error) {
- *     // handle the error here
- *   }
- *
+ * Register a new user with email and password
  */
 export async function signUp(
   registration: Registrer,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!registration?.email || !registration?.password) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Email and password are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
   try {
     await apiClient(true, config).post<any, AxiosResponse<any>>(
       registerUrl,
       registration,
     );
   } catch (error) {
-    const {
-      message,
-      status,
-      error: errorType,
-    } = crudApiErrorResponse(error, "signUp");
-    throw new ApiError(message, status, errorType);
+    logger.error("Failed to register user", { email: registration.email });
+    return { ok: false, error: crudApiErrorResponse(error, "signUp") };
   }
 
   const maybeUser = await signIn(registration, config);
   if (!maybeUser.ok) {
     logger.error("Error after registration during sign in", {
+      email: registration.email,
       message: maybeUser.error.message,
     });
     throw new Error(maybeUser.error.message);
@@ -113,6 +135,9 @@ export async function changeUserPassword(
     return { ok: true, data: result.data };
   } catch (error) {
     logger.error("Error during changeUserPassword", { userId, error });
-    return { ok: false, error: crudApiErrorResponse(error, "changeUserPassword") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "changeUserPassword"),
+    };
   }
 }

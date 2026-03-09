@@ -65,21 +65,22 @@ export const getSession = cache(
  */
 export const getUserVerifiedSession = cache(
   async (): Promise<Result<User, CrudApiError>> => {
-    const res = await getSession();
-    // Distinguish between "no session" and "invalid session data" so we
-    // return an auth-related status (401) instead of a server 500.
-    if (!res.ok || !res.data?.user?.userId) {
-      const err = new ApiError(401, "No active session");
-      logger.warn("No active session during user verification");
-      return { ok: false, error: crudApiErrorResponse(err) };
+    const session = await getSession();
+    if (!session.ok || !session.data?.user?.userId) {
+      const err = {
+        error: "Unauthorized",
+        status: 401,
+        message: "You must be logged in",
+      };
+      logger.warn("Unauthorized", {
+        status: err.status,
+        message: err.message,
+      });
+      return { ok: false, error: err };
     }
 
-    const response = await fetchUserById(res.data.user.userId);
+    const response = await fetchUserById(session.data.user.userId);
     if (!response.ok) {
-      logger.error("Failed to fetch user during session verification", {
-        status: response.error?.status,
-        message: response.error?.message,
-      });
       return response;
     }
 

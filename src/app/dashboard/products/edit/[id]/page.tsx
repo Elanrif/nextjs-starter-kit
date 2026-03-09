@@ -1,5 +1,5 @@
 import { ProductEditPage } from "@/components/kickstart/dashboard/products/ProductEditPage";
-import { fetchProduct } from "@/lib/products/services/product.service";
+import { fetchProductById } from "@/lib/products/services/product.service";
 import { headers } from "next/headers";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const reqHeaders = await headers();
   const config = { headers: reqHeaders };
   // Server-side fetching
-  const res = await fetchProduct(config, Number(id));
+  const res = await fetchProductById(config, Number(id));
   let fetchedProduct: any = null;
   if ("id" in res) {
     fetchedProduct = res;

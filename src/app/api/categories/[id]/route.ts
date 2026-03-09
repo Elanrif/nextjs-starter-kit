@@ -31,26 +31,20 @@ export async function GET(
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(categoryId)) {
-    const status = 400;
-    const message = "Invalid category ID";
-    reqLogger.warn("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   // User authentication and role verification
   const session = await getSession();
 
   if (!session.ok) {
-    const err = session.error;
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
     reqLogger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json(
-      { ok: false, error: err },
-      { status: err.status || 500 },
-    );
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -64,6 +58,7 @@ export async function GET(
     });
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
+
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
@@ -71,16 +66,13 @@ export async function GET(
     const response = await fetchCategory(config, categoryId);
 
     if ("error" in response) {
-      const error = response;
+      const error = response as CrudApiError;
       reqLogger.warn("Category not found", {
         categoryId,
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json(error, { status: error.status });
     }
 
     return NextResponse.json(response, { status: 200 });
@@ -107,26 +99,20 @@ export async function PATCH(
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(categoryId)) {
-    const status = 400;
-    const message = "Invalid category ID";
-    reqLogger.warn("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   // User authentication and role verification
   const session = await getSession();
 
   if (!session.ok) {
-    const err = session.error;
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
     reqLogger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json(
-      { ok: false, error: err },
-      { status: err.status || 500 },
-    );
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -143,34 +129,22 @@ export async function PATCH(
 
   const body = (await request.json()) as CategoryUpdate;
 
-  if (Object.keys(body).length === 0) {
-    const status = 400;
-    const message = "Request body cannot be empty";
-    reqLogger.warn("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
     const response = await updateCategory(config, categoryId, body);
     if ("error" in response) {
-      const error = response;
+      const error = response as CrudApiError;
       reqLogger.warn("Failed to update category", {
         categoryId,
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category updated", {
-      categoryId,
-    });
+    reqLogger.info("Category updated", { categoryId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
@@ -195,19 +169,20 @@ export async function DELETE(
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
-  if (Number.isNaN(categoryId)) {
-    const status = 400;
-    const message = "Invalid category ID";
-    reqLogger.warn("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
-  }
-
   // User authentication and role verification
   const session = await getSession();
 
   if (!session.ok) {
-    const err = session.error;
-    return NextResponse.json({ ok: false, error: err }, { status: 401 });
+    const err = {
+      error: "Unauthorized",
+      status: 401,
+      message: "You must be logged in",
+    };
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -235,19 +210,11 @@ export async function DELETE(
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { message: error.message },
-        { status: error.status },
-      );
+      return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category deleted", {
-      categoryId,
-    });
-    return NextResponse.json(
-      { message: "Category deleted successfully" },
-      { status: 200 },
-    );
+    reqLogger.info("Category deleted", { categoryId });
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
     const status = errMsg.status || 500;

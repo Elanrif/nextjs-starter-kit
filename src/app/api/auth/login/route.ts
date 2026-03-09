@@ -2,40 +2,38 @@ import { NextRequest, NextResponse } from "next/server";
 import { signIn } from "@/lib/auth/auth.service";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
+import { RequestLogger } from "@config/loggers/request.logger";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
+/**
+ * POST /api/auth/login
+ * Sign in a user
+ */
 export async function POST(req: NextRequest) {
+  const reqLogger = new RequestLogger(logger, req);
   const body = (await req.json()) as Login;
-
-  // Validate required fields
-  if (!body.email || !body.password) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: { message: "Email and password are required", status: 400 },
-      },
-      { status: 400 },
-    );
-  }
 
   const reqHeaders = new Headers(req.headers);
   const config = { headers: reqHeaders };
+
   try {
     const response = await signIn(body, config);
 
     if (!response.ok) {
-      const err = crudApiErrorResponse(response, "login");
-      return NextResponse.json(response, { status: err.status || 500 });
+      const error = response.error;
+      return NextResponse.json(response, { status: error.status });
     }
-    return NextResponse.json(response, { status: 201 });
+
+    reqLogger.info("User signed in", { userId: response.data.id });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
-    logger.error("Error during sign in", {
+    reqLogger.error("Error during sign in", {
       status,
       message: errMsg.message,
     });
