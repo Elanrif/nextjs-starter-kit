@@ -5,12 +5,12 @@ import {
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Dashboard",
-  description: "Your personal dashboard",
+  title: "Account",
+  description: "My personal account settings",
 };
 
 /**
- * Dashboard Page (Protected)
+ * Account Page (Protected)
  *
  * This is a Server Component that:
  * 1. Fetches the session on the server
@@ -20,7 +20,7 @@ export const metadata = {
  * The middleware also protects this route, but we add a server-side
  * check as an additional security layer.
  */
-export default async function DashboardPage() {
+export default async function AccountPage() {
   const session = await getSession();
   const auth = await getUserVerifiedSession();
 

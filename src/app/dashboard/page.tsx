@@ -12,7 +12,7 @@ import { Package, Tag, Users, TrendingUp, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "Dashboard",
-  description: "Your personal dashboard",
+  description: "My modern dashboard with stats and recent activity",
 };
 
 /**
