@@ -25,12 +25,12 @@ export async function POST(req: NextRequest) {
   try {
     const res = await signUp(body, config);
 
-    if ("error" in res) {
+    if (!res.ok) {
       const errMsg = crudApiErrorResponse(res, "signUp");
-      return NextResponse.json(errMsg, { status: res.status });
+      return NextResponse.json({ ok: false, error: errMsg }, { status: res.error?.status || 500 });
     }
 
-    return NextResponse.json(res, { status: 200 });
+    return NextResponse.json({ ok: true, data: res.data }, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
@@ -38,6 +38,6 @@ export async function POST(req: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

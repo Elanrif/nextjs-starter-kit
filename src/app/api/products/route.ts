@@ -52,7 +52,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    return NextResponse.json({ ok: true, data: response.data }, { status: 200 });
+    return NextResponse.json(
+      { ok: true, data: response.data },
+      { status: 200 },
+    );
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProducts");
     const status = errMsg.status || 500;
@@ -75,26 +78,31 @@ export async function POST(request: NextRequest) {
   const session = await getSession();
 
   if (!session.ok) {
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.error("Unauthorized", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
+    const err = session.error;
+    return NextResponse.json({ ok: false, error: err }, { status: 401 });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", { status: err.status, message: err.message });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const body = (await request.json()) as ProductCreate;
 
   if (!body?.name || body?.price === undefined) {
-    const status = 400;
-    const message = "Fields `name` and `price` are required";
-    reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
+    const err = {
+      status: 400,
+      message: "Fields `name` and `price` are required",
+    };
+    reqLogger.error("Bad Request", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -112,7 +120,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    return NextResponse.json({ ok: true, data: response.data }, { status: 201 });
+    return NextResponse.json(
+      { ok: true, data: response.data },
+      { status: 201 },
+    );
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createProduct");
     const status = errMsg.status || 500;

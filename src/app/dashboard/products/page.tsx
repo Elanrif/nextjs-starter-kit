@@ -13,8 +13,8 @@ export default async function Page() {
   // Server-side fetching
   const res = await fetchProducts(config);
   let initialProducts: any[] = [];
-  if ("content" in res) {
-    initialProducts = res.content;
+  if (!res.ok) {
+    initialProducts = [];
   }
 
   return <ProductListPage initialProducts={initialProducts} />;

@@ -22,15 +22,15 @@ export async function signInAction(
   try {
     const res = await serverSignIn(credentials);
 
-    if ("error" in res) {
+    if (!res.ok) {
       const errMsg = crudApiErrorResponse(res, "signUp");
       return errMsg;
     }
 
     // Create session with user data
-    await createSession(res.id, res.email, res.role);
+    await createSession(res.data.id, res.data.email, res.data.role);
 
-    return res;
+    return res.data;
   } catch (error: any) {
     const errMsg = crudApiErrorResponse(error, "register");
     return errMsg;
@@ -47,15 +47,15 @@ export async function signUpAction(
   try {
     const res = await serverSignUp(userData);
 
-    if ("error" in res) {
+    if (!res.ok) {
       const errMsg = crudApiErrorResponse(res, "signUp");
       return errMsg;
     }
 
     // Create session after successful registration
-    await createSession(res.id, res.email, res.role);
+    await createSession(res.data.id, res.data.email, res.data.role);
 
-    return res;
+    return res.data;
   } catch (error: any) {
     const errMsg = crudApiErrorResponse(error, "register");
     return errMsg;

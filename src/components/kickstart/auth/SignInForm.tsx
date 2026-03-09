@@ -43,8 +43,8 @@ export function SignInForm() {
       
       const result = await signIn({ email: data.email, password: data.password });
 
-      if("error" in result) {
-        setError(result.message || "An error occurred during sign in.");
+      if(!result.ok) {
+        setError(result.error?.message || "An error occurred during sign in.");
         return;
       }
       router.push("/dashboard");

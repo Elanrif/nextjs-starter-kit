@@ -13,24 +13,19 @@ export async function POST(req: NextRequest) {
 
   // Validate required fields
   if (!body.email || !body.password) {
-    return NextResponse.json(
-      { message: "Email and password are required" },
-      { status: 400 },
-    );
+    return NextResponse.json({ ok: false, error: { message: "Email and password are required" } }, { status: 400 });
   }
 
   const reqHeaders = new Headers(req.headers);
   const config = { headers: reqHeaders };
   try {
-    const user = await signIn(body, config);
+    const response = await signIn(body, config);
 
-    if ("error" in user) {
-      return NextResponse.json(
-        { message: user.message || "Failed to sign in" },
-        { status: user.status },
-      );
+    if (!response.ok) {
+      const err = crudApiErrorResponse(response, "login");
+      return NextResponse.json({ ok: false, error: err }, { status: err.status || 500 });
     }
-    return NextResponse.json(user, { status: 201 });
+    return NextResponse.json({ ok: true, data: response.data }, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
@@ -38,6 +33,6 @@ export async function POST(req: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

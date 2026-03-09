@@ -41,24 +41,29 @@ export async function GET(
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
-  if (!session) {
-    // User is not authenticated
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.warn("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+  if (!session.ok) {
+    const err = session.error;
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json(
+      { ok: false, error: err },
+      { status: err.status || 500 },
+    );
   }
 
-  // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.warn("Forbidden", { status, message });
-    return new Response(null, { status: status });
+  if (session.data?.user?.role !== "ADMIN") {
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
-
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
@@ -112,22 +117,28 @@ export async function PATCH(
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
-  if (!session) {
-    // User is not authenticated
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.warn("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+  if (!session.ok) {
+    const err = session.error;
+    reqLogger.error("Unauthorized", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json(
+      { ok: false, error: err },
+      { status: err.status || 500 },
+    );
   }
 
-  // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.warn("Forbidden", { status, message });
-    return new Response(null, { status: status });
+  if (session.data?.user?.role !== "ADMIN") {
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const body = (await request.json()) as CategoryUpdate;
@@ -194,22 +205,21 @@ export async function DELETE(
   // User authentication and role verification
   const session = await getSession();
 
-  // Check if the user is authenticated
-  if (!session) {
-    // User is not authenticated
-    const status = 401;
-    const message = "You must be logged in";
-    reqLogger.warn("Unauthorized", { status, message });
-    return new Response(null, { status: status });
+  if (!session.ok) {
+    const err = session.error;
+    return NextResponse.json({ ok: false, error: err }, { status: 401 });
   }
 
-  // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.warn("Forbidden", { status, message });
-    return new Response(null, { status: status });
+  if (session.data?.user?.role !== "ADMIN") {
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const reqHeaders = new Headers(request.headers);

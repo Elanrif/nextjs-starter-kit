@@ -1,23 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { ApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  CrudApiError,
+  crudApiErrorResponse,
+  Result,
+} from "@/lib/shared/helpers/crud-api-error";
 import { RequestLogger } from "@/config/loggers/request.logger";
 import { getSession } from "@/lib/auth/session/dal.service";
+import { Session } from "@/lib/auth/models/auth.model";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<Result<Session, CrudApiError>>> {
   const reqLogger = new RequestLogger(logger, request);
   try {
     // Use getSession instead of getSession to avoid redirects
     const session = await getSession();
 
     if (!session.ok) {
-      // Return 401 for unauthenticated requests instead of redirecting
-      const err = new ApiError("No active session", 401);
-      return NextResponse.json({ok: false, error: crudApiErrorResponse(err) }, { status: 401 });
+      const err = session.error;
+      return NextResponse.json(
+        { ok: false, error: err },
+        { status: 401 },
+      );
     }
 
     return NextResponse.json(session, { status: 200 });

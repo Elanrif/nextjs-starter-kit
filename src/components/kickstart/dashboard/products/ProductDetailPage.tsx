@@ -16,7 +16,7 @@ export function ProductDetailPage({ id }: { id: string }) {
   useEffect(() => {
     // Client Side fetching
     fetchProduct(Number(id)).then((res) => {
-      if ("id" in res) setProduct(res);
+      if (res.ok) setProduct(res.data);
       setLoading(false);
     });
   }, [id]);

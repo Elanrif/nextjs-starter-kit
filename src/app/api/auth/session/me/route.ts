@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { ApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  ApiError,
+  crudApiErrorResponse,
+} from "@/lib/shared/helpers/crud-api-error";
 import { RequestLogger } from "@/config/loggers/request.logger";
 import { fetchUserById } from "@/lib/user/services/user.service";
 import { getSession } from "@/lib/auth/session/dal.service";
@@ -15,15 +18,10 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
 
     if (!session.ok) {
-      const err = new ApiError("No active session", 401);
-      return NextResponse.json(
-        {
-          ok: false,
-          error: crudApiErrorResponse(err, "session"),
-        },
-        { status: 401 },
-      );
+      const err = session.error;
+      return NextResponse.json({ ok: false, error: err }, { status: 401 });
     }
+
     const userId = session.data?.user?.userId;
 
     if (typeof userId !== "number") {

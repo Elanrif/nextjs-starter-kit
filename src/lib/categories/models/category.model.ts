@@ -3,7 +3,7 @@
  * Define the category data structure
  */
 
-import { Product } from "@/lib/products";
+import { Product } from "@/lib/products/models/product.model";
 import { z } from "zod";
 
 export interface Category {

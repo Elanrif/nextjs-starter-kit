@@ -7,9 +7,7 @@ import {
 import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
-import {
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/session/dal.service";
 
 const logger = getLogger("server");
@@ -90,7 +88,7 @@ export async function PATCH(
   const session = await getSession();
 
   // Check if the user is authenticated
-  if (!session) {
+  if (!session.ok) {
     // User is not authenticated
     const status = 401;
     const message = "You must be logged in";
@@ -98,13 +96,13 @@ export async function PATCH(
     return new Response(null, { status: status });
   }
 
-  // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
-    return new Response(null, { status: status });
+  if (session.data?.user?.role !== "ADMIN") {
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", { status: err.status, message: err.message });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const body = (await request.json()) as ProductUpdate;
@@ -161,14 +159,14 @@ export async function DELETE(
     const status = 400;
     const message = "Invalid product ID";
     reqLogger.error("Bad Request", { status, message });
-    return NextResponse.json({ok: false, data: {message} }, { status });
+    return NextResponse.json({ ok: false, data: { message } }, { status });
   }
 
   // User authentication and role verification
   const session = await getSession();
 
   // Check if the user is authenticated
-  if (!session) {
+  if (!session.ok) {
     // User is not authenticated
     const status = 401;
     const message = "You must be logged in";
@@ -177,12 +175,16 @@ export async function DELETE(
   }
 
   // Check if the user has the 'admin' role
-  if (session?.user?.role !== "ADMIN") {
-    // User is authenticated but does not have the right permissions
-    const status = 403;
-    const message = "You do not have permission to perform this action";
-    reqLogger.error("Forbidden", { status, message });
-    return NextResponse.json({ ok: false, data: { message } }, { status });
+  if (session.data?.user?.role !== "ADMIN") {
+    const err = {
+      status: 403,
+      message: "You do not have permission to perform this action",
+    };
+    reqLogger.error("Forbidden", {
+      status: err.status,
+      message: err.message,
+    });
+    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -202,8 +204,7 @@ export async function DELETE(
     }
 
     reqLogger.info("Product deleted", { productId });
-    return NextResponse.json({ ok: true }, { status: 200 }
-    );
+    return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteProduct");
     const status = errMsg.status || 500;

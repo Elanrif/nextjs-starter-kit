@@ -3,10 +3,7 @@ import { getLogger } from "@config/logger.config";
 import { RequestLogger } from "@config/loggers/request.logger";
 import { fetchUserById, updateUser } from "@/lib/user/services/user.service";
 import { UserUpdate } from "@/lib/user/models/user.model";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
@@ -34,14 +31,15 @@ export async function GET(
   const config = { headers: reqHeaders };
 
   try {
-    const user = await fetchUserById(userId, config);
-    if (!user || "error" in user) {
+    const response = await fetchUserById(userId, config);
+    if (!response.ok) {
       const status = 404;
-      const message = "User not found";
-      reqLogger.error("Not Found", { status, message });
-      return NextResponse.json({ message }, { status });
+      return NextResponse.json(
+        { ok: false, error: response.error },
+        { status },
+      );
     }
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchUserById");
     const status = errMsg.status || 500;
@@ -49,7 +47,7 @@ export async function GET(
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
 
@@ -85,26 +83,26 @@ export async function PATCH(
       status,
       message,
     });
-    return NextResponse.json({ message }, { status });
+    return NextResponse.json({ ok: false, error: { message } }, { status });
   }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const user = await updateUser(config, userId, body);
-    if ("error" in user) {
-      const error = user as CrudApiError;
+    const response = await updateUser(config, userId, body);
+    if (!response.ok) {
+      const error = response.error;
       reqLogger.error("Failed to update user", {
         status: error.status,
         message: error.message,
       });
       return NextResponse.json(
-        { message: error.message },
+        { ok: false, error: { message: error.message } },
         { status: error.status },
       );
     }
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json({ ok: true, data: response }, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateUser");
     const status = errMsg.status || 500;
@@ -112,6 +110,6 @@ export async function PATCH(
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
