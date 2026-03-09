@@ -93,7 +93,7 @@ export function NavMain({
                         <SidebarMenuSubButton
                           asChild
                           className={
-                            pathname === subItem.url
+                            pathname.startsWith(subItem.url)
                               ? "bg-blue-100/60 text-blue-900"
                               : ""
                           }

@@ -33,13 +33,13 @@ export function ProductEditPage({
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as any,
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      price: 0,
-      stock: 0,
-      isActive: true,
-      categoryId: 0,
+      name: loadedProduct?.name || "",
+      slug: loadedProduct?.slug || "",
+      description: loadedProduct?.description || "",
+      price: loadedProduct?.price || 0,
+      stock: loadedProduct?.stock || 0,
+      isActive: loadedProduct?.isActive ?? true,
+      categoryId: loadedProduct?.category?.id || 0,
     },
   });
 
@@ -50,24 +50,26 @@ export function ProductEditPage({
   const router = useRouter();
 
   useEffect(() => {
-    if (loadedProduct && "id" in loadedProduct) {
-      reset({
-        name: loadedProduct?.name || "",
-        slug: loadedProduct?.slug || "",
-        description: loadedProduct?.description || "",
-        price: loadedProduct?.price || 0,
-        stock: loadedProduct?.stock || 0,
-        isActive: loadedProduct?.isActive ?? true,
-        categoryId: loadedProduct?.category?.id || 0,
-      });
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(false);
-
-    // Client Side fetching for categories
+    // Fetch categories first
     fetchCategories().then((res) => {
-      if (Array.isArray(res))
+      if (Array.isArray(res)) {
         setCategories(res.map((c) => ({ id: c.id, name: c.name })));
+      }
+
+      // Then reset form with loaded product data
+      if (loadedProduct && "id" in loadedProduct) {
+        reset({
+          name: loadedProduct?.name || "",
+          slug: loadedProduct?.slug || "",
+          description: loadedProduct?.description || "",
+          price: loadedProduct?.price || 0,
+          stock: loadedProduct?.stock || 0,
+          isActive: loadedProduct?.isActive ?? true,
+          categoryId: loadedProduct?.category?.id || 0,
+        });
+      }
+
+      setLoading(false);
     });
   }, [loadedProduct, reset]);
 
@@ -277,7 +279,7 @@ export function ProductEditPage({
                 >
                   <option value="">Sélectionner une catégorie</option>
                   {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
+                    <option key={cat.id} value={String(cat.id)}>
                       {cat.name}
                     </option>
                   ))}

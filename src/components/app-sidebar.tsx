@@ -23,6 +23,7 @@ import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
+import SidebarSkeleton from "./ui/sidebar-skeleton";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
@@ -97,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, []);
 
   if (isLoading) {
-    return;
+    return <SidebarSkeleton {...props} />;
   }
 
   return (
