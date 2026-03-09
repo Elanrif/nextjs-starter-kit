@@ -24,7 +24,7 @@ export default async function DashboardLayout({
 }) {
   const auth = await getUserVerifiedSession();
 
-  if ("error" in auth) {
+  if (!auth.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 

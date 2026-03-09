@@ -80,9 +80,9 @@ export const getUserVerifiedSession = cache(
         status: response.error?.status,
         message: response.error?.message,
       });
-      return { ok: false, error: crudApiErrorResponse(response.error) };
+      return response;
     }
 
-    return { ok: true, data: response.data };
+    return response;
   },
 );

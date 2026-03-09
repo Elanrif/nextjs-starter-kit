@@ -13,7 +13,13 @@ export async function POST(req: NextRequest) {
 
   // Validate required fields
   if (!body.email || !body.password) {
-    return NextResponse.json({ ok: false, error: { message: "Email and password are required" } }, { status: 400 });
+    return NextResponse.json(
+      {
+        ok: false,
+        error: { message: "Email and password are required", status: 400 },
+      },
+      { status: 400 },
+    );
   }
 
   const reqHeaders = new Headers(req.headers);
@@ -23,9 +29,9 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const err = crudApiErrorResponse(response, "login");
-      return NextResponse.json({ ok: false, error: err }, { status: err.status || 500 });
+      return NextResponse.json(response, { status: err.status || 500 });
     }
-    return NextResponse.json({ ok: true, data: response.data }, { status: 201 });
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;

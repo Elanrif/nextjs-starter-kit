@@ -49,13 +49,10 @@ export async function GET(request: NextRequest) {
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json({ ok: false, error }, { status: error.status });
+      return NextResponse.json(response, { status: error.status });
     }
 
-    return NextResponse.json(
-      { ok: true, data: response.data },
-      { status: 200 },
-    );
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProducts");
     const status = errMsg.status || 500;
@@ -78,8 +75,7 @@ export async function POST(request: NextRequest) {
   const session = await getSession();
 
   if (!session.ok) {
-    const err = session.error;
-    return NextResponse.json({ ok: false, error: err }, { status: 401 });
+    return NextResponse.json(session, { status: 401 });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -113,11 +109,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const error = response.error;
-      reqLogger.error("Failed to create product", {
-        status: error.status,
-        message: error.message,
-      });
-      return NextResponse.json({ ok: false, error }, { status: error.status });
+      return NextResponse.json(response, { status: error.status });
     }
 
     return NextResponse.json(

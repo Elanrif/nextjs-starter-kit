@@ -1,9 +1,7 @@
 import { fetchAllUser } from "@lib/user/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
-import {
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
@@ -14,7 +12,6 @@ export const dynamic = "force-dynamic";
  * Fetch all users
  */
 export async function GET(request: NextRequest) {
-
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
@@ -22,10 +19,9 @@ export async function GET(request: NextRequest) {
     const response = await fetchAllUser(config);
 
     if (!response.ok) {
-      return NextResponse.json(
-        { ok: false, error: response.error },
-        { status: response.error?.status || 500 },
-      );      
+      return NextResponse.json(response, {
+        status: response.error?.status || 500,
+      });
     }
 
     return NextResponse.json(response, { status: 200 });

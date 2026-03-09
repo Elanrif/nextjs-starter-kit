@@ -1,6 +1,7 @@
 import { ProductListPage } from "@/components/kickstart/dashboard/products/ProductListPage";
 import { fetchProducts } from "@/lib/products/services/product.service";
 import { headers } from "next/headers";
+import { Product } from "@/lib/products/models/product.model";
 
 export const metadata = {
   title: "Products",
@@ -12,9 +13,9 @@ export default async function Page() {
   const config = { headers: reqHeaders };
   // Server-side fetching
   const res = await fetchProducts(config);
-  let initialProducts: any[] = [];
-  if (!res.ok) {
-    initialProducts = [];
+  let initialProducts: Product[] = [];
+  if (res.ok) {
+    initialProducts = res.data.content || [];
   }
 
   return <ProductListPage initialProducts={initialProducts} />;

@@ -22,11 +22,7 @@ export async function GET(
     const session = await getSession();
 
     if (!session.ok) {
-      const err = session.error;
-      return NextResponse.json(
-        { ok: false, error: err },
-        { status: 401 },
-      );
+      return NextResponse.json(session, { status: 401 });
     }
 
     return NextResponse.json(session, { status: 200 });

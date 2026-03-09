@@ -34,10 +34,7 @@ export async function GET(
     const response = await fetchUserById(userId, config);
     if (!response.ok) {
       const status = 404;
-      return NextResponse.json(
-        { ok: false, error: response.error },
-        { status },
-      );
+      return NextResponse.json(response, { status });
     }
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
@@ -97,12 +94,9 @@ export async function PATCH(
         status: error.status,
         message: error.message,
       });
-      return NextResponse.json(
-        { ok: false, error: { message: error.message } },
-        { status: error.status },
-      );
+      return NextResponse.json(response, { status: error.status });
     }
-    return NextResponse.json({ ok: true, data: response }, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateUser");
     const status = errMsg.status || 500;

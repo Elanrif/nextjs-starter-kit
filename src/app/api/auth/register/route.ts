@@ -15,7 +15,13 @@ export async function POST(req: NextRequest) {
   if (!body.email || !body.password) {
     logger.warn("Missing email or password", { body });
     return NextResponse.json(
-      { message: "Email and password are required" },
+      {
+        ok: false,
+        error: {
+          message: "Email and password are required",
+          status: 400,
+        },
+      },
       { status: 400 },
     );
   }
@@ -26,11 +32,10 @@ export async function POST(req: NextRequest) {
     const res = await signUp(body, config);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "signUp");
-      return NextResponse.json({ ok: false, error: errMsg }, { status: res.error?.status || 500 });
+      return NextResponse.json(res, { status: res.error?.status || 500 });
     }
 
-    return NextResponse.json({ ok: true, data: res.data }, { status: 201 });
+    return NextResponse.json(res, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
