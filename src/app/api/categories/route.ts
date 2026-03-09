@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -49,7 +48,6 @@ export async function GET(request: NextRequest) {
  * Create a new category (requires authentication)
  */
 export async function POST(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
 
   // User authentication and role verification
   const session = await getSession();
@@ -60,7 +58,7 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
@@ -92,12 +90,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category created", { categoryId: response.id });
+    logger.info("Category created", { categoryId: response.id });
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during category creation", {
+    logger.error("Error during category creation", {
       status,
       message: errMsg.message,
     });

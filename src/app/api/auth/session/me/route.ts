@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { RequestLogger } from "@/config/loggers/request.logger";
 import { fetchUserById } from "@/lib/user/services/user.service";
 import { getSession } from "@/lib/auth/session/dal.service";
 
@@ -10,7 +9,6 @@ const logger = getLogger("server");
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
   try {
     const session = await getSession();
 
@@ -20,7 +18,7 @@ export async function GET(request: NextRequest) {
         status: 401,
         message: "You must be logged in",
       };
-      reqLogger.error("Unauthorized", {
+      logger.error("Unauthorized", {
         status: err.status,
         message: err.message,
       });
@@ -48,7 +46,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "session");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during session verification", {
+    logger.error("Error during session verification", {
       status,
       message: errMsg.message,
     });

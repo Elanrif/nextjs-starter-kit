@@ -6,7 +6,6 @@ import {
 } from "@/lib/products/services/product.service";
 import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/session/dal.service";
 
@@ -16,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 type Params = Promise<{ id: string }>;
 
-/**
+/** 
  * GET /api/products/[id]
  * Fetch a single product by ID
  */
@@ -24,7 +23,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
@@ -43,7 +41,7 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProduct");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during product fetching", {
+    logger.error("Error during product fetching", {
       status,
       message: errMsg.message,
     });
@@ -59,7 +57,6 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
@@ -72,7 +69,7 @@ export async function PATCH(
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -84,7 +81,7 @@ export async function PATCH(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", { status: err.status, message: err.message });
+    logger.error("Forbidden", { status: err.status, message: err.message });
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -93,7 +90,7 @@ export async function PATCH(
   if (Object.keys(body).length === 0) {
     const status = 400;
     const message = "Request body cannot be empty";
-    reqLogger.error("Bad Request", { status, message });
+    logger.error("Bad Request", { status, message });
     return NextResponse.json({ message }, { status });
   }
 
@@ -105,7 +102,7 @@ export async function PATCH(
 
     if (!response.ok) {
       const error = response.error;
-      reqLogger.error("Failed to update product", {
+      logger.error("Failed to update product", {
         productId,
         status: error.status,
         message: error.message,
@@ -113,12 +110,12 @@ export async function PATCH(
       return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    reqLogger.info("Product updated", { productId });
+    logger.info("Product updated", { productId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateProduct");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during product update", {
+    logger.error("Error during product update", {
       status,
       message: errMsg.message,
     });
@@ -134,7 +131,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
@@ -147,7 +143,7 @@ export async function DELETE(
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -159,7 +155,7 @@ export async function DELETE(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
@@ -174,7 +170,7 @@ export async function DELETE(
 
     if (!response.ok) {
       const error = response.error;
-      reqLogger.error("Failed to delete product", {
+      logger.error("Failed to delete product", {
         productId,
         status: error.status,
         message: error.message,
@@ -182,12 +178,12 @@ export async function DELETE(
       return NextResponse.json(response, { status: error.status });
     }
 
-    reqLogger.info("Product deleted", { productId });
+    logger.info("Product deleted", { productId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteProduct");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during product deletion", {
+    logger.error("Error during product deletion", {
       status,
       message: errMsg.message,
     });

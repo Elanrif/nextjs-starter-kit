@@ -2,7 +2,6 @@ import { fetchAllUser, createUser } from "@lib/user/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/lib/user/models/user.model";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
@@ -41,7 +40,6 @@ export async function GET(request: NextRequest) {
  * Create a new user
  */
 export async function POST(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
 
   const body = (await request.json()) as Omit<User, 'id'>;
 
@@ -60,7 +58,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createUser");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during user creation", {
+    logger.error("Error during user creation", {
       status,
       message: errMsg.message,
     });

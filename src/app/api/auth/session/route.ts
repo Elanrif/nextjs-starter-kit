@@ -5,7 +5,6 @@ import {
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error";
-import { RequestLogger } from "@/config/loggers/request.logger";
 import { getSession } from "@/lib/auth/session/dal.service";
 import { Session } from "@/lib/auth/models/auth.model";
 
@@ -16,7 +15,6 @@ export const dynamic = "force-dynamic";
 export async function GET(
   request: NextRequest,
 ): Promise<NextResponse<Result<Session, CrudApiError>>> {
-  const reqLogger = new RequestLogger(logger, request);
   try {
     // Use getSession instead of getSession to avoid redirects
     const session = await getSession();
@@ -27,7 +25,7 @@ export async function GET(
         status: 401,
         message: "You must be logged in",
       };
-      reqLogger.error("Unauthorized", {
+      logger.error("Unauthorized", {
         status: err.status,
         message: err.message,
       });
@@ -38,7 +36,7 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "session");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during session verification", {
+    logger.error("Error during session verification", {
       status,
       message: errMsg.message,
     });

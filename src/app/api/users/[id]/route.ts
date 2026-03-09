@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import { fetchUserById, updateUser, deleteUser } from "@/lib/user/services/user.service";
 import { UserUpdate } from "@/lib/user/models/user.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
@@ -17,7 +16,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
 
   const userId = Number.parseInt(params.id, 10);
 
@@ -33,7 +31,7 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchUserById");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during user fetching", {
+    logger.error("Error during user fetching", {
       status,
       message: errMsg.message,
     });
@@ -49,8 +47,6 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
-
   const userId = Number.parseInt(params.id, 10);
 
   const body = (await request.json()) as UserUpdate;
@@ -64,12 +60,12 @@ export async function PATCH(
       const error = response.error;
       return NextResponse.json(response, { status: error.status });
     }
-    reqLogger.info("User updated", { userId });
+    logger.info("User updated", { userId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateUser");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during user update", {
+    logger.error("Error during user update", {
       status,
       message: errMsg.message,
     });
@@ -85,8 +81,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
-
   const userId = Number.parseInt(params.id, 10);
 
   const reqHeaders = new Headers(request.headers);
@@ -100,12 +94,12 @@ export async function DELETE(
       return NextResponse.json(response, { status: error.status });
     }
 
-    reqLogger.info("User deleted", { userId });
+    logger.info("User deleted", { userId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteUser");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during user deletion", {
+    logger.error("Error during user deletion", {
       status,
       message: errMsg.message,
     });

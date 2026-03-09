@@ -8,7 +8,6 @@ import {
   ProductFiltersParams,
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/session/dal.service";
 
@@ -21,7 +20,6 @@ export const dynamic = "force-dynamic";
  * Fetch all products with optional filters
  */
 export async function GET(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
   const { searchParams } = new URL(request.url);
 
   // Build filters from query params
@@ -65,7 +63,6 @@ export async function GET(request: NextRequest) {
  * Create a new product (requires authentication)
  */
 export async function POST(request: NextRequest) {
-  const reqLogger = new RequestLogger(logger, request);
 
   // User authentication and role verification
   const session = await getSession();
@@ -76,7 +73,7 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -88,7 +85,7 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });

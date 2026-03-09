@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { signIn } from "@/lib/auth/auth.service";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
@@ -14,7 +13,6 @@ export const dynamic = "force-dynamic";
  * Sign in a user
  */
 export async function POST(req: NextRequest) {
-  const reqLogger = new RequestLogger(logger, req);
   const body = (await req.json()) as Login;
 
   const reqHeaders = new Headers(req.headers);
@@ -28,12 +26,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response, { status: error.status });
     }
 
-    reqLogger.info("User signed in", { userId: response.data.id });
+    logger.info("User signed in", { userId: response.data.id });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
-    reqLogger.error("Error during sign in", {
+    logger.error("Error during sign in", {
       status,
       message: errMsg.message,
     });

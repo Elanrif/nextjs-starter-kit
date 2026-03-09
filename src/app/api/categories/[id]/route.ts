@@ -6,7 +6,6 @@ import {
 } from "@/lib/categories/services/category.service";
 import { CategoryUpdate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import { RequestLogger } from "@config/loggers/request.logger";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -27,7 +26,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -40,7 +38,7 @@ export async function GET(
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -52,7 +50,7 @@ export async function GET(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
@@ -67,7 +65,7 @@ export async function GET(
 
     if ("error" in response) {
       const error = response as CrudApiError;
-      reqLogger.warn("Category not found", {
+      logger.warn("Category not found", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -95,7 +93,6 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -108,7 +105,7 @@ export async function PATCH(
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -120,7 +117,7 @@ export async function PATCH(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
@@ -136,7 +133,7 @@ export async function PATCH(
     const response = await updateCategory(config, categoryId, body);
     if ("error" in response) {
       const error = response as CrudApiError;
-      reqLogger.warn("Failed to update category", {
+      logger.warn("Failed to update category", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -144,7 +141,7 @@ export async function PATCH(
       return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category updated", { categoryId });
+    logger.info("Category updated", { categoryId });
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
@@ -165,7 +162,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Params },
 ) {
-  const reqLogger = new RequestLogger(logger, request);
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -178,7 +174,7 @@ export async function DELETE(
       status: 401,
       message: "You must be logged in",
     };
-    reqLogger.error("Unauthorized", {
+    logger.error("Unauthorized", {
       status: err.status,
       message: err.message,
     });
@@ -190,7 +186,7 @@ export async function DELETE(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    reqLogger.error("Forbidden", {
+    logger.error("Forbidden", {
       status: err.status,
       message: err.message,
     });
@@ -205,7 +201,7 @@ export async function DELETE(
 
     if ("error" in result) {
       const error = result as CrudApiError;
-      reqLogger.warn("Failed to delete category", {
+      logger.warn("Failed to delete category", {
         categoryId,
         status: error.status,
         message: error.message,
@@ -213,7 +209,7 @@ export async function DELETE(
       return NextResponse.json(error, { status: error.status });
     }
 
-    reqLogger.info("Category deleted", { categoryId });
+    logger.info("Category deleted", { categoryId });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
