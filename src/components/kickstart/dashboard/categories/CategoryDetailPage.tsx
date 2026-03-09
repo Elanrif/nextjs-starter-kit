@@ -81,29 +81,29 @@ export function CategoryDetailPage({ data }: { data: Category | null }) {
       {/* Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Info Card */}
-        <Card className="p-6 space-y-4 hover:shadow-lg transition-shadow">
+        <Card className="p-6 space-y-4 hover:shadow-lg transition-shadow bg-linear-to-br from-slate-900 via-slate-800 to-slate-700">
           <div className="space-y-5">
             <div className="border-b pb-4">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
+              <label className="text-xs font-semibold text-gray-50 uppercase tracking-wide mb-2 block">
                 Nom
               </label>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-lg font-semibold text-gray-300">
                 {category.name}
               </p>
             </div>
             <div className="border-b pb-4">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
+              <label className="text-xs font-semibold text-gray-300 uppercase tracking-wide mb-2 block">
                 Slug
               </label>
-              <p className="text-sm font-mono text-gray-700 bg-gray-50 p-3 rounded-md">
+              <p className="text-sm font-mono bg-gray-50 p-3 rounded-md">
                 {category.slug}
               </p>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
+              <label className="text-xs font-semibold text-gray-300 uppercase tracking-wide mb-2 block">
                 Description
               </label>
-              <p className="text-sm text-gray-700 leading-relaxed">
+              <p className="text-sm text-gray-300 leading-relaxed">
                 {category.description || (
                   <span className="italic text-gray-400">—</span>
                 )}
@@ -113,12 +113,12 @@ export function CategoryDetailPage({ data }: { data: Category | null }) {
         </Card>
 
         {/* Meta Card */}
-        <Card className="p-6 space-y-3 bg-gradient-to-br from-blue-50 to-indigo-50">
-          <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-blue-100">
+        <Card className="p-6 space-y-3 bg-linear-to-br from-cyan-700 to-blue-900">
+          <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-blue-200">
             {category.isActive ? (
-              <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
             ) : (
-              <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <XCircle className="w-5 h-5 text-red-600 shrink-0" />
             )}
             <div className="flex-1">
               <p className="text-xs font-semibold text-gray-500 uppercase">
@@ -129,8 +129,8 @@ export function CategoryDetailPage({ data }: { data: Category | null }) {
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-blue-100">
-            <Calendar className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-blue-200">
+            <Calendar className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase">
                 Créé le

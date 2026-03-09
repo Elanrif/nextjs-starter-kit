@@ -97,7 +97,7 @@ export function ProductListPage({
       render: (row) => (
         <div className="flex gap-2">
           <Link href={`${DASHBOARD}${PRODUCTS}/${row.id}`}>
-            <DashboardButton size="xs">Voir</DashboardButton>
+            <DashboardButton size="xs">Détails</DashboardButton>
           </Link>
           <Link href={`${DASHBOARD}${PRODUCTS}/edit/${row.id}`}>
             <DashboardButton size="xs" variant="secondary">
