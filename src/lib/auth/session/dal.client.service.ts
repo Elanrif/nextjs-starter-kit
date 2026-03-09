@@ -2,10 +2,7 @@
  * DAL (Data Access Layer) for session management.
  * Provides server-side session verification and retrieval utilities.
  */
-import {
-  CrudApiError,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error";
+import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 import { Session } from "@lib/auth/models/auth.model";
 import { proxyEnvironment } from "@/config/proxy-api.config";
 import { AxiosResponse } from "axios";

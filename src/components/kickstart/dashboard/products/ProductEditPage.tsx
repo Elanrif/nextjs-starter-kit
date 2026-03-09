@@ -9,7 +9,11 @@ import { fetchCategories } from "@/lib/categories/services/category.client.servi
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/utils/routes";
-import { Product, ProductFormData, productSchema } from "@/lib/products/models/product.model";
+import {
+  Product,
+  ProductFormData,
+  productSchema,
+} from "@/lib/products/models/product.model";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 

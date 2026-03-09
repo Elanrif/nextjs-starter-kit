@@ -51,9 +51,7 @@ export async function signUp(
 /**
  * Get the current user's session (client-side)
  */
-export async function getClientSession(): Promise<
-  Result<User, CrudApiError>
-> {
+export async function getClientSession(): Promise<Result<User, CrudApiError>> {
   const result = await frontendHttp().get<
     any,
     AxiosResponse<Result<User, CrudApiError>>

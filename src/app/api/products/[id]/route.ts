@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 type Params = Promise<{ id: string }>;
 
-/** 
+/**
  * GET /api/products/[id]
  * Fetch a single product by ID
  */

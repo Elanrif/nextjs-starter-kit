@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
     const response = await fetchAllUser(config);
 
     if (!response.ok) {
-      return NextResponse.json(response, { status: response.error?.status || 500 });
+      return NextResponse.json(response, {
+        status: response.error?.status || 500,
+      });
     }
 
     return NextResponse.json(response, { status: 200 });
@@ -40,8 +42,7 @@ export async function GET(request: NextRequest) {
  * Create a new user
  */
 export async function POST(request: NextRequest) {
-
-  const body = (await request.json()) as Omit<User, 'id'>;
+  const body = (await request.json()) as Omit<User, "id">;
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };

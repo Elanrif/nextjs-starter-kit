@@ -35,7 +35,9 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-            {auth.data.firstName?.toUpperCase() || auth.data.email?.toUpperCase() || "U"}
+            {auth.data.firstName?.toUpperCase() ||
+              auth.data.email?.toUpperCase() ||
+              "U"}
           </div>
 
           {/* User Info */}
@@ -57,7 +59,9 @@ export default async function DashboardPage() {
         <div className="space-y-3">
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">User ID</span>
-            <span className="font-mono text-sm text-gray-900">{auth.data.id}</span>
+            <span className="font-mono text-sm text-gray-900">
+              {auth.data.id}
+            </span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">
@@ -67,7 +71,9 @@ export default async function DashboardPage() {
 
           <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-600">Name</span>
-            <span className="text-gray-900">{auth.data.firstName || "Not set"}</span>
+            <span className="text-gray-900">
+              {auth.data.firstName || "Not set"}
+            </span>
           </div>
 
           <div className="flex justify-between py-2 border-b border-gray-100">

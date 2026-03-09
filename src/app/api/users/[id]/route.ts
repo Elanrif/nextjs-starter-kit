@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
-import { fetchUserById, updateUser, deleteUser } from "@/lib/user/services/user.service";
+import {
+  fetchUserById,
+  updateUser,
+  deleteUser,
+} from "@/lib/user/services/user.service";
 import { UserUpdate } from "@/lib/user/models/user.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
@@ -16,7 +20,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-
   const userId = Number.parseInt(params.id, 10);
 
   const reqHeaders = new Headers(request.headers);
@@ -25,7 +28,9 @@ export async function GET(
   try {
     const response = await fetchUserById(userId, config);
     if (!response.ok) {
-      return NextResponse.json(response, { status: response.error?.status || 500 });
+      return NextResponse.json(response, {
+        status: response.error?.status || 500,
+      });
     }
     return NextResponse.json(response, { status: 200 });
   } catch (error) {

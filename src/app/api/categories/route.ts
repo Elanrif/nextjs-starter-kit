@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
  * Create a new category (requires authentication)
  */
 export async function POST(request: NextRequest) {
-
   // User authentication and role verification
   const session = await getSession();
 

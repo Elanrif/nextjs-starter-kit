@@ -57,7 +57,7 @@ export async function updateUser(
  * Create a new user (client-side)
  */
 export async function createUser(
-  user: Omit<User, 'id'>,
+  user: Omit<User, "id">,
 ): Promise<Result<User, CrudApiError>> {
   const res = await frontendHttp().post<
     unknown,

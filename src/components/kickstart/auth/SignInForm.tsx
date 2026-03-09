@@ -40,10 +40,12 @@ export function SignInForm() {
     setIsLoading(true);
     setError(null);
     try {
-      
-      const result = await signIn({ email: data.email, password: data.password });
+      const result = await signIn({
+        email: data.email,
+        password: data.password,
+      });
 
-      if(!result.ok) {
+      if (!result.ok) {
         setError(result.error?.message || "An error occurred during sign in.");
         return;
       }

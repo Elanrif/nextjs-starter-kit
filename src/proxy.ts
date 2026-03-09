@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { decrypt } from "@/lib/auth/session";
 
 // Routes that require authentication (exact or prefix)
@@ -11,7 +10,8 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   // normalize path (remove trailing slash except for root)
-  const normalized = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+  const normalized =
+    path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
 
   const isProtectedRoute = protectedRoutes.some(
     (p) => normalized === p || normalized.startsWith(p + "/"),
@@ -21,9 +21,8 @@ export default async function proxy(req: NextRequest) {
   );
 
   // decrypt session from cookie (if any)
-  const cookieStore = await cookies();
-  const raw = cookieStore.get("session")?.value;
-  const session = await decrypt(raw);
+  const cookieStore = req.cookies.get("session")?.value;
+  const session = await decrypt(cookieStore);
 
   // If route is protected and user not authenticated => redirect to sign-in
   if (isProtectedRoute && !session?.user?.userId) {
@@ -38,7 +37,7 @@ export default async function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Routes Proxy should not run on
 export const config = {
-  matcher: [String.raw`/((?!api|_next/static|_next/image|.*\.png$).*)/`],
+  // eslint-disable-next-line unicorn/prefer-string-raw
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
