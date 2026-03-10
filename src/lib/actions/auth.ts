@@ -11,6 +11,10 @@ import {
 } from "@/lib/shared/helpers/crud-api-error";
 import { Login, Registrer } from "@/lib/auth/models/auth.model";
 import { User } from "../user/models/user.model";
+import {
+  sendPasswordResetEmail,
+  generateResetToken,
+} from "@/config/mail.config";
 
 /**
  * Server Action: Sign In
@@ -58,6 +62,57 @@ export async function signUpAction(
     return res.data;
   } catch (error: any) {
     const errMsg = crudApiErrorResponse(error, "register");
+    return errMsg;
+  }
+}
+
+/**
+ * Server Action: Send Password Reset Email
+ * Generates token and sends reset email to user
+ */
+export async function sendPasswordResetAction(
+  email: string,
+): Promise<{ success: boolean; message: string } | CrudApiError> {
+  try {
+    // Check if email is valid
+    if (!email || !email.includes("@")) {
+      return {
+        error: "Invalid email",
+        status: 400,
+        message: "Please provide a valid email address",
+      } as CrudApiError;
+    }
+
+    // Generate reset token
+    const resetToken = generateResetToken();
+
+    // In production, store this token in database with expiration time (1 hour)
+    // For now, we'll just log it
+    console.log(`[DEV] Reset token for ${email}: ${resetToken}`);
+
+    // Build reset URL (adjust based on your domain)
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+
+    // Send email
+    const emailSent = await sendPasswordResetEmail(email, resetToken, resetUrl);
+
+    if (!emailSent) {
+      return {
+        error: "Email service unavailable",
+        status: 503,
+        message: "Failed to send reset email. Please try again later.",
+      } as CrudApiError;
+    }
+
+    // Always return success message for security (don't reveal if email exists)
+    return {
+      success: true,
+      message:
+        "If an account exists with this email, you will receive password reset instructions.",
+    };
+  } catch (error: any) {
+    const errMsg = crudApiErrorResponse(error, "sendPasswordReset");
     return errMsg;
   }
 }
