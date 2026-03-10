@@ -67,7 +67,7 @@ export function Header() {
                   );
                 }
 
-                if (session && session.isAuth && !error) {
+                if (session && session.ok && !error) {
                   return (
                     <>
                       <Link href={ROUTES.DASHBOARD}>

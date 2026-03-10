@@ -5,6 +5,7 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
+  LayoutDashboard,
   User as UserIcon,
 } from "lucide-react";
 
@@ -49,7 +50,7 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
   // If current pathname is under /dashboard, switch to account
   if (pathname?.startsWith("/dashboard")) {
     target = ROUTES.USER_ACCOUNT;
-    label = "Account";
+    label = "Profile";
   } else if (pathname?.startsWith("/account") && user.role === UserRole.ADMIN) {
     // If current pathname is under /account and user is admin, link to dashboard
     target = ROUTES.DASHBOARD;
@@ -60,7 +61,7 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
   return (
     <DropdownMenuItem className="bg-blue-50">
       <Link href={target} className="flex items-center gap-2 w-full">
-        <UserIcon />
+        {target === ROUTES.DASHBOARD ? <LayoutDashboard /> : <UserIcon />}
         {label}
       </Link>
     </DropdownMenuItem>
