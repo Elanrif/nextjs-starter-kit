@@ -16,7 +16,7 @@ import { resetPasswordTokenAction } from "@/lib/actions/auth";
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const resetToken = searchParams.get("token");
   const email = searchParams.get("email");
 
   const [password, setPassword] = useState("");
@@ -47,7 +47,7 @@ function ResetPasswordContent() {
     e.preventDefault();
     setError("");
 
-    if (!token || !email) {
+    if (!resetToken || !email) {
       setError("Invalid reset link. Please try again.");
       return;
     }
@@ -59,9 +59,10 @@ function ResetPasswordContent() {
     setLoading(true);
     try {
       const res = await resetPasswordTokenAction({
+        // ❌ not use to backend : oldPassword: confirmPassword,
+        code: "",
+        resetToken,
         email,
-        token,
-        oldPassword: confirmPassword,
         newPassword: password,
       });
       if ("error" in res) {
@@ -76,7 +77,7 @@ function ResetPasswordContent() {
     }
   };
 
-  if (!token || !email) {
+  if (!resetToken || !email) {
     return (
       <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">

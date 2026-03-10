@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { getLogger } from "./logger.config";
+import { randomBytes, createHmac } from "node:crypto"; // native crypto module for secure token generation
 
 const logger = getLogger("server");
 
@@ -29,15 +30,14 @@ transporter.verify((error, success) => {
 });
 
 /**
- * Generate password reset token (simple example)
- * In production, use a proper token generation library
+ * Generate password reset token using a secret key
+ * The token is a HMAC-SHA256 hash of a random string and the secret key
  */
-export function generateResetToken(): string {
-  return (
-    Math.random().toString(36).slice(2, 15) +
-    Math.random().toString(36).slice(2, 15) +
-    Math.random().toString(36).slice(2, 15)
-  );
+export function generateResetToken(): { resetToken: string; code: string } {
+  const secret = process.env.SMTP_RESET_TOKEN_SECRET!;
+  const code = randomBytes(16).toString("hex"); // Generate random string
+  const resetToken = createHmac("sha256", secret).update(code).digest("hex"); // HMAC-SHA256
+  return { resetToken, code };
 }
 
 /**

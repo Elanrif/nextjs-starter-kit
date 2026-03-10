@@ -1,7 +1,7 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { User } from "@lib/user/models/user.model";
+import { ResetPassword, User } from "@lib/user/models/user.model";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -26,7 +26,7 @@ import { createSession } from "./session";
 const {
   api: {
     rest: {
-      endpoints: { register: registerUrl, login: loginUrl },
+      endpoints: { register: registerUrl, login: loginUrl, users: usersUrl },
     },
   },
 } = environment;
@@ -139,5 +139,42 @@ export async function changeUserPassword(
       ok: false,
       error: crudApiErrorResponse(error, "changeUserPassword"),
     };
+  }
+}
+
+/**
+ * Change password for a user
+ */
+export async function resetPassword(
+  data: ResetPassword,
+  config?: Config,
+): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!data?.email || !data?.newPassword || !data?.resetToken || !data?.code) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message:
+          "Fields `email`, `newPassword`, `resetToken`, and `code` are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
+      usersUrl,
+      data,
+    );
+    logger.info("User created successfully", { id: res.data.id });
+    return { ok: true, data: res.data };
+  } catch (error) {
+    logger.error("Failed to create user", { email: data.email });
+    return { ok: false, error: crudApiErrorResponse(error, "createUser") };
   }
 }

@@ -25,8 +25,8 @@ export interface User {
 }
 
 export interface ResetPassword {
-  token?: string; // Optional token for password reset
+  code: string;
+  resetToken: string;
   email: string;
-  oldPassword: string;
   newPassword: string;
 }
