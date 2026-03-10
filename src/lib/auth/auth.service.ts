@@ -168,13 +168,13 @@ export async function resetPassword(
 
   try {
     const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
-      usersUrl,
+      `${usersUrl}/reset-password`,
       data,
     );
-    logger.info("User created successfully", { id: res.data.id });
+    logger.info("Password reset successfully", { id: res.data.id });
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to create user", { email: data.email });
-    return { ok: false, error: crudApiErrorResponse(error, "createUser") };
+    logger.error("Failed to reset password", { email: data.email });
+    return { ok: false, error: crudApiErrorResponse(error, "resetPassword") };
   }
 }

@@ -28,7 +28,7 @@ export async function signInAction(
     const res = await serverSignIn(credentials);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "signUp");
+      const errMsg = crudApiErrorResponse(res, "signIn action");
       return errMsg;
     }
 
@@ -37,7 +37,7 @@ export async function signInAction(
 
     return res.data;
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "register");
+    const errMsg = crudApiErrorResponse(error, "signIn action");
     return errMsg;
   }
 }
@@ -53,7 +53,7 @@ export async function signUpAction(
     const res = await serverSignUp(userData);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "signUp");
+      const errMsg = crudApiErrorResponse(res, "signUp action");
       return errMsg;
     }
 
@@ -62,7 +62,7 @@ export async function signUpAction(
 
     return res.data;
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "register");
+    const errMsg = crudApiErrorResponse(error, "signUp action");
     return errMsg;
   }
 }
@@ -87,12 +87,6 @@ export async function sendPasswordResetAction(
     // Generate reset token
     const { resetToken, code } = generateResetToken();
 
-    // In production, store this token in database with expiration time (1 hour)
-    // For now, we'll just log it
-    console.log(
-      `[DEV] Reset token for ${email}: ${resetToken} (random code: ${code})`,
-    );
-
     // Build reset URL (adjust based on your domain)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&code=${code}&email=${encodeURIComponent(email)}`;
@@ -115,7 +109,7 @@ export async function sendPasswordResetAction(
         "If an account exists with this email, you will receive password reset instructions.",
     };
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "sendPasswordReset");
+    const errMsg = crudApiErrorResponse(error, "sendPasswordReset action");
     return errMsg;
   }
 }
@@ -140,7 +134,7 @@ export async function resetPasswordTokenAction(
     const res = await resetPassword(data);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "resetPassword");
+      const errMsg = crudApiErrorResponse(res, "resetPassword action");
       return errMsg;
     }
 
@@ -148,8 +142,8 @@ export async function resetPasswordTokenAction(
     await createSession(res.data.id, res.data.email, res.data.role);
 
     return res.data;
-  } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "resetPassword");
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(error, "resetPassword action");
     return errMsg;
   }
 }
