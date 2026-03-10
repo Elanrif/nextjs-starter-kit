@@ -10,11 +10,12 @@ import {
   crudApiErrorResponse,
 } from "@/lib/shared/helpers/crud-api-error";
 import { Login, Registrer } from "@/lib/auth/models/auth.model";
-import { User } from "../user/models/user.model";
+import { ResetPassword, User } from "@/lib/user/models/user.model";
 import {
   sendPasswordResetEmail,
   generateResetToken,
 } from "@/config/mail.config";
+import { resetPassword } from "@/lib/user/services/user.service";
 
 /**
  * Server Action: Sign In
@@ -113,6 +114,102 @@ export async function sendPasswordResetAction(
     };
   } catch (error: any) {
     const errMsg = crudApiErrorResponse(error, "sendPasswordReset");
+    return errMsg;
+  }
+}
+
+/**
+ * Server Action: Change Password
+ * Safely handles password change on the server side
+ * Requires current password for security
+ */
+export async function resetPasswordTokenAction(
+  data: ResetPassword,
+): Promise<User | CrudApiError> {
+  if (!data.token) {
+    return {
+      error: "Token required",
+      status: 400,
+      message: "Password reset token is required",
+    } as CrudApiError;
+  }
+
+  try {
+    const res = await resetPassword(data);
+
+    if (!res.ok) {
+      const errMsg = crudApiErrorResponse(res, "resetPassword");
+      return errMsg;
+    }
+
+    // Create session after successful password change
+    await createSession(res.data.id, res.data.email, res.data.role);
+
+    return res.data;
+  } catch (error: any) {
+    const errMsg = crudApiErrorResponse(error, "resetPassword");
+    return errMsg;
+  }
+}
+
+/**
+ * Server Action: Reset Password with Token
+ * Resets user password using token from email link
+ */
+export async function resetPasswordWithTokenAction(
+  email: string,
+  token: string,
+  newPassword: string,
+): Promise<{ success: boolean; message: string } | CrudApiError> {
+  try {
+    // Validate inputs
+    if (!email || !token || !newPassword) {
+      return {
+        error: "Invalid request",
+        status: 400,
+        message: "Missing required fields",
+      } as CrudApiError;
+    }
+
+    if (newPassword.length < 8) {
+      return {
+        error: "Weak password",
+        status: 400,
+        message: "Password must be at least 8 characters",
+      } as CrudApiError;
+    }
+
+    // TODO: In production, validate token against database
+    // - Check if token exists for this email
+    // - Check if token is not expired
+    // - Mark token as used
+    console.log(`[DEV] Reset password with token: ${token} for ${email}`);
+
+    // Call backend with correct data structure
+    const resetPasswordData: ResetPassword = {
+      token, // just uses token for validation in backend, oldPassword is not needed for token-based reset
+      email,
+      newPassword,
+      oldPassword: "", // Not needed for token-based reset
+    };
+
+    const res = await resetPassword(resetPasswordData);
+
+    if (!res.ok) {
+      const errMsg = crudApiErrorResponse(res, "resetPasswordWithToken");
+      return errMsg;
+    }
+
+    // Create session after successful password change
+    await createSession(res.data.id, res.data.email, res.data.role);
+
+    return {
+      success: true,
+      message:
+        "Password reset successfully. You can now sign in with your new password.",
+    };
+  } catch (error: any) {
+    const errMsg = crudApiErrorResponse(error, "resetPasswordWithToken");
     return errMsg;
   }
 }

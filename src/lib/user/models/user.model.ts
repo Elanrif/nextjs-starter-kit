@@ -23,3 +23,10 @@ export interface User {
   isActive: boolean;
   [key: string]: any; // Allow additional properties
 }
+
+export interface ResetPassword {
+  token?: string; // Optional token for password reset
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}

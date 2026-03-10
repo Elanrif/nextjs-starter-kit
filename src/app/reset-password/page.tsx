@@ -11,6 +11,7 @@ import {
   AlertCircle,
   ArrowLeft,
 } from "lucide-react";
+import { resetPasswordTokenAction } from "@/lib/actions/auth";
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -57,9 +58,16 @@ function ResetPasswordContent() {
 
     setLoading(true);
     try {
-      // TODO: Call your reset password API/action here
-      // For now, just simulate success
-      console.log("Reset password with:", { token, email, password });
+      const res = await resetPasswordTokenAction({
+        email,
+        token,
+        oldPassword: confirmPassword,
+        newPassword: password,
+      });
+      if ("error" in res) {
+        setError(res.message || "Failed to reset password");
+        return;
+      }
       setSuccess(true);
     } catch {
       setError("Failed to reset password. Please try again.");
@@ -282,7 +290,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-liner-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
           Loading...
         </div>
       }
