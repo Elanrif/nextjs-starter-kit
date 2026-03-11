@@ -26,7 +26,11 @@ import { createSession } from "./session";
 const {
   api: {
     rest: {
-      endpoints: { register: registerUrl, login: loginUrl, users: usersUrl },
+      endpoints: {
+        register: registerUrl,
+        login: loginUrl,
+        resetPassword: resetPasswordUrl,
+      },
     },
   },
 } = environment;
@@ -154,21 +158,37 @@ export async function resetPassword(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (!data?.email || !data?.newPassword || !data?.resetToken || !data?.code) {
+  if (!data?.email || !data?.newPassword) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Fields `email`, `newPassword`are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  /**
+   * ⚠️ For security, we don't reveal if the email exists or not
+   * ❌ Someone can use this to find valid emails
+   * ✅ Always require token and code to prevent abuse
+   */
+  if (!data?.resetToken || !data?.code) {
     return {
       ok: false,
       error: {
         status: 400,
         message:
-          "Fields `email`, `newPassword`, `resetToken`, and `code` are required",
+          "Oups, looks like the reset link is invalid or expired. Please request a new password reset.",
         error: "Bad Request",
       },
     };
   }
 
   try {
-    const res = await apiClient(true, config).post<any, AxiosResponse<User>>(
-      `${usersUrl}/reset-password`,
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+      resetPasswordUrl,
       data,
     );
     logger.info("Password reset successfully", { id: res.data.id });

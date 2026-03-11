@@ -28,8 +28,7 @@ export async function signInAction(
     const res = await serverSignIn(credentials);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "signIn action");
-      return errMsg;
+      return res.error;
     }
 
     // Create session with user data
@@ -53,8 +52,7 @@ export async function signUpAction(
     const res = await serverSignUp(userData);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "signUp action");
-      return errMsg;
+      return res.error;
     }
 
     // Create session after successful registration
@@ -134,16 +132,13 @@ export async function resetPasswordTokenAction(
     const res = await resetPassword(data);
 
     if (!res.ok) {
-      const errMsg = crudApiErrorResponse(res, "resetPassword action");
-      return errMsg;
+      return res.error;
     }
 
-    // Create session after successful password change
-    await createSession(res.data.id, res.data.email, res.data.role);
-
+    // Go to sign in page after successful password reset
     return res.data;
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "resetPassword action");
+    const errMsg = crudApiErrorResponse(error, "error resetPassword action");
     return errMsg;
   }
 }

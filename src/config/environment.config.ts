@@ -15,12 +15,13 @@ const environment = {
       endpoints: {
         categories: `${XXX_BASE_V1}/categories`,
         products: `${XXX_BASE_V1}/products`,
-
-        // Managed user endpoints
-        auth: `${XXX_BASE_V1}/auth`,
         users: `${XXX_BASE_V1}/users`,
+
+        // auth endpoints
+        auth: `${XXX_BASE_V1}/auth`,
         login: `${XXX_BASE_V1}/auth/login`,
         register: `${XXX_BASE_V1}/auth/register`,
+        resetPassword: `${XXX_BASE_V1}/auth/reset-password`,
       },
     },
   },

@@ -50,7 +50,7 @@ export async function sendPasswordResetEmail(
 ): Promise<boolean> {
   try {
     const mailOptions = {
-      from: process.env.SMTP_FROM || "noreply@example.com",
+      from: process.env.SMTP_FROM || "noreply@google.com",
       to: email,
       subject: "Password Reset Request",
       html: `
@@ -85,7 +85,7 @@ export async function sendPasswordResetEmail(
                   <p>Click the button below to reset your password. This link will expire in <strong>1 hour</strong>.</p>
                   
                   <center>
-                    <a href="${resetUrl}" class="button">Reset Password</a>
+                    <a href="${resetUrl}" class="button" style="color: white;">Reset Password</a>
                   </center>
                   
                   <div class="warning">
@@ -101,7 +101,7 @@ export async function sendPasswordResetEmail(
                 
                 <p style="font-size: 14px; color: #666;">
                   <strong>Didn't request this?</strong><br/>
-                  If you didn't request a password reset, please contact us immediately at support@example.com or reply to this email.
+                  If you didn't request a password reset, please contact us immediately at elanrif.tech@gmail.com or reply to this email.
                 </p>
               </div>
               <div class="footer">

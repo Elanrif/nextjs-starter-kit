@@ -16,6 +16,7 @@ import { resetPasswordTokenAction } from "@/lib/actions/auth";
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const code = searchParams.get("code");
   const resetToken = searchParams.get("token");
   const email = searchParams.get("email");
 
@@ -47,7 +48,7 @@ function ResetPasswordContent() {
     e.preventDefault();
     setError("");
 
-    if (!resetToken || !email) {
+    if (!resetToken || !email || !code) {
       setError("Invalid reset link. Please try again.");
       return;
     }
@@ -60,7 +61,7 @@ function ResetPasswordContent() {
     try {
       const res = await resetPasswordTokenAction({
         // ❌ not use to backend : oldPassword: confirmPassword,
-        code: "",
+        code,
         resetToken,
         email,
         newPassword: password,
@@ -77,9 +78,9 @@ function ResetPasswordContent() {
     }
   };
 
-  if (!resetToken || !email) {
+  if (!resetToken || !email || !code) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+      <div className="h-screen flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
@@ -104,7 +105,7 @@ function ResetPasswordContent() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <div className="flex justify-center mb-6">
@@ -132,7 +133,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+    <div className="h-screen flex items-center justify-center">
       <div className="w-full max-w-md">
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -291,7 +292,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="h-screen flex items-center justify-center">
           Loading...
         </div>
       }

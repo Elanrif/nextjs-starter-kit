@@ -92,7 +92,7 @@ export async function DELETE(
   const config = { headers: reqHeaders };
 
   try {
-    const response = await deleteUser(config, userId);
+    const response = await deleteUser(userId, config);
 
     if (!response.ok) {
       const error = response.error;
