@@ -21,15 +21,15 @@ export function DataTable<T extends { id: string | number }>({
   emptyText = "Aucune donnée.",
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto rounded-lg shadow bg-white">
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className="overflow-x-auto rounded-lg shadow-md shadow-slate-300  bg-white">
+      <table className="min-w-full divide-y divide-slate-200">
         {/* Header */}
-        <thead className="bg-gray-50">
+        <thead className="bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700 text-white">
           <tr>
             {columns.map((col) => (
               <th
                 key={col.key as string}
-                className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${col.className || ""}`}
+                className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${col.className || ""}`}
               >
                 {col.label}
               </th>
@@ -38,7 +38,7 @@ export function DataTable<T extends { id: string | number }>({
         </thead>
 
         {/* Body */}
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="bg-white divide-y divide-cyan-200">
           {/* Loading */}
           {loading && (
             <tr>

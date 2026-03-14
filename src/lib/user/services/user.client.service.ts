@@ -12,7 +12,7 @@ import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 
 const {
   api: {
-    endpoints: { users: usersUrl, usersUpdate: userUpdateUrl },
+    endpoints: { users: usersUrl },
   },
 } = proxyEnvironment;
 
@@ -44,12 +44,13 @@ export async function fetchUserById(
  * Update a user (client-side)
  */
 export async function updateUser(
+  id: number,
   user: UserUpdate,
 ): Promise<Result<User, CrudApiError>> {
   const res = await frontendHttp().patch<
     unknown,
     AxiosResponse<Result<User, CrudApiError>>
-  >(userUpdateUrl, user);
+  >(`${usersUrl}/${id}`, user);
   return res.data;
 }
 

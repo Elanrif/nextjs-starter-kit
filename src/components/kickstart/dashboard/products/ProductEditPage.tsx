@@ -14,6 +14,8 @@ import {
   ProductFormData,
   productSchema,
 } from "@/lib/products/models/product.model";
+import { Card } from "@/components/ui/card";
+import { Edit, ArrowLeft, Package, DollarSign, Layers } from "lucide-react";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -31,13 +33,13 @@ export function ProductEditPage({
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as any,
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      price: 0,
-      stock: 0,
-      isActive: true,
-      categoryId: 0,
+      name: loadedProduct?.name || "",
+      slug: loadedProduct?.slug || "",
+      description: loadedProduct?.description || "",
+      price: loadedProduct?.price || 0,
+      stock: loadedProduct?.stock || 0,
+      isActive: loadedProduct?.isActive ?? true,
+      categoryId: loadedProduct?.category?.id || 0,
     },
   });
 
@@ -48,24 +50,26 @@ export function ProductEditPage({
   const router = useRouter();
 
   useEffect(() => {
-    if (loadedProduct && "id" in loadedProduct) {
-      reset({
-        name: loadedProduct?.name || "",
-        slug: loadedProduct?.slug || "",
-        description: loadedProduct?.description || "",
-        price: loadedProduct?.price || 0,
-        stock: loadedProduct?.stock || 0,
-        isActive: loadedProduct?.isActive ?? true,
-        categoryId: loadedProduct?.categoryId || 0,
-      });
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(false);
-
-    // Client Side fetching for categories
+    // Fetch categories first
     fetchCategories().then((res) => {
-      if (Array.isArray(res))
+      if (Array.isArray(res)) {
         setCategories(res.map((c) => ({ id: c.id, name: c.name })));
+      }
+
+      // Then reset form with loaded product data
+      if (loadedProduct && "id" in loadedProduct) {
+        reset({
+          name: loadedProduct?.name || "",
+          slug: loadedProduct?.slug || "",
+          description: loadedProduct?.description || "",
+          price: loadedProduct?.price || 0,
+          stock: loadedProduct?.stock || 0,
+          isActive: loadedProduct?.isActive ?? true,
+          categoryId: loadedProduct?.category?.id || 0,
+        });
+      }
+
+      setLoading(false);
     });
   }, [loadedProduct, reset]);
 
@@ -93,161 +97,249 @@ export function ProductEditPage({
   //   });
   // }, [id, reset]);
 
+  /**
+   * Handles product update with robust error management.
+   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
+   * and ensures loading is always stopped, even if an exception occurs.
+   */
   const onSubmit = async (data: ProductFormData) => {
     if (!loadedProduct) {
+      setError("name", { message: "Produit introuvable" });
       toast.error("Produit introuvable.");
       return;
     }
     setLoading(true);
-    const anyRes = (await updateProduct(Number(loadedProduct.id), {
-      ...data,
-      price: Number(data.price),
-      stock: Number(data.stock),
-      categoryId: Number(data.categoryId),
-    })) as any;
-    setLoading(false);
+    try {
+      const anyRes = (await updateProduct(Number(loadedProduct.id), {
+        ...data,
+        price: Number(data.price),
+        stock: Number(data.stock),
+        categoryId: Number(data.categoryId),
+      })) as any;
 
-    const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-    if (updatedId) {
-      toast.success("Produit modifié avec succès");
-      router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
-      return;
-    }
-
-    if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
-      for (const d of anyRes.message.details) {
-        if (d.field)
-          setError(d.field as keyof ProductFormData, {
-            type: "server",
-            message: d.message,
-          });
+      const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      if (updatedId) {
+        toast.success("Produit modifié avec succès");
+        router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
+        return;
       }
-      toast.error("Erreur de validation côté serveur");
-      return;
-    }
 
-    toast.error(
-      anyRes?.message?.message ||
-        anyRes?.message ||
-        "Erreur lors de la modification",
-    );
+      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+        for (const d of anyRes.message.details) {
+          if (d.field)
+            setError(d.field as keyof ProductFormData, {
+              type: "server",
+              message: d.message,
+            });
+        }
+        toast.error("Erreur de validation côté serveur");
+        return;
+      }
+
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la modification",
+      );
+    } catch (error: any) {
+      toast.error(
+        error.message || "Erreur inattendue lors de la modification du produit",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading)
     return <LoadingPage isLoading={true} text="Chargement du produit..." />;
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="min-w-md mx-auto bg-white rounded-lg shadow p-6 space-y-4"
-    >
-      <h2 className="text-2xl font-bold mb-2">Modifier le produit</h2>
-      <section className="grid grid-cols-2 gap-4">
-        <label className="block">
-          <span className="block mb-1 after:content-['*'] after:ml-1 after:text-red-500">
-            Nom
-          </span>
-          <input
-            {...register("name")}
-            placeholder="Nom"
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.name && (
-            <span className="text-red-500 text-sm">{errors.name.message}</span>
-          )}
-        </label>
-        <label className="block">
-          <span className="block mb-1 after:content-['*'] after:ml-1 after:text-red-500">
-            Slug
-          </span>
-          <input
-            {...register("slug")}
-            placeholder="Slug"
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.slug && (
-            <span className="text-red-500 text-sm">{errors.slug.message}</span>
-          )}
-        </label>
-        <label className="block">
-          <span className="block mb-1">Description</span>
-          <textarea
-            {...register("description")}
-            placeholder="Description"
-            className="w-full border px-3 py-2 rounded"
-          />
-        </label>
-        <label className="block">
-          <span className="block mb-1 after:content-['*'] after:ml-1 after:text-red-500">
-            Prix
-          </span>
-          <input
-            {...register("price", { valueAsNumber: true })}
-            type="number"
-            step="0.01"
-            min={0}
-            inputMode="decimal"
-            placeholder="Prix"
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.price && (
-            <span className="text-red-500 text-sm">{errors.price.message}</span>
-          )}
-        </label>
-        <label className="block">
-          <span className="block mb-1 after:content-['*'] after:ml-1 after:text-red-500">
-            Stock
-          </span>
-          <input
-            {...register("stock", { valueAsNumber: true })}
-            type="number"
-            step={1}
-            min={0}
-            placeholder="Stock"
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.stock && (
-            <span className="text-red-500 text-sm">{errors.stock.message}</span>
-          )}
-        </label>
-        <label className="block">
-          <span className="block mb-1 after:content-['*'] after:ml-1 after:text-red-500">
-            Catégorie
-          </span>
-          <select
-            {...register("categoryId", { valueAsNumber: true })}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="">Sélectionner une catégorie</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-          {errors.categoryId && (
-            <span className="text-red-500 text-sm">
-              {errors.categoryId.message}
-            </span>
-          )}
-        </label>
-        <label className="flex items-center gap-2">
-          <input type="checkbox" {...register("isActive")} /> Actif
-        </label>
-      </section>
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-purple-100 rounded-lg">
+            <Edit className="w-6 h-6 text-purple-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Modifier le produit
+            </h1>
+            <p className="text-sm text-gray-500">{loadedProduct?.name}</p>
+          </div>
+        </div>
 
-      <div className="flex gap-2 mt-4">
-        <DashboardButton type="submit" disabled={loading}>
-          {loading ? "Modification..." : "Enregistrer"}
-        </DashboardButton>
-        <DashboardButton
-          type="button"
-          variant="secondary"
-          onClick={() => history.back()}
-        >
-          Annuler
-        </DashboardButton>
+        {/* Form Card */}
+        <Card className="p-8 space-y-8 bg-linear-to-br from-gray-50 to-gray-100">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Product Info Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
+                <Package className="w-5 h-5 text-orange-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Informations du produit
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
+                    Nom
+                  </span>
+                  <input
+                    {...register("name")}
+                    placeholder="Ex: Laptop Pro"
+                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                  />
+                  {errors.name && (
+                    <span className="text-red-500 text-sm mt-1">
+                      {errors.name.message}
+                    </span>
+                  )}
+                </label>
+                <label className="block">
+                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
+                    Slug
+                  </span>
+                  <input
+                    {...register("slug")}
+                    placeholder="Ex: laptop-pro"
+                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                  />
+                  {errors.slug && (
+                    <span className="text-red-500 text-sm mt-1">
+                      {errors.slug.message}
+                    </span>
+                  )}
+                </label>
+              </div>
+              <label className="block">
+                <span className="block text-sm font-semibold text-gray-700 mb-2">
+                  Description
+                </span>
+                <textarea
+                  {...register("description")}
+                  placeholder="Décrivez votre produit..."
+                  rows={4}
+                  className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                />
+              </label>
+            </div>
+
+            {/* Pricing & Inventory Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
+                <DollarSign className="w-5 h-5 text-green-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Tarification & Inventaire
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
+                    Prix (€)
+                  </span>
+                  <input
+                    {...register("price", { valueAsNumber: true })}
+                    type="number"
+                    step="0.01"
+                    min={0}
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition"
+                  />
+                  {errors.price && (
+                    <span className="text-red-500 text-sm mt-1">
+                      {errors.price.message}
+                    </span>
+                  )}
+                </label>
+                <label className="block">
+                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
+                    Stock
+                  </span>
+                  <input
+                    {...register("stock", { valueAsNumber: true })}
+                    type="number"
+                    step={1}
+                    min={0}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition"
+                  />
+                  {errors.stock && (
+                    <span className="text-red-500 text-sm mt-1">
+                      {errors.stock.message}
+                    </span>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* Category & Status Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
+                <Layers className="w-5 h-5 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Catégorie & Statut
+                </h2>
+              </div>
+              <label className="block">
+                <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
+                  Catégorie
+                </span>
+                <select
+                  {...register("categoryId", { valueAsNumber: true })}
+                  className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                >
+                  <option value="">Sélectionner une catégorie</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.categoryId && (
+                  <span className="text-red-500 text-sm mt-1">
+                    {errors.categoryId.message}
+                  </span>
+                )}
+              </label>
+              <label className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-500 transition">
+                <input
+                  type="checkbox"
+                  {...register("isActive")}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm font-semibold text-gray-700">
+                  Produit actif
+                </span>
+              </label>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
+              <DashboardButton
+                type="submit"
+                size="lg"
+                className="flex-1"
+                disabled={loading}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                {loading ? "Modification..." : "Enregistrer"}
+              </DashboardButton>
+              <DashboardButton
+                type="button"
+                size="lg"
+                variant="outline"
+                className="flex-1"
+                onClick={() => router.back()}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Annuler
+              </DashboardButton>
+            </div>
+          </form>
+        </Card>
       </div>
-    </form>
+    </div>
   );
 }

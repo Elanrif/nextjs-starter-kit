@@ -15,6 +15,7 @@ import {
 import { getUserVerifiedSession } from "@/lib/auth/session/dal.service";
 import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -44,9 +45,9 @@ export default async function DashboardLayout({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <HomeIcon href={ROUTES.HOME} size={18}>
-                    Kickstart Nextjs
-                  </HomeIcon>
+                  <Link href={ROUTES.DASHBOARD}>
+                    <HomeIcon href={ROUTES.HOME} size={18} />
+                  </Link>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -56,7 +57,7 @@ export default async function DashboardLayout({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 p-16 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -72,7 +72,7 @@ export function CategoryListPage() {
       render: (row) => (
         <div className="flex gap-2">
           <Link href={`${DASHBOARD}${CATEGORIES}/${row.id}`}>
-            <DashboardButton size="xs">Voir</DashboardButton>
+            <DashboardButton size="xs">Détails</DashboardButton>
           </Link>
           <Link href={`${DASHBOARD}${CATEGORIES}/edit/${row.id}`}>
             <DashboardButton size="xs" variant="secondary">

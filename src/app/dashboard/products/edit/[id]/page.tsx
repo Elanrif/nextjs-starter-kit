@@ -14,8 +14,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   // Server-side fetching
   const res = await fetchProductById(config, Number(id));
   let fetchedProduct: any = null;
-  if ("id" in res) {
-    fetchedProduct = res;
+  if (res.ok) {
+    fetchedProduct = res.data;
   }
   return <ProductEditPage loadedProduct={fetchedProduct} />;
 }

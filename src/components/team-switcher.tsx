@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
+import Logo from "./kickstart/logo";
 
 export function TeamSwitcher({
   teams,
@@ -45,19 +46,12 @@ export function TeamSwitcher({
         {isDisplay ? (
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className="bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700  data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             onClick={() => {
               redirect(ROUTES.HOME);
             }}
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <activeTeam.logo className="size-4" />
-            </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{activeTeam.name}</span>
-              <span className="truncate text-xs">{activeTeam.plan}</span>
-            </div>
-            <ChevronsUpDown className="ml-auto" />
+            <Logo />
           </SidebarMenuButton>
         ) : (
           <DropdownMenu>

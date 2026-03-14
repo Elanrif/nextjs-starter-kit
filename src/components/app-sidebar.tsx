@@ -2,13 +2,9 @@
 
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
-  Frame,
   GalleryVerticalEnd,
-  Map,
+  HomeIcon,
   PieChart,
-  Settings2,
   SquareTerminal,
 } from "lucide-react";
 
@@ -27,6 +23,7 @@ import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
+import SidebarSkeleton from "./ui/sidebar-skeleton";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
@@ -40,6 +37,11 @@ const data = {
     },
   ],
   navMain: [
+    {
+      title: "Home",
+      url: DASHBOARD,
+      icon: HomeIcon,
+    },
     {
       title: "Store",
       url: "#",
@@ -60,87 +62,12 @@ const data = {
         },
       ],
     },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
   ],
   projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
     {
       name: "Sales & Marketing",
       url: "#",
       icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -156,12 +83,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         const response = await getUserVerifiedSession();
 
         if (!response.ok) {
-          redirect("/sign-in?callbackUrl=/dashboard");
+          redirect("/sign-in?callbackUrl=/account");
         }
         setAuth(response.data);
       } catch (error) {
         console.error("Auth error:", error);
-        redirect("/sign-in?callbackUrl=/dashboard");
+        redirect("/sign-in?callbackUrl=/account");
       } finally {
         setIsLoading(false);
       }
@@ -170,8 +97,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     fetchAuthData();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading || !auth) {
+    return <SidebarSkeleton {...props} />;
   }
 
   return (

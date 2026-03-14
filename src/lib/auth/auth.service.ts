@@ -1,7 +1,7 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { User } from "@lib/user/models/user.model";
+import { ResetPassword, User } from "@lib/user/models/user.model";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -26,7 +26,11 @@ import { createSession } from "./session";
 const {
   api: {
     rest: {
-      endpoints: { register: registerUrl, login: loginUrl },
+      endpoints: {
+        register: registerUrl,
+        login: loginUrl,
+        resetPassword: resetPasswordUrl,
+      },
     },
   },
 } = environment;
@@ -139,5 +143,58 @@ export async function changeUserPassword(
       ok: false,
       error: crudApiErrorResponse(error, "changeUserPassword"),
     };
+  }
+}
+
+/**
+ * Change password for a user
+ */
+export async function resetPassword(
+  data: ResetPassword,
+  config?: Config,
+): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  if (!data?.email || !data?.newPassword) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: "Fields `email`, `newPassword`are required",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  /**
+   * ⚠️ For security, we don't reveal if the email exists or not
+   * ❌ Someone can use this to find valid emails
+   * ✅ Always require token and code to prevent abuse
+   */
+  if (!data?.resetToken || !data?.code) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message:
+          "Oups, looks like the reset link is invalid or expired. Please request a new password reset.",
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+      resetPasswordUrl,
+      data,
+    );
+    logger.info("Password reset successfully", { id: res.data.id });
+    return { ok: true, data: res.data };
+  } catch (error) {
+    logger.error("Failed to reset password", { email: data.email });
+    return { ok: false, error: crudApiErrorResponse(error, "resetPassword") };
   }
 }

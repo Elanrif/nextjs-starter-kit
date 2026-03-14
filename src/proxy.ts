@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth/session";
 
-// Routes that require authentication (exact or prefix)
-const protectedRoutes = ["/dashboard"];
-// Public auth routes we want to hide from authenticated users
+const protectedRoutes = ["/dashboard", "/account"];
 const publicRoutePrefixes = ["/sign-in", "/sign-up"];
 
 export default async function proxy(req: NextRequest) {
@@ -24,14 +22,35 @@ export default async function proxy(req: NextRequest) {
   const cookieStore = req.cookies.get("session")?.value;
   const session = await decrypt(cookieStore);
 
-  // If route is protected and user not authenticated => redirect to sign-in
+  // If route is protected and user is not authenticated => redirect to sign-in
   if (isProtectedRoute && !session?.user?.userId) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
 
-  // If route is a public-auth page (sign-in / sign-up) and user is authenticated => redirect to dashboard
-  if (isPublicRoute && session?.user?.userId) {
+  // If user is admin => redirect to admin (but not if already on /admin)
+  if (
+    isProtectedRoute &&
+    session?.user?.userId &&
+    session?.user?.role === "ADMIN" &&
+    !normalized.startsWith("/dashboard") &&
+    !normalized.startsWith("/account")
+  ) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  }
+
+  // If user is not admin => redirect to account (but not if already on /account)
+  if (
+    isProtectedRoute &&
+    session?.user?.userId &&
+    session?.user?.role !== "ADMIN" &&
+    !normalized.startsWith("/account")
+  ) {
+    return NextResponse.redirect(new URL("/account", req.nextUrl));
+  }
+
+  // If route is public and user is authenticated => redirect to account/dashboard
+  if (isPublicRoute && session?.user?.userId) {
+    return NextResponse.redirect(new URL("/account", req.nextUrl));
   }
 
   return NextResponse.next();
