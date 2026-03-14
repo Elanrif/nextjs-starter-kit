@@ -2,32 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  User,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Check,
-  Circle,
-  ArrowRight,
-  Phone,
-} from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
 import { signUpAction } from "@/lib/actions/auth";
-
-/**
- * Password validation rules
- */
-function usePasswordValidation(password: string) {
-  return {
-    minLength: password.length >= 8,
-    hasNumber: /\d/.test(password) || /[!"#$%&()*,.:<>?@^{|}]/.test(password),
-    hasCase: /[a-z]/.test(password) && /[A-Z]/.test(password),
-  };
-}
+import { usePasswordValidation } from "@/hooks/use-password-validation";
+import ValidationItem from "@/utils";
 
 /**
  * Sign Up Form Component
@@ -56,7 +37,7 @@ export function SignUpForm() {
   const password = watch("password");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validation = usePasswordValidation(password);
 
@@ -70,7 +51,7 @@ export function SignUpForm() {
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
 
     try {
@@ -93,7 +74,7 @@ export function SignUpForm() {
     } catch (error_: any) {
       setError(error_?.message || "An unexpected error occurred");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -115,7 +96,7 @@ export function SignUpForm() {
             type="text"
             {...register("firstName")}
             placeholder="First Name"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300
              focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
@@ -135,7 +116,7 @@ export function SignUpForm() {
             type="text"
             {...register("lastName")}
             placeholder="Last Name"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
           {errors.lastName && (
@@ -156,7 +137,7 @@ export function SignUpForm() {
             type="tel"
             {...register("phoneNumber")}
             placeholder="Phone Number"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
           {errors.phoneNumber && (
@@ -175,7 +156,7 @@ export function SignUpForm() {
             type="email"
             {...register("email")}
             placeholder="Email Address"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
           {errors.email && (
@@ -195,7 +176,7 @@ export function SignUpForm() {
               type={showPassword ? "text" : "password"}
               {...register("password")}
               placeholder="Password"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
             />
             {errors.password && (
@@ -244,7 +225,7 @@ export function SignUpForm() {
             type="password"
             {...register("confirmPassword")}
             placeholder="Re-Type Password"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
           />
           {errors.confirmPassword && (
@@ -258,12 +239,12 @@ export function SignUpForm() {
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={loading}
         className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-600 to-teal-700 text-white font-medium rounded-full hover:from-emerald-400 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-300 
         focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center
          justify-center gap-2 shadow-lg shadow-emerald-300/30"
       >
-        {isLoading ? (
+        {loading ? (
           "Creating account..."
         ) : (
           <>
@@ -286,21 +267,6 @@ export function SignUpForm() {
         </div>
       </div>
     </form>
-  );
-}
-
-function ValidationItem({ valid, text }: { valid: boolean; text: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      {valid ? (
-        <Check className="h-4 w-4 text-emerald-500" />
-      ) : (
-        <Circle className="h-4 w-4 text-gray-300" />
-      )}
-      <span className={valid ? "text-emerald-600" : "text-gray-400"}>
-        {text}
-      </span>
-    </div>
   );
 }
 

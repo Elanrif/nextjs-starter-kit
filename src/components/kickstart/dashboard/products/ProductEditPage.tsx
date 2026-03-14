@@ -97,44 +97,57 @@ export function ProductEditPage({
   //   });
   // }, [id, reset]);
 
+  /**
+   * Handles product update with robust error management.
+   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
+   * and ensures loading is always stopped, even if an exception occurs.
+   */
   const onSubmit = async (data: ProductFormData) => {
     if (!loadedProduct) {
+      setError("name", { message: "Produit introuvable" });
       toast.error("Produit introuvable.");
       return;
     }
     setLoading(true);
-    const anyRes = (await updateProduct(Number(loadedProduct.id), {
-      ...data,
-      price: Number(data.price),
-      stock: Number(data.stock),
-      categoryId: Number(data.categoryId),
-    })) as any;
-    setLoading(false);
+    try {
+      const anyRes = (await updateProduct(Number(loadedProduct.id), {
+        ...data,
+        price: Number(data.price),
+        stock: Number(data.stock),
+        categoryId: Number(data.categoryId),
+      })) as any;
 
-    const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-    if (updatedId) {
-      toast.success("Produit modifié avec succès");
-      router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
-      return;
-    }
-
-    if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
-      for (const d of anyRes.message.details) {
-        if (d.field)
-          setError(d.field as keyof ProductFormData, {
-            type: "server",
-            message: d.message,
-          });
+      const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      if (updatedId) {
+        toast.success("Produit modifié avec succès");
+        router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
+        return;
       }
-      toast.error("Erreur de validation côté serveur");
-      return;
-    }
 
-    toast.error(
-      anyRes?.message?.message ||
-        anyRes?.message ||
-        "Erreur lors de la modification",
-    );
+      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+        for (const d of anyRes.message.details) {
+          if (d.field)
+            setError(d.field as keyof ProductFormData, {
+              type: "server",
+              message: d.message,
+            });
+        }
+        toast.error("Erreur de validation côté serveur");
+        return;
+      }
+
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la modification",
+      );
+    } catch (error: any) {
+      toast.error(
+        error.message || "Erreur inattendue lors de la modification du produit",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading)

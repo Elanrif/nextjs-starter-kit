@@ -20,7 +20,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -52,7 +53,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const body = (await request.json()) as UserUpdate;
 
@@ -86,7 +88,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };

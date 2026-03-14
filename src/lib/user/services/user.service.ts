@@ -1,7 +1,11 @@
 import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
-import { User } from "@lib/user/models/user.model";
+import {
+  parseUserCreate,
+  parseUserUpdate,
+  User,
+} from "@lib/user/models/user.model";
 import { UpdateUser } from "@lib/user/queries/use-update-customer";
 import { getLogger } from "@config/logger.config";
 import {
@@ -45,20 +49,17 @@ export async function createUser(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (
-    !user?.firstName ||
-    !user?.lastName ||
-    !user?.email ||
-    !user?.phoneNumber
-  ) {
+  const parse = parseUserCreate(user);
+  if (!parse.success) {
+    logger.warn("Invalid user data", { errors: parse.error.issues });
     return {
       ok: false,
       error: {
         status: 400,
-        message:
-          "Fields `firstName`, `lastName`, `email`, and `phoneNumber` are required",
+        message: "Invalid user data",
         error: "Bad Request",
-      },
+        details: parse.error.issues,
+      } as CrudApiError,
     };
   }
 
@@ -127,23 +128,19 @@ export async function updateUser(
     };
   }
 
-  if (
-    !user?.firstName ||
-    !user?.lastName ||
-    !user?.email ||
-    !user?.phoneNumber
-  ) {
+  const parse = parseUserUpdate(user);
+  if (!parse.success) {
+    logger.warn("Invalid user data", { errors: parse.error.issues });
     return {
       ok: false,
       error: {
         status: 400,
-        message:
-          "Fields `firstName`, `lastName`, `email`, and `phoneNumber` are required",
+        message: "Invalid user data",
         error: "Bad Request",
-      },
+        details: parse.error.issues,
+      } as CrudApiError,
     };
   }
-
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
       `${usersUrl}/${id}`,

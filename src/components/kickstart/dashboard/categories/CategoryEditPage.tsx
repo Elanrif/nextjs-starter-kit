@@ -58,32 +58,42 @@ export function CategoryEditPage({ id }: { id: string }) {
     });
   }, [id, reset]);
 
+  /**
+   * Handles category update with robust error management.
+   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
+   * and ensures loading is always stopped, even if an exception occurs.
+   */
   const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
-    const anyRes = (await updateCategory(Number(id), data)) as any;
-    setLoading(false);
-    const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-    if (updatedId) {
-      toast.success("Catégorie modifiée avec succès");
-      router.push(`${DASHBOARD}${CATEGORIES}/${updatedId}`);
-      return;
-    }
-    if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
-      for (const d of anyRes.message.details) {
-        if (d.field)
-          setError(d.field as keyof CategoryFormData, {
-            type: "server",
-            message: d.message,
-          });
+    try {
+      const anyRes = (await updateCategory(Number(id), data)) as any;
+      const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      if (updatedId) {
+        toast.success("Catégorie modifiée avec succès");
+        router.push(`${DASHBOARD}${CATEGORIES}/${updatedId}`);
+        return;
       }
-      toast.error("Erreur de validation côté serveur");
-      return;
+      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+        for (const d of anyRes.message.details) {
+          if (d.field)
+            setError(d.field as keyof CategoryFormData, {
+              type: "server",
+              message: d.message,
+            });
+        }
+        toast.error("Erreur de validation côté serveur");
+        return;
+      }
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la modification",
+      );
+    } catch (error: any) {
+      toast.error(error.message || "Unexpected error during category update");
+    } finally {
+      setLoading(false);
     }
-    toast.error(
-      anyRes?.message?.message ||
-        anyRes?.message ||
-        "Erreur lors de la modification",
-    );
   };
 
   if (loading)

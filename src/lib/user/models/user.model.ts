@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface UserLogin {
   token: string;
   refreshToken: string;
@@ -30,3 +32,58 @@ export interface ResetPassword {
   email: string;
   newPassword: string;
 }
+
+// Schéma de base sans refine
+const UserBaseSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  phoneNumber: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .max(15, "Phone number must be at most 15 digits"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z
+    .string()
+    .min(6, "Confirm password must be at least 6 characters"),
+});
+
+// Schéma création avec refine
+export const UserSchema = UserBaseSchema.refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  },
+);
+export type UserFormData = z.infer<typeof UserSchema>;
+export const parseUserCreate = UserSchema.safeParse;
+
+/**
+ * Update a user
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ */
+export const UserUpdateSchema = UserBaseSchema.partial().refine(
+  (data) => {
+    if (data.password !== undefined || data.confirmPassword !== undefined) {
+      // If either password field is provided, both must be valid and match
+      if (
+        typeof data.password === "string" &&
+        typeof data.confirmPassword === "string" &&
+        data.password.length >= 6 &&
+        data.confirmPassword.length >= 6
+      ) {
+        return data.password === data.confirmPassword;
+      }
+      return false;
+    }
+    return true; // If no password fields are provided, it's valid
+  },
+  {
+    message: "Passwords must match and be at least 6 characters",
+    path: ["confirmPassword"],
+  },
+);
+export type UserUpdateFormData = z.infer<typeof UserUpdateSchema>;
+export const parseUserUpdate = UserUpdateSchema.safeParse;

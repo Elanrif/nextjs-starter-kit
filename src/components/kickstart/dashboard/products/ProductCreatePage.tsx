@@ -51,39 +51,51 @@ export function ProductCreatePage() {
     });
   }, []);
 
+  /**
+   * Handles product creation with robust error management.
+   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
+   * and ensures loading is always stopped, even if an exception occurs.
+   */
   const onSubmit = async (data: ProductFormData) => {
     setLoading(true);
-    const anyRes = (await createProduct({
-      ...data,
-      price: Number(data.price),
-      stock: Number(data.stock),
-      categoryId: Number(data.categoryId),
-    })) as any;
-    setLoading(false);
+    try {
+      const anyRes = (await createProduct({
+        ...data,
+        price: Number(data.price),
+        stock: Number(data.stock),
+        categoryId: Number(data.categoryId),
+      })) as any;
 
-    // Robust handling: try common id locations
-    const createdId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      // Robust handling: try common id locations
+      const createdId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
 
-    if (createdId) {
-      toast.success("Produit créé avec succès");
-      router.push(`${DASHBOARD}${PRODUCTS}/${createdId}`);
-      return;
-    }
-
-    // handle server-side validation details
-    if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
-      const details = anyRes.message.details;
-      for (const d of details) {
-        toast.error(`${d.field}: ${d.message}`);
+      if (createdId) {
+        toast.success("Produit créé avec succès");
+        router.push(`${DASHBOARD}${PRODUCTS}/${createdId}`);
+        return;
       }
-      return;
-    }
 
-    toast.error(
-      anyRes?.message?.message ||
-        anyRes?.message ||
-        "Erreur lors de la création",
-    );
+      // handle server-side validation details
+      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+        const details = anyRes.message.details;
+        for (const d of details) {
+          toast.error(`${d.field}: ${d.message}`);
+        }
+        return;
+      }
+
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la création",
+      );
+    } catch (error: any) {
+      toast.error(
+        error.message || "Erreur inattendue lors de la création du produit",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
