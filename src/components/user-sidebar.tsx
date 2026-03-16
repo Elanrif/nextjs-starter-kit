@@ -3,7 +3,6 @@
 import * as React from "react";
 import { GalleryVerticalEnd, HomeIcon, PieChart, Settings } from "lucide-react";
 
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -99,7 +98,7 @@ export function UserSidebar({
   }
 
   const UserSidebarColors = {
-    main: "bg-orange-50",
+    main: "bg-gray-50/20",
   };
 
   return (
@@ -109,7 +108,7 @@ export function UserSidebar({
       </SidebarHeader>
       <SidebarContent className={` ${UserSidebarColors.main}`}>
         <NavMainUser items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter className={` ${UserSidebarColors.main}`}>
         <NavUser user={auth} />

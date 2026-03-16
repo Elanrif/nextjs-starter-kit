@@ -16,11 +16,13 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Plus,
-  ArrowRight,
   Phone,
+  Edit,
+  ArrowLeft,
+  PlusIcon,
 } from "lucide-react";
 import ValidationItem from "@/utils";
+import { DashboardButton } from "../DashboardButton";
 
 const { DASHBOARD, USERS } = ROUTES;
 
@@ -84,11 +86,11 @@ export function UserCreatePage() {
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">
             <div className="p-3 bg-purple-100 rounded-lg">
-              <Plus className="w-6 h-6 text-purple-600" />
+              <PlusIcon className="w-6 h-6 text-purple-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Créer un utilisateur
+                Ajouter un utilisateur
               </h1>
               <p className="text-sm text-gray-7000">
                 Ajouter un nouveau utilisateur à votre système
@@ -108,16 +110,22 @@ export function UserCreatePage() {
               <label className="flex flex-col sm:flex-row sm:items-center gap-10">
                 {/* First Name Field */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                    Prénom
+                  </span>
+                  <div
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                    style={{ top: "1.5rem" }}
+                  >
                     <User className="h-5 w-5" />
                   </div>
                   <input
                     type="text"
                     {...register("firstName")}
-                    placeholder="First Name"
+                    placeholder="Votre prénom"
                     disabled={loading}
                     className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300
-             focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+             focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.firstName && (
                     <span className="text-red-500 text-sm">
@@ -128,15 +136,21 @@ export function UserCreatePage() {
 
                 {/* Last Name Field */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                    Nom
+                  </span>
+                  <div
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                    style={{ top: "1.5rem" }}
+                  >
                     <User className="h-5 w-5" />
                   </div>
                   <input
                     type="text"
                     {...register("lastName")}
-                    placeholder="Last Name"
+                    placeholder="Votre nom"
                     disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.lastName && (
                     <span className="text-red-500 text-sm">
@@ -149,15 +163,21 @@ export function UserCreatePage() {
               <label className="flex flex-col sm:flex-row sm:items-center gap-10">
                 {/* Phone Number Field */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                    Numéro de téléphone
+                  </span>
+                  <div
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                    style={{ top: "1.5rem" }}
+                  >
                     <Phone className="h-5 w-5" />
                   </div>
                   <input
                     type="tel"
                     {...register("phoneNumber")}
-                    placeholder="Phone Number"
+                    placeholder="+33 6 00 00 00 00"
                     disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.phoneNumber && (
                     <span className="text-red-500 text-sm">
@@ -168,15 +188,21 @@ export function UserCreatePage() {
 
                 {/* Email Field */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                    Adresse email
+                  </span>
+                  <div
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                    style={{ top: "1.5rem" }}
+                  >
                     <Mail className="h-5 w-5" />
                   </div>
                   <input
                     type="email"
                     {...register("email")}
-                    placeholder="Email Address"
+                    placeholder="exemple@email.com"
                     disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.email && (
                     <span className="text-red-500 text-sm">
@@ -190,15 +216,21 @@ export function UserCreatePage() {
                 {/* Password Field */}
                 <div>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                      Mot de passe
+                    </span>
+                    <div
+                      className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                      style={{ top: "1.5rem" }}
+                    >
                       <Lock className="h-5 w-5" />
                     </div>
                     <input
                       type={showPassword ? "text" : "password"}
                       {...register("password")}
-                      placeholder="Password"
+                      placeholder="Votre mot de passe"
                       disabled={loading}
-                      className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+                      className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                     />
                     {errors.password && (
                       <span className="text-red-500 text-sm">
@@ -239,15 +271,21 @@ export function UserCreatePage() {
 
                 {/* Confirm Password Field */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+                    Confirmer le mot de passe
+                  </span>
+                  <div
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                    style={{ top: "1.5rem" }}
+                  >
                     <Lock className="h-5 w-5" />
                   </div>
                   <input
                     type="password"
                     {...register("confirmPassword")}
-                    placeholder="Re-Type Password"
+                    placeholder="Répétez le mot de passe"
                     disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-700"
+                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.confirmPassword && (
                     <span className="text-red-500 text-sm">
@@ -257,23 +295,28 @@ export function UserCreatePage() {
                 </div>
               </label>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-600 to-teal-700 text-white font-medium rounded-full hover:from-emerald-400 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-300 
-        focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center
-         justify-center gap-2 shadow-lg shadow-emerald-300/30"
-              >
-                {loading ? (
-                  "Creating account..."
-                ) : (
-                  <>
-                    Valider
-                    <ArrowRight className="h-5 w-5" />
-                  </>
-                )}
-              </button>
+              {/* Actions */}
+              <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
+                <DashboardButton
+                  type="submit"
+                  size="lg"
+                  className="flex-1"
+                  disabled={loading}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  {loading ? "en cours..." : "Enregistrer"}
+                </DashboardButton>
+                <DashboardButton
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => router.back()}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Annuler
+                </DashboardButton>
+              </div>
             </form>
           </Card>
         </div>

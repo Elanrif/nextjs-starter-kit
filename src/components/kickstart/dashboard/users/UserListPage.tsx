@@ -124,7 +124,7 @@ export function UserListPage({ initialUsers = [] }: UserListPageProps) {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Utilisateurs</h2>
           <Link href={`${DASHBOARD}${USERS}/create`}>
-            <DashboardButton>Créer un utilisateur</DashboardButton>
+            <DashboardButton>Ajouter un utilisateur</DashboardButton>
           </Link>
         </div>
         <DataTable

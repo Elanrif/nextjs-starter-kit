@@ -69,14 +69,20 @@ export function SignInForm() {
 
       {/* Email Field */}
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+          Adresse email
+        </span>
+        <div
+          className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          style={{ top: "1.5rem" }}
+        >
           <Mail className="h-5 w-5 text-gray-50" />
         </div>
         <input
           type="email"
           {...register("email")}
-          placeholder="Email Address"
-          className="w-full pl-12 pr-4 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
+          placeholder="exemple@email.com"
+          className="w-full pl-12 pr-4 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-slate-400 placeholder:text-xs"
         />
         {errors.email && (
           <span className="text-red-500 text-sm">{errors.email.message}</span>
@@ -85,14 +91,21 @@ export function SignInForm() {
 
       {/* Password Field */}
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+          Mot de passe
+        </span>
+        <div
+          className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          style={{ top: "1.5rem" }}
+        >
           <Lock className="h-5 w-5 text-gray-50" />
         </div>
         <input
           type={showPassword ? "text" : "password"}
           {...register("password")}
+          placeholder="Votre mot de passe"
           disabled={isLoading}
-          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-gray-100"
+          className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-100 placeholder-slate-400 placeholder:text-xs"
         />
         {errors.password && (
           <span className="text-red-500 text-sm">
@@ -102,7 +115,8 @@ export function SignInForm() {
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-100 hover:text-gray-100"
+          className="absolute right-0 pr-4 flex items-center text-gray-100 hover:text-gray-100"
+          style={{ top: "1.5rem", bottom: 0 }}
         >
           {showPassword ? (
             <EyeOff className="h-5 w-5" />

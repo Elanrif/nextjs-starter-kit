@@ -188,7 +188,7 @@ export function ProductEditPage({
                   <input
                     {...register("name")}
                     placeholder="Ex: Laptop Pro"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.name && (
                     <span className="text-red-500 text-sm mt-1">
@@ -203,7 +203,7 @@ export function ProductEditPage({
                   <input
                     {...register("slug")}
                     placeholder="Ex: laptop-pro"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.slug && (
                     <span className="text-red-500 text-sm mt-1">
@@ -220,7 +220,7 @@ export function ProductEditPage({
                   {...register("description")}
                   placeholder="Décrivez votre produit..."
                   rows={4}
-                  className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                 />
               </label>
             </div>
@@ -245,7 +245,7 @@ export function ProductEditPage({
                     min={0}
                     inputMode="decimal"
                     placeholder="0.00"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.price && (
                     <span className="text-red-500 text-sm mt-1">
@@ -263,7 +263,7 @@ export function ProductEditPage({
                     step={1}
                     min={0}
                     placeholder="0"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.stock && (
                     <span className="text-red-500 text-sm mt-1">
@@ -288,7 +288,7 @@ export function ProductEditPage({
                 </span>
                 <select
                   {...register("categoryId", { valueAsNumber: true })}
-                  className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                 >
                   <option value="">Sélectionner une catégorie</option>
                   {categories.map((cat) => (

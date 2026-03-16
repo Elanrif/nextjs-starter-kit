@@ -126,7 +126,7 @@ export function ProductListPage({
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Produits</h2>
           <Link href={`${DASHBOARD}${PRODUCTS}/create`}>
-            <DashboardButton>Créer un produit</DashboardButton>
+            <DashboardButton>Ajouter un produit</DashboardButton>
           </Link>
         </div>
         <DataTable

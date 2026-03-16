@@ -90,16 +90,21 @@ export function SignUpForm() {
       <label className="flex flex-col sm:flex-row sm:items-center gap-10">
         {/* First Name Field */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+            Prénom
+          </span>
+          <div
+            className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            style={{ top: "1.5rem" }}
+          >
             <User className="h-5 w-5" />
           </div>
           <input
             type="text"
             {...register("firstName")}
-            placeholder="First Name"
+            placeholder="Votre prénom"
             disabled={loading}
-            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300
-             focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
           />
           {errors.firstName && (
             <span className="text-red-500 text-sm">
@@ -110,15 +115,21 @@ export function SignUpForm() {
 
         {/* Last Name Field */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+            Nom
+          </span>
+          <div
+            className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            style={{ top: "1.5rem" }}
+          >
             <User className="h-5 w-5" />
           </div>
           <input
             type="text"
             {...register("lastName")}
-            placeholder="Last Name"
+            placeholder="Votre nom"
             disabled={loading}
-            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
           />
           {errors.lastName && (
             <span className="text-red-500 text-sm">
@@ -131,15 +142,21 @@ export function SignUpForm() {
       <label className="flex flex-col sm:flex-row sm:items-center gap-10">
         {/* Phone Number Field */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+            Numéro de téléphone
+          </span>
+          <div
+            className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            style={{ top: "1.5rem" }}
+          >
             <Phone className="h-5 w-5" />
           </div>
           <input
             type="tel"
             {...register("phoneNumber")}
-            placeholder="Phone Number"
+            placeholder="+33 6 00 00 00 00"
             disabled={loading}
-            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
           />
           {errors.phoneNumber && (
             <span className="text-red-500 text-sm">
@@ -150,15 +167,21 @@ export function SignUpForm() {
 
         {/* Email Field */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+            Adresse email
+          </span>
+          <div
+            className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            style={{ top: "1.5rem" }}
+          >
             <Mail className="h-5 w-5" />
           </div>
           <input
             type="email"
             {...register("email")}
-            placeholder="Email Address"
+            placeholder="exemple@email.com"
             disabled={loading}
-            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
           />
           {errors.email && (
             <span className="text-red-500 text-sm">{errors.email.message}</span>
@@ -170,15 +193,21 @@ export function SignUpForm() {
         {/* Password Field */}
         <div>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+              Mot de passe
+            </span>
+            <div
+              className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              style={{ top: "1.5rem" }}
+            >
               <Lock className="h-5 w-5" />
             </div>
             <input
               type={showPassword ? "text" : "password"}
               {...register("password")}
-              placeholder="Password"
+              placeholder="Votre mot de passe"
               disabled={loading}
-              className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+              className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
             />
             {errors.password && (
               <span className="text-red-500 text-sm">
@@ -219,15 +248,21 @@ export function SignUpForm() {
 
         {/* Confirm Password Field */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <span className="block text-xs font-medium text-gray-300 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
+            Confirmer le mot de passe
+          </span>
+          <div
+            className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+            style={{ top: "1.5rem" }}
+          >
             <Lock className="h-5 w-5" />
           </div>
           <input
             type="password"
             {...register("confirmPassword")}
-            placeholder="Re-Type Password"
+            placeholder="Répétez le mot de passe"
             disabled={loading}
-            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-gray-50"
+            className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-50 placeholder-slate-400 placeholder:text-xs"
           />
           {errors.confirmPassword && (
             <span className="text-red-500 text-sm">

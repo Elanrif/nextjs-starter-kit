@@ -139,7 +139,7 @@ export function CategoryEditPage({ id }: { id: string }) {
                   <input
                     {...register("name")}
                     placeholder="Ex: Électronique"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.name && (
                     <span className="text-red-500 text-sm mt-1">
@@ -154,7 +154,7 @@ export function CategoryEditPage({ id }: { id: string }) {
                   <input
                     {...register("slug")}
                     placeholder="Ex: electronique"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.slug && (
                     <span className="text-red-500 text-sm mt-1">
@@ -172,7 +172,7 @@ export function CategoryEditPage({ id }: { id: string }) {
                   {...register("description")}
                   placeholder="Décrivez cette catégorie..."
                   rows={4}
-                  className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                 />
               </label>
 

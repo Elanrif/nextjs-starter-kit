@@ -88,7 +88,7 @@ export function CategoryCreatePage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Créer une catégorie
+                Ajouter une catégorie
               </h1>
               <p className="text-sm text-gray-500">
                 Ajouter une nouvelle catégorie à votre catalogue
@@ -115,7 +115,7 @@ export function CategoryCreatePage() {
                   <input
                     {...register("name")}
                     placeholder="Ex: Électronique"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.name && (
                     <span className="text-red-500 text-sm mt-1">
@@ -131,7 +131,7 @@ export function CategoryCreatePage() {
                   <input
                     {...register("slug")}
                     placeholder="Ex: electronique"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                   {errors.slug && (
                     <span className="text-red-500 text-sm mt-1">
@@ -148,7 +148,7 @@ export function CategoryCreatePage() {
                     {...register("description")}
                     placeholder="Décrivez cette catégorie..."
                     rows={4}
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                 </label>
 
@@ -159,7 +159,7 @@ export function CategoryCreatePage() {
                   <input
                     {...register("imageUrl")}
                     placeholder="https://example.com/image.jpg"
-                    className="w-full border-2 border-gray-200 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
                   />
                 </label>
 
@@ -184,7 +184,7 @@ export function CategoryCreatePage() {
                   disabled={loading}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  {loading ? "Création..." : "Créer la catégorie"}
+                  {loading ? "en cours..." : "Enregistrer"}
                 </DashboardButton>
                 <DashboardButton
                   type="button"

@@ -8,7 +8,7 @@ import LoadingPage from "@/components/kickstart/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { Card } from "@/components/ui/card";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
-import { Lock, Eye, EyeOff, Plus, ArrowRight } from "lucide-react";
+import { Lock, Eye, EyeOff, Plus, Edit, ArrowLeft } from "lucide-react";
 import ValidationItem from "@/utils";
 import {
   ChangePasswordProfileFormData,
@@ -17,6 +17,7 @@ import {
 import { useAuthUser } from "@/context/auth.user.context";
 import { signOut } from "@/lib/actions/logout";
 import { changePasswordProfileAction } from "@/lib/actions/auth";
+import { DashboardButton } from "../dashboard/DashboardButton";
 
 const { MY_ACCOUNT } = ROUTES;
 
@@ -264,23 +265,28 @@ export function ChangePasswordPage() {
                 Mot de passe oublié ?
               </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-emerald-600 to-teal-700 text-white font-medium rounded-full hover:from-emerald-400 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-300 
-        focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center
-         justify-center gap-2 shadow-lg shadow-emerald-300/30"
-              >
-                {loading ? (
-                  "Updating account..."
-                ) : (
-                  <>
-                    Valider
-                    <ArrowRight className="h-5 w-5" />
-                  </>
-                )}
-              </button>
+              {/* Actions */}
+              <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
+                <DashboardButton
+                  type="submit"
+                  size="lg"
+                  className="flex-1"
+                  disabled={loading}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  {loading ? "en cours..." : "Enregistrer"}
+                </DashboardButton>
+                <DashboardButton
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => router.back()}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Annuler
+                </DashboardButton>
+              </div>
             </form>
           </Card>
         </div>

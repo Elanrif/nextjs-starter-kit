@@ -101,7 +101,7 @@ export function CategoryListPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Catégories</h2>
           <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
-            <DashboardButton>Créer une catégorie</DashboardButton>
+            <DashboardButton>Ajouter une catégorie</DashboardButton>
           </Link>
         </div>
         <DataTable
