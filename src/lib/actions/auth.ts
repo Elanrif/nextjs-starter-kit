@@ -1,6 +1,8 @@
 "use server";
 
 import {
+  changePasswordProfile,
+  editProfile,
   resetPassword,
   signIn as serverSignIn,
   signUp as serverSignUp,
@@ -10,8 +12,18 @@ import {
   CrudApiError,
   crudApiErrorResponse,
 } from "@/lib/shared/helpers/crud-api-error";
-import { Login, Registrer } from "@/lib/auth/models/auth.model";
-import { ResetPassword, User } from "@/lib/user/models/user.model";
+import {
+  ChangePasswordProfileFormData,
+  Login,
+  parseChangePasswordProfile,
+  ProfileUserFormData,
+  Registrer,
+} from "@/lib/auth/models/auth.model";
+import {
+  parseResetPassword,
+  ResetPassword,
+  User,
+} from "@/lib/user/models/user.model";
 import {
   sendPasswordResetEmail,
   generateResetToken,
@@ -61,6 +73,26 @@ export async function signUpAction(
     return res.data;
   } catch (error: any) {
     const errMsg = crudApiErrorResponse(error, "signUp action");
+    return errMsg;
+  }
+}
+
+/**
+ * Server Action: Edit Profile
+ * Safely handles profile editing on the server side
+ */
+export async function editProfileAction(
+  data: ProfileUserFormData,
+): Promise<User | CrudApiError> {
+  try {
+    const res = await editProfile(data);
+
+    if (!res.ok) {
+      return res.error;
+    }
+    return res.data;
+  } catch (error: any) {
+    const errMsg = crudApiErrorResponse(error, "editProfile action");
     return errMsg;
   }
 }
@@ -120,11 +152,12 @@ export async function sendPasswordResetAction(
 export async function resetPasswordTokenAction(
   data: ResetPassword,
 ): Promise<User | CrudApiError> {
-  if (!data.resetToken) {
+  const validation = parseResetPassword(data);
+  if (!validation.success) {
     return {
-      error: "Token required",
       status: 400,
-      message: "Password reset token is required",
+      message: validation.error.message,
+      error: "Bad Request",
     } as CrudApiError;
   }
 
@@ -139,6 +172,41 @@ export async function resetPasswordTokenAction(
     return res.data;
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "error resetPassword action");
+    return errMsg;
+  }
+}
+
+/**
+ * Server Action: Change Password
+ * Safely handles password change on the server side for authenticated users
+ * Requires old password for security
+ */
+export async function changePasswordProfileAction(
+  data: ChangePasswordProfileFormData,
+): Promise<User | CrudApiError> {
+  const validation = parseChangePasswordProfile(data);
+  if (!validation.success) {
+    return {
+      status: 400,
+      message: validation.error.message,
+      error: "Bad Request",
+    } as CrudApiError;
+  }
+
+  try {
+    const res = await changePasswordProfile(data);
+
+    if (!res.ok) {
+      return res.error;
+    }
+
+    // Go to sign in page after successful password reset
+    return res.data;
+  } catch (error) {
+    const errMsg = crudApiErrorResponse(
+      error,
+      "error changePasswordProfile action",
+    );
     return errMsg;
   }
 }

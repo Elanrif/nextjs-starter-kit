@@ -62,6 +62,7 @@ export function SignUpForm() {
         phoneNumber: data.phoneNumber,
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword,
       });
 
       if ("error" in result) {

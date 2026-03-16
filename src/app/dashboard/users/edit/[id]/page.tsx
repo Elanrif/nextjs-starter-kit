@@ -18,6 +18,6 @@ export default async function Page({ params }: { params: { id: string } }) {
   if (res.ok) {
     fetchedUser = res.data;
   }
-  console.log("Fetched user data:", fetchedUser);
+
   return <UserEditPage loadedUser={fetchedUser} />;
 }

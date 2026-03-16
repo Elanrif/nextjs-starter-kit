@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { signIn } from "@/lib/auth/auth.client.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
+import Link from "next/link";
+import { ROUTES } from "@/utils/routes";
 
 /**
  * Sign In Form Component
@@ -112,12 +114,12 @@ export function SignInForm() {
 
       {/* Forgot Password Link */}
       <div className="text-right">
-        <a
-          href="/forgot-password"
+        <Link
+          href={ROUTES.FORGOT_PASSWORD}
           className="text-sm text-emerald-300 hover:text-emerald-400"
         >
           Forgot password?
-        </a>
+        </Link>
       </div>
 
       {/* Submit Button */}

@@ -48,7 +48,26 @@ const UserBaseSchema = z.object({
     .min(6, "Confirm password must be at least 6 characters"),
 });
 
-// Schéma création avec refine
+/**
+ * Reset password schema with validation
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ */
+export const ResetPasswordSchema = UserBaseSchema.pick({
+  email: true,
+}).extend({
+  newPassword: UserBaseSchema.shape.password,
+  code: z.string().min(1, "Reset code is required"),
+  resetToken: z.string().min(1, "Reset token is required"),
+});
+export type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
+export const parseResetPassword = ResetPasswordSchema.safeParse;
+
+/**
+ * User schema with password confirmation validation
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ */
 export const UserSchema = UserBaseSchema.refine(
   (data) => data.password === data.confirmPassword,
   {
@@ -59,11 +78,6 @@ export const UserSchema = UserBaseSchema.refine(
 export type UserFormData = z.infer<typeof UserSchema>;
 export const parseUserCreate = UserSchema.safeParse;
 
-/**
- * Update a user
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- */
 export const UserUpdateSchema = UserBaseSchema.partial().refine(
   (data) => {
     if (data.password !== undefined || data.confirmPassword !== undefined) {

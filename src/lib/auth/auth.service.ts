@@ -1,15 +1,28 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { ResetPassword, User } from "@lib/user/models/user.model";
+import {
+  parseResetPassword,
+  ResetPassword,
+  User,
+} from "@lib/user/models/user.model";
 import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
-import { Login, Registrer } from "./models/auth.model";
-import { createSession } from "./session";
+import {
+  ChangePasswordProfileFormData,
+  Login,
+  parseChangePasswordProfile,
+  parseLogin,
+  parseProfileUser,
+  parseRegister,
+  ProfileUserFormData,
+  RegisterFormData,
+} from "@lib/auth/models/auth.model";
+import { createSession } from "@lib/auth/session";
 
 // ============================================================================
 // Auth API Service (Server-side)
@@ -27,6 +40,10 @@ const {
   api: {
     rest: {
       endpoints: {
+        auth: {
+          editProfile: editProfileUrl,
+          changeProfilePasswordUrl: changeProfilePasswordUrl,
+        },
         register: registerUrl,
         login: loginUrl,
         resetPassword: resetPasswordUrl,
@@ -52,12 +69,13 @@ export async function signIn(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (!login?.email || !login?.password) {
+  const validation = parseLogin(login);
+  if (!validation.success) {
     return {
       ok: false,
       error: {
         status: 400,
-        message: "Email and password are required",
+        message: validation.error.message,
         error: "Bad Request",
       },
     };
@@ -81,7 +99,7 @@ export async function signIn(
  * Register a new user with email and password
  */
 export async function signUp(
-  registration: Registrer,
+  registration: RegisterFormData,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
   /**
@@ -89,12 +107,13 @@ export async function signUp(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (!registration?.email || !registration?.password) {
+  const validation = parseRegister(registration);
+  if (!validation.success) {
     return {
       ok: false,
       error: {
         status: 400,
-        message: "Email and password are required",
+        message: validation.error.message,
         error: "Bad Request",
       },
     };
@@ -137,8 +156,11 @@ export async function changeUserPassword(
       .patch<any, AxiosResponse<User>>(url, body);
     logger.info("changeUserPassword", { userId });
     return { ok: true, data: result.data };
-  } catch (error) {
-    logger.error("Error during changeUserPassword", { userId, error });
+  } catch (error: any) {
+    logger.error("Error during changeUserPassword", {
+      userId,
+      message: error.response?.data || error,
+    });
     return {
       ok: false,
       error: crudApiErrorResponse(error, "changeUserPassword"),
@@ -158,29 +180,13 @@ export async function resetPassword(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (!data?.email || !data?.newPassword) {
+  const validation = parseResetPassword(data);
+  if (!validation.success) {
     return {
       ok: false,
       error: {
         status: 400,
-        message: "Fields `email`, `newPassword`are required",
-        error: "Bad Request",
-      },
-    };
-  }
-
-  /**
-   * ⚠️ For security, we don't reveal if the email exists or not
-   * ❌ Someone can use this to find valid emails
-   * ✅ Always require token and code to prevent abuse
-   */
-  if (!data?.resetToken || !data?.code) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message:
-          "Oups, looks like the reset link is invalid or expired. Please request a new password reset.",
+        message: validation.error.message,
         error: "Bad Request",
       },
     };
@@ -193,8 +199,87 @@ export async function resetPassword(
     );
     logger.info("Password reset successfully", { id: res.data.id });
     return { ok: true, data: res.data };
-  } catch (error) {
-    logger.error("Failed to reset password", { email: data.email });
+  } catch (error: any) {
+    logger.error("Failed to reset password", error.response?.data || error);
     return { ok: false, error: crudApiErrorResponse(error, "resetPassword") };
+  }
+}
+
+/**
+ * Edit user profile
+ */
+export async function editProfile(
+  data: ProfileUserFormData,
+  config?: Config,
+): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  const validation = parseProfileUser(data);
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: validation.error.message,
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+      editProfileUrl,
+      data,
+    );
+    logger.info("Profile updated successfully", { id: res.data.id });
+    return { ok: true, data: res.data };
+  } catch (error: any) {
+    logger.error("Failed to update profile", error.response?.data || error);
+    return { ok: false, error: crudApiErrorResponse(error, "editProfile") };
+  }
+}
+
+/**
+ * Change user profile password
+ */
+export async function changePasswordProfile(
+  data: ChangePasswordProfileFormData,
+  config?: Config,
+): Promise<Result<User, CrudApiError>> {
+  /**
+   * ⚠️ Never trust the client input
+   * ❌ Someone can bypass the form
+   * ✅ Protection against malicious bugs
+   */
+  const validation = parseChangePasswordProfile(data);
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      error: {
+        status: 400,
+        message: validation.error.message,
+        error: "Bad Request",
+      },
+    };
+  }
+
+  try {
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+      changeProfilePasswordUrl,
+      data,
+    );
+    logger.info("Profile updated successfully", { id: res.data.id });
+    return { ok: true, data: res.data };
+  } catch (error: any) {
+    logger.error("Failed to update profile", error.response?.data || error);
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "changeProfilePassword"),
+    };
   }
 }

@@ -39,7 +39,7 @@ export function NavMainUser({
 
   // Determine active items based on current pathname
   const activeItems = items.map((item) => {
-    const dashboardBase = ROUTES.USER_ACCOUNT;
+    const dashboardBase = ROUTES.MY_ACCOUNT;
 
     // Exact Dashboard match
     if (item.url === dashboardBase && pathname === dashboardBase) {

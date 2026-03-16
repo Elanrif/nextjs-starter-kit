@@ -2,6 +2,7 @@ import {
   getSession,
   getUserVerifiedSession,
 } from "@/lib/auth/session/dal.service";
+import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -60,13 +61,13 @@ export default async function AccountPage() {
 
               <div className="hidden md:flex flex-col items-end gap-3">
                 <a
-                  href="/profile"
+                  href={ROUTES.EDIT_PROFILE}
                   className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-sm hover:bg-indigo-700 transition"
                 >
                   Edit profile
                 </a>
                 <a
-                  href="/settings"
+                  href={ROUTES.SETTINGS}
                   className="inline-flex items-center px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition"
                 >
                   Settings

@@ -43,13 +43,13 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
 
   // Default target based on role
   let target =
-    user.role === UserRole.ADMIN ? ROUTES.DASHBOARD : ROUTES.USER_ACCOUNT;
+    user.role === UserRole.ADMIN ? ROUTES.DASHBOARD : ROUTES.MY_ACCOUNT;
   let label =
     user.role === UserRole.ADMIN ? "Admin dashboard" : "User dashboard";
 
   // If current pathname is under /dashboard, switch to account
   if (pathname?.startsWith("/dashboard")) {
-    target = ROUTES.USER_ACCOUNT;
+    target = ROUTES.MY_ACCOUNT;
     label = "Profile";
   } else if (pathname?.startsWith("/account") && user.role === UserRole.ADMIN) {
     // If current pathname is under /account and user is admin, link to dashboard

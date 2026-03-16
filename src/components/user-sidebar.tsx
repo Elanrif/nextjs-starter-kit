@@ -20,7 +20,7 @@ import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";
 
-const { USER_ACCOUNT, PRODUCTS, CATEGORIES } = ROUTES;
+const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 
 // This is sample data.
 const data = {
@@ -34,7 +34,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: USER_ACCOUNT,
+      url: MY_ACCOUNT,
       icon: HomeIcon,
     },
     {
@@ -44,12 +44,16 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "update profile",
-          url: `${USER_ACCOUNT}${CATEGORIES}`,
+          title: "View profile",
+          url: `${VIEW_PROFILE}`,
         },
         {
-          title: "change password",
-          url: `${USER_ACCOUNT}${PRODUCTS}`,
+          title: "Edit profile",
+          url: `${EDIT_PROFILE}`,
+        },
+        {
+          title: "Change password",
+          url: `${CHANGE_PASSWORD}`,
         },
       ],
     },
