@@ -94,16 +94,20 @@ export function UserSidebar({
     return <SidebarSkeleton {...props} />;
   }
 
+  const UserSidebarColors = {
+    main: "bg-orange-50",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className={` ${UserSidebarColors.main}`}>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className={` ${UserSidebarColors.main}`}>
         <NavMainUser items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className={` ${UserSidebarColors.main}`}>
         <NavUser user={auth} />
       </SidebarFooter>
       <SidebarRail />

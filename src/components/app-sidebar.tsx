@@ -101,16 +101,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return <SidebarSkeleton {...props} />;
   }
 
+  const AppSidebarColors = {
+    main: "bg-black text-white hover:bg-black/90",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className={` ${AppSidebarColors.main}`}>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className={` ${AppSidebarColors.main}`}>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className={` ${AppSidebarColors.main}`}>
         <NavUser user={auth} />
       </SidebarFooter>
       <SidebarRail />

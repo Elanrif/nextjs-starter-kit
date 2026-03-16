@@ -46,7 +46,7 @@ export function TeamSwitcher({
         {isDisplay ? (
           <SidebarMenuButton
             size="lg"
-            className="bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700  data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className="bg-linear-to-br from-slate-500 via-slate-600 to-slate-700  data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             onClick={() => {
               redirect(ROUTES.HOME);
             }}

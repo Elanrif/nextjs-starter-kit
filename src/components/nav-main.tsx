@@ -58,6 +58,11 @@ export function NavMain({
     return { ...item, isActive: false };
   });
 
+  const navMainColors = {
+    active: "bg-white/20 text-white/90 hover:bg-white/30 hover:text-white",
+    inactive: "text-white/80 hover:bg-white/40 hover:text-white/90",
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="sr-only">Platform</SidebarGroupLabel>
@@ -75,7 +80,9 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     className={
-                      item.isActive ? "bg-purple-100/60 text-purple-900" : ""
+                      item.isActive
+                        ? navMainColors.active
+                        : navMainColors.inactive
                     }
                   >
                     {item.icon && <item.icon />}
@@ -94,8 +101,8 @@ export function NavMain({
                           asChild
                           className={
                             pathname.startsWith(subItem.url)
-                              ? "bg-blue-100/60 text-blue-900"
-                              : ""
+                              ? navMainColors.active
+                              : navMainColors.inactive
                           }
                         >
                           <a href={subItem.url}>
@@ -113,7 +120,9 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     className={
-                      item.isActive ? "bg-purple-100/60 text-purple-900" : ""
+                      item.isActive
+                        ? navMainColors.active
+                        : navMainColors.inactive
                     }
                   >
                     {item.icon && <item.icon />}
