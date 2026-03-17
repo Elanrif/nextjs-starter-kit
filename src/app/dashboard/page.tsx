@@ -29,7 +29,7 @@ export default async function DashboardPage() {
   if (!response.ok || !response.data) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
-  const { auth } = response.data.user;
+  const { user: auth } = response.data;
 
   // Fetch data
   const reqHeaders = await headers();
@@ -60,15 +60,15 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {auth.data.firstName || "User"}!
+              Welcome back, {auth.firstName || "User"}!
             </h1>
             <p className="text-blue-100">
               Here&apos;s what&apos;s happening with your business today
             </p>
           </div>
           <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-4xl font-bold border-2 border-white/30">
-            {auth.data.firstName?.toUpperCase()?.slice(0, 2) ||
-              auth.data.email?.slice(0, 2)?.toUpperCase() ||
+            {auth.firstName?.toUpperCase()?.slice(0, 2) ||
+              auth.email?.slice(0, 2)?.toUpperCase() ||
               "U"}
           </div>
         </div>
