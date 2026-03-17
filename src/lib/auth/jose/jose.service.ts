@@ -5,18 +5,17 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { decrypt } from "@/lib/auth/session";
 import { getLogger } from "@/config/logger.config";
 import { fetchUserById } from "@/lib/user/services/user.service";
-import { User } from "@/lib/user/models/user.model";
 import { cache } from "react";
 import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error";
-import { Session } from "@lib/auth/models/auth.model";
+import { CurrentUser, Session } from "@lib/auth/models/auth.model";
 import { ApiError } from "next/dist/server/api-utils";
+import { decrypt } from ".";
 
 /** Logger instance for session operations */
 const logger = getLogger("server");
@@ -26,7 +25,7 @@ const logger = getLogger("server");
  * Used for API routes that need to check session status.
  * @returns Session object or null if no valid session
  */
-export const getSession = cache(
+export const _getSession = cache(
   async (): Promise<Result<Session, CrudApiError>> => {
     try {
       const cookie = await cookies();
@@ -63,9 +62,9 @@ export const getSession = cache(
  * Returns null if user cannot be fetched or session is invalid.
  * @returns User object or null
  */
-export const getUserVerifiedSession = cache(
-  async (): Promise<Result<User, CrudApiError>> => {
-    const session = await getSession();
+export const _getCurrentUser = cache(
+  async (): Promise<Result<CurrentUser, CrudApiError>> => {
+    const session = await _getSession();
     if (!session.ok || !session.data?.user?.userId) {
       const err = {
         error: "Unauthorized",
@@ -80,10 +79,11 @@ export const getUserVerifiedSession = cache(
     }
 
     const response = await fetchUserById(session.data.user.userId);
+
     if (!response.ok) {
-      return response;
+      return { ok: false, error: response.error! };
     }
 
-    return response;
+    return { ok: true, data: { user: response.data, session: session.data } };
   },
 );

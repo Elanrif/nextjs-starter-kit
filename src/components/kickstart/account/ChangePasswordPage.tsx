@@ -15,9 +15,9 @@ import {
   ChangePasswordProfileSchema,
 } from "@/lib/auth/models/auth.model";
 import { useAuthUser } from "@/context/auth.user.context";
-import { signOut } from "@/lib/actions/logout";
 import { changePasswordProfileAction } from "@/lib/actions/auth";
 import { DashboardButton } from "../dashboard/DashboardButton";
+import { authClient } from "@/lib/auth/wrapper/auth.client";
 
 const { MY_ACCOUNT } = ROUTES;
 
@@ -248,7 +248,8 @@ export function ChangePasswordPage() {
                 className="text-left hover:cursor-pointer text-sm text-blue-700 hover:text-blue-600"
                 onClick={() => {
                   setLoading(true);
-                  signOut()
+                  authClient
+                    .signOut()
                     .then(() => {
                       router.push(ROUTES.FORGOT_PASSWORD);
                       setLoading(false);

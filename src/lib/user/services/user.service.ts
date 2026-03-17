@@ -1,3 +1,5 @@
+"server-only";
+
 import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
@@ -5,8 +7,8 @@ import {
   parseUserCreate,
   parseUserUpdate,
   User,
+  UserUpdateFormData,
 } from "@lib/user/models/user.model";
-import { UpdateUser } from "@lib/user/queries/use-update-customer";
 import { getLogger } from "@config/logger.config";
 import {
   CrudApiError,
@@ -108,9 +110,9 @@ export async function fetchUserById(
 }
 
 export async function updateUser(
-  config: Config,
   id: number,
-  user: UpdateUser,
+  user: UserUpdateFormData,
+  config?: Config,
 ): Promise<Result<User, CrudApiError>> {
   /**
    * ⚠️ Never trust the client input

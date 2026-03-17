@@ -7,7 +7,7 @@ import {
 import { ProductUpdate } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { getSession } from "@/lib/auth/session/dal.service";
+import { _getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
@@ -61,7 +61,7 @@ export async function PATCH(
   const productId = Number.parseInt(id, 10);
 
   // User authentication and role verification
-  const session = await getSession();
+  const session = await _getSession();
 
   if (!session.ok) {
     const err = {
@@ -135,7 +135,7 @@ export async function DELETE(
   const productId = Number.parseInt(id, 10);
 
   // User authentication and role verification
-  const session = await getSession();
+  const session = await _getSession();
 
   if (!session.ok) {
     const err = {

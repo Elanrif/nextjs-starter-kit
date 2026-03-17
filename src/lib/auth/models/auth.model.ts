@@ -1,3 +1,4 @@
+import { User } from "@/lib/user/models/user.model";
 import { z } from "zod";
 
 export interface AuthSignIn {
@@ -39,6 +40,11 @@ export type Session = {
   };
   isAuth: boolean;
   expiresAt?: Date;
+};
+
+export type CurrentUser = {
+  user: User;
+  session: Session;
 };
 
 const BaseSchema = z.object({

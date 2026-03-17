@@ -1,23 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error";
-import { getSession } from "@/lib/auth/session/dal.service";
 import { Session } from "@/lib/auth/models/auth.model";
+import { _getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  request: NextRequest,
-): Promise<NextResponse<Result<Session, CrudApiError>>> {
+export async function GET(): Promise<
+  NextResponse<Result<Session, CrudApiError>>
+> {
   try {
     // Use getSession instead of getSession to avoid redirects
-    const session = await getSession();
+    const session = await _getSession();
 
     if (!session.ok) {
       const err = {

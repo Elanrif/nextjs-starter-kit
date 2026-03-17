@@ -17,7 +17,6 @@ const {
       register: registerUrl,
       login: loginUrl,
       signOut: _signOutUrl,
-      session: sessionUrl,
     },
   },
 } = proxyEnvironment;
@@ -25,7 +24,7 @@ const {
 /**
  * Sign in a user with email and password (client-side)
  */
-export async function signIn(
+export async function _signIn(
   login: Login,
 ): Promise<Result<User, CrudApiError>> {
   const result = await frontendHttp().post<
@@ -38,7 +37,7 @@ export async function signIn(
 /**
  * Register a new user (client-side)
  */
-export async function signUp(
+export async function _signUp(
   registration: Registrer,
 ): Promise<Result<User, CrudApiError>> {
   const res = await frontendHttp().post<
@@ -46,17 +45,6 @@ export async function signUp(
     AxiosResponse<Result<User, CrudApiError>>
   >(registerUrl, registration);
   return res.data;
-}
-
-/**
- * Get the current user's session (client-side)
- */
-export async function getClientSession(): Promise<Result<User, CrudApiError>> {
-  const result = await frontendHttp().get<
-    any,
-    AxiosResponse<Result<User, CrudApiError>>
-  >(sessionUrl);
-  return result.data;
 }
 
 /**

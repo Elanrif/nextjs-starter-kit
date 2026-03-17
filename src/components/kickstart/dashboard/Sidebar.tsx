@@ -9,7 +9,7 @@ import { ROUTES } from "@/utils/routes";
 import { useEffect, useState } from "react";
 import { User } from "@/lib/user/models/user.model";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
+import { authClient } from "@/lib/auth/wrapper/auth.client";
 
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [
@@ -28,11 +28,12 @@ export default function Sidebar() {
 
   useEffect(() => {
     setLoading(true);
-    getUserVerifiedSession()
+    authClient
+      .getCurrentUser()
       .then((res) => {
         if (res.ok) {
           setUserError(null);
-          setUser(res.data);
+          setUser(res.data.user);
         } else {
           setUserError(res.error);
           setUser(null);

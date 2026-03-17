@@ -1,3 +1,5 @@
+"server-only";
+
 import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";

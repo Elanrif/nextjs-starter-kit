@@ -1,43 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { fetchUserById } from "@/lib/user/services/user.service";
-import { getSession } from "@/lib/auth/session/dal.service";
+import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getSession();
-
-    if (!session.ok) {
-      const err = {
-        error: "Unauthorized",
-        status: 401,
-        message: "You must be logged in",
-      };
-      logger.error("Unauthorized", {
-        status: err.status,
-        message: err.message,
-      });
-      return NextResponse.json(
-        { ok: false, error: err },
-        { status: err.status },
-      );
-    }
-
-    const userId = session.data?.user?.userId;
-
-    if (typeof userId !== "number") {
-      const error = new Error("Invalid userId in session");
-      const errMsg = crudApiErrorResponse(error, "session");
-      const status = errMsg.status || 500;
-      return NextResponse.json({ ok: false, error: errMsg }, { status });
-    }
-
-    const response = await fetchUserById(userId);
+    const response = await _getCurrentUser();
     if (!response.ok) {
       const status = response.error?.status || 500;
       return NextResponse.json(response, { status });

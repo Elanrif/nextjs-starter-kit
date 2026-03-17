@@ -12,12 +12,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { UserSidebar } from "@/components/user-sidebar";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.service";
 import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthUserProvider } from "@/context/auth.user.context";
+import { auth } from "@/lib/auth/wrapper/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -26,14 +26,14 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const auth = await getUserVerifiedSession();
+  const response = await auth.api.getCurrentUser();
 
-  if (!auth.ok || !auth.data) {
+  if (!response.ok || !response.data) {
     redirect("/sign-in?callbackUrl=/account");
   }
 
   return (
-    <AuthUserProvider user={auth.data}>
+    <AuthUserProvider user={response.data.user}>
       <SidebarProvider>
         <UserSidebar />
         <SidebarInset className="bg-[#faf7f0] bg-[linear-gradient(rgba(139,115,85,0.08)_1px,transparent_1px),linear-gradient(to_right,rgba(139,115,85,0.08)_1px,transparent_1px)] bg-size-[32px_32px]">

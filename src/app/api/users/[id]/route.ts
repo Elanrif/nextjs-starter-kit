@@ -62,7 +62,7 @@ export async function PATCH(
   const config = { headers: reqHeaders };
 
   try {
-    const response = await updateUser(config, userId, body);
+    const response = await updateUser(userId, body, config);
     if (!response.ok) {
       const error = response.error;
       return NextResponse.json(response, { status: error.status });

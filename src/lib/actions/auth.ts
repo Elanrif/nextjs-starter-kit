@@ -4,10 +4,9 @@ import {
   changePasswordProfile,
   editProfile,
   resetPassword,
-  signIn as serverSignIn,
-  signUp as serverSignUp,
+  _signIn as serverSignIn,
+  _signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
-import { createSession } from "@/lib/auth/session";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -28,6 +27,7 @@ import {
   sendPasswordResetEmail,
   generateResetToken,
 } from "@/config/mail.config";
+import { createSession, deleteSession } from "@lib/auth/jose";
 
 /**
  * Server Action: Sign In
@@ -209,4 +209,11 @@ export async function changePasswordProfileAction(
     );
     return errMsg;
   }
+}
+
+/**
+ * Delete session cookie to log out user
+ */
+export async function signOutAction() {
+  await deleteSession();
 }

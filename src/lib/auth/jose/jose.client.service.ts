@@ -3,11 +3,10 @@
  * Provides server-side session verification and retrieval utilities.
  */
 import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
-import { Session } from "@lib/auth/models/auth.model";
+import { CurrentUser, Session } from "@lib/auth/models/auth.model";
 import { proxyEnvironment } from "@/config/proxy-api.config";
 import { AxiosResponse } from "axios";
 import { frontendHttp } from "@/config/axios/frontend-http.config";
-import { User } from "@/lib/user/models/user.model";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -20,7 +19,7 @@ const {
   },
 } = proxyEnvironment;
 
-export async function getSession(): Promise<Result<Session, CrudApiError>> {
+export async function _getSession(): Promise<Result<Session, CrudApiError>> {
   const response = await frontendHttp().get<
     any,
     AxiosResponse<Result<Session, CrudApiError>>
@@ -29,12 +28,12 @@ export async function getSession(): Promise<Result<Session, CrudApiError>> {
   return response.data;
 }
 
-export async function getUserVerifiedSession(): Promise<
-  Result<User, CrudApiError>
+export async function _getCurrentUser(): Promise<
+  Result<CurrentUser, CrudApiError>
 > {
   const response = await frontendHttp().get<
     any,
-    AxiosResponse<Result<User, CrudApiError>>
+    AxiosResponse<Result<CurrentUser, CrudApiError>>
   >(meUrl);
   // data is the type of AxiosResponse's data
   return response.data;

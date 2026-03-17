@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { signIn } from "@/lib/auth/auth.client.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
+import { authClient } from "@/lib/auth/wrapper/auth.client";
 
 /**
  * Sign In Form Component
@@ -42,12 +42,12 @@ export function SignInForm() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await signIn({
+      const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
       });
 
-      if (!result.ok) {
+      if ("error" in result) {
         setError(result.error?.message || "An error occurred during sign in.");
         return;
       }

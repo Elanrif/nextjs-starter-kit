@@ -12,7 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.service";
+import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
 import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
@@ -25,7 +25,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const auth = await getUserVerifiedSession();
+  const auth = await _getCurrentUser();
 
   if (!auth.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");

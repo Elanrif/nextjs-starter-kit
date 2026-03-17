@@ -1,3 +1,5 @@
+"server-only";
+
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
@@ -22,7 +24,7 @@ import {
   ProfileUserFormData,
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
-import { createSession } from "@lib/auth/session";
+import { createSession } from "./jose";
 
 // ============================================================================
 // Auth API Service (Server-side)
@@ -60,7 +62,7 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(
+export async function _signIn(
   login: Login,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
@@ -98,7 +100,7 @@ export async function signIn(
 /**
  * Register a new user with email and password
  */
-export async function signUp(
+export async function _signUp(
   registration: RegisterFormData,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
@@ -129,7 +131,7 @@ export async function signUp(
     return { ok: false, error: crudApiErrorResponse(error, "signUp") };
   }
 
-  const maybeUser = await signIn(registration, config);
+  const maybeUser = await _signIn(registration, config);
   if (!maybeUser.ok) {
     logger.error("Error after registration during sign in", {
       email: registration.email,

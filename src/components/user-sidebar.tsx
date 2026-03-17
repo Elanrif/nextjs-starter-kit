@@ -12,12 +12,12 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";
+import { authClient } from "@/lib/auth/wrapper/auth.client";
 
 const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 
@@ -76,12 +76,12 @@ export function UserSidebar({
     const fetchAuthData = async () => {
       try {
         // Only fetch user if session is valid
-        const response = await getUserVerifiedSession();
+        const response = await authClient.getCurrentUser();
 
         if (!response.ok) {
           redirect("/sign-in?callbackUrl=/account");
         }
-        setAuth(response.data);
+        setAuth(response.data.user);
       } catch (error) {
         console.error("Auth error:", error);
         redirect("/sign-in?callbackUrl=/account");

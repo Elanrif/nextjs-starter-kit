@@ -18,11 +18,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 import { redirect } from "next/navigation";
 import { User } from "@/lib/user/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
+import { authClient } from "@/lib/auth/wrapper/auth.client";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
@@ -79,12 +79,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const fetchAuthData = async () => {
       try {
         // Only fetch user if session is valid
-        const response = await getUserVerifiedSession();
+        const response = await authClient.getCurrentUser();
 
         if (!response.ok) {
           redirect("/sign-in?callbackUrl=/account");
         }
-        setAuth(response.data);
+        setAuth(response.data.user);
       } catch (error) {
         console.error("Auth error:", error);
         redirect("/sign-in?callbackUrl=/account");

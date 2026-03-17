@@ -1,7 +1,4 @@
-import {
-  getSession,
-  getUserVerifiedSession,
-} from "@/lib/auth/session/dal.service";
+import { auth } from "@/lib/auth/wrapper/auth";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 
@@ -22,12 +19,13 @@ export const metadata = {
  * check as an additional security layer.
  */
 export default async function AccountPage() {
-  const session = await getSession();
-  const auth = await getUserVerifiedSession();
+  const response = await auth.api.getCurrentUser();
 
-  if (!session.ok || !auth.ok) {
+  if (!response.ok || !response.data) {
     redirect("/sign-in?callbackUrl=/account");
   }
+  const { session, user } = response.data;
+
   return (
     <div className="w-full min-h-[80vh] max-w-6xl mx-auto p-6 bg-gray-200">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -36,25 +34,25 @@ export default async function AccountPage() {
           <div className="bg-linear-to-r from-white via-slate-50 to-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold">
-                {auth.data.firstName?.toUpperCase()?.slice(0, 2) ||
-                  auth.data.email?.slice(0, 2)?.toUpperCase() ||
+                {user.firstName?.toUpperCase()?.slice(0, 2) ||
+                  user.email?.slice(0, 2)?.toUpperCase() ||
                   "U"}
               </div>
 
               <div className="flex-1">
                 <div className="flex items-center gap-3">
                   <h1 className="text-2xl font-bold text-gray-900">
-                    {auth.data.firstName || "User"}
+                    {user.firstName || "User"}
                   </h1>
                   <span className="px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 text-sm font-semibold">
-                    {auth.data.role || "User"}
+                    {user.role || "User"}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{auth.data.email}</p>
+                <p className="text-sm text-gray-600 mt-1">{user.email}</p>
                 <p className="text-sm text-gray-500 mt-2">
                   Member since:{" "}
-                  {auth.data.createdAt
-                    ? new Date(auth.data.createdAt).toLocaleDateString()
+                  {user.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
                     : "—"}
                 </p>
               </div>
@@ -83,16 +81,14 @@ export default async function AccountPage() {
                 <div className="flex justify-between">
                   <span>Session expires</span>
                   <span className="font-mono text-gray-900">
-                    {session.data?.expiresAt
-                      ? new Date(session.data.expiresAt).toLocaleString()
+                    {session.expiresAt
+                      ? new Date(session.expiresAt).toLocaleString()
                       : "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>User ID</span>
-                  <span className="font-mono text-gray-900">
-                    {auth.data.id}
-                  </span>
+                  <span className="font-mono text-gray-900">{user.id}</span>
                 </div>
               </div>
             </div>
@@ -105,14 +101,14 @@ export default async function AccountPage() {
                 <div>
                   <p className="text-sm text-gray-600">Email</p>
                   <p className="text-sm font-semibold text-gray-900">
-                    {auth.data.email}
+                    {user.email}
                   </p>
                 </div>
                 <div>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${auth.data.emailVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${user.emailVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
                   >
-                    {auth.data.emailVerified ? "Verified" : "Not verified"}
+                    {user.emailVerified ? "Verified" : "Not verified"}
                   </span>
                 </div>
               </div>

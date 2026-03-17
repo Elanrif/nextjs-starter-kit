@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signUp } from "@/lib/auth/auth.service";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { auth } from "@/lib/auth/wrapper/auth";
 
 const logger = getLogger("server");
 
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const res = await signUp(body, config);
+    const res = await auth.api.signUp({ body, config });
 
     if (!res.ok) {
       const error = res.error;

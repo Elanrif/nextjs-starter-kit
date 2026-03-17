@@ -1,7 +1,3 @@
-import {
-  getSession,
-  getUserVerifiedSession,
-} from "@/lib/auth/session/dal.service";
 import { redirect } from "next/navigation";
 import { fetchProducts } from "@/lib/products/services/product.service";
 import { fetchCategories } from "@/lib/categories/services/category.service";
@@ -9,6 +5,7 @@ import { fetchAllUser } from "@/lib/user/services/user.service";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Package, Tag, Users, TrendingUp, ArrowRight } from "lucide-react";
+import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
 
 export const metadata = {
   title: "Dashboard",
@@ -27,12 +24,12 @@ export const metadata = {
  * check as an additional security layer.
  */
 export default async function DashboardPage() {
-  const session = await getSession();
-  const auth = await getUserVerifiedSession();
+  const response = await _getCurrentUser();
 
-  if (!session.ok || !auth.ok) {
+  if (!response.ok || !response.data) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
+  const { auth } = response.data.user;
 
   // Fetch data
   const reqHeaders = await headers();
