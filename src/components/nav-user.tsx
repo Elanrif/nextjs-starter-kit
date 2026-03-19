@@ -26,11 +26,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { User, UserRole } from "@/lib/users/models/user.model";
-import { SignOutButton } from "./kickstart/auth/SignOutButton";
 import { useSession } from "@/hooks/use.session";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
+import { SignOutButton } from "./features/auth/sign-out-button";
 
 function renderAccountMenuItem(user: User, pathname?: string | null) {
   // If user is missing, don't render

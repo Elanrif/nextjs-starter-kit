@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { SignOutButton } from "@/components/features/auth/SignOutButton";
+import { SignOutButton } from "@/components/features/auth/sign-out-button";
 import { ROUTES } from "@/utils/routes";
 import { useSession } from "@/hooks/use.session";
 import Logo from "./logo";

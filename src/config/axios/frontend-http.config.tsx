@@ -3,7 +3,7 @@
 import axios from "axios";
 import environment from "@config/environment.config";
 import { baseRequestConfig } from "@config/axios/base-request.config";
-import { getModalInstance } from "@/components/providers/ModalProvider";
+import { getModalInstance } from "@/components/providers/modal-provider";
 
 const { apiProxyBase } = environment;
 

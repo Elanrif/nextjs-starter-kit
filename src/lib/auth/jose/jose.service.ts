@@ -78,7 +78,7 @@ export const _getCurrentUser = cache(
       return { ok: false, error: err };
     }
 
-    const response = await fetchUserById(session.data.user.userId);
+    const response = await fetchUserById(session.data.user.userId, {});
 
     if (!response.ok) {
       return { ok: false, error: response.error! };

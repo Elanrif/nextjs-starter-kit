@@ -206,7 +206,7 @@ export function Footer() {
           {/* Bottom Message */}
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
             <p className="text-sm text-gray-500">
-              🚀 Start your next project with the best Next.js starter kit
+              Start your next project with the best Next.js starter kit
             </p>
           </div>
         </div>

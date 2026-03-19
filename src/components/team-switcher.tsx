@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
-import Logo from "./kickstart/logo";
+import Logo from "./features/logo";
 
 export function TeamSwitcher({
   teams,
