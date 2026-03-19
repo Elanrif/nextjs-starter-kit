@@ -1,10 +1,2 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-export function useIsMounted() {
-  const [mounted, setMounted] = useState(false);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => setMounted(true), []);
-  return mounted;
-}
+// Moved to hooks/use-is-mounted.ts — this file is kept for backward compatibility
+export * from "@/hooks/use-is-mounted";

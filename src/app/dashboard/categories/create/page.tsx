@@ -1,4 +1,4 @@
-import { CategoryCreatePage } from "@/components/kickstart/dashboard/categories/CategoryCreatePage";
+import { CategoryCreatePage } from "@/components/features/dashboard/categories/CategoryCreatePage";
 
 export const metadata = {
   title: "Create Category",

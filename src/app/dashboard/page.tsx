@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { fetchProducts } from "@/lib/products/services/product.service";
 import { fetchCategories } from "@/lib/categories/services/category.service";
-import { fetchAllUser } from "@/lib/user/services/user.service";
+import { fetchAllUser } from "@/lib/users/services/user.service";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Package, Tag, Users, TrendingUp, ArrowRight } from "lucide-react";

@@ -1,4 +1,4 @@
-import { ProductListPage } from "@/components/kickstart/dashboard/products/ProductListPage";
+import { ProductListPage } from "@/components/features/dashboard/products/ProductListPage";
 import { fetchProducts } from "@/lib/products/services/product.service";
 import { headers } from "next/headers";
 import { Product } from "@/lib/products/models/product.model";

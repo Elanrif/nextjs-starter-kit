@@ -1,4 +1,4 @@
-import { UserDetailPage } from "@/components/kickstart/dashboard/users/UserDetailPage";
+import { UserDetailPage } from "@/components/features/dashboard/users/UserDetailPage";
 
 export const metadata = {
   title: "User Details",

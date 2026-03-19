@@ -1,6 +1,6 @@
-import { UserEditPage } from "@/components/kickstart/dashboard/users/UserEditPage";
-import { User } from "@/lib/user/models/user.model";
-import { fetchUserById } from "@/lib/user/services/user.service";
+import { UserEditPage } from "@/components/features/dashboard/users/UserEditPage";
+import { User } from "@/lib/users/models/user.model";
+import { fetchUserById } from "@/lib/users/services/user.service";
 import { headers } from "next/headers";
 
 export const metadata = {

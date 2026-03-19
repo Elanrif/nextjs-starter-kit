@@ -7,7 +7,7 @@ import {
   parseResetPassword,
   ResetPassword,
   User,
-} from "@lib/user/models/user.model";
+} from "@lib/users/models/user.model";
 import {
   CrudApiError,
   crudApiErrorResponse,

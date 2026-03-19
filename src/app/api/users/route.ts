@@ -1,6 +1,6 @@
-import { fetchAllUser, createUser } from "@lib/user/services/user.service";
+import { fetchAllUser, createUser } from "@lib/users/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
-import { User } from "@/lib/user/models/user.model";
+import { User } from "@/lib/users/models/user.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 

@@ -13,7 +13,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
-import { User } from "@/lib/user/models/user.model";
+import { User } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";

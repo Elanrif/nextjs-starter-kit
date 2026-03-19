@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { sendPasswordResetAction } from "@/lib/actions/auth";
+import { sendPasswordResetAction } from "@/lib/auth/actions/auth";
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function ForgotPasswordPage() {

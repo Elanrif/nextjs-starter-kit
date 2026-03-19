@@ -1,4 +1,4 @@
-import { UserCreatePage } from "@/components/kickstart/dashboard/users/UserCreatePage";
+import { UserCreatePage } from "@/components/features/dashboard/users/UserCreatePage";
 
 export const metadata = {
   title: "Create User",

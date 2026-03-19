@@ -1,4 +1,4 @@
-import { ChangePasswordPage } from "@/components/kickstart/account/ChangePasswordPage";
+import { ChangePasswordPage } from "@/components/features/account/ChangePasswordPage";
 
 export const metadata = {
   title: "Change Password",

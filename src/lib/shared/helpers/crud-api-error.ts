@@ -1,5 +1,6 @@
 import { getLogger } from "@/config/logger.config";
 import { AxiosError } from "axios";
+import type { ZodError } from "zod";
 
 // NOTE: logger.error writes to console.error on the Node process. Using
 // logger.error for non-5xx conditions (auth/validation) will always produce
@@ -55,6 +56,7 @@ export type CrudApiError = {
   error: string; // errorType e.g., "Bad Request", "Unauthorized", etc.
   status: number; // HTTP status code
   message: string; // error message from the API
+  details?: unknown; // optional validation details (e.g. Zod issues)
 };
 
 /**
@@ -74,7 +76,7 @@ export function crudApiErrorResponse(
       timestamp: new Date().toISOString(),
     };
     // Log as warn for non-5xx statuses to avoid noisy server errors
-    if ((apiError.status ?? 500) >= 500) {
+    if (apiError.status >= 500) {
       logger.error(
         `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
         apiError,
@@ -103,3 +105,18 @@ export function crudApiErrorResponse(
 
 // Generic Result type for API responses, can be used to represent success or error outcomes
 export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };
+
+/**
+ * Returns a structured 400 validation error from Zod issues.
+ * Use `message` to identify the entity (e.g. "Invalid user data", "Invalid product data").
+ */
+export function validationError(
+  issues: ZodError["issues"],
+  message: string,
+): Result<never, CrudApiError> {
+  logger.warn(message, { errors: issues });
+  return {
+    ok: false,
+    error: { status: 400, message, error: "Bad Request", details: issues },
+  };
+}

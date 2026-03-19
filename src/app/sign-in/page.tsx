@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Shield } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
-import { SignInForm } from "@/components/kickstart/auth/SignInForm";
+import { SignInForm } from "@/components/features/auth/SignInForm";
 
 export const metadata = {
   title: "Sign In",

@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { User, UserRole } from "@/lib/user/models/user.model";
+import { User, UserRole } from "@/lib/users/models/user.model";
 import { SignOutButton } from "./kickstart/auth/SignOutButton";
 import { useSession } from "@/hooks/use.session";
 import Link from "next/link";

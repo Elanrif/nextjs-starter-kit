@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
-import { fetchAllUser } from "@/lib/user/services/user.service";
-import { User } from "@/lib/user/models/user.model";
-import { UserListPage } from "@/components/kickstart/dashboard/users/UserListPage";
+import { fetchAllUser } from "@/lib/users/services/user.service";
+import { User } from "@/lib/users/models/user.model";
+import { UserListPage } from "@/components/features/dashboard/users/UserListPage";
 import { auth } from "@/lib/auth/wrapper/auth";
 
 export const metadata = {

@@ -6,7 +6,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { getLogger } from "@/config/logger.config";
-import { fetchUserById } from "@/lib/user/services/user.service";
+import { fetchUserById } from "@/lib/users/services/user.service";
 import { cache } from "react";
 import {
   CrudApiError,

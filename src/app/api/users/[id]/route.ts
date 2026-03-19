@@ -4,8 +4,8 @@ import {
   fetchUserById,
   updateUser,
   deleteUser,
-} from "@/lib/user/services/user.service";
-import { UserUpdate } from "@/lib/user/models/user.model";
+} from "@/lib/users/services/user.service";
+import { UserUpdate } from "@/lib/users/models/user.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");

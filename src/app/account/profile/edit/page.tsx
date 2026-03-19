@@ -1,4 +1,4 @@
-import { ProfileEditPage } from "@/components/kickstart/account/profile/ProfileEditPage";
+import { ProfileEditPage } from "@/components/features/account/profile/ProfileEditPage";
 import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
 
 export const metadata = {

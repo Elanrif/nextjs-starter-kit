@@ -1,4 +1,4 @@
-import { CategoryDetailPage } from "@/components/kickstart/dashboard/categories/CategoryDetailPage";
+import { CategoryDetailPage } from "@/components/features/dashboard/categories/CategoryDetailPage";
 import { fetchCategory } from "@/lib/categories/services/category.service";
 import { headers } from "next/headers";
 

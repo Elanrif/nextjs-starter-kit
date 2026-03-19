@@ -1,4 +1,4 @@
-import { ProductDetailPage } from "@/components/kickstart/dashboard/products/ProductDetailPage";
+import { ProductDetailPage } from "@/components/features/dashboard/products/ProductDetailPage";
 
 export const metadata = {
   title: "Product Details",

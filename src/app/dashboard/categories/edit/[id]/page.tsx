@@ -1,4 +1,4 @@
-import { CategoryEditPage } from "@/components/kickstart/dashboard/categories/CategoryEditPage";
+import { CategoryEditPage } from "@/components/features/dashboard/categories/CategoryEditPage";
 
 export const metadata = {
   title: "Edit Category",

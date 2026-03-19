@@ -1,4 +1,4 @@
-import { signInAction, signOutAction } from "@/lib/actions/auth";
+import { signInAction, signOutAction } from "@/lib/auth/actions/auth";
 import { Registrer } from "@lib/auth/models/auth.model";
 import { _signUp } from "@lib/auth/auth.client.service";
 import { _getCurrentUser } from "@lib/auth/jose/jose.client.service";

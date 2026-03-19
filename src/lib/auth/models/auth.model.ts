@@ -1,4 +1,4 @@
-import { User } from "@/lib/user/models/user.model";
+import { User } from "@/lib/users/models/user.model";
 import { z } from "zod";
 
 export interface AuthSignIn {

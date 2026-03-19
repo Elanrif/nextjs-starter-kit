@@ -11,7 +11,7 @@ import {
   AlertCircle,
   ArrowLeft,
 } from "lucide-react";
-import { resetPasswordTokenAction } from "@/lib/actions/auth";
+import { resetPasswordTokenAction } from "@/lib/auth/actions/auth";
 
 function ResetPasswordContent() {
   const router = useRouter();

@@ -1,4 +1,4 @@
-import { ProductCreatePage } from "@/components/kickstart/dashboard/products/ProductCreatePage";
+import { ProductCreatePage } from "@/components/features/dashboard/products/ProductCreatePage";
 
 export const metadata = {
   title: "Create Product",
