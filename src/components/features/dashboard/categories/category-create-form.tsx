@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import { toast } from "react-toastify";
 import { createCategory } from "@/lib/categories/services/category.client.service";
 import LoadingPage from "@/components/features/loading";
@@ -12,10 +11,20 @@ import {
   CategoryFormData,
   categorySchema,
 } from "@/lib/categories/models/category.model";
-import { Card } from "@/components/ui/card";
-import { Plus, ArrowLeft, Tag } from "lucide-react";
+import {
+  ArrowLeft,
+  Tag,
+  Save,
+  Link as LinkIcon,
+  FileText,
+  Image,
+  CheckSquare,
+} from "lucide-react";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
+
+const ic =
+  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all";
 
 export function CategoryCreateForm() {
   const {
@@ -38,11 +47,6 @@ export function CategoryCreateForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  /**
-   * Handles category creation with robust error management.
-   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
-   * and ensures loading is always stopped, even if an exception occurs.
-   */
   const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
     try {
@@ -53,7 +57,7 @@ export function CategoryCreateForm() {
         router.push(`${DASHBOARD}${CATEGORIES}/${createdId}`);
         return;
       }
-      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
         for (const d of anyRes.message.details) {
           if (d.field)
             setError(d.field as keyof CategoryFormData, {
@@ -70,7 +74,7 @@ export function CategoryCreateForm() {
           "Erreur lors de la création",
       );
     } catch (error: any) {
-      toast.error(error.message || "Unexpected error during category creation");
+      toast.error(error.message || "Erreur inattendue lors de la création");
     } finally {
       setLoading(false);
     }
@@ -79,126 +83,126 @@ export function CategoryCreateForm() {
   return (
     <>
       <LoadingPage isLoading={loading} text="Création de la catégorie..." />
-      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Plus className="w-6 h-6 text-blue-600" />
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-purple-500/15 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-violet-500/20 ring-1 ring-violet-400/30">
+              <Tag className="w-5 h-5 text-violet-300" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-white">
                 Ajouter une catégorie
               </h1>
-              <p className="text-sm text-gray-500">
-                Ajouter une nouvelle catégorie à votre catalogue
+              <p className="text-sm text-slate-400 mt-0.5">
+                Créer une nouvelle catégorie pour votre catalogue
               </p>
             </div>
           </div>
+        </div>
 
-          {/* Form Card */}
-          <Card className="p-8 space-y-6 bg-linear-to-br from-gray-50 to-gray-100">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Category Info Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-sky-200">
-                  <Tag className="w-5 h-5 text-sky-600" />
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    Informations de la catégorie
-                  </h2>
-                </div>
-
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Nom
-                  </span>
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Nom <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("name")}
                     placeholder="Ex: Électronique"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.name && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.name.message}
-                    </span>
-                  )}
-                </label>
+                </div>
+                {errors.name && (
+                  <p className="text-xs text-red-500">{errors.name.message}</p>
+                )}
+              </div>
 
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Slug
-                  </span>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Slug <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("slug")}
                     placeholder="Ex: electronique"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.slug && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.slug.message}
-                    </span>
-                  )}
-                </label>
-
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2">
-                    Description
-                  </span>
-                  <textarea
-                    {...register("description")}
-                    placeholder="Décrivez cette catégorie..."
-                    rows={4}
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2">
-                    Image URL
-                  </span>
-                  <input
-                    {...register("imageUrl")}
-                    placeholder="https://example.com/image.jpg"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
-                  />
-                </label>
-
-                <label className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-500 transition">
-                  <input
-                    type="checkbox"
-                    {...register("isActive")}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm font-semibold text-gray-700">
-                    Catégorie active
-                  </span>
-                </label>
+                </div>
+                {errors.slug && (
+                  <p className="text-xs text-red-500">{errors.slug.message}</p>
+                )}
               </div>
+            </div>
 
-              {/* Actions */}
-              <div className="flex gap-3 pt-6 border-t-2 border-sky-100">
-                <DashboardButton
-                  type="submit"
-                  size="lg"
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {loading ? "en cours..." : "Enregistrer"}
-                </DashboardButton>
-                <DashboardButton
-                  type="button"
-                  size="lg"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => router.back()}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Annuler
-                </DashboardButton>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Description
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <textarea
+                  {...register("description")}
+                  placeholder="Décrivez cette catégorie..."
+                  rows={3}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none"
+                />
               </div>
-            </form>
-          </Card>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Image URL
+              </label>
+              <div className="relative">
+                <Image className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  {...register("imageUrl")}
+                  placeholder="https://example.com/image.jpg"
+                  className={ic}
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50/50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                {...register("isActive")}
+                className="w-4 h-4 accent-violet-600 rounded"
+              />
+              <div className="flex items-center gap-2">
+                <CheckSquare className="w-4 h-4 text-violet-500" />
+                <span className="text-sm font-medium text-gray-700">
+                  Catégorie active
+                </span>
+              </div>
+            </label>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Création..." : "Créer la catégorie"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

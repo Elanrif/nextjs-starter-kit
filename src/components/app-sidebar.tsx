@@ -22,7 +22,7 @@ import { redirect } from "next/navigation";
 import { User } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
-import { authClient } from "@/lib/auth/api/auth.client.service";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 

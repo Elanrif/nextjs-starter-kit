@@ -6,12 +6,11 @@ import {
   DataTable,
   DataTableColumn,
 } from "@/components/features/dashboard/data-table";
-import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { Category } from "@/lib/categories/models/category.model";
-import LoadingPage from "@/components/features/loading";
 import { ROUTES } from "@/utils/routes";
+import { Eye, Pencil, Trash2, Tag, Plus } from "lucide-react";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
@@ -33,7 +32,6 @@ export function CategoryList({
       setCategories(initialCategories);
       setLoading(false);
     }, 100);
-
     return () => {
       mounted = false;
       clearTimeout(timer);
@@ -46,7 +44,6 @@ export function CategoryList({
     const res = await deleteCategory(deleteId);
     setDeleteLoading(false);
     setModalOpen(false);
-
     if ("success" in res && res.success) {
       setCategories((prev) => prev.filter((c) => c.id !== deleteId));
       toast.success("Catégorie supprimée avec succès");
@@ -61,66 +58,134 @@ export function CategoryList({
   };
 
   const columns: DataTableColumn<Category>[] = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Nom" },
+    {
+      key: "id",
+      label: "ID",
+      render: (row) => (
+        <span className="font-mono text-xs text-gray-400">#{row.id}</span>
+      ),
+    },
+    {
+      key: "name",
+      label: "Catégorie",
+      render: (row) => (
+        <div>
+          <p className="font-medium text-gray-800">{row.name}</p>
+          {row.slug && (
+            <p className="text-xs text-gray-400 font-mono">{row.slug}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "description",
+      label: "Description",
+      render: (row) => (
+        <p className="text-sm text-gray-500 truncate max-w-xs">
+          {row.description || "—"}
+        </p>
+      ),
+    },
+    {
+      key: "isActive",
+      label: "Statut",
+      render: (row) => (
+        <span
+          className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+            row.isActive
+              ? "bg-violet-50 text-violet-700"
+              : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          {row.isActive ? "Active" : "Inactive"}
+        </span>
+      ),
+    },
     {
       key: "createdAt",
       label: "Créé le",
-      render: (row) => new Date(row.createdAt).toLocaleDateString(),
+      render: (row) => (
+        <span className="text-xs text-gray-400">
+          {new Date(row.createdAt).toLocaleDateString("fr-FR")}
+        </span>
+      ),
     },
     {
       key: "actions",
-      label: "Actions",
+      label: "",
       render: (row) => (
-        <div className="flex gap-2">
+        <div className="flex items-center gap-1 justify-end">
           <Link href={`${DASHBOARD}${CATEGORIES}/${row.id}`}>
-            <DashboardButton size="xs">Détails</DashboardButton>
+            <button
+              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              title="Détails"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
           </Link>
           <Link href={`${DASHBOARD}${CATEGORIES}/edit/${row.id}`}>
-            <DashboardButton size="xs" variant="secondary">
-              Modifier
-            </DashboardButton>
+            <button
+              className="p-1.5 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+              title="Modifier"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
           </Link>
-          <DashboardButton
-            size="xs"
-            variant="destructive"
+          <button
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            title="Supprimer"
             onClick={() => {
               setDeleteId(row.id);
               setModalOpen(true);
             }}
           >
-            Supprimer
-          </DashboardButton>
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       ),
     },
   ];
 
   return (
-    <>
-      <LoadingPage isLoading={loading} text="Chargement des catégories..." />
-      <div className="space-y-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Catégories</h2>
-          <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
-            <DashboardButton>Ajouter une catégorie</DashboardButton>
-          </Link>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-violet-50">
+            <Tag className="w-5 h-5 text-violet-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Catégories</h1>
+            {!loading && (
+              <p className="text-xs text-gray-400">
+                {categories.length} catégorie
+                {categories.length === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
         </div>
-        <DataTable
-          columns={columns}
-          data={categories}
-          loading={loading}
-          emptyText="Aucune catégorie."
-        />
-        <ConfirmModal
-          open={modalOpen}
-          onCancel={() => setModalOpen(false)}
-          onConfirm={handleDelete}
-          loading={deleteLoading}
-          title="Confirmez-vous la suppression ?"
-          description="Cette action est irréversible."
-        />
+        <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
+          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </Link>
       </div>
-    </>
+
+      <DataTable
+        columns={columns}
+        data={categories}
+        loading={loading}
+        emptyText="Aucune catégorie."
+      />
+
+      <ConfirmModal
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        title="Supprimer cette catégorie ?"
+        description="Cette action est irréversible. La catégorie sera définitivement supprimée."
+      />
+    </div>
   );
 }

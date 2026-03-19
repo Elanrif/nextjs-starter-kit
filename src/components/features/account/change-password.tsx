@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,9 +7,16 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import LoadingPage from "@/components/features/loading";
 import { ROUTES } from "@/utils/routes";
-import { Card } from "@/components/ui/card";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
-import { Lock, Eye, EyeOff, Plus, Edit, ArrowLeft } from "lucide-react";
+import {
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  ShieldCheck,
+  KeyRound,
+  Save,
+} from "lucide-react";
 import ValidationItem from "@/components/ui/validation-item";
 import {
   ChangePasswordProfileFormData,
@@ -16,14 +24,12 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
-import { DashboardButton } from "../dashboard/dashboard-button";
-import { authClient } from "@/lib/auth/api/auth.client.service";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { MY_ACCOUNT } = ROUTES;
 
 export function ChangePassword() {
   const router = useRouter();
-
   const user = useAuthUser();
 
   const {
@@ -42,210 +48,209 @@ export function ChangePassword() {
   });
 
   const password = watch("newPassword");
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const validation = usePasswordValidation(password);
+  const allValid =
+    validation.minLength && validation.hasNumber && validation.hasCase;
 
-  /**
-   * Handles user update with robust error management.
-   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
-   * and ensures loading is always stopped, even if an exception occurs.
-   */
   const onSubmit = async (data: ChangePasswordProfileFormData) => {
-    if (!user) {
-      setError("User data is not loaded");
-      toast.error("User data is not loaded");
-      return;
-    }
     setLoading(true);
     try {
       const response = await changePasswordProfileAction(data);
-
       if ("error" in response) {
         setError(response.error.message || "Erreur lors de la mise à jour");
         toast.error(response.error.message || "Erreur lors de la mise à jour");
         return;
       }
-
-      toast.success("Utilisateur mis à jour avec succès !");
-      router.push(`${MY_ACCOUNT}`);
+      toast.success("Mot de passe mis à jour avec succès !");
+      router.push(MY_ACCOUNT);
     } catch (error_: any) {
-      setError(error_.message || "Erreur inattendue lors de la mise à jour");
+      setError(error_.message || "Erreur inattendue");
       toast.error("Erreur inattendue lors de la mise à jour");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user)
-    return (
-      <div className="w-full max-w-4xl mx-auto">
-        <Card className="p-8 text-center">
-          <p className="text-gray-500 text-lg">
-            Erreur 403: Aucune session active.
-          </p>
-        </Card>
-      </div>
-    );
+  const inputClass =
+    "w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Mise à jour de l'utilisateur..." />
-      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <Plus className="w-6 h-6 text-purple-600" />
+      <LoadingPage isLoading={loading} text="Mise à jour du mot de passe..." />
+      <div className="max-w-xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-orange-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-orange-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-red-500/15 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-orange-500/20 ring-1 ring-orange-400/30">
+              <KeyRound className="w-5 h-5 text-orange-300" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Changer mon mot de passe
+              <h1 className="text-xl font-bold text-white">
+                Changer le mot de passe
               </h1>
-              <p className="text-sm text-gray-7000">
-                Mettez à jour votre mot de passe pour sécuriser votre compte
+              <p className="text-sm text-slate-400 mt-0.5">
+                Sécurisez votre compte avec un nouveau mot de passe
               </p>
             </div>
           </div>
+        </div>
 
-          {/* Form Card */}
-          <Card className="p-8 space-y-8 bg-linear-to-br from-gray-50 to-gray-100">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                  {error}
-                </div>
+        {/* Form */}
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {error && (
+              <div className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl">
+                <span className="mt-0.5 shrink-0">⚠</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Old password */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                Ancien mot de passe <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type={showOld ? "text" : "password"}
+                  {...register("oldPassword")}
+                  placeholder="Votre mot de passe actuel"
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowOld(!showOld)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showOld ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.oldPassword && (
+                <p className="text-xs text-red-500">
+                  {errors.oldPassword.message}
+                </p>
+              )}
+            </div>
+
+            <div className="h-px bg-gray-100" />
+
+            {/* New password */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                Nouveau mot de passe <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type={showNew ? "text" : "password"}
+                  {...register("newPassword")}
+                  placeholder="Choisissez un nouveau mot de passe"
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showNew ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.newPassword && (
+                <p className="text-xs text-red-500">
+                  {errors.newPassword.message}
+                </p>
               )}
 
-              <label className="flex flex-col sm:flex-row items-start gap-10">
-                {/* Password Field */}
-                <div>
-                  <div className="relative">
-                    <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                      Ancien mot de passe
-                    </span>
-                    <div
-                      className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                      style={{ top: "1.5rem" }}
-                    >
-                      <Lock className="h-5 w-5" />
-                    </div>
-                    <input
-                      type={showOldPassword ? "text" : "password"}
-                      {...register("oldPassword")}
-                      placeholder="Votre mot de passe actuel"
-                      disabled={loading}
-                      className="w-full pl-12 pr-12 py-3.5 border-b-2 border-gray-400 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-500 placeholder:text-xs"
+              {/* Strength checklist */}
+              {password && (
+                <div
+                  className={`mt-3 p-3 rounded-xl space-y-1.5 text-sm border ${allValid ? "bg-emerald-50 border-emerald-100" : "bg-gray-50 border-gray-100"}`}
+                >
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <ShieldCheck
+                      className={`w-3.5 h-3.5 ${allValid ? "text-emerald-600" : "text-gray-400"}`}
                     />
-                    {errors.oldPassword && (
-                      <span className="text-red-500 text-sm">
-                        {errors.oldPassword.message}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setShowOldPassword(!showOldPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+                    <span
+                      className={`text-xs font-semibold ${allValid ? "text-emerald-700" : "text-gray-500"}`}
                     >
-                      {showOldPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </label>
-
-              <label className="flex flex-col sm:flex-row items-start gap-10">
-                {/* Password Field */}
-                <div>
-                  <div className="relative">
-                    <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                      Nouveau mot de passe
+                      {allValid ? "Mot de passe fort" : "Exigences de sécurité"}
                     </span>
-                    <div
-                      className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                      style={{ top: "1.5rem" }}
-                    >
-                      <Lock className="h-5 w-5" />
-                    </div>
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      {...register("newPassword")}
-                      placeholder="Nouveau mot de passe"
-                      disabled={loading}
-                      className="w-full pl-12 pr-12 py-3.5 border-b-2 border-gray-400 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-500 placeholder:text-xs"
-                    />
-                    {errors.newPassword && (
-                      <span className="text-red-500 text-sm">
-                        {errors.newPassword.message}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
                   </div>
-
-                  {/* Password Requirements */}
-                  {password && (
-                    <div className="mt-3 space-y-1.5 text-sm">
-                      <ValidationItem
-                        valid={validation.minLength}
-                        text="Least 8 characters"
-                      />
-                      <ValidationItem
-                        valid={validation.hasNumber}
-                        text="Least one number (0-9) or a symbol"
-                      />
-                      <ValidationItem
-                        valid={validation.hasCase}
-                        text="Lowercase (a-z) and uppercase (A-Z)"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Confirm Password Field */}
-                <div className="relative">
-                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                    Confirmer le mot de passe
-                  </span>
-                  <div
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                    style={{ top: "1.5rem" }}
-                  >
-                    <Lock className="h-5 w-5" />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    {...register("confirmPassword")}
-                    placeholder="Répétez le nouveau mot de passe"
-                    disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b-2 border-gray-400 focus:border-emerald-500 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-500 placeholder:text-xs"
+                  <ValidationItem
+                    valid={validation.minLength}
+                    text="Au moins 8 caractères"
                   />
-                  {errors.confirmPassword && (
-                    <span className="text-red-500 text-sm">
-                      {errors.confirmPassword.message}
-                    </span>
-                  )}
+                  <ValidationItem
+                    valid={validation.hasNumber}
+                    text="Un chiffre (0-9) ou symbole"
+                  />
+                  <ValidationItem
+                    valid={validation.hasCase}
+                    text="Minuscule (a-z) et majuscule (A-Z)"
+                  />
                 </div>
-              </label>
+              )}
+            </div>
 
-              {/* Forgot Password Link */}
-              <div
-                className="text-left hover:cursor-pointer text-sm text-blue-700 hover:text-blue-600"
+            {/* Confirm password */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                Confirmer le mot de passe{" "}
+                <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  {...register("confirmPassword")}
+                  placeholder="Répétez le nouveau mot de passe"
+                  disabled={loading}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showConfirm ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-xs text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+
+            {/* Forgot password */}
+            <div className="text-right">
+              <button
+                type="button"
+                disabled={loading}
+                className="text-xs text-orange-600 hover:text-orange-700 font-medium underline-offset-2 hover:underline transition-colors"
                 onClick={() => {
                   setLoading(true);
                   authClient
@@ -254,42 +259,37 @@ export function ChangePassword() {
                       router.push(ROUTES.FORGOT_PASSWORD);
                       setLoading(false);
                     })
-                    .catch((error) => {
-                      toast.error(
-                        "Erreur lors de la déconnexion",
-                        error.message,
-                      );
+                    .catch((error_) => {
+                      toast.error("Erreur lors de la déconnexion");
                       setLoading(false);
                     });
                 }}
               >
                 Mot de passe oublié ?
-              </div>
+              </button>
+            </div>
 
-              {/* Actions */}
-              <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
-                <DashboardButton
-                  type="submit"
-                  size="lg"
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  {loading ? "en cours..." : "Enregistrer"}
-                </DashboardButton>
-                <DashboardButton
-                  type="button"
-                  size="lg"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => router.back()}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Annuler
-                </DashboardButton>
-              </div>
-            </form>
-          </Card>
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Enregistrement..." : "Mettre à jour"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

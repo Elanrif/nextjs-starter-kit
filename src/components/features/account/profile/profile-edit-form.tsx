@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,24 +7,49 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import LoadingPage from "@/components/features/loading";
 import { ROUTES } from "@/utils/routes";
-import { Card } from "@/components/ui/card";
 import { User } from "@/lib/users/models/user.model";
 import {
   User as UserIcon,
   Mail,
-  Plus,
   Phone,
-  Edit,
+  Pencil,
   ArrowLeft,
+  Save,
 } from "lucide-react";
 import {
   ProfileUserFormData,
   ProfileUserSchema,
 } from "@/lib/auth/models/auth.model";
 import { editProfileAction } from "@/lib/auth/actions/auth";
-import { DashboardButton } from "../../dashboard/dashboard-button";
 
 const { MY_ACCOUNT } = ROUTES;
+
+interface FieldProps {
+  label: string;
+  error?: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function Field({ label, error, icon, children }: FieldProps) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+        {label}
+        <span className="text-red-400">*</span>
+      </label>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+          {icon}
+        </div>
+        {children}
+      </div>
+      {error && (
+        <p className="text-xs text-red-500 flex items-center gap-1">{error}</p>
+      )}
+    </div>
+  );
+}
 
 export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
   const router = useRouter();
@@ -44,11 +70,6 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  /**
-   * Handles user update with robust error management.
-   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
-   * and ensures loading is always stopped, even if an exception occurs.
-   */
   const onSubmit = async (data: ProfileUserFormData) => {
     if (!loadedUser) {
       setError("User data is not loaded");
@@ -58,181 +79,135 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
     setLoading(true);
     try {
       const response = await editProfileAction(data);
-
       if ("error" in response) {
         setError(response.error.message || "Erreur lors de la mise à jour");
         toast.error(response.error.message || "Erreur lors de la mise à jour");
         return;
       }
-
-      toast.success("Utilisateur mis à jour avec succès !");
-      router.push(`${MY_ACCOUNT}`);
+      toast.success("Profil mis à jour avec succès !");
+      router.push(MY_ACCOUNT);
     } catch (error_: any) {
-      setError(error_.message || "Erreur inattendue lors de la mise à jour");
+      setError(error_.message || "Erreur inattendue");
       toast.error("Erreur inattendue lors de la mise à jour");
     } finally {
       setLoading(false);
     }
   };
 
+  const inputClass =
+    "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+
   return (
     <>
-      <LoadingPage isLoading={loading} text="Mise à jour de l'utilisateur..." />
-      <div className="min-h-[50vh] bg-linear-to-br p-16 from-gray-50 to-gray-100">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <Plus className="w-6 h-6 text-purple-600" />
+      <LoadingPage isLoading={loading} text="Mise à jour du profil..." />
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-indigo-500/20 ring-1 ring-indigo-400/30">
+              <Pencil className="w-5 h-5 text-indigo-300" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-white">
                 Modifier mon profil
               </h1>
-              <p className="text-sm text-gray-7000">
-                Mettre à jour les informations de mon profil
+              <p className="text-sm text-slate-400 mt-0.5">
+                Mettez à jour vos informations personnelles
               </p>
             </div>
           </div>
+        </div>
 
-          {/* Form Card */}
-          <Card className="p-8 space-y-8 bg-linear-to-br from-gray-50 to-gray-100">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                  {error}
-                </div>
-              )}
-
-              <label className="flex flex-col sm:flex-row sm:items-center gap-10">
-                {/* First Name Field */}
-                <div className="relative">
-                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                    Prénom
-                  </span>
-                  <div
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                    style={{ top: "1.5rem" }}
-                  >
-                    <UserIcon className="h-5 w-5" />
-                  </div>
-                  <input
-                    type="text"
-                    {...register("firstName")}
-                    placeholder="Votre prénom"
-                    disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300
-             focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
-                  />
-                  {errors.firstName && (
-                    <span className="text-red-500 text-sm">
-                      {errors.firstName.message}
-                    </span>
-                  )}
-                </div>
-
-                {/* Last Name Field */}
-                <div className="relative">
-                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                    Nom
-                  </span>
-                  <div
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                    style={{ top: "1.5rem" }}
-                  >
-                    <UserIcon className="h-5 w-5" />
-                  </div>
-                  <input
-                    type="text"
-                    {...register("lastName")}
-                    placeholder="Votre nom"
-                    disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
-                  />
-                  {errors.lastName && (
-                    <span className="text-red-500 text-sm">
-                      {errors.lastName.message}
-                    </span>
-                  )}
-                </div>
-              </label>
-
-              <label className="flex flex-col sm:flex-row sm:items-center gap-10">
-                {/* Phone Number Field */}
-                <div className="relative">
-                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                    Numéro de téléphone
-                  </span>
-                  <div
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                    style={{ top: "1.5rem" }}
-                  >
-                    <Phone className="h-5 w-5" />
-                  </div>
-                  <input
-                    type="tel"
-                    {...register("phoneNumber")}
-                    placeholder="+33 6 00 00 00 00"
-                    disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
-                  />
-                  {errors.phoneNumber && (
-                    <span className="text-red-500 text-sm">
-                      {errors.phoneNumber.message}
-                    </span>
-                  )}
-                </div>
-
-                {/* Email Field */}
-                <div className="relative">
-                  <span className="block text-xs font-medium text-gray-500 mb-1 pl-1 after:content-['*'] after:text-red-500 after:ml-1.5">
-                    Adresse email
-                  </span>
-                  <div
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-                    style={{ top: "1.5rem" }}
-                  >
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <input
-                    type="email"
-                    {...register("email")}
-                    placeholder="exemple@email.com"
-                    disabled={loading}
-                    className="w-full pl-12 pr-12 py-3.5 border-b border-gray-200 focus:border-emerald-300 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-slate-400 placeholder:text-xs"
-                  />
-                  {errors.email && (
-                    <span className="text-red-500 text-sm">
-                      {errors.email.message}
-                    </span>
-                  )}
-                </div>
-              </label>
-
-              {/* Actions */}
-              <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
-                <DashboardButton
-                  type="submit"
-                  size="lg"
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  {loading ? "en cours..." : "Enregistrer"}
-                </DashboardButton>
-                <DashboardButton
-                  type="button"
-                  size="lg"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => router.back()}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Annuler
-                </DashboardButton>
+        {/* Form */}
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {error && (
+              <div className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl">
+                <span className="mt-0.5 shrink-0">⚠</span>
+                <span>{error}</span>
               </div>
-            </form>
-          </Card>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <Field
+                label="Prénom"
+                error={errors.firstName?.message}
+                icon={<UserIcon className="w-4 h-4" />}
+              >
+                <input
+                  type="text"
+                  {...register("firstName")}
+                  placeholder="Votre prénom"
+                  disabled={loading}
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field
+                label="Nom"
+                error={errors.lastName?.message}
+                icon={<UserIcon className="w-4 h-4" />}
+              >
+                <input
+                  type="text"
+                  {...register("lastName")}
+                  placeholder="Votre nom"
+                  disabled={loading}
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field
+                label="Adresse e-mail"
+                error={errors.email?.message}
+                icon={<Mail className="w-4 h-4" />}
+              >
+                <input
+                  type="email"
+                  {...register("email")}
+                  placeholder="exemple@email.com"
+                  disabled={loading}
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field
+                label="Téléphone"
+                error={errors.phoneNumber?.message}
+                icon={<Phone className="w-4 h-4" />}
+              >
+                <input
+                  type="tel"
+                  {...register("phoneNumber")}
+                  placeholder="+33 6 00 00 00 00"
+                  disabled={loading}
+                  className={inputClass}
+                />
+              </Field>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Enregistrement..." : "Enregistrer"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

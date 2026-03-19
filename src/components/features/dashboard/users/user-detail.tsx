@@ -1,152 +1,160 @@
 "use client";
 
-import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
-  Edit,
-  Package,
-  Layers,
+  Pencil,
+  Mail,
+  Phone,
+  Hash,
   Calendar,
   CheckCircle2,
   XCircle,
-  UserKey,
-  UserIcon,
+  ShieldCheck,
+  User as UserIcon,
 } from "lucide-react";
 import { User, UserRole } from "@/lib/users/models/user.model";
 
 const { DASHBOARD, USERS } = ROUTES;
 
 export function UserDetail({ user }: { user: User }) {
+  const initials =
+    (user.firstName?.slice(0, 1) || "") + (user.lastName?.slice(0, 1) || "");
+  const fullName =
+    [user.firstName, user.lastName].filter(Boolean).join(" ") || "—";
+
+  const memberSince = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
+
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-purple-100 rounded-lg">
-            <Package className="w-6 h-6 text-purple-600" />
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-emerald-950 to-slate-900 p-8 shadow-xl">
+        <div className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-10 h-52 w-52 rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="relative flex items-center gap-6">
+          <div className="h-20 w-20 rounded-2xl bg-linear-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-2 ring-white/10 shrink-0">
+            {initials.toUpperCase() || "U"}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
-            <p className="text-sm text-gray-500">ID: #{user.id}</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl font-bold text-white">{fullName}</h1>
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ${
+                  user.role === UserRole.ADMIN
+                    ? "bg-emerald-500/25 text-emerald-300 ring-emerald-400/30"
+                    : "bg-white/10 text-white/70 ring-white/10"
+                }`}
+              >
+                {user.role === UserRole.ADMIN && (
+                  <ShieldCheck className="w-3 h-3" />
+                )}
+                {user.role}
+              </span>
+            </div>
+            <p className="text-slate-400 text-sm mt-1">{user.email}</p>
+            {memberSince && (
+              <div className="flex items-center gap-1.5 mt-2 text-slate-500 text-xs">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Membre depuis {memberSince}</span>
+              </div>
+            )}
+          </div>
+          <div
+            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+              user.isActive
+                ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/30"
+                : "bg-red-500/20 text-red-300 ring-1 ring-red-400/30"
+            }`}
+          >
+            {user.isActive ? (
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            ) : (
+              <XCircle className="w-3.5 h-3.5" />
+            )}
+            {user.isActive ? "Actif" : "Inactif"}
           </div>
         </div>
-        <Badge variant={user.isActive ? "default" : "secondary"}>
-          {user.isActive ? "Actif" : "Inactif"}
-        </Badge>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Info Card */}
-        <Card
-          className="p-6 space-y-4 hover:shadow-lg transition-shadow
-         bg-linear-to-br from-slate-900 via-slate-800 to-slate-700"
+      {/* Info grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[
+          {
+            icon: Hash,
+            label: "Identifiant",
+            value: `#${user.id}`,
+            color: "text-slate-600",
+            bg: "bg-slate-50",
+            mono: true,
+          },
+          {
+            icon: Mail,
+            label: "E-mail",
+            value: user.email,
+            color: "text-violet-600",
+            bg: "bg-violet-50",
+          },
+          {
+            icon: Phone,
+            label: "Téléphone",
+            value: user.phoneNumber || "—",
+            color: "text-blue-600",
+            bg: "bg-blue-50",
+          },
+          {
+            icon: user.role === UserRole.ADMIN ? ShieldCheck : UserIcon,
+            label: "Rôle",
+            value: user.role,
+            color:
+              user.role === UserRole.ADMIN
+                ? "text-emerald-600"
+                : "text-gray-600",
+            bg: user.role === UserRole.ADMIN ? "bg-emerald-50" : "bg-gray-50",
+          },
+        ].map(({ icon: Icon, label, value, color, bg, mono }) => (
+          <div
+            key={label}
+            className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className={`${bg} ${color} p-3 rounded-xl shrink-0`}>
+              <Icon className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                {label}
+              </p>
+              <p
+                className={`text-sm font-semibold text-gray-800 mt-0.5 truncate ${mono ? "font-mono" : ""}`}
+              >
+                {value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3">
+        <Link
+          href={`${DASHBOARD}${USERS}`}
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
         >
-          <div className="space-y-5">
-            <div className="border-b pb-4">
-              <label className="text-xs font-semibold text-gray-50 uppercase tracking-wide mb-2 block">
-                Nom de l&apos;utilisateur
-              </label>
-              <p className="text-lg font-semibold text-gray-300">
-                {user.firstName} {user.lastName}
-              </p>
-            </div>
-            <div className="border-b pb-4">
-              <label className="text-xs font-semibold text-gray-300 uppercase tracking-wide mb-2 block">
-                Email
-              </label>
-              <p className="text-sm text-gray-300 leading-relaxed">
-                {user.email || <span className="italic text-gray-300">—</span>}
-              </p>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-300 uppercase tracking-wide mb-2 block">
-                Numéro de téléphone
-              </label>
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-gray-400" />
-                <p className="text-sm font-medium text-gray-300">
-                  {user.phoneNumber || (
-                    <span className="italic text-gray-300">—</span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Metrics Card */}
-        <Card className="p-6 space-y-3 bg-linear-to-br from-cyan-700 to-blue-900">
-          <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-purple-200">
-            {user.role === UserRole.ADMIN ? (
-              <UserKey className="w-5 h-5 text-green-600 shrink-0" />
-            ) : (
-              <UserIcon className="w-5 h-5 text-gray-600 shrink-0" />
-            )}
-            <div className="flex-1">
-              <p className="text-xs font-semibold text-gray-500 uppercase">
-                Rôle
-              </p>
-              <p className="font-semibold text-gray-900">{user.role}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-purple-200">
-            {user.isActive ? (
-              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-            ) : (
-              <XCircle className="w-5 h-5 text-red-600 shrink-0" />
-            )}
-            <div className="flex-1">
-              <p className="text-xs font-semibold text-gray-500 uppercase">
-                Email
-              </p>
-              <p className="font-semibold text-gray-900">
-                {user.isActive ? "Activé" : "Inactif"}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-purple-200">
-            <Calendar className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase">
-                Créé le
-              </p>
-              <p className="font-semibold text-gray-900">
-                {new Date(user.createdAt).toLocaleDateString("fr-FR", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(user.createdAt).toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-3 pt-4">
-        <Link href={`${DASHBOARD}${USERS}`} className="flex-1">
-          <DashboardButton size="lg" variant="outline" className="w-full">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour
-          </DashboardButton>
+          <ArrowLeft className="w-4 h-4" />
+          Retour
         </Link>
-        <Link href={`${DASHBOARD}${USERS}/edit/${user.id}`} className="flex-1">
-          <DashboardButton size="lg" className="w-full">
-            <Edit className="w-4 h-4 mr-2" />
-            Modifier
-          </DashboardButton>
+        <Link
+          href={`${DASHBOARD}${USERS}/edit/${user.id}`}
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+        >
+          <Pencil className="w-4 h-4" />
+          Modifier
         </Link>
       </div>
     </div>

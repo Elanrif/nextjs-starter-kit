@@ -3,7 +3,6 @@ import LoadingPage from "@/components/features/loading";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/lib/products/services/product.client.service";
-import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import { useForm } from "react-hook-form";
@@ -14,10 +13,38 @@ import {
   ProductFormData,
   productSchema,
 } from "@/lib/products/models/product.model";
-import { Card } from "@/components/ui/card";
-import { Edit, ArrowLeft, Package, DollarSign, Layers } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  Package,
+  Save,
+  Euro,
+  Box,
+  Tag,
+  FileText,
+  Link as LinkIcon,
+  CheckSquare,
+} from "lucide-react";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
+
+const ic =
+  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all";
+
+function SectionTitle({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+      <div className="text-gray-400">{icon}</div>
+      <h3 className="text-sm font-semibold text-gray-700">{label}</h3>
+    </div>
+  );
+}
 
 export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
   const {
@@ -46,13 +73,9 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch categories first
     fetchCategories().then((res) => {
-      if (Array.isArray(res)) {
+      if (Array.isArray(res))
         setCategories(res.map((c) => ({ id: c.id, name: c.name })));
-      }
-
-      // Then reset form with loaded product data
       if (loadedProduct && "id" in loadedProduct) {
         reset({
           name: loadedProduct?.name || "",
@@ -64,22 +87,11 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
           categoryId: loadedProduct?.category?.id || 0,
         });
       }
-
       setLoading(false);
     });
   }, [loadedProduct, reset]);
 
-  /**
-   * Handles product update with robust error management.
-   * Uses try/catch/finally to catch unexpected errors (e.g., JS crash, network issues, etc.)
-   * and ensures loading is always stopped, even if an exception occurs.
-   */
   const onSubmit = async (data: ProductFormData) => {
-    if (!loadedProduct) {
-      setError("name", { message: "Produit introuvable" });
-      toast.error("Produit introuvable.");
-      return;
-    }
     setLoading(true);
     try {
       const anyRes = (await updateProduct(Number(loadedProduct.id), {
@@ -88,15 +100,13 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
         stock: Number(data.stock),
         categoryId: Number(data.categoryId),
       })) as any;
-
       const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
       if (updatedId) {
         toast.success("Produit modifié avec succès");
         router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
         return;
       }
-
-      if (anyRes && anyRes.message && Array.isArray(anyRes.message.details)) {
+      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
         for (const d of anyRes.message.details) {
           if (d.field)
             setError(d.field as keyof ProductFormData, {
@@ -107,16 +117,13 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
         toast.error("Erreur de validation côté serveur");
         return;
       }
-
       toast.error(
         anyRes?.message?.message ||
           anyRes?.message ||
           "Erreur lors de la modification",
       );
     } catch (error: any) {
-      toast.error(
-        error.message || "Erreur inattendue lors de la modification du produit",
-      );
+      toast.error(error.message || "Erreur inattendue lors de la modification");
     } finally {
       setLoading(false);
     }
@@ -126,90 +133,94 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
     return <LoadingPage isLoading={true} text="Chargement du produit..." />;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-3 bg-purple-100 rounded-lg">
-            <Edit className="w-6 h-6 text-purple-600" />
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
+        <div className="relative flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-blue-500/20 ring-1 ring-blue-400/30">
+            <Pencil className="w-5 h-5 text-blue-300" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-xl font-bold text-white">
               Modifier le produit
             </h1>
-            <p className="text-sm text-gray-500">{loadedProduct?.name}</p>
+            <p className="text-sm text-slate-400 mt-0.5">
+              {loadedProduct?.name}
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Form Card */}
-        <Card className="p-8 space-y-8 bg-linear-to-br from-gray-50 to-gray-100">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Product Info Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
-                <Package className="w-5 h-5 text-orange-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Informations du produit
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Nom
-                  </span>
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <SectionTitle
+              icon={<Package className="w-4 h-4" />}
+              label="Informations du produit"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Nom <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("name")}
                     placeholder="Ex: Laptop Pro"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.name && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.name.message}
-                    </span>
-                  )}
+                </div>
+                {errors.name && (
+                  <p className="text-xs text-red-500">{errors.name.message}</p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Slug <span className="text-red-400">*</span>
                 </label>
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Slug
-                  </span>
+                <div className="relative">
+                  <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("slug")}
                     placeholder="Ex: laptop-pro"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.slug && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.slug.message}
-                    </span>
-                  )}
-                </label>
+                </div>
+                {errors.slug && (
+                  <p className="text-xs text-red-500">{errors.slug.message}</p>
+                )}
               </div>
-              <label className="block">
-                <span className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description
-                </span>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Description
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
                 <textarea
                   {...register("description")}
                   placeholder="Décrivez votre produit..."
-                  rows={4}
-                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-purple-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                  rows={3}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
                 />
-              </label>
-            </div>
-
-            {/* Pricing & Inventory Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
-                <DollarSign className="w-5 h-5 text-green-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Tarification & Inventaire
-                </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Prix (€)
-                  </span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <SectionTitle
+              icon={<Euro className="w-4 h-4" />}
+              label="Tarification & Inventaire"
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Prix (€) <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <Euro className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("price", { valueAsNumber: true })}
                     type="number"
@@ -217,50 +228,49 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
                     min={0}
                     inputMode="decimal"
                     placeholder="0.00"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.price && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.price.message}
-                    </span>
-                  )}
+                </div>
+                {errors.price && (
+                  <p className="text-xs text-red-500">{errors.price.message}</p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Stock <span className="text-red-400">*</span>
                 </label>
-                <label className="block">
-                  <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                    Stock
-                  </span>
+                <div className="relative">
+                  <Box className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <input
                     {...register("stock", { valueAsNumber: true })}
                     type="number"
                     step={1}
                     min={0}
                     placeholder="0"
-                    className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                    className={ic}
                   />
-                  {errors.stock && (
-                    <span className="text-red-500 text-sm mt-1">
-                      {errors.stock.message}
-                    </span>
-                  )}
-                </label>
+                </div>
+                {errors.stock && (
+                  <p className="text-xs text-red-500">{errors.stock.message}</p>
+                )}
               </div>
             </div>
+          </div>
 
-            {/* Category & Status Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b-2 border-orange-200">
-                <Layers className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Catégorie & Statut
-                </h2>
-              </div>
-              <label className="block">
-                <span className="block text-sm font-semibold text-gray-700 mb-2 after:content-['*'] after:ml-1 after:text-red-500">
-                  Catégorie
-                </span>
+          <div className="space-y-4">
+            <SectionTitle
+              icon={<Tag className="w-4 h-4" />}
+              label="Catégorie & Statut"
+            />
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Catégorie
+              </label>
+              <div className="relative">
+                <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 <select
                   {...register("categoryId", { valueAsNumber: true })}
-                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:outline-none transition placeholder-slate-400 placeholder:text-xs"
+                  className={ic + " appearance-none"}
                 >
                   <option value="">Sélectionner une catégorie</option>
                   {categories.map((cat) => (
@@ -269,48 +279,48 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
                     </option>
                   ))}
                 </select>
-                {errors.categoryId && (
-                  <span className="text-red-500 text-sm mt-1">
-                    {errors.categoryId.message}
-                  </span>
-                )}
-              </label>
-              <label className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-gray-200 cursor-pointer hover:border-blue-500 transition">
-                <input
-                  type="checkbox"
-                  {...register("isActive")}
-                  className="w-4 h-4"
-                />
-                <span className="text-sm font-semibold text-gray-700">
+              </div>
+              {errors.categoryId && (
+                <p className="text-xs text-red-500">
+                  {errors.categoryId.message}
+                </p>
+              )}
+            </div>
+            <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                {...register("isActive")}
+                className="w-4 h-4 accent-blue-600 rounded"
+              />
+              <div className="flex items-center gap-2">
+                <CheckSquare className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium text-gray-700">
                   Produit actif
                 </span>
-              </label>
-            </div>
+              </div>
+            </label>
+          </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-6 border-t-2 border-orange-100">
-              <DashboardButton
-                type="submit"
-                size="lg"
-                className="flex-1"
-                disabled={loading}
-              >
-                <Edit className="w-4 h-4 mr-2" />
-                {loading ? "Modification..." : "Enregistrer"}
-              </DashboardButton>
-              <DashboardButton
-                type="button"
-                size="lg"
-                variant="outline"
-                className="flex-1"
-                onClick={() => router.back()}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Annuler
-              </DashboardButton>
-            </div>
-          </form>
-        </Card>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+            >
+              <Save className="w-4 h-4" />
+              {loading ? "Enregistrement..." : "Enregistrer"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
