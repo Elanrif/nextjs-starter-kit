@@ -11,6 +11,7 @@ import { ROUTES } from "@/utils/routes";
 import { User } from "@/lib/users/models/user.model";
 import { deleteUser } from "@/lib/users/services/user.client.service";
 import { Eye, Pencil, Trash2, Users, Plus, ShieldCheck } from "lucide-react";
+import LoadingPage from "@components/features/loading-page";
 
 const { DASHBOARD, USERS } = ROUTES;
 
@@ -156,45 +157,48 @@ export function UserList({ initialUsers = [] }: { initialUsers?: User[] }) {
   ];
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-emerald-50">
-            <Users className="w-5 h-5 text-emerald-600" />
+    <>
+      <LoadingPage loading={loading} text="Chargement des utilisateurs..." />
+      <div className="space-y-5">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-emerald-50">
+              <Users className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
+              {!loading && (
+                <p className="text-xs text-gray-400">
+                  {users.length} utilisateur{users.length === 1 ? "" : "s"}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
-            {!loading && (
-              <p className="text-xs text-gray-400">
-                {users.length} utilisateur{users.length === 1 ? "" : "s"}
-              </p>
-            )}
-          </div>
+          <Link href={`${DASHBOARD}${USERS}/create`}>
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+              <Plus className="w-4 h-4" />
+              Ajouter
+            </button>
+          </Link>
         </div>
-        <Link href={`${DASHBOARD}${USERS}/create`}>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <Plus className="w-4 h-4" />
-            Ajouter
-          </button>
-        </Link>
+
+        <DataTable
+          columns={columns}
+          data={users}
+          loading={loading}
+          emptyText="Aucun utilisateur."
+        />
+
+        <ConfirmModal
+          open={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          onConfirm={handleDelete}
+          loading={deleteLoading}
+          title="Supprimer cet utilisateur ?"
+          description="Cette action est irréversible. L'utilisateur sera définitivement supprimé."
+        />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={users}
-        loading={loading}
-        emptyText="Aucun utilisateur."
-      />
-
-      <ConfirmModal
-        open={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        onConfirm={handleDelete}
-        loading={deleteLoading}
-        title="Supprimer cet utilisateur ?"
-        description="Cette action est irréversible. L'utilisateur sera définitivement supprimé."
-      />
-    </div>
+    </>
   );
 }

@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import LoadingPage from "@components/features/loading-page";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -105,9 +106,10 @@ export function ProductList({
           className={`font-medium ${
             row.stock > 10
               ? "text-emerald-600"
-              : (row.stock > 0
+              // eslint-disable-next-line unicorn/no-nested-ternary
+              : row.stock > 0
                 ? "text-amber-600"
-                : "text-red-600")
+                : "text-red-600"
           }`}
         >
           {row.stock}
@@ -178,44 +180,47 @@ export function ProductList({
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-50">
-            <Package className="w-5 h-5 text-blue-600" />
+    <>
+      <LoadingPage loading={loading} text="Chargement des produits..." />
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-blue-50">
+              <Package className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Produits</h1>
+              {!loading && (
+                <p className="text-xs text-gray-400">
+                  {products.length} produit{products.length === 1 ? "" : "s"}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Produits</h1>
-            {!loading && (
-              <p className="text-xs text-gray-400">
-                {products.length} produit{products.length === 1 ? "" : "s"}
-              </p>
-            )}
-          </div>
+          <Link href={`${DASHBOARD}${PRODUCTS}/create`}>
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+              <Plus className="w-4 h-4" />
+              Ajouter
+            </button>
+          </Link>
         </div>
-        <Link href={`${DASHBOARD}${PRODUCTS}/create`}>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <Plus className="w-4 h-4" />
-            Ajouter
-          </button>
-        </Link>
+
+        <DataTable
+          columns={columns}
+          data={products}
+          loading={loading}
+          emptyText="Aucun produit."
+        />
+
+        <ConfirmModal
+          open={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          onConfirm={handleDelete}
+          loading={deleteLoading}
+          title="Supprimer ce produit ?"
+          description="Cette action est irréversible. Le produit sera définitivement supprimé."
+        />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={products}
-        loading={loading}
-        emptyText="Aucun produit."
-      />
-
-      <ConfirmModal
-        open={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        onConfirm={handleDelete}
-        loading={deleteLoading}
-        title="Supprimer ce produit ?"
-        description="Cette action est irréversible. Le produit sera définitivement supprimé."
-      />
-    </div>
+    </>
   );
 }

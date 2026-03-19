@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { UserFormData, UserSchema } from "@/lib/users/models/user.model";
 import { createUser } from "@/lib/users/services/user.client.service";
@@ -22,43 +22,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import ValidationItem from "@/components/ui/validation-item";
+import { Field } from "@/components/ui/form/field";
+import { icLight, icLightPwd } from "@/components/ui/form/input-class";
 
 const { DASHBOARD, USERS } = ROUTES;
-
-const ic =
-  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all disabled:opacity-50";
-const icPwd =
-  "w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all disabled:opacity-50";
-
-function Field({
-  label,
-  error,
-  icon,
-  children,
-  required = true,
-}: {
-  label: string;
-  error?: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  required?: boolean;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-        {label}
-        {required && <span className="text-red-400">*</span>}
-      </label>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-          {icon}
-        </div>
-        {children}
-      </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
-    </div>
-  );
-}
 
 export function UserCreateForm() {
   const router = useRouter();
@@ -108,7 +75,7 @@ export function UserCreateForm() {
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Création de l'utilisateur..." />
+      <LoadingPage loading={loading} text="Création de l'utilisateur..." />
       <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-emerald-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-emerald-500/20 blur-3xl" />
@@ -139,6 +106,7 @@ export function UserCreateForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <Field
+                variant="light"
                 label="Prénom"
                 error={errors.firstName?.message}
                 icon={<UserIcon className="w-4 h-4" />}
@@ -148,10 +116,11 @@ export function UserCreateForm() {
                   {...register("firstName")}
                   placeholder="Prénom"
                   disabled={loading}
-                  className={ic}
+                  className={icLight}
                 />
               </Field>
               <Field
+                variant="light"
                 label="Nom"
                 error={errors.lastName?.message}
                 icon={<UserIcon className="w-4 h-4" />}
@@ -161,10 +130,11 @@ export function UserCreateForm() {
                   {...register("lastName")}
                   placeholder="Nom"
                   disabled={loading}
-                  className={ic}
+                  className={icLight}
                 />
               </Field>
               <Field
+                variant="light"
                 label="E-mail"
                 error={errors.email?.message}
                 icon={<Mail className="w-4 h-4" />}
@@ -174,10 +144,11 @@ export function UserCreateForm() {
                   {...register("email")}
                   placeholder="exemple@email.com"
                   disabled={loading}
-                  className={ic}
+                  className={icLight}
                 />
               </Field>
               <Field
+                variant="light"
                 label="Téléphone"
                 error={errors.phoneNumber?.message}
                 icon={<Phone className="w-4 h-4" />}
@@ -187,7 +158,7 @@ export function UserCreateForm() {
                   {...register("phoneNumber")}
                   placeholder="+33 6 00 00 00 00"
                   disabled={loading}
-                  className={ic}
+                  className={icLight}
                 />
               </Field>
             </div>
@@ -195,36 +166,34 @@ export function UserCreateForm() {
             <div className="h-px bg-gray-100" />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                  Mot de passe <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <div>
+                <Field
+                  variant="light"
+                  label="Mot de passe"
+                  error={errors.password?.message}
+                  icon={<Lock className="w-4 h-4" />}
+                  action={
+                    <button
+                      type="button"
+                      onClick={() => setShowPwd(!showPwd)}
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPwd ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  }
+                >
                   <input
                     type={showPwd ? "text" : "password"}
                     {...register("password")}
                     placeholder="Mot de passe"
                     disabled={loading}
-                    className={icPwd}
+                    className={icLightPwd}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPwd(!showPwd)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPwd ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-xs text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
+                </Field>
                 {password && (
                   <div
                     className={`mt-2 p-3 rounded-xl space-y-1.5 border ${allValid ? "bg-emerald-50 border-emerald-100" : "bg-gray-50 border-gray-100"}`}
@@ -255,16 +224,30 @@ export function UserCreateForm() {
                 )}
               </div>
               <Field
+                variant="light"
                 label="Confirmer le mot de passe"
                 error={errors.confirmPassword?.message}
                 icon={<Lock className="w-4 h-4" />}
+                action={
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd(!showPwd)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPwd ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                }
               >
                 <input
-                  type="password"
+                  type={showPwd ? "text" : "password"}
                   {...register("confirmPassword")}
                   placeholder="Répéter le mot de passe"
                   disabled={loading}
-                  className={ic}
+                  className={icLightPwd}
                 />
               </Field>
             </div>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { createCategory } from "@/lib/categories/services/category.client.service";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/utils/routes";
@@ -20,11 +20,12 @@ import {
   Image,
   CheckSquare,
 } from "lucide-react";
+import { Field } from "@/components/ui/form/field";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
-const ic =
-  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all";
+const icv =
+  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all disabled:opacity-50";
 
 export function CategoryCreateForm() {
   const {
@@ -82,7 +83,7 @@ export function CategoryCreateForm() {
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Création de la catégorie..." />
+      <LoadingPage loading={loading} text="Création de la catégorie..." />
       <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl" />
@@ -105,69 +106,58 @@ export function CategoryCreateForm() {
         <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Nom <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <input
-                    {...register("name")}
-                    placeholder="Ex: Électronique"
-                    className={ic}
-                  />
-                </div>
-                {errors.name && (
-                  <p className="text-xs text-red-500">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Slug <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <input
-                    {...register("slug")}
-                    placeholder="Ex: electronique"
-                    className={ic}
-                  />
-                </div>
-                {errors.slug && (
-                  <p className="text-xs text-red-500">{errors.slug.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Description
-              </label>
-              <div className="relative">
-                <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
-                <textarea
-                  {...register("description")}
-                  placeholder="Décrivez cette catégorie..."
-                  rows={3}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Image URL
-              </label>
-              <div className="relative">
-                <Image className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Field
+                variant="light"
+                label="Nom"
+                error={errors.name?.message}
+                icon={<Tag className="w-4 h-4" />}
+              >
                 <input
-                  {...register("imageUrl")}
-                  placeholder="https://example.com/image.jpg"
-                  className={ic}
+                  {...register("name")}
+                  placeholder="Ex: Électronique"
+                  className={icv}
                 />
-              </div>
+              </Field>
+              <Field
+                variant="light"
+                label="Slug"
+                error={errors.slug?.message}
+                icon={<LinkIcon className="w-4 h-4" />}
+              >
+                <input
+                  {...register("slug")}
+                  placeholder="Ex: electronique"
+                  className={icv}
+                />
+              </Field>
             </div>
+
+            <Field
+              variant="light"
+              label="Description"
+              required={false}
+              icon={<FileText className="w-4 h-4" />}
+            >
+              <textarea
+                {...register("description")}
+                placeholder="Décrivez cette catégorie..."
+                rows={3}
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none"
+              />
+            </Field>
+
+            <Field
+              variant="light"
+              label="Image URL"
+              required={false}
+              icon={<Image className="w-4 h-4" />}
+            >
+              <input
+                {...register("imageUrl")}
+                placeholder="https://example.com/image.jpg"
+                className={icv}
+              />
+            </Field>
 
             <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50/50 cursor-pointer transition-colors">
               <input

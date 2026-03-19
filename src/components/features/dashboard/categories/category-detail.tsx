@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Category } from "@/lib/categories/models/category.model";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import {
   ArrowLeft,
@@ -36,9 +36,7 @@ export function CategoryDetail({ data }: { data: Category | null }) {
   }, [data]);
 
   if (loading)
-    return (
-      <LoadingPage isLoading={true} text="Chargement de la catégorie..." />
-    );
+    return <LoadingPage loading={true} text="Chargement de la catégorie..." />;
   if (!category)
     return (
       <div className="text-center py-16 text-gray-400 text-sm">

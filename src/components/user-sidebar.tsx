@@ -15,10 +15,10 @@ import {
 import { redirect } from "next/navigation";
 import { User as UserType } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
-import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";
 import { authClient } from "@/lib/auth/api/auth.client";
 import { AccountBrand } from "./features/account-brand";
+import LoadingPage from "@components/features/loading-page";
 
 const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 
@@ -47,7 +47,7 @@ export function UserSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const [auth, setAuth] = React.useState<UserType | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchAuthData = async () => {
@@ -60,14 +60,15 @@ export function UserSidebar({
       } catch {
         redirect("/sign-in?callbackUrl=/account");
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     fetchAuthData();
   }, []);
 
-  if (isLoading || !auth) {
-    return <SidebarSkeleton {...props} />;
+  if (loading || !auth) {
+    //<SidebarSkeleton {...props} />
+    return <LoadingPage loading={loading} text="Chargement..." />;
   }
 
   return (

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
 import { authClient } from "@/lib/auth/api/auth.client";
+import LoadingPage from "@components/features/loading-page";
 
 interface SignOutButtonProps {
   /** Text to display on the button */
@@ -48,20 +49,22 @@ export function SignOutButton({
   onSignOut,
 }: SignOutButtonProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   //const { signOut } = useAuth();
 
   const handleSignOut = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
-      await authClient.signOut();
+      await Promise.all([
+        authClient.signOut(),
+        new Promise((resolve) => setTimeout(resolve, 800)),
+      ]);
       if (onSignOut) onSignOut();
       router.push(redirectTo);
       router.refresh();
     } catch (error) {
       console.error("Failed to sign out:", error);
-    } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -77,12 +80,15 @@ export function SignOutButton({
   };
 
   return (
-    <button
-      onClick={handleSignOut}
-      disabled={isLoading}
-      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
-    >
-      {isLoading ? "Signing out..." : children}
-    </button>
+    <>
+      <LoadingPage loading={loading} text="Déconnexion en cours..." />
+      <button
+        onClick={handleSignOut}
+        disabled={loading}
+        className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      >
+        {loading ? "Déconnexion en cours..." : children}
+      </button>
+    </>
   );
 }

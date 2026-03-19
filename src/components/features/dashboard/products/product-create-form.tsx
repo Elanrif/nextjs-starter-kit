@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createProduct } from "@/lib/products/services/product.client.service";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import {
   ProductFormData,
@@ -23,26 +23,11 @@ import {
   Link as LinkIcon,
   CheckSquare,
 } from "lucide-react";
+import { icLight } from "@/components/ui/form/input-class";
+import { SectionTitle } from "@/components/ui/form/section-title";
+import { Field } from "@/components/ui/form/field";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
-
-const ic =
-  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all";
-
-function SectionTitle({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-      <div className="text-gray-400">{icon}</div>
-      <h3 className="text-sm font-semibold text-gray-700">{label}</h3>
-    </div>
-  );
-}
 
 export function ProductCreateForm() {
   const {
@@ -111,7 +96,7 @@ export function ProductCreateForm() {
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Création du produit..." />
+      <LoadingPage loading={loading} text="Création du produit..." />
       <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
@@ -140,57 +125,44 @@ export function ProductCreateForm() {
                 label="Informations du produit"
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Nom <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      {...register("name")}
-                      placeholder="Ex: Laptop Pro"
-                      className={ic}
-                    />
-                  </div>
-                  {errors.name && (
-                    <p className="text-xs text-red-500">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Slug <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      {...register("slug")}
-                      placeholder="Ex: laptop-pro"
-                      className={ic}
-                    />
-                  </div>
-                  {errors.slug && (
-                    <p className="text-xs text-red-500">
-                      {errors.slug.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Description
-                </label>
-                <div className="relative">
-                  <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <textarea
-                    {...register("description")}
-                    placeholder="Décrivez votre produit..."
-                    rows={3}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
+                <Field
+                  variant="light"
+                  label="Nom"
+                  error={errors.name?.message}
+                  icon={<Package className="w-4 h-4" />}
+                >
+                  <input
+                    {...register("name")}
+                    placeholder="Ex: Laptop Pro"
+                    className={icLight}
                   />
-                </div>
+                </Field>
+                <Field
+                  variant="light"
+                  label="Slug"
+                  error={errors.slug?.message}
+                  icon={<LinkIcon className="w-4 h-4" />}
+                >
+                  <input
+                    {...register("slug")}
+                    placeholder="Ex: laptop-pro"
+                    className={icLight}
+                  />
+                </Field>
               </div>
+              <Field
+                variant="light"
+                label="Description"
+                required={false}
+                icon={<FileText className="w-4 h-4" />}
+              >
+                <textarea
+                  {...register("description")}
+                  placeholder="Décrivez votre produit..."
+                  rows={3}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
+                />
+              </Field>
             </div>
 
             {/* Pricing section */}
@@ -200,47 +172,35 @@ export function ProductCreateForm() {
                 label="Tarification & Inventaire"
               />
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Prix (€) <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <Euro className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      {...register("price", { valueAsNumber: true })}
-                      type="number"
-                      step="0.01"
-                      min={0}
-                      placeholder="0.00"
-                      className={ic}
-                    />
-                  </div>
-                  {errors.price && (
-                    <p className="text-xs text-red-500">
-                      {errors.price.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Stock <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <Box className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    <input
-                      {...register("stock", { valueAsNumber: true })}
-                      type="number"
-                      min={0}
-                      placeholder="0"
-                      className={ic}
-                    />
-                  </div>
-                  {errors.stock && (
-                    <p className="text-xs text-red-500">
-                      {errors.stock.message}
-                    </p>
-                  )}
-                </div>
+                <Field
+                  variant="light"
+                  label="Prix (€)"
+                  error={errors.price?.message}
+                  icon={<Euro className="w-4 h-4" />}
+                >
+                  <input
+                    {...register("price", { valueAsNumber: true })}
+                    type="number"
+                    step="0.01"
+                    min={0}
+                    placeholder="0.00"
+                    className={icLight}
+                  />
+                </Field>
+                <Field
+                  variant="light"
+                  label="Stock"
+                  error={errors.stock?.message}
+                  icon={<Box className="w-4 h-4" />}
+                >
+                  <input
+                    {...register("stock", { valueAsNumber: true })}
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    className={icLight}
+                  />
+                </Field>
               </div>
             </div>
 
@@ -250,30 +210,25 @@ export function ProductCreateForm() {
                 icon={<Tag className="w-4 h-4" />}
                 label="Catégorie & Statut"
               />
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Catégorie
-                </label>
-                <div className="relative">
-                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <select
-                    {...register("categoryId", { valueAsNumber: true })}
-                    className={ic + " appearance-none"}
-                  >
-                    <option value="">Sélectionner une catégorie</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {errors.categoryId && (
-                  <p className="text-xs text-red-500">
-                    {errors.categoryId.message}
-                  </p>
-                )}
-              </div>
+              <Field
+                variant="light"
+                label="Catégorie"
+                required={false}
+                error={errors.categoryId?.message}
+                icon={<Tag className="w-4 h-4" />}
+              >
+                <select
+                  {...register("categoryId", { valueAsNumber: true })}
+                  className={icLight + " appearance-none"}
+                >
+                  <option value="">Sélectionner une catégorie</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
               <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-colors">
                 <input
                   type="checkbox"

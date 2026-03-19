@@ -17,6 +17,8 @@ import {
   UserX,
 } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
+import { Field } from "@/components/ui/form/field";
+import { icDark } from "@/components/ui/form/input-class";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -182,26 +184,23 @@ export default function ForgotPasswordPage() {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Email */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-white/50 uppercase tracking-wider">
-                        Adresse email <span className="text-red-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="vous@exemple.com"
-                          required
-                          disabled={loading}
-                          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-white placeholder-white/25 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all disabled:opacity-50"
-                        />
-                      </div>
-                      <p className="text-xs text-white/25">
-                        Nous vérifierons si un compte existe avec cet email.
-                      </p>
-                    </div>
+                    <Field
+                      label="Adresse email"
+                      icon={<Mail className="w-4 h-4" />}
+                    >
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="vous@exemple.com"
+                        required
+                        disabled={loading}
+                        className={icDark}
+                      />
+                    </Field>
+                    <p className="text-xs text-white/25 -mt-2">
+                      Nous vérifierons si un compte existe avec cet email.
+                    </p>
 
                     {/* Submit */}
                     <button

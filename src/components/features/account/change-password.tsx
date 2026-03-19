@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import LoadingPage from "@/components/features/loading";
 import { ROUTES } from "@/utils/routes";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import {
@@ -25,6 +24,7 @@ import {
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
 import { authClient } from "@/lib/auth/api/auth.client";
+import LoadingPage from "@components/features/loading-page";
 
 const { MY_ACCOUNT } = ROUTES;
 
@@ -82,7 +82,7 @@ export function ChangePassword() {
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Mise à jour du mot de passe..." />
+      <LoadingPage loading={loading} text="Mise à jour du mot de passe..." />
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-orange-950 to-slate-900 p-7 shadow-xl">

@@ -98,42 +98,51 @@ export function NavMain({
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub className="ml-4 border-l border-white/8 pl-3 mt-1 gap-0.5">
-                    {item.items.map((subItem) => {
-                      const isSubActive = pathname.startsWith(subItem.url);
-                      return (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            className={cn(
-                              "rounded-lg h-8 text-xs font-medium transition-all duration-150",
-                              isSubActive
-                                ? "bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/20 hover:text-white"
-                                : "text-white/45 hover:bg-white/5 hover:text-white/75",
-                            )}
-                          >
-                            <Link
-                              href={subItem.url}
-                              className="flex items-center gap-2"
+                    {(() => {
+                      const bestMatch = item
+                        .items!.map((i) => i.url)
+                        .filter(
+                          (url) =>
+                            pathname === url || pathname.startsWith(url + "/"),
+                        )
+                        .toSorted((a, b) => b.length - a.length)[0];
+                      return item.items!.map((subItem) => {
+                        const isSubActive = subItem.url === bestMatch;
+                        return (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={cn(
+                                "rounded-lg h-8 text-xs font-medium transition-all duration-150",
+                                isSubActive
+                                  ? "bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/20 hover:text-white"
+                                  : "text-white/45 hover:bg-white/5 hover:text-white/75",
+                              )}
                             >
-                              {subItem.icon && (
-                                <subItem.icon
-                                  className={cn(
-                                    "w-3.5 h-3.5 shrink-0",
-                                    isSubActive
-                                      ? "text-current!"
-                                      : "text-white/40!",
-                                  )}
-                                />
-                              )}
-                              <span>{subItem.title}</span>
-                              {isSubActive && (
-                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                              )}
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      );
-                    })}
+                              <Link
+                                href={subItem.url}
+                                className="flex items-center gap-2"
+                              >
+                                {subItem.icon && (
+                                  <subItem.icon
+                                    className={cn(
+                                      "w-3.5 h-3.5 shrink-0",
+                                      isSubActive
+                                        ? "text-current!"
+                                        : "text-white/40!",
+                                    )}
+                                  />
+                                )}
+                                <span>{subItem.title}</span>
+                                {isSubActive && (
+                                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                                )}
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      });
+                    })()}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>

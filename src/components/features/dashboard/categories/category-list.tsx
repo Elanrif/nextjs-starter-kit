@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { Category } from "@/lib/categories/models/category.model";
 import { ROUTES } from "@/utils/routes";
 import { Eye, Pencil, Trash2, Tag, Plus } from "lucide-react";
+import LoadingPage from "@components/features/loading-page";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
@@ -147,45 +148,48 @@ export function CategoryList({
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-violet-50">
-            <Tag className="w-5 h-5 text-violet-600" />
+    <>
+      <LoadingPage loading={loading} text="Chargement des catégories..." />
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-violet-50">
+              <Tag className="w-5 h-5 text-violet-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Catégories</h1>
+              {!loading && (
+                <p className="text-xs text-gray-400">
+                  {categories.length} catégorie
+                  {categories.length === 1 ? "" : "s"}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Catégories</h1>
-            {!loading && (
-              <p className="text-xs text-gray-400">
-                {categories.length} catégorie
-                {categories.length === 1 ? "" : "s"}
-              </p>
-            )}
-          </div>
+          <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+              <Plus className="w-4 h-4" />
+              Ajouter
+            </button>
+          </Link>
         </div>
-        <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-            <Plus className="w-4 h-4" />
-            Ajouter
-          </button>
-        </Link>
+
+        <DataTable
+          columns={columns}
+          data={categories}
+          loading={loading}
+          emptyText="Aucune catégorie."
+        />
+
+        <ConfirmModal
+          open={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          onConfirm={handleDelete}
+          loading={deleteLoading}
+          title="Supprimer cette catégorie ?"
+          description="Cette action est irréversible. La catégorie sera définitivement supprimée."
+        />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={categories}
-        loading={loading}
-        emptyText="Aucune catégorie."
-      />
-
-      <ConfirmModal
-        open={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        onConfirm={handleDelete}
-        loading={deleteLoading}
-        title="Supprimer cette catégorie ?"
-        description="Cette action est irréversible. La catégorie sera définitivement supprimée."
-      />
-    </div>
+    </>
   );
 }

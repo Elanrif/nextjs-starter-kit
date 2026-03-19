@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { User } from "@/lib/users/models/user.model";
 import {
@@ -99,7 +99,7 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
 
   return (
     <>
-      <LoadingPage isLoading={loading} text="Mise à jour du profil..." />
+      <LoadingPage loading={loading} text="Mise à jour du profil..." />
       <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-7 shadow-xl">

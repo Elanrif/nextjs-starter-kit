@@ -100,41 +100,48 @@ export function NavMainUser({
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub className="ml-4 border-l border-gray-100 pl-3 mt-1 gap-0.5">
-                    {item.items.map((subItem) => {
-                      const isSubActive =
-                        pathname === subItem.url ||
-                        pathname.startsWith(subItem.url + "/");
-                      return (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            className={cn(
-                              "rounded-lg h-8 text-xs font-medium transition-all duration-150",
-                              isSubActive
-                                ? "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700"
-                                : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
-                            )}
-                          >
-                            <Link
-                              href={subItem.url}
-                              className="flex items-center gap-2"
+                    {(() => {
+                      const bestMatch = item
+                        .items!.map((i) => i.url)
+                        .filter(
+                          (url) =>
+                            pathname === url || pathname.startsWith(url + "/"),
+                        )
+                        .toSorted((a, b) => b.length - a.length)[0];
+                      return item.items!.map((subItem) => {
+                        const isSubActive = subItem.url === bestMatch;
+                        return (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={cn(
+                                "rounded-lg h-8 text-xs font-medium transition-all duration-150",
+                                isSubActive
+                                  ? "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700"
+                                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
+                              )}
                             >
-                              {subItem.icon && (
-                                <subItem.icon
-                                  className={cn(
-                                    "w-3.5 h-3.5 shrink-0 text-current!",
-                                  )}
-                                />
-                              )}
-                              <span>{subItem.title}</span>
-                              {isSubActive && (
-                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                              )}
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      );
-                    })}
+                              <Link
+                                href={subItem.url}
+                                className="flex items-center gap-2"
+                              >
+                                {subItem.icon && (
+                                  <subItem.icon
+                                    className={cn(
+                                      "w-3.5 h-3.5 shrink-0 text-current!",
+                                    )}
+                                  />
+                                )}
+                                <span>{subItem.title}</span>
+                                {isSubActive && (
+                                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                )}
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      });
+                    })()}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>

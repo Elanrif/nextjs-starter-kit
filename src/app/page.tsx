@@ -2,7 +2,7 @@ import CTASection from "@/components/features/cta-section";
 import { Footer } from "@/components/features/footer";
 import GettingStartedSection from "@/components/features/getting-started-section";
 import { Header } from "@/components/features/header";
-import Hero from "@/components/features/hero";
+import Hero from "@/components/features/Hero";
 
 export const metadata = {
   title: "Kickstart Next.js - Modern Boilerplate",

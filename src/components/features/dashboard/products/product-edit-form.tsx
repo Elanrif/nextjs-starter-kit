@@ -1,5 +1,5 @@
 "use client";
-import LoadingPage from "@/components/features/loading";
+import LoadingPage from "@components/features/loading-page";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/lib/products/services/product.client.service";
@@ -25,26 +25,11 @@ import {
   Link as LinkIcon,
   CheckSquare,
 } from "lucide-react";
+import { icLight } from "@/components/ui/form/input-class";
+import { SectionTitle } from "@/components/ui/form/section-title";
+import { Field } from "@/components/ui/form/field";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
-
-const ic =
-  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all";
-
-function SectionTitle({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-      <div className="text-gray-400">{icon}</div>
-      <h3 className="text-sm font-semibold text-gray-700">{label}</h3>
-    </div>
-  );
-}
 
 export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
   const {
@@ -129,98 +114,88 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
     }
   };
 
-  if (loading)
-    return <LoadingPage isLoading={true} text="Chargement du produit..." />;
-
   return (
-    <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
-        <div className="relative flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-blue-500/20 ring-1 ring-blue-400/30">
-            <Pencil className="w-5 h-5 text-blue-300" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white">
-              Modifier le produit
-            </h1>
-            <p className="text-sm text-slate-400 mt-0.5">
-              {loadedProduct?.name}
-            </p>
+    <>
+      <LoadingPage loading={loading} text="Modification du produit..." />
+      <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-blue-500/20 ring-1 ring-blue-400/30">
+              <Pencil className="w-5 h-5 text-blue-300" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">
+                Modifier le produit
+              </h1>
+              <p className="text-sm text-slate-400 mt-0.5">
+                {loadedProduct?.name}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <SectionTitle
-              icon={<Package className="w-4 h-4" />}
-              label="Informations du produit"
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Nom <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Package className="w-4 h-4" />}
+                label="Informations du produit"
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field
+                  variant="light"
+                  label="Nom"
+                  error={errors.name?.message}
+                  icon={<Package className="w-4 h-4" />}
+                >
                   <input
                     {...register("name")}
                     placeholder="Ex: Laptop Pro"
-                    className={ic}
+                    className={icLight}
                   />
-                </div>
-                {errors.name && (
-                  <p className="text-xs text-red-500">{errors.name.message}</p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Slug <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </Field>
+                <Field
+                  variant="light"
+                  label="Slug"
+                  error={errors.slug?.message}
+                  icon={<LinkIcon className="w-4 h-4" />}
+                >
                   <input
                     {...register("slug")}
                     placeholder="Ex: laptop-pro"
-                    className={ic}
+                    className={icLight}
                   />
-                </div>
-                {errors.slug && (
-                  <p className="text-xs text-red-500">{errors.slug.message}</p>
-                )}
+                </Field>
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Description
-              </label>
-              <div className="relative">
-                <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Field
+                variant="light"
+                label="Description"
+                required={false}
+                icon={<FileText className="w-4 h-4" />}
+              >
                 <textarea
                   {...register("description")}
                   placeholder="Décrivez votre produit..."
                   rows={3}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
                 />
-              </div>
+              </Field>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <SectionTitle
-              icon={<Euro className="w-4 h-4" />}
-              label="Tarification & Inventaire"
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Prix (€) <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <Euro className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Euro className="w-4 h-4" />}
+                label="Tarification & Inventaire"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <Field
+                  variant="light"
+                  label="Prix (€)"
+                  error={errors.price?.message}
+                  icon={<Euro className="w-4 h-4" />}
+                >
                   <input
                     {...register("price", { valueAsNumber: true })}
                     type="number"
@@ -228,100 +203,93 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
                     min={0}
                     inputMode="decimal"
                     placeholder="0.00"
-                    className={ic}
+                    className={icLight}
                   />
-                </div>
-                {errors.price && (
-                  <p className="text-xs text-red-500">{errors.price.message}</p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Stock <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <Box className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </Field>
+                <Field
+                  variant="light"
+                  label="Stock"
+                  error={errors.stock?.message}
+                  icon={<Box className="w-4 h-4" />}
+                >
                   <input
                     {...register("stock", { valueAsNumber: true })}
                     type="number"
                     step={1}
                     min={0}
                     placeholder="0"
-                    className={ic}
+                    className={icLight}
                   />
+                </Field>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Tag className="w-4 h-4" />}
+                label="Catégorie & Statut"
+              />
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Catégorie
+                </label>
+                <div className="relative">
+                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <select
+                    {...register("categoryId", { valueAsNumber: true })}
+                    className={icLight + " appearance-none"}
+                  >
+                    <option value="">Sélectionner une catégorie</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                {errors.stock && (
-                  <p className="text-xs text-red-500">{errors.stock.message}</p>
+                {errors.categoryId && (
+                  <p className="text-xs text-red-500">
+                    {errors.categoryId.message}
+                  </p>
                 )}
               </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <SectionTitle
-              icon={<Tag className="w-4 h-4" />}
-              label="Catégorie & Statut"
-            />
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Catégorie
+              <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-colors">
+                <input
+                  type="checkbox"
+                  {...register("isActive")}
+                  className="w-4 h-4 accent-blue-600 rounded"
+                />
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Produit actif
+                  </span>
+                </div>
               </label>
-              <div className="relative">
-                <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <select
-                  {...register("categoryId", { valueAsNumber: true })}
-                  className={ic + " appearance-none"}
-                >
-                  <option value="">Sélectionner une catégorie</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={String(cat.id)}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {errors.categoryId && (
-                <p className="text-xs text-red-500">
-                  {errors.categoryId.message}
-                </p>
-              )}
             </div>
-            <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-colors">
-              <input
-                type="checkbox"
-                {...register("isActive")}
-                className="w-4 h-4 accent-blue-600 rounded"
-              />
-              <div className="flex items-center gap-2">
-                <CheckSquare className="w-4 h-4 text-blue-500" />
-                <span className="text-sm font-medium text-gray-700">
-                  Produit actif
-                </span>
-              </div>
-            </label>
-          </div>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Annuler
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
-            >
-              <Save className="w-4 h-4" />
-              {loading ? "Enregistrement..." : "Enregistrer"}
-            </button>
-          </div>
-        </form>
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Enregistrement..." : "Enregistrer"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
