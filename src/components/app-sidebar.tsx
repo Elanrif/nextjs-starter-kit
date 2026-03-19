@@ -25,9 +25,9 @@ const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 const data = {
   teams: [
     {
-      name: "Nextjs Starter Kit",
+      name: "Espace Admin",
       logo: LayoutGrid,
-      plan: "Boilerplate",
+      plan: "Gestion de la boutique",
     },
   ],
   navMain: [

@@ -1,67 +1,44 @@
 "use client";
 
 import * as React from "react";
-import { GalleryVerticalEnd, HomeIcon, PieChart, Settings } from "lucide-react";
+import { HomeIcon, Settings, User, Pencil, Lock } from "lucide-react";
 
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
-import { User } from "@/lib/users/models/user.model";
+import { User as UserType } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";
 import { authClient } from "@/lib/auth/api/auth.client";
+import { AccountBrand } from "./features/account-brand";
 
 const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 
-// This is sample data.
 const data = {
-  teams: [
-    {
-      name: "Nextjs Starter Kit",
-      logo: GalleryVerticalEnd,
-      plan: "Boilerplate",
-    },
-  ],
   navMain: [
     {
-      title: "Home",
+      title: "Accueil",
       url: MY_ACCOUNT,
       icon: HomeIcon,
     },
     {
-      title: "Settings",
+      title: "Paramètres",
       url: "#",
       icon: Settings,
       isActive: true,
       items: [
-        {
-          title: "View profile",
-          url: `${VIEW_PROFILE}`,
-        },
-        {
-          title: "Edit profile",
-          url: `${EDIT_PROFILE}`,
-        },
-        {
-          title: "Change password",
-          url: `${CHANGE_PASSWORD}`,
-        },
+        { title: "Voir le profil", url: VIEW_PROFILE, icon: User },
+        { title: "Modifier le profil", url: EDIT_PROFILE, icon: Pencil },
+        { title: "Mot de passe", url: CHANGE_PASSWORD, icon: Lock },
       ],
-    },
-  ],
-  projects: [
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
     },
   ],
 };
@@ -69,27 +46,23 @@ const data = {
 export function UserSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const [auth, setAuth] = React.useState<User | null>(null);
+  const [auth, setAuth] = React.useState<UserType | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchAuthData = async () => {
       try {
-        // Only fetch user if session is valid
         const response = await authClient.getCurrentUser();
-
         if (!response.ok) {
           redirect("/sign-in?callbackUrl=/account");
         }
         setAuth(response.data.user);
-      } catch (error) {
-        console.error("Auth error:", error);
+      } catch {
         redirect("/sign-in?callbackUrl=/account");
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchAuthData();
   }, []);
 
@@ -97,21 +70,26 @@ export function UserSidebar({
     return <SidebarSkeleton {...props} />;
   }
 
-  const UserSidebarColors = {
-    main: "bg-gray-50/20",
-  };
-
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className={` ${UserSidebarColors.main}`}>
-        <TeamSwitcher teams={data.teams} />
+    <Sidebar
+      collapsible="icon"
+      {...props}
+      className="bg-white border-r border-gray-350"
+    >
+      <SidebarHeader className="bg-white">
+        <AccountBrand />
       </SidebarHeader>
-      <SidebarContent className={` ${UserSidebarColors.main}`}>
+
+      <SidebarSeparator className="bg-purple-300 mx-0" />
+
+      <SidebarContent className="bg-white">
         <NavMainUser items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      <SidebarFooter className={` ${UserSidebarColors.main}`}>
-        <NavUser user={auth} />
+
+      <SidebarSeparator className="bg-purple-300 mx-0" />
+
+      <SidebarFooter className="bg-white">
+        <NavUser user={auth} variant="light" />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -8,47 +8,33 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ROUTES } from "@/utils/routes";
-import { HomeIcon } from "lucide-react";
+import { UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const { DASHBOARD } = ROUTES;
-
 const SEGMENT_LABELS: Record<string, string> = {
-  users: "Utilisateurs",
-  categories: "Catégories",
-  products: "Produits",
-  create: "Créer",
+  profile: "Profil",
   edit: "Modifier",
+  settings: "Paramètres",
+  "change-password": "Mot de passe",
 };
 
 function getSegmentLabel(segment: string): string {
   return SEGMENT_LABELS[segment] ?? segment;
 }
 
-function isId(segment: string): boolean {
-  return /^\d+$/.test(segment);
-}
-
-export function DashboardBreadcrumb() {
+export function AccountBreadcrumb() {
   const pathname = usePathname();
 
-  // Strip /dashboard prefix and split
-  const after = pathname.replace(DASHBOARD, "").replace(/^\//, "");
+  const after = pathname.replace(ROUTES.MY_ACCOUNT, "").replace(/^\//, "");
   const segments = after ? after.split("/").filter(Boolean) : [];
 
-  // Build breadcrumb items: skip bare numeric IDs (show "Détails" instead)
   const crumbs: { label: string; href?: string }[] = [];
-  let href: string = DASHBOARD;
+  let href = ROUTES.MY_ACCOUNT;
 
   for (const seg of segments) {
     href = `${href}/${seg}`;
-
-    if (isId(seg)) {
-      crumbs.push({ label: "Détails" });
-    } else {
-      crumbs.push({ label: getSegmentLabel(seg), href });
-    }
+    crumbs.push({ label: getSegmentLabel(seg), href });
   }
 
   return (
@@ -56,10 +42,10 @@ export function DashboardBreadcrumb() {
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
           <Link
-            href={DASHBOARD}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            href={ROUTES.MY_ACCOUNT}
+            className="text-indigo-500/70 hover:text-indigo-700 transition-colors"
           >
-            <HomeIcon size={14} />
+            <UserCircle2 size={15} />
           </Link>
         </BreadcrumbItem>
 
@@ -67,8 +53,8 @@ export function DashboardBreadcrumb() {
           <>
             <BreadcrumbSeparator className="hidden md:block text-gray-300" />
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-sm font-medium text-gray-700">
-                Dashboard
+              <BreadcrumbPage className="font-medium text-gray-700">
+                Mon espace
               </BreadcrumbPage>
             </BreadcrumbItem>
           </>
@@ -80,12 +66,12 @@ export function DashboardBreadcrumb() {
                 {crumb.href && i < crumbs.length - 1 ? (
                   <Link
                     href={crumb.href}
-                    className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+                    className="text-gray-400 hover:text-gray-700 text-sm transition-colors"
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <BreadcrumbPage className="text-sm font-medium text-gray-700">
+                  <BreadcrumbPage className="font-medium text-gray-700 text-sm">
                     {crumb.label}
                   </BreadcrumbPage>
                 )}

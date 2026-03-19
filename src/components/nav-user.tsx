@@ -69,7 +69,13 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
   );
 }
 
-export function NavUser({ user }: { user: User }) {
+export function NavUser({
+  user,
+  variant = "dark",
+}: {
+  user: User;
+  variant?: "dark" | "light";
+}) {
   const { session, error, invalidate } = useSession();
   const { isMobile } = useSidebar();
   const pathname = usePathname();
@@ -78,6 +84,8 @@ export function NavUser({ user }: { user: User }) {
 
   const initials = getInitials(user);
 
+  const isDark = variant === "dark";
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -85,23 +93,51 @@ export function NavUser({ user }: { user: User }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="h-12 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 transition-all data-[state=open]:bg-white/10"
+              className={
+                isDark
+                  ? "h-12 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 transition-all data-[state=open]:bg-white/10"
+                  : "h-12 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all data-[state=open]:bg-gray-100"
+              }
             >
               <Avatar className="h-7 w-7 rounded-lg shrink-0">
                 <AvatarImage src={user.avatar} alt={user.firstName} />
-                <AvatarFallback className="rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold">
+                <AvatarFallback
+                  className={
+                    isDark
+                      ? "rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold"
+                      : "rounded-lg bg-indigo-100 text-indigo-600 text-xs font-semibold"
+                  }
+                >
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
-                <span className="truncate text-xs font-semibold text-white/90">
+                <span
+                  className={
+                    isDark
+                      ? "truncate text-xs font-semibold text-white/90"
+                      : "truncate text-xs font-semibold text-gray-800"
+                  }
+                >
                   {user.firstName} {user.lastName}
                 </span>
-                <span className="truncate text-[10px] text-white/40">
+                <span
+                  className={
+                    isDark
+                      ? "truncate text-[10px] text-white/40"
+                      : "truncate text-[10px] text-gray-400"
+                  }
+                >
                   {user.email}
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto w-3.5 h-3.5 text-white/30 shrink-0" />
+              <ChevronsUpDown
+                className={
+                  isDark
+                    ? "ml-auto w-3.5 h-3.5 text-white/30 shrink-0"
+                    : "ml-auto w-3.5 h-3.5 text-gray-400 shrink-0"
+                }
+              />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
