@@ -1,6 +1,10 @@
 import { AxiosResponse } from "axios";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { User, UserUpdate } from "@lib/users/models/user.model";
+import {
+  User,
+  UserUpdate,
+  UserSearchFilter,
+} from "@lib/users/models/user.model";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 
@@ -77,5 +81,25 @@ export async function deleteUser(
     unknown,
     AxiosResponse<Result<{ success: boolean }, CrudApiError>>
   >(`${usersUrl}/${id}`);
+  return res.data;
+}
+
+/**
+ * Search users by filters (client-side)
+ */
+export async function searchUsersFilter(
+  filters: UserSearchFilter,
+): Promise<Result<User[], CrudApiError>> {
+  const params = new URLSearchParams();
+  if (filters.email) params.set("email", filters.email);
+  if (filters.firstName) params.set("firstName", filters.firstName);
+  if (filters.lastName) params.set("lastName", filters.lastName);
+  if (filters.isActive !== undefined)
+    params.set("isActive", String(filters.isActive));
+
+  const res = await frontendHttp().get<
+    unknown,
+    AxiosResponse<Result<User[], CrudApiError>>
+  >(`${usersUrl}/search?${params.toString()}`);
   return res.data;
 }

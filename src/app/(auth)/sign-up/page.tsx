@@ -1,124 +1,157 @@
-// TODO: delete src/app/sign-up/page.tsx (route group migration)
 import Link from "next/link";
-import { ArrowLeft, Key } from "lucide-react";
+import { ArrowLeft, Zap } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
 import { SignUpForm } from "@/components/features/auth/sign-up-form";
 
 export const metadata = {
-  title: "Sign Up",
-  description: "Create a new account",
+  title: "Inscription",
+  description: "Créez votre compte",
 };
 
-/**
- * Sign Up Page
- * Modern split-screen layout with decorative right panel
- */
 const { HOME, SIGN_IN } = ROUTES;
+
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col px-0 py-3 sm:px-8 sm:py-6 lg:px-16 lg:py-10">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
+    <div className="min-h-screen flex bg-slate-950">
+      {/* Left — Form */}
+      <div className="flex-1 flex flex-col px-6 py-8 lg:px-12">
+        {/* Top bar */}
+        <div className="flex items-center justify-between">
           <Link
             href={HOME}
-            className="w-10 h-10 rounded-full border border-gray-50 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/10 text-white/50 hover:text-white hover:bg-white/5 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Link>
-          <p className="text-sm">
-            Already member?{" "}
+          <p className="text-sm text-white/40">
+            Déjà un compte ?{" "}
             <Link
               href={SIGN_IN}
-              className="text-emerald-300 font-medium hover:underline"
+              className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
             >
-              Sign in
+              Se connecter
             </Link>
           </p>
         </div>
 
-        {/* Form Content */}
-        <div className="flex-1 flex items-center px-5 sm:ps-20">
-          <div className="w-full max-w-7xl">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold mb-2">Sign Up</h1>
-              <p className="text-gray-50">Create your account to get started</p>
+        {/* Centered form */}
+        <div className="flex-1 flex items-center justify-center py-8">
+          <div className="w-full max-w-sm lg:min-w-xl">
+            {/* Brand */}
+            <div className="flex items-center gap-2.5 mb-8">
+              <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-900/40">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-white font-semibold text-sm">
+                Kickstart
+              </span>
             </div>
 
-            <SignUpForm />
+            {/* Heading */}
+            <div className="mb-7">
+              <h1 className="text-2xl font-bold text-white mb-1">
+                Créer un compte ✨
+              </h1>
+              <p className="text-sm text-white/40">
+                Rejoignez-nous en quelques secondes
+              </p>
+            </div>
+
+            {/* Form card */}
+            <div className="bg-white/5 border border-white/8 rounded-2xl p-6 backdrop-blur-sm">
+              <SignUpForm />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right Side - Decorative */}
-      <div className="hidden lg:flex lg:flex-1 bg-linear-to-br from-blue-500 via-blue-600 to-indigo-700 relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0">
-          {/* Floating Cards */}
-          <div className="absolute top-20 left-16 bg-white rounded-2xl shadow-xl p-5 w-48">
-            <p className="text-orange-500 text-sm font-medium">Inbox</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">176,18</p>
-            <div className="mt-4 flex items-end gap-1 h-16">
-              <div className="w-4 bg-orange-200 rounded-t h-8"></div>
-              <div className="w-4 bg-orange-200 rounded-t h-12"></div>
-              <div className="w-4 bg-orange-300 rounded-t h-6"></div>
-              <div className="w-4 bg-orange-200 rounded-t h-10"></div>
-              <div className="w-4 bg-orange-400 rounded-t h-14"></div>
-              <div className="w-4 bg-orange-300 rounded-t h-8"></div>
-              <div className="w-4 bg-orange-200 rounded-t h-16"></div>
-            </div>
-          </div>
+      {/* Right — Decorative panel */}
+      <div className="hidden lg:flex lg:w-[40%] relative overflow-hidden bg-linear-to-br from-indigo-600 via-violet-600 to-purple-700">
+        {/* Blobs */}
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" />
 
-          {/* Social Icons */}
-          <div className="absolute top-16 right-20 w-14 h-14 bg-linear-to-br from-pink-500 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg
-              className="w-7 h-7 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-            </svg>
-          </div>
-
-          <div className="absolute top-40 right-12 w-12 h-12 bg-black rounded-2xl flex items-center justify-center shadow-lg">
-            <svg
-              className="w-6 h-6 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
-            </svg>
-          </div>
-
-          {/* Data Card */}
-          <div className="absolute bottom-32 right-16 bg-white rounded-2xl shadow-xl p-6 w-64">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <div className="h-2 w-16 bg-blue-500 rounded"></div>
-                <div className="h-2 w-24 bg-gray-200 rounded"></div>
-                <div className="h-2 w-20 bg-gray-200 rounded"></div>
-                <div className="h-2 w-28 bg-gray-200 rounded"></div>
+        {/* Content */}
+        <div className="relative w-full flex flex-col justify-between p-12">
+          {/* Top quote */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 max-w-xs">
+            <p className="text-white text-sm leading-relaxed">
+              Démarrez votre projet en moins de 5 minutes avec notre starter
+              kit.
+            </p>
+            <div className="flex items-center gap-2.5 mt-4">
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">
+                K
               </div>
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                <Key className="w-6 h-6 text-orange-500" />
+              <div>
+                <p className="text-white text-xs font-medium">Kickstart Team</p>
+                <p className="text-white/50 text-[10px]">Next.js Starter Kit</p>
               </div>
             </div>
-            <div className="mt-4">
-              <h3 className="font-semibold text-gray-900">
-                Your data, your rules
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Your data belongs to you, and our encryption ensures that
+          </div>
+
+          {/* Center card */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-2xl p-5 shadow-xl w-60">
+              <p className="text-xs font-medium text-indigo-600 mb-2">
+                Nouveau membre
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-linear-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold">
+                  U
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Utilisateur
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Compte créé avec succès
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs text-gray-500">Actif maintenant</span>
+              </div>
+            </div>
+
+            <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-52 border border-white/20">
+              <p className="text-white/80 text-xs font-medium mb-1">
+                Comptes créés
+              </p>
+              <p className="text-white text-2xl font-bold">12 493</p>
+              <p className="text-white/50 text-[10px] mt-1">
+                +124 cette semaine
               </p>
             </div>
           </div>
 
-          {/* Brand */}
-          <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-            <div className="bg-gray-400/30 backdrop-blur-sm rounded-2xl px-8 py-4">
-              <span className="text-white text-2xl font-bold">Kickstart</span>
-            </div>
+          {/* Bottom features */}
+          <div className="space-y-2.5">
+            {[
+              "Inscription gratuite",
+              "Accès immédiat au dashboard",
+              "Support communautaire",
+            ].map((f) => (
+              <div key={f} className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-2.5 h-2.5 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <span className="text-white/70 text-sm">{f}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -4,22 +4,42 @@
 import { useState } from "react";
 import Link from "next/link";
 import { sendPasswordResetAction } from "@/lib/auth/actions/auth";
-import { Mail, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
+import { searchUsersFilter } from "@/lib/users/services/user.client.service";
+import {
+  Mail,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
+  Shield,
+  Lock,
+  KeyRound,
+  UserX,
+} from "lucide-react";
+import { ROUTES } from "@/utils/routes";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setNotFound(false);
     setLoading(true);
 
     try {
-      const result = await sendPasswordResetAction(email);
+      // Vérifie que l'email existe bien en base avant d'envoyer le lien
+      const search = await searchUsersFilter({ email });
+      if (!search.ok || search.data.length === 0) {
+        setNotFound(true);
+        return;
+      }
 
+      const result = await sendPasswordResetAction(email);
       if ("error" in result) {
         setError(result.message || "Failed to send reset email");
       } else {
@@ -32,204 +52,286 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  /**
-   * If submitted, show success message with email and option to resend or go back to sign in
-   */
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-          <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
-            style={{ animationDelay: "2s" }}
-          ></div>
-        </div>
-        <div className="w-full max-w-md">
-          {/* Success Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-            </div>
-
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Check Your Email
-            </h1>
-
-            <p className="text-gray-600 mb-6">
-              We&apos;ve sent a password reset link to:
-            </p>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-              <p className="text-blue-900 font-medium text-sm break-all">
-                {email}
-              </p>
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
-              <p className="text-sm text-yellow-900">
-                <strong>💡 Tip:</strong> The link will expire in 1 hour. Check
-                your spam folder if you don&apos;t see the email.
-              </p>
-            </div>
-
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                setEmail("");
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 mb-3"
-            >
-              Send to Another Email
-            </button>
-
+  return (
+    <div className="min-h-screen flex bg-slate-950">
+      {/* Left — Form */}
+      <div className="flex-1 flex flex-col px-6 py-8 lg:px-12">
+        {/* Top bar */}
+        <div className="flex items-center justify-between">
+          <Link
+            href={ROUTES.SIGN_IN}
+            className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/10 text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <p className="text-sm text-white/40">
+            Déjà un compte ?{" "}
             <Link
-              href="/sign-in"
-              className="flex items-center justify-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+              href={ROUTES.SIGN_IN}
+              className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Sign In
+              Se connecter
             </Link>
+          </p>
+        </div>
+
+        {/* Centered content */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-sm lg:min-w-lg">
+            {/* Brand */}
+            <div className="flex items-center gap-2.5 mb-8">
+              <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-900/40">
+                <KeyRound className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-white font-semibold text-sm">
+                Kickstart
+              </span>
+            </div>
+
+            {submitted ? (
+              /* ── Success state ── */
+              <div className="bg-white/5 border border-white/8 rounded-2xl p-6 backdrop-blur-sm text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-5">
+                  <CheckCircle className="w-7 h-7 text-emerald-400" />
+                </div>
+                <h1 className="text-xl font-bold text-white mb-2">
+                  Email envoyé !
+                </h1>
+                <p className="text-sm text-white/40 mb-5 leading-relaxed">
+                  Un lien de réinitialisation a été envoyé à{" "}
+                  <span className="text-white/70 font-medium">{email}</span>.
+                  Vérifiez aussi vos spams.
+                </p>
+
+                {/* Email chip */}
+                <div className="flex items-center gap-2.5 px-4 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl mb-5 text-left">
+                  <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span className="text-sm text-white/70 break-all">
+                    {email}
+                  </span>
+                </div>
+
+                {/* Tip */}
+                <div className="flex items-start gap-2 px-4 py-3 bg-amber-500/8 border border-amber-500/15 rounded-xl mb-6 text-left">
+                  <span className="text-amber-400 text-xs shrink-0 mt-0.5">
+                    💡
+                  </span>
+                  <p className="text-xs text-white/40 leading-relaxed">
+                    Le lien expire dans{" "}
+                    <span className="text-white/60">1 heure</span>.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSubmitted(false);
+                    setEmail("");
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold shadow-lg shadow-indigo-900/30 transition-all"
+                >
+                  Envoyer à une autre adresse
+                </button>
+              </div>
+            ) : (
+              /* ── Form state ── */
+              <>
+                <div className="mb-7">
+                  <h1 className="text-2xl font-bold text-white mb-1">
+                    Mot de passe oublié ?
+                  </h1>
+                  <p className="text-sm text-white/40">
+                    Entrez votre email et nous vous enverrons un lien de
+                    réinitialisation.
+                  </p>
+                </div>
+
+                <div className="bg-white/5 border border-white/8 rounded-2xl p-6 backdrop-blur-sm">
+                  {notFound && (
+                    <div className="flex flex-col gap-3 p-4 bg-amber-500/8 border border-amber-500/20 rounded-xl mb-4">
+                      <div className="flex items-start gap-2">
+                        <UserX className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-amber-300 mb-0.5">
+                            Aucun compte trouvé
+                          </p>
+                          <p className="text-xs text-white/40 leading-relaxed">
+                            Aucun compte n&apos;est associé à{" "}
+                            <span className="text-white/60 font-medium">
+                              {email}
+                            </span>
+                            .
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href={ROUTES.SIGN_UP}
+                        className="flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-amber-500/15 border border-amber-500/25 text-xs font-medium text-amber-300 hover:bg-amber-500/25 transition-colors"
+                      >
+                        Créer un compte
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl mb-4">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Email */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-white/50 uppercase tracking-wider">
+                        Adresse email <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="vous@exemple.com"
+                          required
+                          disabled={loading}
+                          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm text-white placeholder-white/25 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all disabled:opacity-50"
+                        />
+                      </div>
+                      <p className="text-xs text-white/25">
+                        Nous vérifierons si un compte existe avec cet email.
+                      </p>
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold shadow-lg shadow-indigo-900/30 hover:shadow-indigo-900/50 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                          Envoi en cours...
+                        </>
+                      ) : (
+                        <>
+                          Envoyer le lien
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+
+                  <div className="flex items-center gap-3 my-4">
+                    <div className="flex-1 h-px bg-white/8" />
+                    <span className="text-xs text-white/25">ou</span>
+                    <div className="flex-1 h-px bg-white/8" />
+                  </div>
+
+                  <div className="space-y-2 text-center text-sm">
+                    <p className="text-white/40">
+                      Vous vous souvenez de votre mot de passe ?{" "}
+                      <Link
+                        href={ROUTES.SIGN_IN}
+                        className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
+                      >
+                        Se connecter
+                      </Link>
+                    </p>
+                    <p className="text-white/40">
+                      Pas encore de compte ?{" "}
+                      <Link
+                        href={ROUTES.SIGN_UP}
+                        className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
+                      >
+                        S&apos;inscrire
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
-    );
-  }
 
-  /**
-   * If not submitted, show form to enter email with option to go back to sign in. On submit,
-   * validate email and show loading state. If error, show error message.
-   */
-  return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Mail className="w-6 h-6 text-blue-600" />
+      {/* Right — Decorative panel */}
+      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-linear-to-br from-indigo-600 via-violet-600 to-purple-700">
+        {/* Blobs */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-violet-300/20 blur-3xl" />
+
+        {/* Content */}
+        <div className="relative w-full flex flex-col justify-between p-12">
+          {/* Top quote */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 max-w-xs">
+            <p className="text-white text-sm leading-relaxed">
+              &ldquo;La sécurité de vos données est notre priorité
+              absolue.&rdquo;
+            </p>
+            <div className="flex items-center gap-2.5 mt-4">
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">
+                K
+              </div>
+              <div>
+                <p className="text-white text-xs font-medium">Kickstart Team</p>
+                <p className="text-white/50 text-[10px]">Next.js Starter Kit</p>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Forgot Your Password?
-            </h1>
-            <p className="text-gray-600">
-              Enter your email address and we&apos;ll send you a link to reset
-              your password.
-            </p>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-red-900 font-medium text-sm">{error}</p>
+          {/* Center — security visual */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-2xl p-5 shadow-xl w-60">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
+                  <Lock className="w-4 h-4 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-900">
+                    Réinitialisation
+                  </p>
+                  <p className="text-[10px] text-gray-400">Lien sécurisé</p>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <div className="h-1.5 bg-indigo-100 rounded-full overflow-hidden">
+                  <div className="h-full w-full bg-linear-to-r from-indigo-500 to-violet-500 rounded-full" />
+                </div>
+                <p className="text-[10px] text-gray-400">Chiffrement AES-256</p>
               </div>
             </div>
-          )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Input */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition"
-              />
-              <p className="text-xs text-gray-500 mt-2">
-                We&apos;ll check if an account exists with this email.
+            <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-48 border border-white/20">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+                <span className="text-white/80 text-xs font-medium">
+                  Connexion sécurisée
+                </span>
+              </div>
+              <p className="text-white/50 text-[10px]">
+                HTTPS · Données chiffrées
               </p>
             </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Mail className="w-4 h-4" />
-                  Send Reset Link
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or</span>
-            </div>
           </div>
 
-          {/* Footer Links */}
-          <div className="space-y-3 text-center text-sm">
-            <div>
-              <span className="text-gray-600">Remember your password? </span>
-              <Link
-                href="/sign-in"
-                className="text-blue-600 hover:text-blue-700 font-semibold transition"
-              >
-                Sign In
-              </Link>
-            </div>
-            <div>
-              <span className="text-gray-600">
-                Don&apos;t have an account?{" "}
-              </span>
-              <Link
-                href="/sign-up"
-                className="text-blue-600 hover:text-blue-700 font-semibold transition"
-              >
-                Sign Up
-              </Link>
-            </div>
-          </div>
-
-          {/* Security Note */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
-            <p className="text-xs text-blue-900">
-              🔒 Your password reset link is secure and will expire in 1 hour.
-            </p>
+          {/* Bottom — security features */}
+          <div className="space-y-2.5">
+            {[
+              "Lien expirant en 1 heure",
+              "Token à usage unique",
+              "Notification par email",
+            ].map((f) => (
+              <div key={f} className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                  <Shield className="w-2.5 h-2.5 text-white" />
+                </div>
+                <span className="text-white/70 text-sm">{f}</span>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Footer Text */}
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Need help?{" "}
-          <a
-            href="mailto:support@example.com"
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Contact Support
-          </a>
-        </p>
       </div>
     </div>
   );

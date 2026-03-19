@@ -1,135 +1,146 @@
-// TODO: delete src/app/sign-in/page.tsx (route group migration)
 import Link from "next/link";
-import { ArrowLeft, Shield } from "lucide-react";
+import { ArrowLeft, Zap } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
 import { SignInForm } from "@/components/features/auth/sign-in-form";
 
 export const metadata = {
-  title: "Sign In",
-  description: "Sign in to your account",
+  title: "Connexion",
+  description: "Connectez-vous à votre compte",
 };
 
-/**
- * Sign In Page
- * Modern split-screen layout with decorative right panel
- */
 const { HOME, SIGN_UP } = ROUTES;
+
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col px-8 py-6 lg:px-16 lg:py-10">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
+    <div className="min-h-screen flex bg-slate-950">
+      {/* Left — Form */}
+      <div className="flex-1 flex flex-col px-6 py-8 lg:px-12">
+        {/* Top bar */}
+        <div className="flex items-center justify-between">
           <Link
             href={HOME}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/10 text-white/50 hover:text-white hover:bg-white/5 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Link>
-          <p className="text-sm">
-            Don&apos;t have an account?{" "}
+          <p className="text-sm text-white/40">
+            Pas encore de compte ?{" "}
             <Link
               href={SIGN_UP}
-              className="text-emerald-300 font-medium hover:underline"
+              className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors"
             >
-              Sign up
+              S&apos;inscrire
             </Link>
           </p>
         </div>
 
-        {/* Form Content */}
-        <div className="flex-1 flex items-center ps-20">
-          <div className="w-full max-w-md">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold mb-2">Welcome Back</h1>
-              <p className="text-gray-50">
-                Sign in to continue to your account
+        {/* Centered form */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-sm lg:min-w-lg">
+            {/* Brand */}
+            <div className="flex items-center gap-2.5 mb-8">
+              <div className="w-8 h-8 rounded-lg bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-white font-semibold text-sm">
+                Kickstart
+              </span>
+            </div>
+
+            {/* Heading */}
+            <div className="mb-7">
+              <h1 className="text-2xl font-bold text-white mb-1">
+                Bon retour 👋
+              </h1>
+              <p className="text-sm text-white/40">
+                Connectez-vous pour continuer
               </p>
             </div>
 
-            <SignInForm />
+            {/* Form card */}
+            <div className="bg-white/5 border border-white/8 rounded-2xl p-6 backdrop-blur-sm">
+              <SignInForm />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right Side - Decorative */}
-      <div className="hidden lg:flex lg:flex-1 bg-linear-to-br from-emerald-500 via-teal-500 to-cyan-600 relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0">
-          {/* Stats Card */}
-          <div className="absolute top-20 left-16 bg-white rounded-2xl shadow-xl p-5 w-48">
-            <p className="text-emerald-300 text-sm font-medium">Welcome back</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">2,847</p>
-            <p className="text-sm text-gray-50 mt-1">Active sessions</p>
-            <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full w-3/4 bg-linear-to-r from-emerald-500 to-teal-500 rounded-full"></div>
-            </div>
-          </div>
+      {/* Right — Decorative panel */}
+      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-linear-to-br from-emerald-600 via-teal-600 to-cyan-700">
+        {/* Blobs */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-teal-300/20 blur-3xl" />
 
-          {/* Security Icon */}
-          <div className="absolute top-16 right-20 w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-            <Shield className="w-7 h-7 text-emerald-300" />
-          </div>
-
-          <div className="absolute top-40 right-12 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-            <svg
-              className="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-
-          {/* Security Card */}
-          <div className="absolute bottom-32 right-16 bg-white rounded-2xl shadow-xl p-6 w-64">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <div className="h-2 w-16 bg-emerald-300 rounded"></div>
-                <div className="h-2 w-24 bg-gray-200 rounded"></div>
-                <div className="h-2 w-20 bg-gray-200 rounded"></div>
+        {/* Content */}
+        <div className="relative w-full flex flex-col justify-between p-12">
+          {/* Top quote */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 max-w-xs">
+            <p className="text-white text-sm leading-relaxed">
+              La plateforme la plus rapide pour lancer votre prochain projet.
+            </p>
+            <div className="flex items-center gap-2.5 mt-4">
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">
+                K
               </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-emerald-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+              <div>
+                <p className="text-white text-xs font-medium">Kickstart Team</p>
+                <p className="text-white/50 text-[10px]">Next.js Starter Kit</p>
               </div>
             </div>
-            <div className="mt-4">
-              <h3 className="font-semibold text-gray-100">Secure Access</h3>
-              <p className="text-sm text-gray-50 mt-1">
-                Your account is protected with enterprise-grade security
+          </div>
+
+          {/* Center stat cards */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-2xl p-4 shadow-xl w-56">
+              <p className="text-xs font-medium text-emerald-600 mb-1">
+                Sessions actives
+              </p>
+              <p className="text-2xl font-bold text-gray-900">2 847</p>
+              <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full w-3/4 bg-linear-to-r from-emerald-500 to-teal-500 rounded-full" />
+              </div>
+            </div>
+
+            <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-48 border border-white/20">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+                <span className="text-white/80 text-xs font-medium">
+                  Système opérationnel
+                </span>
+              </div>
+              <p className="text-xs text-white/60">
+                Tous les services fonctionnent
               </p>
             </div>
           </div>
 
-          {/* Brand */}
-          <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-4">
-              <span className="text-white text-2xl font-bold">Kickstart</span>
-            </div>
+          {/* Bottom feature list */}
+          <div className="space-y-2.5">
+            {[
+              "Authentification sécurisée",
+              "Dashboard temps réel",
+              "Gestion des rôles",
+            ].map((f) => (
+              <div key={f} className="flex items-center gap-2.5">
+                <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-2.5 h-2.5 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <span className="text-white/70 text-sm">{f}</span>
+              </div>
+            ))}
           </div>
-
-          {/* Floating circles */}
-          <div className="absolute top-1/4 left-1/3 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
         </div>
       </div>
     </div>

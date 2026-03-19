@@ -7,6 +7,7 @@ import {
   parseUserUpdate,
   User,
   UserUpdateFormData,
+  UserSearchFilter,
 } from "@lib/users/models/user.model";
 import { getLogger } from "@config/logger.config";
 import {
@@ -80,6 +81,32 @@ export async function fetchUserById(
   } catch (error) {
     logger.error("Failed to fetch user", { id });
     return { ok: false, error: crudApiErrorResponse(error, "fetchUserById") };
+  }
+}
+
+export async function searchUsersFilter(
+  filters: UserSearchFilter,
+  config: Config,
+): Promise<Result<User[], CrudApiError>> {
+  const params = new URLSearchParams();
+  if (filters.email) params.set("email", filters.email);
+  if (filters.firstName) params.set("firstName", filters.firstName);
+  if (filters.lastName) params.set("lastName", filters.lastName);
+  if (filters.isActive !== undefined)
+    params.set("isActive", String(filters.isActive));
+
+  try {
+    const res = await apiClient(true, config).get<User[]>(
+      `${usersUrl}/search?${params.toString()}`,
+    );
+    logger.info("Users search completed", { count: res.data.length, filters });
+    return { ok: true, data: res.data };
+  } catch (error) {
+    logger.error("Failed to search users", { filters });
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "searchUsersFilter"),
+    };
   }
 }
 

@@ -26,6 +26,13 @@ export interface User {
   [key: string]: any; // Allow additional properties
 }
 
+export interface UserSearchFilter {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  isActive?: boolean;
+}
+
 export interface ResetPassword {
   code: string;
   resetToken: string;
