@@ -1,46 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
 import { authClient } from "@/lib/auth/api/auth.client";
-import LoadingPage from "@components/features/loading-page";
+import LoadingPage from "@/components/features/loading-page";
 
 interface SignOutButtonProps {
-  /** Text to display on the button */
   children?: React.ReactNode;
-  /** URL to redirect to after sign out */
   redirectTo?: string;
-  /** Additional CSS classes */
   className?: string;
-  /** Variant style */
   variant?: "default" | "outline" | "ghost" | "destructive";
-  /** Callback after sign out */
   onSignOut?: () => void;
 }
 
-/**
- * Sign Out Button Component
- *
- * A client-side button for signing out users using Better Auth.
- *
- * @example
- * ```tsx
- * // Basic usage
- * <SignOutButton />
- *
- * // With custom text
- * <SignOutButton>Log out</SignOutButton>
- *
- * // With redirect
- * <SignOutButton redirectTo="/">Sign Out</SignOutButton>
- *
- * // With custom styling
- * <SignOutButton className="bg-red-500" variant="destructive">
- *   Sign Out
- * </SignOutButton>
- * ```
- */
 export function SignOutButton({
   children = "Sign Out",
   redirectTo = ROUTES.HOME,
@@ -48,28 +20,16 @@ export function SignOutButton({
   variant = "default",
   onSignOut,
 }: SignOutButtonProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  //const { signOut } = useAuth();
 
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     setLoading(true);
-    try {
-      await Promise.all([
-        authClient.signOut(),
-        new Promise((resolve) => setTimeout(resolve, 800)),
-      ]);
+    authClient.signOut();
+    setTimeout(() => {
       if (onSignOut) onSignOut();
-      router.push(redirectTo);
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to sign out:", error);
-      setLoading(false);
-    }
+      window.location.href = redirectTo;
+    }, 800);
   };
-
-  const baseStyles =
-    "px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors";
 
   const variantStyles = {
     default: "bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-500",
@@ -85,9 +45,9 @@ export function SignOutButton({
       <button
         onClick={handleSignOut}
         disabled={loading}
-        className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+        className={`px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${variantStyles[variant]} ${className}`}
       >
-        {loading ? "Déconnexion en cours..." : children}
+        {loading ? "Déconnexion..." : children}
       </button>
     </>
   );
