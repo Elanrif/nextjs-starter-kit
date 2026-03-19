@@ -1,6 +1,6 @@
-import { fetchAllUser, createUser } from "@lib/user/services/user.service";
+import { fetchAllUsers, createUser } from "@lib/users/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
-import { User } from "@/lib/user/models/user.model";
+import { User } from "@/lib/users/models/user.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const response = await fetchAllUser(config);
+    const response = await fetchAllUsers(config);
 
     if (!response.ok) {
       return NextResponse.json(response, {

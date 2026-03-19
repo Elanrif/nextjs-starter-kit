@@ -4,8 +4,8 @@ import {
   fetchUserById,
   updateUser,
   deleteUser,
-} from "@/lib/user/services/user.service";
-import { UserUpdate } from "@/lib/user/models/user.model";
+} from "@/lib/users/services/user.service";
+import { UserUpdate } from "@/lib/users/models/user.model";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
@@ -20,7 +20,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -52,7 +53,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const body = (await request.json()) as UserUpdate;
 
@@ -60,7 +62,7 @@ export async function PATCH(
   const config = { headers: reqHeaders };
 
   try {
-    const response = await updateUser(config, userId, body);
+    const response = await updateUser(userId, body, config);
     if (!response.ok) {
       const error = response.error;
       return NextResponse.json(response, { status: error.status });
@@ -86,13 +88,14 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const userId = Number.parseInt(params.id, 10);
+  const { id } = await params;
+  const userId = Number.parseInt(id, 10);
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const response = await deleteUser(config, userId);
+    const response = await deleteUser(userId, config);
 
     if (!response.ok) {
       const error = response.error;

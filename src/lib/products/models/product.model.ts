@@ -2,6 +2,7 @@
  * Product Model
  * Define the product data structure
  */
+import { Category } from "@/lib/categories/models/category.model";
 import { z } from "zod";
 
 export interface Product {
@@ -12,7 +13,7 @@ export interface Product {
   price: number;
   stock: number;
   isActive: boolean;
-  categoryId: number;
+  category?: Category;
   createdAt: string;
   updatedAt: string;
 }
@@ -69,3 +70,8 @@ export const productSchema = z.object({
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
+
+const productUpdateSchema = productSchema.partial();
+export const parseProductCreate = productSchema.safeParse.bind(productSchema);
+export const parseProductUpdate =
+  productUpdateSchema.safeParse.bind(productUpdateSchema);

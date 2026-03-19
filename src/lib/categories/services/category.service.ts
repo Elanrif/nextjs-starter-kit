@@ -1,3 +1,5 @@
+"server-only";
+
 import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
@@ -5,25 +7,23 @@ import { getLogger } from "@config/logger.config";
 import {
   CrudApiError,
   crudApiErrorResponse,
+  Result,
+  validationError,
 } from "@/lib/shared/helpers/crud-api-error";
 import {
   Category,
   CategoryCreate,
   CategoryUpdate,
+  parseCategoryCreate,
+  parseCategoryUpdate,
 } from "@lib/categories/models/category.model";
-
-// ============================================================================
-// Categories API Service (Server-side)
-// ============================================================================
+import { validateId } from "@/utils/utils";
 
 /**
- * Use this service in:
- * - Server Components
- * - Route Handlers (API routes)
- * - Server Actions
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ * ✅ Protection against malicious bugs
  */
-
-// API endpoints from environment config
 const {
   api: {
     rest: {
@@ -34,26 +34,22 @@ const {
 
 const logger = getLogger("server");
 
-// ============================================================================
-// Categories CRUD
-// ============================================================================
-
 /**
  * Fetch all categories
  */
 export async function fetchCategories(
   config: Config,
-): Promise<Category[] | CrudApiError> {
+): Promise<Result<Category[], CrudApiError>> {
   try {
     const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Category[]>
     >(CATEGORIES_URL);
     logger.debug("Categories fetched", { count: res.data.length });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to fetch categories");
-    return crudApiErrorResponse(error, "fetchCategories");
+    return { ok: false, error: crudApiErrorResponse(error, "fetchCategories") };
   }
 }
 
@@ -63,29 +59,19 @@ export async function fetchCategories(
 export async function fetchCategory(
   config: Config,
   id: number,
-): Promise<Category | CrudApiError> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!id || id <= 0) {
-    return {
-      status: 400,
-      message: "Invalid category ID",
-      error: "Bad Request",
-    };
-  }
+): Promise<Result<Category, CrudApiError>> {
+  const idError = validateId(id);
+  if (idError) return idError;
 
   try {
     const res = await apiClient(true, config).get<
       unknown,
       AxiosResponse<Category>
     >(`${CATEGORIES_URL}/${id}`);
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to fetch category", { id });
-    return crudApiErrorResponse(error, "fetchCategory");
+    return { ok: false, error: crudApiErrorResponse(error, "fetchCategory") };
   }
 }
 
@@ -95,33 +81,24 @@ export async function fetchCategory(
 export async function createCategory(
   config: Config,
   category: CategoryCreate,
-): Promise<Category | CrudApiError> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!category?.name) {
-    return {
-      status: 400,
-      message: "Field `name` is required",
-      error: "Bad Request",
-    };
-  }
+): Promise<Result<Category, CrudApiError>> {
+  const parse = parseCategoryCreate(category);
+  if (!parse.success)
+    return validationError(parse.error.issues, "Invalid category data");
 
   try {
     const res = await apiClient(true, config).post<
       unknown,
       AxiosResponse<Category>
-    >(CATEGORIES_URL, category);
+    >(CATEGORIES_URL, parse.data);
     logger.info("Category created successfully", {
       id: res.data.id,
       name: res.data.name,
     });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to create category", { categoryName: category.name });
-    return crudApiErrorResponse(error, "createCategory");
+    return { ok: false, error: crudApiErrorResponse(error, "createCategory") };
   }
 }
 
@@ -132,38 +109,24 @@ export async function updateCategory(
   config: Config,
   id: number,
   category: CategoryUpdate,
-): Promise<Category | CrudApiError> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!id || id <= 0) {
-    return {
-      status: 400,
-      message: "Invalid category ID",
-      error: "Bad Request",
-    };
-  }
+): Promise<Result<Category, CrudApiError>> {
+  const idError = validateId(id);
+  if (idError) return idError;
 
-  if (Object.keys(category).length === 0) {
-    return {
-      status: 400,
-      message: "Request body cannot be empty",
-      error: "Bad Request",
-    };
-  }
+  const parse = parseCategoryUpdate(category);
+  if (!parse.success)
+    return validationError(parse.error.issues, "Invalid category data");
 
   try {
     const res = await apiClient(true, config).patch<
       unknown,
       AxiosResponse<Category>
-    >(`${CATEGORIES_URL}/${id}`, category);
+    >(`${CATEGORIES_URL}/${id}`, parse.data);
     logger.info("Category updated successfully", { id, name: res.data.name });
-    return res.data;
+    return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to update category", { id });
-    return crudApiErrorResponse(error, "updateCategory");
+    return { ok: false, error: crudApiErrorResponse(error, "updateCategory") };
   }
 }
 
@@ -173,26 +136,16 @@ export async function updateCategory(
 export async function deleteCategory(
   config: Config,
   id: number,
-): Promise<{ success: boolean } | CrudApiError> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!id || id <= 0) {
-    return {
-      status: 400,
-      message: "Invalid category ID",
-      error: "Bad Request",
-    };
-  }
+): Promise<Result<{ success: boolean }, CrudApiError>> {
+  const idError = validateId(id);
+  if (idError) return idError;
 
   try {
     await apiClient(true, config).delete(`${CATEGORIES_URL}/${id}`);
     logger.info("Category deleted successfully", { id });
-    return { success: true };
+    return { ok: true, data: { success: true } };
   } catch (error) {
     logger.error("Failed to delete category", { id });
-    return crudApiErrorResponse(error, "deleteCategory");
+    return { ok: false, error: crudApiErrorResponse(error, "deleteCategory") };
   }
 }

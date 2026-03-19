@@ -2,8 +2,8 @@ import { AxiosResponse } from "axios";
 import { CrudApiError, Result } from "@lib/shared/helpers/crud-api-error";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
-import { Login, Registrer } from "./models/auth.model";
-import { User } from "../user/models/user.model";
+import { Login, Registrer } from "@lib/auth/models/auth.model";
+import { User } from "@lib/users/models/user.model";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -17,7 +17,6 @@ const {
       register: registerUrl,
       login: loginUrl,
       signOut: _signOutUrl,
-      session: sessionUrl,
     },
   },
 } = proxyEnvironment;
@@ -46,17 +45,6 @@ export async function signUp(
     AxiosResponse<Result<User, CrudApiError>>
   >(registerUrl, registration);
   return res.data;
-}
-
-/**
- * Get the current user's session (client-side)
- */
-export async function getClientSession(): Promise<Result<User, CrudApiError>> {
-  const result = await frontendHttp().get<
-    any,
-    AxiosResponse<Result<User, CrudApiError>>
-  >(sessionUrl);
-  return result.data;
 }
 
 /**

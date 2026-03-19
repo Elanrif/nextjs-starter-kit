@@ -1,0 +1,316 @@
+"use client";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { createProduct } from "@/lib/products/services/product.client.service";
+import { toast } from "react-toastify";
+import { fetchCategories } from "@/lib/categories/services/category.client.service";
+import LoadingPage from "@/components/features/loading";
+import { ROUTES } from "@/utils/routes";
+import {
+  ProductFormData,
+  productSchema,
+} from "@/lib/products/models/product.model";
+import {
+  ArrowLeft,
+  Package,
+  Save,
+  Euro,
+  Box,
+  Tag,
+  FileText,
+  Link as LinkIcon,
+  CheckSquare,
+} from "lucide-react";
+
+const { DASHBOARD, PRODUCTS } = ROUTES;
+
+const ic =
+  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all";
+
+function SectionTitle({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+      <div className="text-gray-400">{icon}</div>
+      <h3 className="text-sm font-semibold text-gray-700">{label}</h3>
+    </div>
+  );
+}
+
+export function ProductCreateForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema) as any,
+    defaultValues: {
+      name: "",
+      slug: "",
+      description: "",
+      price: 0,
+      stock: 0,
+      isActive: true,
+      categoryId: 0,
+    },
+  });
+
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+    [],
+  );
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchCategories().then((res) => {
+      if (Array.isArray(res))
+        setCategories(res.map((c) => ({ id: c.id, name: c.name })));
+    });
+  }, []);
+
+  const onSubmit = async (data: ProductFormData) => {
+    setLoading(true);
+    try {
+      const anyRes = (await createProduct({
+        ...data,
+        price: Number(data.price),
+        stock: Number(data.stock),
+        categoryId: Number(data.categoryId),
+      })) as any;
+      const createdId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      if (createdId) {
+        toast.success("Produit créé avec succès");
+        router.push(`${DASHBOARD}${PRODUCTS}/${createdId}`);
+        return;
+      }
+      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
+        for (const d of anyRes.message.details)
+          toast.error(`${d.field}: ${d.message}`);
+        return;
+      }
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la création",
+      );
+    } catch (error: any) {
+      toast.error(
+        error.message || "Erreur inattendue lors de la création du produit",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <LoadingPage isLoading={loading} text="Création du produit..." />
+      <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-blue-500/20 ring-1 ring-blue-400/30">
+              <Package className="w-5 h-5 text-blue-300" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">
+                Ajouter un produit
+              </h1>
+              <p className="text-sm text-slate-400 mt-0.5">
+                Créer un nouveau produit dans votre catalogue
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Info section */}
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Package className="w-4 h-4" />}
+                label="Informations du produit"
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Nom <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <Package className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <input
+                      {...register("name")}
+                      placeholder="Ex: Laptop Pro"
+                      className={ic}
+                    />
+                  </div>
+                  {errors.name && (
+                    <p className="text-xs text-red-500">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Slug <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <input
+                      {...register("slug")}
+                      placeholder="Ex: laptop-pro"
+                      className={ic}
+                    />
+                  </div>
+                  {errors.slug && (
+                    <p className="text-xs text-red-500">
+                      {errors.slug.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Description
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <textarea
+                    {...register("description")}
+                    placeholder="Décrivez votre produit..."
+                    rows={3}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing section */}
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Euro className="w-4 h-4" />}
+                label="Tarification & Inventaire"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Prix (€) <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <Euro className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <input
+                      {...register("price", { valueAsNumber: true })}
+                      type="number"
+                      step="0.01"
+                      min={0}
+                      placeholder="0.00"
+                      className={ic}
+                    />
+                  </div>
+                  {errors.price && (
+                    <p className="text-xs text-red-500">
+                      {errors.price.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Stock <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <Box className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <input
+                      {...register("stock", { valueAsNumber: true })}
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      className={ic}
+                    />
+                  </div>
+                  {errors.stock && (
+                    <p className="text-xs text-red-500">
+                      {errors.stock.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Category & status section */}
+            <div className="space-y-4">
+              <SectionTitle
+                icon={<Tag className="w-4 h-4" />}
+                label="Catégorie & Statut"
+              />
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Catégorie
+                </label>
+                <div className="relative">
+                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <select
+                    {...register("categoryId", { valueAsNumber: true })}
+                    className={ic + " appearance-none"}
+                  >
+                    <option value="">Sélectionner une catégorie</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors.categoryId && (
+                  <p className="text-xs text-red-500">
+                    {errors.categoryId.message}
+                  </p>
+                )}
+              </div>
+              <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-colors">
+                <input
+                  type="checkbox"
+                  {...register("isActive")}
+                  className="w-4 h-4 accent-blue-600 rounded"
+                />
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Produit actif
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Création..." : "Créer le produit"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}

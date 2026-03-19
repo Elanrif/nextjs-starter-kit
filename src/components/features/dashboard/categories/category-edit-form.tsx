@@ -1,0 +1,195 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { updateCategory } from "@/lib/categories/services/category.client.service";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ROUTES } from "@/utils/routes";
+import LoadingPage from "@/components/features/loading";
+import {
+  Category,
+  CategoryFormData,
+  categorySchema,
+} from "@/lib/categories/models/category.model";
+import {
+  ArrowLeft,
+  Pencil,
+  Tag,
+  Save,
+  Link as LinkIcon,
+  FileText,
+  CheckSquare,
+} from "lucide-react";
+
+const { DASHBOARD, CATEGORIES } = ROUTES;
+
+const ic =
+  "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all";
+
+export function CategoryEditForm({ category }: { category: Category }) {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<CategoryFormData>({
+    resolver: zodResolver(categorySchema) as any,
+    defaultValues: {
+      name: category?.name || "",
+      slug: category?.slug || "",
+      description: category?.description || "",
+      imageUrl: category?.imageUrl || "",
+      isActive: category?.isActive ?? true,
+      sortOrder: category?.sortOrder,
+    },
+  });
+
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const onSubmit = async (data: CategoryFormData) => {
+    setLoading(true);
+    try {
+      const anyRes = (await updateCategory(Number(category?.id), data)) as any;
+      const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
+      if (updatedId) {
+        toast.success("Catégorie modifiée avec succès");
+        router.push(`${DASHBOARD}${CATEGORIES}/${updatedId}`);
+        return;
+      }
+      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
+        for (const d of anyRes.message.details) {
+          if (d.field)
+            setError(d.field as keyof CategoryFormData, {
+              type: "server",
+              message: d.message,
+            });
+        }
+        toast.error("Erreur de validation côté serveur");
+        return;
+      }
+      toast.error(
+        anyRes?.message?.message ||
+          anyRes?.message ||
+          "Erreur lors de la modification",
+      );
+    } catch (error: any) {
+      toast.error(error.message || "Erreur inattendue lors de la modification");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <LoadingPage isLoading={loading} text="Mise à jour de la catégorie..." />
+      <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-7 shadow-xl">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-purple-500/15 blur-3xl" />
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-violet-500/20 ring-1 ring-violet-400/30">
+              <Pencil className="w-5 h-5 text-violet-300" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">
+                Modifier la catégorie
+              </h1>
+              <p className="text-sm text-slate-400 mt-0.5">{category.name}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Nom <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    {...register("name")}
+                    placeholder="Ex: Électronique"
+                    className={ic}
+                  />
+                </div>
+                {errors.name && (
+                  <p className="text-xs text-red-500">{errors.name.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Slug <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    {...register("slug")}
+                    placeholder="Ex: electronique"
+                    className={ic}
+                  />
+                </div>
+                {errors.slug && (
+                  <p className="text-xs text-red-500">{errors.slug.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Description
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <textarea
+                  {...register("description")}
+                  placeholder="Décrivez cette catégorie..."
+                  rows={3}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none"
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50/50 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                {...register("isActive")}
+                className="w-4 h-4 accent-violet-600 rounded"
+              />
+              <div className="flex items-center gap-2">
+                <CheckSquare className="w-4 h-4 text-violet-500" />
+                <span className="text-sm font-medium text-gray-700">
+                  Catégorie active
+                </span>
+              </div>
+            </label>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+              >
+                <Save className="w-4 h-4" />
+                {loading ? "Enregistrement..." : "Enregistrer"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}

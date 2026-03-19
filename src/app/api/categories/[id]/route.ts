@@ -6,11 +6,8 @@ import {
 } from "@/lib/categories/services/category.service";
 import { CategoryUpdate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
-import { getSession } from "@/lib/auth/session/dal.service";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
@@ -63,17 +60,18 @@ export async function GET(
   try {
     const response = await fetchCategory(config, categoryId);
 
-    if ("error" in response) {
-      const error = response as CrudApiError;
+    if (!response.ok) {
       logger.warn("Category not found", {
         categoryId,
-        status: error.status,
-        message: error.message,
+        status: response.error.status,
+        message: response.error.message,
       });
-      return NextResponse.json(error, { status: error.status });
+      return NextResponse.json(response.error, {
+        status: response.error.status,
+      });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategory");
     const status = errMsg.status || 500;
@@ -131,18 +129,20 @@ export async function PATCH(
 
   try {
     const response = await updateCategory(config, categoryId, body);
-    if ("error" in response) {
-      const error = response as CrudApiError;
+
+    if (!response.ok) {
       logger.warn("Failed to update category", {
         categoryId,
-        status: error.status,
-        message: error.message,
+        status: response.error.status,
+        message: response.error.message,
       });
-      return NextResponse.json(error, { status: error.status });
+      return NextResponse.json(response.error, {
+        status: response.error.status,
+      });
     }
 
     logger.info("Category updated", { categoryId });
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
     const status = errMsg.status || 500;
@@ -199,18 +199,17 @@ export async function DELETE(
   try {
     const result = await deleteCategory(config, categoryId);
 
-    if ("error" in result) {
-      const error = result as CrudApiError;
+    if (!result.ok) {
       logger.warn("Failed to delete category", {
         categoryId,
-        status: error.status,
-        message: error.message,
+        status: result.error.status,
+        message: result.error.message,
       });
-      return NextResponse.json(error, { status: error.status });
+      return NextResponse.json(result.error, { status: result.error.status });
     }
 
     logger.info("Category deleted", { categoryId });
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(result.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
     const status = errMsg.status || 500;

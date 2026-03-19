@@ -1,3 +1,5 @@
+"server-only";
+
 import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
@@ -6,6 +8,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
+  validationError,
 } from "@/lib/shared/helpers/crud-api-error";
 import {
   Product,
@@ -13,20 +16,16 @@ import {
   ProductUpdate,
   ProductFiltersParams,
   PageProduct,
+  parseProductCreate,
+  parseProductUpdate,
 } from "@/lib/products/models/product.model";
-
-// ============================================================================
-// Products API Service (Server-side)
-// ============================================================================
+import { validateId } from "@/utils/utils";
 
 /**
- * Use this service in:
- * - Server Components
- * - Route Handlers (API routes)
- * - Server Actions
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ * ✅ Protection against malicious bugs
  */
-
-// API endpoints from environment config
 const {
   api: {
     rest: {
@@ -37,13 +36,6 @@ const {
 
 const logger = getLogger("server");
 
-// ============================================================================
-// Products CRUD
-// ============================================================================
-
-/**
- * Build URL with query filters
- */
 export function buildProductsUrl(
   baseUrl: string,
   filters?: ProductFiltersParams,
@@ -103,21 +95,8 @@ export async function fetchProductById(
   config: Config,
   id: number,
 ): Promise<Result<Product, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!id || id <= 0) {
-    return {
-      ok: false,
-      error: {
-        error: "Bad Request",
-        status: 400,
-        message: "Invalid product ID",
-      } as CrudApiError,
-    };
-  }
+  const idError = validateId(id);
+  if (idError) return idError;
 
   try {
     const res = await apiClient(true, config).get<
@@ -147,11 +126,15 @@ export async function createProduct(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
+  const parse = parseProductCreate(product);
+  if (!parse.success)
+    return validationError(parse.error.issues, "Invalid product data");
+
   try {
     const res = await apiClient(true, config).post<
       unknown,
       AxiosResponse<Product>
-    >(PRODUCTS_URL, product);
+    >(PRODUCTS_URL, parse.data);
 
     logger.info("Product created successfully", {
       id: res.data.id,
@@ -177,22 +160,18 @@ export async function updateProduct(
    * ❌ Someone can bypass the form
    * ✅ Protection against malicious bugs
    */
-  if (!id || id <= 0) {
-    return {
-      ok: false,
-      error: {
-        error: "Bad Request",
-        status: 400,
-        message: "Invalid product ID",
-      } as CrudApiError,
-    };
-  }
+  const idError = validateId(id);
+  if (idError) return idError;
+
+  const parse = parseProductUpdate(product);
+  if (!parse.success)
+    return validationError(parse.error.issues, "Invalid product data");
 
   try {
     const res = await apiClient(true, config).patch<
       unknown,
       AxiosResponse<Product>
-    >(`${PRODUCTS_URL}/${id}`, product);
+    >(`${PRODUCTS_URL}/${id}`, parse.data);
 
     logger.info("Product updated successfully", { id, name: res.data.name });
     return { ok: true, data: res.data };
@@ -209,21 +188,8 @@ export async function deleteProduct(
   config: Config,
   id: number,
 ): Promise<Result<{ success: boolean }, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  if (!id || id <= 0) {
-    return {
-      ok: false,
-      error: {
-        error: "Bad Request",
-        status: 400,
-        message: "Invalid product ID",
-      } as CrudApiError,
-    };
-  }
+  const idError = validateId(id);
+  if (idError) return idError;
 
   try {
     await apiClient(true, config).delete(`${PRODUCTS_URL}/${id}`);

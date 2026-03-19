@@ -9,7 +9,7 @@ import {
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { getSession } from "@/lib/auth/session/dal.service";
+import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 

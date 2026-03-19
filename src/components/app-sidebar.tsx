@@ -1,19 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { HomeIcon, LayoutGrid, Tag, Package, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -22,128 +12,57 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { getUserVerifiedSession } from "@/lib/auth/session/dal.client.service";
 import { redirect } from "next/navigation";
-import { User } from "@/lib/user/models/user.model";
+import { User } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
+import SidebarSkeleton from "./ui/sidebar-skeleton";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
-// This is sample data.
 const data = {
   teams: [
     {
-      name: "Nextjs Starter Kit",
-      logo: GalleryVerticalEnd,
-      plan: "Boilerplate",
+      name: "Espace Admin",
+      logo: LayoutGrid,
+      plan: "Gestion de la boutique",
     },
   ],
   navMain: [
     {
-      title: "Store",
+      title: "Accueil",
+      url: DASHBOARD,
+      icon: HomeIcon,
+    },
+    {
+      title: "Boutique",
       url: "#",
-      icon: SquareTerminal,
+      icon: LayoutGrid,
       isActive: true,
       items: [
         {
-          title: "Categories",
+          title: "Catégories",
           url: `${DASHBOARD}${CATEGORIES}`,
+          icon: Tag,
         },
         {
-          title: "Products",
+          title: "Produits",
           url: `${DASHBOARD}${PRODUCTS}`,
+          icon: Package,
         },
         {
-          title: "Users",
+          title: "Utilisateurs",
           url: `${DASHBOARD}${USERS}`,
+          icon: Users,
         },
       ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
+
+const sidebarBg = "bg-slate-950 text-white";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [auth, setAuth] = React.useState<User | null>(null);
@@ -152,38 +71,39 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     const fetchAuthData = async () => {
       try {
-        // Only fetch user if session is valid
-        const response = await getUserVerifiedSession();
-
+        const response = await authClient.getCurrentUser();
         if (!response.ok) {
-          redirect("/sign-in?callbackUrl=/dashboard");
+          redirect("/sign-in?callbackUrl=/account");
         }
-        setAuth(response.data);
-      } catch (error) {
-        console.error("Auth error:", error);
-        redirect("/sign-in?callbackUrl=/dashboard");
+        setAuth(response.data.user);
+      } catch {
+        redirect("/sign-in?callbackUrl=/account");
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchAuthData();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading || !auth) {
+    return <SidebarSkeleton {...props} />;
   }
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+    <Sidebar collapsible="icon" {...props} className={sidebarBg}>
+      <SidebarHeader className={sidebarBg}>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+
+      <SidebarSeparator className="bg-white/5 mx-3" />
+
+      <SidebarContent className={sidebarBg}>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
+
+      <SidebarSeparator className="bg-white/5 mx-3" />
+
+      <SidebarFooter className={sidebarBg}>
         <NavUser user={auth} />
       </SidebarFooter>
       <SidebarRail />

@@ -15,12 +15,16 @@ const environment = {
       endpoints: {
         categories: `${XXX_BASE_V1}/categories`,
         products: `${XXX_BASE_V1}/products`,
-
-        // Managed user endpoints
-        auth: `${XXX_BASE_V1}/auth`,
         users: `${XXX_BASE_V1}/users`,
         login: `${XXX_BASE_V1}/auth/login`,
         register: `${XXX_BASE_V1}/auth/register`,
+        resetPassword: `${XXX_BASE_V1}/auth/reset-password`,
+        // auth endpoints
+        auth: {
+          baseUrl: `${XXX_BASE_V1}/auth`,
+          editProfile: `${XXX_BASE_V1}/auth/edit-profile`,
+          changeProfilePasswordUrl: `${XXX_BASE_V1}/auth/change-password-profile`,
+        },
       },
     },
   },

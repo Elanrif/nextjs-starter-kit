@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import {
   createCategory,
   fetchCategories,
 } from "@/lib/categories/services/category.service";
-import { getSession } from "@/lib/auth/session/dal.service";
+import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
@@ -26,12 +23,13 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetchCategories(config);
 
-    if ("error" in response) {
-      const error = response;
-      return NextResponse.json(error, { status: error.status });
+    if (!response.ok) {
+      return NextResponse.json(response.error, {
+        status: response.error.status,
+      });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategories");
     const status = errMsg.status || 500;
@@ -84,13 +82,14 @@ export async function POST(request: NextRequest) {
   try {
     const response = await createCategory(config, body);
 
-    if ("error" in response) {
-      const error = response as CrudApiError;
-      return NextResponse.json(error, { status: error.status });
+    if (!response.ok) {
+      return NextResponse.json(response.error, {
+        status: response.error.status,
+      });
     }
 
-    logger.info("Category created", { categoryId: response.id });
-    return NextResponse.json(response, { status: 201 });
+    logger.info("Category created", { categoryId: response.data.id });
+    return NextResponse.json(response.data, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
