@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   DataTable,
@@ -8,50 +8,38 @@ import {
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
-import { User } from "@/lib/users/models/user.model";
-import { deleteUser } from "@/lib/users/services/user.client.service";
+import type { User } from "@/lib/users/models/user.model";
 import { Eye, Pencil, Trash2, Users, Plus, ShieldCheck } from "lucide-react";
 import LoadingPage from "@components/features/loading-page";
+import { useUsers, useDeleteUser } from "@/lib/users/hooks/use-users";
 
 const { DASHBOARD, USERS } = ROUTES;
 
-export function UserList({ initialUsers = [] }: { initialUsers?: User[] }) {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+export function UserList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    const timer = setTimeout(() => {
-      if (!mounted) return;
-      setUsers(initialUsers);
-      setLoading(false);
-    }, 100);
-    return () => {
-      mounted = false;
-      clearTimeout(timer);
-    };
-  }, [initialUsers]);
+  const { data: users = [], isLoading } = useUsers();
+  const { mutate: remove, isPending: deleteLoading } = useDeleteUser();
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteId) return;
-    setDeleteLoading(true);
-    const res = await deleteUser(deleteId);
-    setDeleteLoading(false);
-    setModalOpen(false);
-    if (res.ok) {
-      setUsers((prev) => prev.filter((u) => u.id !== deleteId));
-      toast.success("Utilisateur supprimé avec succès");
-    } else {
-      toast.error(
-        "message" in res && typeof res.message === "string"
-          ? res.message
-          : "Erreur lors de la suppression",
-      );
-    }
-    setDeleteId(null);
+    remove(deleteId, {
+      onSuccess: () => {
+        setModalOpen(false);
+        setDeleteId(null);
+        toast.success("Utilisateur supprimé avec succès");
+      },
+      onError: (error) => {
+        setModalOpen(false);
+        setDeleteId(null);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Erreur lors de la suppression",
+        );
+      },
+    });
   };
 
   const columns: DataTableColumn<User>[] = [
@@ -158,7 +146,7 @@ export function UserList({ initialUsers = [] }: { initialUsers?: User[] }) {
 
   return (
     <>
-      <LoadingPage loading={loading} text="Chargement des utilisateurs..." />
+      <LoadingPage loading={isLoading} text="Chargement des utilisateurs..." />
       <div className="space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -168,7 +156,7 @@ export function UserList({ initialUsers = [] }: { initialUsers?: User[] }) {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
-              {!loading && (
+              {!isLoading && (
                 <p className="text-xs text-gray-400">
                   {users.length} utilisateur{users.length === 1 ? "" : "s"}
                 </p>
@@ -186,7 +174,7 @@ export function UserList({ initialUsers = [] }: { initialUsers?: User[] }) {
         <DataTable
           columns={columns}
           data={users}
-          loading={loading}
+          loading={isLoading}
           emptyText="Aucun utilisateur."
         />
 
