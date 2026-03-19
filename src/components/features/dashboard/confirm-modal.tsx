@@ -1,13 +1,7 @@
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ReactNode } from "react";
-import { DashboardButton } from "./dashboard-button";
+import { AlertTriangle, Trash2, X } from "lucide-react";
 
 type ConfirmModalProps = {
   open: boolean;
@@ -23,41 +17,84 @@ type ConfirmModalProps = {
 
 export function ConfirmModal({
   open,
-  title = "Confirmez-vous la suppression ?",
-  description = "Cette action est irréversible.",
+  title = "Supprimer cet élément ?",
+  description = "Cette action est irréversible. L'élément sera définitivement supprimé.",
   onCancel,
   onConfirm,
   loading,
-  confirmText = "Confirmer",
+  confirmText = "Supprimer",
   cancelText = "Annuler",
   children,
 }: ConfirmModalProps) {
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
-        <div className="py-2 text-gray-600">{description}</div>
-        {children}
-        <DialogFooter className="flex gap-2 pt-4">
-          <DashboardButton
-            type="button"
-            variant="ghost"
+      <DialogContent className="p-0 overflow-hidden max-w-md border-0 shadow-2xl">
+        {/* Top danger band */}
+        <div className="relative overflow-hidden bg-linear-to-br from-red-600 via-rose-600 to-red-700 px-6 pt-6 pb-8">
+          <div className="pointer-events-none absolute -top-10 -right-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-rose-400/20 blur-2xl" />
+
+          {/* Close button */}
+          <button
             onClick={onCancel}
             disabled={loading}
+            className="absolute top-3 right-3 p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
           >
-            {cancelText}
-          </DashboardButton>
-          <DashboardButton
-            type="button"
-            onClick={onConfirm}
-            disabled={loading}
-            className="bg-red-500 hover:bg-red-600"
-          >
-            {confirmText}
-          </DashboardButton>
-        </DialogFooter>
+            <X className="w-4 h-4" />
+          </button>
+
+          {/* Icon */}
+          <div className="relative flex items-center gap-4">
+            <div className="flex-shrink-0 p-3 rounded-2xl bg-white/15 ring-1 ring-white/20 shadow-inner">
+              <AlertTriangle className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-red-200 mb-0.5">
+                Action irréversible
+              </p>
+              <h2 className="text-lg font-bold text-white leading-tight">
+                {title}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 space-y-4 bg-white">
+          <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+
+          {/* Warning box */}
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-50 border border-red-100">
+            <Trash2 className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+            <p className="text-xs text-red-700 leading-relaxed">
+              Une fois supprimé, cet élément ne pourra pas être restauré.
+              Veuillez confirmer votre choix.
+            </p>
+          </div>
+
+          {children}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={loading}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              {cancelText}
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+            >
+              <Trash2 className="w-4 h-4" />
+              {loading ? "Suppression..." : confirmText}
+            </button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

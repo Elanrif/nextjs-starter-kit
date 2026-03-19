@@ -83,7 +83,7 @@ export function ChangePassword() {
   return (
     <>
       <LoadingPage isLoading={loading} text="Mise à jour du mot de passe..." />
-      <div className="max-w-xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-orange-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-orange-500/20 blur-3xl" />

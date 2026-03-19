@@ -112,7 +112,7 @@ export function ProductCreateForm() {
   return (
     <>
       <LoadingPage isLoading={loading} text="Création du produit..." />
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
