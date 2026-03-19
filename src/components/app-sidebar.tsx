@@ -1,12 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  GalleryVerticalEnd,
-  HomeIcon,
-  PieChart,
-  SquareTerminal,
-} from "lucide-react";
+import { HomeIcon, LayoutGrid, Tag, Package, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -17,6 +12,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { User } from "@/lib/users/models/user.model";
@@ -26,50 +22,47 @@ import { authClient } from "@/lib/auth/api/auth.client";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
-// This is sample data.
 const data = {
   teams: [
     {
       name: "Nextjs Starter Kit",
-      logo: GalleryVerticalEnd,
+      logo: LayoutGrid,
       plan: "Boilerplate",
     },
   ],
   navMain: [
     {
-      title: "Home",
+      title: "Accueil",
       url: DASHBOARD,
       icon: HomeIcon,
     },
     {
-      title: "Store",
+      title: "Boutique",
       url: "#",
-      icon: SquareTerminal,
+      icon: LayoutGrid,
       isActive: true,
       items: [
         {
-          title: "Categories",
+          title: "Catégories",
           url: `${DASHBOARD}${CATEGORIES}`,
+          icon: Tag,
         },
         {
-          title: "Products",
+          title: "Produits",
           url: `${DASHBOARD}${PRODUCTS}`,
+          icon: Package,
         },
         {
-          title: "Users",
+          title: "Utilisateurs",
           url: `${DASHBOARD}${USERS}`,
+          icon: Users,
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-  ],
 };
+
+const sidebarBg = "bg-slate-950 text-white";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [auth, setAuth] = React.useState<User | null>(null);
@@ -78,21 +71,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     const fetchAuthData = async () => {
       try {
-        // Only fetch user if session is valid
         const response = await authClient.getCurrentUser();
-
         if (!response.ok) {
           redirect("/sign-in?callbackUrl=/account");
         }
         setAuth(response.data.user);
-      } catch (error) {
-        console.error("Auth error:", error);
+      } catch {
         redirect("/sign-in?callbackUrl=/account");
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchAuthData();
   }, []);
 
@@ -100,20 +89,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return <SidebarSkeleton {...props} />;
   }
 
-  const AppSidebarColors = {
-    main: "bg-black/90 text-white",
-  };
-
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className={` ${AppSidebarColors.main}`}>
+    <Sidebar collapsible="icon" {...props} className={sidebarBg}>
+      <SidebarHeader className={sidebarBg}>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent className={` ${AppSidebarColors.main}`}>
+
+      <SidebarSeparator className="bg-white/5 mx-3" />
+
+      <SidebarContent className={sidebarBg}>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      <SidebarFooter className={` ${AppSidebarColors.main}`}>
+
+      <SidebarSeparator className="bg-white/5 mx-3" />
+
+      <SidebarFooter className={sidebarBg}>
         <NavUser user={auth} />
       </SidebarFooter>
       <SidebarRail />

@@ -1,11 +1,4 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -13,10 +6,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth/api/auth";
-import { ROUTES } from "@/utils/routes";
-import { Bell, HomeIcon, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { Bell, Sparkles } from "lucide-react";
 import { redirect } from "next/navigation";
+import { DashboardBreadcrumb } from "@/components/features/dashboard/dashboard-breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -42,24 +34,7 @@ export default async function DashboardLayout({
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <Link
-                    href={ROUTES.DASHBOARD}
-                    className="text-amber-700/70 hover:text-amber-900 transition-colors"
-                  >
-                    <HomeIcon size={15} />
-                  </Link>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block text-amber-300" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="font-medium text-gray-700">
-                    Dashboard
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <DashboardBreadcrumb />
           </div>
 
           {/* Right side actions */}
