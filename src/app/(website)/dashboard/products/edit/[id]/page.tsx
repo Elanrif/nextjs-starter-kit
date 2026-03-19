@@ -8,6 +8,9 @@ export const metadata = {
   description: "Edit a product",
 };
 
+// SSR is intentional here: the edit form needs data immediately to pre-fill fields
+// (no skeleton pattern applies cleanly to forms), and notFound() gives a proper 404
+// if the product ID doesn't exist — both benefits justify the server-side fetch.
 export default async function Page({
   params,
 }: {

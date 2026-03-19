@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { UserFormData, UserSchema } from "@/lib/users/models/user.model";
-import { createUser } from "@/lib/users/services/user.client.service";
+import { useCreateUser } from "@/lib/users/hooks/use-users";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import {
   User as UserIcon,
@@ -49,28 +49,26 @@ export function UserCreateForm() {
   const password = watch("password");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const validation = usePasswordValidation(password);
   const allValid =
     validation.minLength && validation.hasNumber && validation.hasCase;
 
-  const onSubmit = async (data: UserFormData) => {
-    setLoading(true);
-    try {
-      const response = await createUser({ ...data });
-      if (!response.ok) {
-        setError(response.error.message || "Erreur lors de la création");
-        toast.error(response.error.message || "Erreur lors de la création");
-        return;
-      }
-      toast.success("Utilisateur créé avec succès !");
-      router.push(`${DASHBOARD}${USERS}`);
-    } catch (error_: any) {
-      setError(error_.message || "Erreur inattendue");
-      toast.error("Erreur inattendue lors de la création");
-    } finally {
-      setLoading(false);
-    }
+  const { mutate: create, isPending: loading } = useCreateUser();
+
+  const onSubmit = (data: UserFormData) => {
+    setError(null);
+    create(data, {
+      onSuccess: () => {
+        toast.success("Utilisateur créé avec succès !");
+        router.push(`${DASHBOARD}${USERS}`);
+      },
+      onError: (err) => {
+        const message =
+          err instanceof Error ? err.message : "Erreur lors de la création";
+        setError(message);
+        toast.error(message);
+      },
+    });
   };
 
   return (

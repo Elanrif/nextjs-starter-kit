@@ -2,7 +2,7 @@
 import LoadingPage from "@components/features/loading-page";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateProduct } from "@/lib/products/services/product.client.service";
+import { useUpdateProduct } from "@/lib/products/hooks/use-products";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import { useForm } from "react-hook-form";
@@ -54,7 +54,7 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
   const [categories, setCategories] = useState<{ id: number; name: string }[]>(
     [],
   );
-  const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -72,46 +72,38 @@ export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
           categoryId: loadedProduct?.category?.id || 0,
         });
       }
-      setLoading(false);
+      setCategoriesLoading(false);
     });
   }, [loadedProduct, reset]);
 
-  const onSubmit = async (data: ProductFormData) => {
-    setLoading(true);
-    try {
-      const anyRes = (await updateProduct(Number(loadedProduct.id), {
-        ...data,
-        price: Number(data.price),
-        stock: Number(data.stock),
-        categoryId: Number(data.categoryId),
-      })) as any;
-      const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-      if (updatedId) {
-        toast.success("Produit modifié avec succès");
-        router.push(`${DASHBOARD}${PRODUCTS}/${updatedId}`);
-        return;
-      }
-      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
-        for (const d of anyRes.message.details) {
-          if (d.field)
-            setError(d.field as keyof ProductFormData, {
-              type: "server",
-              message: d.message,
-            });
-        }
-        toast.error("Erreur de validation côté serveur");
-        return;
-      }
-      toast.error(
-        anyRes?.message?.message ||
-          anyRes?.message ||
-          "Erreur lors de la modification",
-      );
-    } catch (error: any) {
-      toast.error(error.message || "Erreur inattendue lors de la modification");
-    } finally {
-      setLoading(false);
-    }
+  const { mutate: update, isPending: submitLoading } = useUpdateProduct();
+  const loading = categoriesLoading || submitLoading;
+
+  const onSubmit = (data: ProductFormData) => {
+    update(
+      {
+        id: Number(loadedProduct.id),
+        data: {
+          ...data,
+          price: Number(data.price),
+          stock: Number(data.stock),
+          categoryId: Number(data.categoryId),
+        },
+      },
+      {
+        onSuccess: (product) => {
+          toast.success("Produit modifié avec succès");
+          router.push(`${DASHBOARD}${PRODUCTS}/${product?.id}`);
+        },
+        onError: (err) => {
+          toast.error(
+            err instanceof Error
+              ? err.message
+              : "Erreur lors de la modification",
+          );
+        },
+      },
+    );
   };
 
   return (

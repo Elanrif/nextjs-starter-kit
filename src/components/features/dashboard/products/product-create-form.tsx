@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { createProduct } from "@/lib/products/services/product.client.service";
+import { useCreateProduct } from "@/lib/products/hooks/use-products";
 import { toast } from "react-toastify";
 import { fetchCategories } from "@/lib/categories/services/category.client.service";
 import LoadingPage from "@components/features/loading-page";
@@ -50,7 +50,6 @@ export function ProductCreateForm() {
   const [categories, setCategories] = useState<{ id: number; name: string }[]>(
     [],
   );
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -60,38 +59,28 @@ export function ProductCreateForm() {
     });
   }, []);
 
-  const onSubmit = async (data: ProductFormData) => {
-    setLoading(true);
-    try {
-      const anyRes = (await createProduct({
+  const { mutate: create, isPending: loading } = useCreateProduct();
+
+  const onSubmit = (data: ProductFormData) => {
+    create(
+      {
         ...data,
         price: Number(data.price),
         stock: Number(data.stock),
         categoryId: Number(data.categoryId),
-      })) as any;
-      const createdId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-      if (createdId) {
-        toast.success("Produit créé avec succès");
-        router.push(`${DASHBOARD}${PRODUCTS}/${createdId}`);
-        return;
-      }
-      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
-        for (const d of anyRes.message.details)
-          toast.error(`${d.field}: ${d.message}`);
-        return;
-      }
-      toast.error(
-        anyRes?.message?.message ||
-          anyRes?.message ||
-          "Erreur lors de la création",
-      );
-    } catch (error: any) {
-      toast.error(
-        error.message || "Erreur inattendue lors de la création du produit",
-      );
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: (product) => {
+          toast.success("Produit créé avec succès");
+          router.push(`${DASHBOARD}${PRODUCTS}/${product?.id}`);
+        },
+        onError: (err) => {
+          toast.error(
+            err instanceof Error ? err.message : "Erreur lors de la création",
+          );
+        },
+      },
+    );
   };
 
   return (

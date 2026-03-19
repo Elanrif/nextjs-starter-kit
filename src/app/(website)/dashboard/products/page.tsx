@@ -1,6 +1,3 @@
-import { fetchProducts } from "@/lib/products/services/product.service";
-import { headers } from "next/headers";
-import { Product } from "@/lib/products/models/product.model";
 import { ProductList } from "@/components/features/dashboard/products/product-list";
 
 export const metadata = {
@@ -8,15 +5,9 @@ export const metadata = {
   description: "Manage your products",
 };
 
-export default async function Page() {
-  const reqHeaders = await headers();
-  const config = { headers: reqHeaders };
-  // Server-side fetching
-  const res = await fetchProducts(config);
-  let initialProducts: Product[] = [];
-  if (res.ok) {
-    initialProducts = res.data.content || [];
-  }
-
-  return <ProductList initialProducts={initialProducts} />;
+// No SSR here: this is a protected admin page (no SEO benefit), and the list
+// works well with a skeleton loader. React Query handles fetching, caching,
+// and automatic refetch after mutations (create/delete) without extra complexity.
+export default function Page() {
+  return <ProductList />;
 }

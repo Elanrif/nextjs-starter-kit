@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { User, UserFormData, UserSchema } from "@/lib/users/models/user.model";
-import { updateUser } from "@/lib/users/services/user.client.service";
+import { useUpdateUser } from "@/lib/users/hooks/use-users";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import {
   User as UserIcon,
@@ -49,28 +49,31 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
   const password = watch("password");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const validation = usePasswordValidation(password);
   const allValid =
     validation.minLength && validation.hasNumber && validation.hasCase;
 
-  const onSubmit = async (data: UserFormData) => {
-    setLoading(true);
-    try {
-      const response = await updateUser(Number(loadedUser.id), data);
-      if (!response.ok) {
-        setError(response.error.message || "Erreur lors de la mise à jour");
-        toast.error(response.error.message || "Erreur lors de la mise à jour");
-        return;
-      }
-      toast.success("Utilisateur mis à jour avec succès !");
-      router.push(`${DASHBOARD}${USERS}`);
-    } catch (error_: any) {
-      setError(error_.message || "Erreur inattendue");
-      toast.error("Erreur inattendue lors de la mise à jour");
-    } finally {
-      setLoading(false);
-    }
+  const { mutate: update, isPending: loading } = useUpdateUser();
+
+  const onSubmit = (data: UserFormData) => {
+    setError(null);
+    update(
+      { id: Number(loadedUser.id), data },
+      {
+        onSuccess: () => {
+          toast.success("Utilisateur mis à jour avec succès !");
+          router.push(`${DASHBOARD}${USERS}`);
+        },
+        onError: (err) => {
+          const message =
+            err instanceof Error
+              ? err.message
+              : "Erreur lors de la mise à jour";
+          setError(message);
+          toast.error(message);
+        },
+      },
+    );
   };
 
   return (

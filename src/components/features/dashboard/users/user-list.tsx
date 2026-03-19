@@ -12,6 +12,7 @@ import type { User } from "@/lib/users/models/user.model";
 import { Eye, Pencil, Trash2, Users, Plus, ShieldCheck } from "lucide-react";
 import LoadingPage from "@components/features/loading-page";
 import { useUsers, useDeleteUser } from "@/lib/users/hooks/use-users";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 
 const { DASHBOARD, USERS } = ROUTES;
 
@@ -19,7 +20,9 @@ export function UserList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const { id: currentUserId } = useAuthUser();
   const { data: users = [], isLoading } = useUsers();
+  const filteredUsers = users.filter((u) => u.id !== currentUserId);
   const { mutate: remove, isPending: deleteLoading } = useDeleteUser();
 
   const handleDelete = () => {
@@ -158,7 +161,8 @@ export function UserList() {
               <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
               {!isLoading && (
                 <p className="text-xs text-gray-400">
-                  {users.length} utilisateur{users.length === 1 ? "" : "s"}
+                  {filteredUsers.length} utilisateur
+                  {filteredUsers.length === 1 ? "" : "s"}
                 </p>
               )}
             </div>
@@ -173,7 +177,7 @@ export function UserList() {
 
         <DataTable
           columns={columns}
-          data={users}
+          data={filteredUsers}
           loading={isLoading}
           emptyText="Aucun utilisateur."
         />

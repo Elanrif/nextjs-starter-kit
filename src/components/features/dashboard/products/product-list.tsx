@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { deleteProduct } from "@/lib/products/services/product.client.service";
-import { Product } from "@/lib/products/models/product.model";
+import type { Product } from "@/lib/products/models/product.model";
 import {
   DataTable,
   DataTableColumn,
@@ -20,50 +19,37 @@ import {
   XCircle,
 } from "lucide-react";
 import LoadingPage from "@components/features/loading-page";
+import {
+  useProducts,
+  useDeleteProduct,
+} from "@/lib/products/hooks/use-products";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
-export function ProductList({
-  initialProducts = [],
-}: {
-  initialProducts?: Product[];
-}) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export function ProductList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    const timer = setTimeout(() => {
-      if (!mounted) return;
-      setProducts(initialProducts);
-      setLoading(false);
-    }, 100);
-    return () => {
-      mounted = false;
-      clearTimeout(timer);
-    };
-  }, [initialProducts]);
+  const { data, isLoading } = useProducts();
+  const products = data?.content ?? [];
+  const { mutate: remove, isPending: deleteLoading } = useDeleteProduct();
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteId) return;
-    setDeleteLoading(true);
-    const res = await deleteProduct(deleteId);
-    setDeleteLoading(false);
-    setModalOpen(false);
-    if (res.ok) {
-      setProducts((prev) => prev.filter((p) => p.id !== deleteId));
-      toast.success("Produit supprimé avec succès");
-    } else {
-      toast.error(
-        "message" in res && typeof res.message === "string"
-          ? res.message
-          : "Erreur lors de la suppression",
-      );
-    }
-    setDeleteId(null);
+    remove(deleteId, {
+      onSuccess: () => {
+        setModalOpen(false);
+        setDeleteId(null);
+        toast.success("Produit supprimé avec succès");
+      },
+      onError: (err) => {
+        setModalOpen(false);
+        setDeleteId(null);
+        toast.error(
+          err instanceof Error ? err.message : "Erreur lors de la suppression",
+        );
+      },
+    });
   };
 
   const columns: DataTableColumn<Product>[] = [
@@ -106,8 +92,8 @@ export function ProductList({
           className={`font-medium ${
             row.stock > 10
               ? "text-emerald-600"
-              // eslint-disable-next-line unicorn/no-nested-ternary
-              : row.stock > 0
+              : // eslint-disable-next-line unicorn/no-nested-ternary
+                row.stock > 0
                 ? "text-amber-600"
                 : "text-red-600"
           }`}
@@ -181,7 +167,7 @@ export function ProductList({
 
   return (
     <>
-      <LoadingPage loading={loading} text="Chargement des produits..." />
+      <LoadingPage loading={isLoading} text="Chargement des produits..." />
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -190,7 +176,7 @@ export function ProductList({
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Produits</h1>
-              {!loading && (
+              {!isLoading && (
                 <p className="text-xs text-gray-400">
                   {products.length} produit{products.length === 1 ? "" : "s"}
                 </p>
@@ -208,7 +194,7 @@ export function ProductList({
         <DataTable
           columns={columns}
           data={products}
-          loading={loading}
+          loading={isLoading}
           emptyText="Aucun produit."
         />
 

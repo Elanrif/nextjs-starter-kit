@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useSyncExternalStore } from "react";
 
 type LoadingPageProps = {
   loading: boolean;
@@ -9,8 +10,23 @@ type LoadingPageProps = {
   text?: string;
 };
 
+function unsubscribe() {
+  // no external store to unsubscribe from
+}
+function subscribe() {
+  return unsubscribe;
+}
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function LoadingPage({ loading, text }: LoadingPageProps) {
-  if (!loading || typeof document === "undefined") return null;
+  const isMounted = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+
+  if (!isMounted || !loading) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md">

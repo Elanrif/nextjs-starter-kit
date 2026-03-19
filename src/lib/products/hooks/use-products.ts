@@ -56,7 +56,11 @@ export function useProduct(id: number) {
 export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: ProductCreate) => createProduct(data),
+    mutationFn: async (data: ProductCreate) => {
+      const res = await createProduct(data);
+      if (!res.ok) throw new Error(res.error.message);
+      return res.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
@@ -67,8 +71,11 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: ProductUpdate }) =>
-      updateProduct(id, data),
+    mutationFn: async ({ id, data }: { id: number; data: ProductUpdate }) => {
+      const res = await updateProduct(id, data);
+      if (!res.ok) throw new Error(res.error.message);
+      return res.data;
+    },
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
@@ -80,7 +87,11 @@ export function useUpdateProduct() {
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => deleteProduct(id),
+    mutationFn: async (id: number) => {
+      const res = await deleteProduct(id);
+      if (!res.ok) throw new Error(res.error.message);
+      return res.data;
+    },
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: productKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
