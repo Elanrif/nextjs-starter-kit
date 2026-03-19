@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth/api/auth";
+import { auth } from "@/lib/auth/api/auth.service";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 

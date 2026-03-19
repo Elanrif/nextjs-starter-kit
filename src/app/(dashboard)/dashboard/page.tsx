@@ -5,7 +5,7 @@ import { fetchAllUsers } from "@/lib/users/services/user.service";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Package, Tag, Users, TrendingUp, ArrowRight } from "lucide-react";
-import { auth } from "@/lib/auth/api/auth";
+import { auth } from "@/lib/auth/api/auth.service";
 
 export const metadata = {
   title: "Dashboard",

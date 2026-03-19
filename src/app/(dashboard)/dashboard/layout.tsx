@@ -12,7 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth/api/auth";
+import { auth } from "@/lib/auth/api/auth.service";
 import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
