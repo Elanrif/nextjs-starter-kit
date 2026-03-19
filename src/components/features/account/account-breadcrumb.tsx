@@ -30,7 +30,7 @@ export function AccountBreadcrumb() {
   const segments = after ? after.split("/").filter(Boolean) : [];
 
   const crumbs: { label: string; href?: string }[] = [];
-  let href = ROUTES.MY_ACCOUNT;
+  let href: any = ROUTES.MY_ACCOUNT;
 
   for (const seg of segments) {
     href = `${href}/${seg}`;
