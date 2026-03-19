@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { auth } from "@/lib/auth/wrapper/auth";
+import { auth } from "@/lib/auth/api/auth";
 
 const logger = getLogger("server");
 

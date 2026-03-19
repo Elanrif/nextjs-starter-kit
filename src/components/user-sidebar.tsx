@@ -17,7 +17,7 @@ import { User } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
 import SidebarSkeleton from "./ui/sidebar-skeleton";
 import { NavMainUser } from "./nav-main-user";
-import { authClient } from "@/lib/auth/wrapper/auth.client";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 

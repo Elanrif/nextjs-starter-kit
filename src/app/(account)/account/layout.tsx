@@ -18,7 +18,7 @@ import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
-import { auth } from "@/lib/auth/wrapper/auth";
+import { auth } from "@/lib/auth/api/auth";
 
 export const dynamic = "force-dynamic";
 

@@ -1,5 +1,5 @@
 // TODO: delete src/app/account/page.tsx (route group migration)
-import { auth } from "@/lib/auth/wrapper/auth";
+import { auth } from "@/lib/auth/api/auth";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 

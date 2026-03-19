@@ -17,7 +17,7 @@ import {
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
 import { DashboardButton } from "../dashboard/dashboard-button";
-import { authClient } from "@/lib/auth/wrapper/auth.client";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { MY_ACCOUNT } = ROUTES;
 

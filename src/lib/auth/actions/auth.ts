@@ -4,8 +4,8 @@ import {
   changePasswordProfile,
   editProfile,
   resetPassword,
-  _signIn as serverSignIn,
-  _signUp as serverSignUp,
+  signIn as serverSignIn,
+  signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
 import {
   CrudApiError,

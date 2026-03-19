@@ -9,7 +9,7 @@ import { ROUTES } from "@/utils/routes";
 import { useEffect, useState } from "react";
 import { User } from "@/lib/users/models/user.model";
 import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
-import { authClient } from "@/lib/auth/wrapper/auth.client";
+import { authClient } from "@/lib/auth/api/auth.client";
 
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [

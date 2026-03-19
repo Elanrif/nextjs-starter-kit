@@ -70,3 +70,8 @@ export const productSchema = z.object({
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
+
+const productUpdateSchema = productSchema.partial();
+export const parseProductCreate = productSchema.safeParse.bind(productSchema);
+export const parseProductUpdate =
+  productUpdateSchema.safeParse.bind(productUpdateSchema);

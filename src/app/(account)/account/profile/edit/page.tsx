@@ -1,5 +1,5 @@
 import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
-import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { getCurrentUser } from "@/lib/auth/jose/jose.service";
 
 export const metadata = {
   title: "Edit Profile",
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const res = await _getCurrentUser();
+  const res = await getCurrentUser();
   if (!res.ok) {
     // Handle error, e.g., redirect to sign-in
     return <div>Error: Unauthorized</div>;

@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { User } from "@/lib/users/models/user.model";
-import { auth } from "@/lib/auth/wrapper/auth";
+import { auth } from "@/lib/auth/api/auth";
 import { UserList } from "@/components/features/dashboard/users/user-list";
 import { fetchAllUsers } from "@/lib/users/services/user.service";
 

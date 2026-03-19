@@ -1,7 +1,7 @@
+import * as authClientService from "@lib/auth/auth.client.service";
+import * as joseClientService from "@lib/auth/jose/jose.client.service";
 import { signInAction, signOutAction } from "@/lib/auth/actions/auth";
 import { Registrer } from "@lib/auth/models/auth.model";
-import { _signUp } from "@lib/auth/auth.client.service";
-import { _getCurrentUser } from "@lib/auth/jose/jose.client.service";
 
 export const authClient = {
   signIn: {
@@ -14,7 +14,7 @@ export const authClient = {
   },
 
   signUp: async ({ body }: { body: Registrer }) => {
-    _signUp(body);
+    authClientService.signUp(body);
   },
 
   signOut: async () => {
@@ -22,10 +22,10 @@ export const authClient = {
   },
 
   getCurrentUser: async () => {
-    return _getCurrentUser();
+    return joseClientService.getCurrentUser();
   },
 
   useSession: () => {
-    // ton hoook React actuel
+    // ton hook React actuel
   },
 };

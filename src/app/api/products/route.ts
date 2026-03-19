@@ -9,7 +9,7 @@ import {
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { _getSession } from "@/lib/auth/jose/jose.service";
+import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   // User authentication and role verification
-  const session = await _getSession();
+  const session = await getSession();
 
   if (!session.ok) {
     const err = {

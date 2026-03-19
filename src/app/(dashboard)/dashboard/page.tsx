@@ -1,4 +1,3 @@
-// TODO: delete src/app/dashboard/page.tsx (route group migration)
 import { redirect } from "next/navigation";
 import { fetchProducts } from "@/lib/products/services/product.service";
 import { fetchCategories } from "@/lib/categories/services/category.service";
@@ -6,31 +5,20 @@ import { fetchAllUsers } from "@/lib/users/services/user.service";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Package, Tag, Users, TrendingUp, ArrowRight } from "lucide-react";
-import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { auth } from "@/lib/auth/api/auth";
 
 export const metadata = {
   title: "Dashboard",
   description: "My modern dashboard with stats and recent activity",
 };
 
-/**
- * Dashboard Page (Protected)
- *
- * This is a Server Component that:
- * 1. Fetches the session on the server
- * 2. Fetches products, categories, and users
- * 3. Displays a modern dashboard with statistics
- *
- * The middleware also protects this route, but we add a server-side
- * check as an additional security layer.
- */
 export default async function DashboardPage() {
-  const response = await _getCurrentUser();
+  const response = await auth.api.getCurrentUser();
 
   if (!response.ok || !response.data) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
-  const { user: auth } = response.data;
+  const { user } = response.data;
 
   // Fetch data
   const reqHeaders = await headers();
@@ -41,7 +29,7 @@ export default async function DashboardPage() {
   const usersRes = await fetchAllUsers(config);
 
   const products = productsRes.ok ? productsRes.data.content || [] : [];
-  const categories = "error" in categoriesRes ? [] : categoriesRes;
+  const categories = categoriesRes.ok ? categoriesRes.data : [];
   const users = usersRes.ok ? usersRes.data : [];
 
   const totalProducts = products.length;
@@ -61,15 +49,15 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {auth.firstName || "User"}!
+              Welcome back, {user.firstName || "User"}!
             </h1>
             <p className="text-blue-100">
               Here&apos;s what&apos;s happening with your business today
             </p>
           </div>
           <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-4xl font-bold border-2 border-white/30">
-            {auth.firstName?.toUpperCase()?.slice(0, 2) ||
-              auth.email?.slice(0, 2)?.toUpperCase() ||
+            {user.firstName?.toUpperCase()?.slice(0, 2) ||
+              user.email?.slice(0, 2)?.toUpperCase() ||
               "U"}
           </div>
         </div>

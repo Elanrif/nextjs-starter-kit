@@ -25,7 +25,7 @@ const logger = getLogger("server");
  * Used for API routes that need to check session status.
  * @returns Session object or null if no valid session
  */
-export const _getSession = cache(
+export const getSession = cache(
   async (): Promise<Result<Session, CrudApiError>> => {
     try {
       const cookie = await cookies();
@@ -62,9 +62,9 @@ export const _getSession = cache(
  * Returns null if user cannot be fetched or session is invalid.
  * @returns User object or null
  */
-export const _getCurrentUser = cache(
+export const getCurrentUser = cache(
   async (): Promise<Result<CurrentUser, CrudApiError>> => {
-    const session = await _getSession();
+    const session = await getSession();
     if (!session.ok || !session.data?.user?.userId) {
       const err = {
         error: "Unauthorized",

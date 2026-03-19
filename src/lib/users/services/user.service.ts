@@ -17,6 +17,11 @@ import {
 } from "@/lib/shared/helpers/crud-api-error";
 import { validateId } from "@/utils/utils";
 
+/**
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ * ✅ Protection against malicious bugs
+ */
 const {
   api: {
     rest: {
@@ -47,11 +52,6 @@ export async function createUser(
   config: Config,
   user: Omit<User, "id">,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const parse = parseUserCreate(user);
   if (!parse.success)
     return validationError(parse.error.issues, "Invalid user data");
@@ -69,13 +69,8 @@ export async function createUser(
 
 export async function fetchUserById(
   id: number,
-  config: Config, // ✅ Config requis (cohérence avec les autres fonctions)
+  config: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const idError = validateId(id);
   if (idError) return idError;
 
@@ -93,12 +88,6 @@ export async function updateUser(
   user: UserUpdateFormData,
   config: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
-  // ✅ Validation centralisée
   const idError = validateId(id);
   if (idError) return idError;
 
@@ -126,11 +115,6 @@ export async function deleteUser(
   id: number,
   config: Config,
 ): Promise<Result<{ success: boolean }, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const idError = validateId(id);
   if (idError) return idError;
 

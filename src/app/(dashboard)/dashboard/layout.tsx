@@ -1,4 +1,3 @@
-// TODO: delete src/app/dashboard/layout.tsx (route group migration)
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -13,7 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { _getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { auth } from "@/lib/auth/api/auth";
 import { ROUTES } from "@/utils/routes";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
@@ -26,9 +25,9 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const auth = await _getCurrentUser();
+  const currentUser = await auth.api.getCurrentUser();
 
-  if (!auth.ok) {
+  if (!currentUser.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 

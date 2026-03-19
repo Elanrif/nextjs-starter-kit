@@ -57,3 +57,9 @@ export const categorySchema = z.object({
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
+
+const categoryUpdateSchema = categorySchema.partial();
+export const parseCategoryCreate =
+  categorySchema.safeParse.bind(categorySchema);
+export const parseCategoryUpdate =
+  categoryUpdateSchema.safeParse.bind(categoryUpdateSchema);

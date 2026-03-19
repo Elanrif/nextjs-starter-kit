@@ -1,19 +1,19 @@
 "server-only";
 
-import { _signUp, _signIn } from "@lib/auth/auth.service";
+import * as authService from "@lib/auth/auth.service";
+import * as joseService from "@lib/auth/jose/jose.service";
 import { Login, Registrer } from "@lib/auth/models/auth.model";
 import { deleteSession } from "@lib/auth/jose";
 import { Config } from "@/config/api.config";
-import { _getCurrentUser, _getSession } from "@lib/auth/jose/jose.service";
 
 export const auth = {
   api: {
     signIn: async ({ body, config }: { body: Login; config?: Config }) => {
-      return _signIn(body, config);
+      return authService.signIn(body, config);
     },
 
     signUp: async ({ body, config }: { body: Registrer; config?: Config }) => {
-      return _signUp(body, config);
+      return authService.signUp(body, config);
     },
 
     signOut: async () => {
@@ -21,11 +21,11 @@ export const auth = {
     },
 
     getSession: async () => {
-      return _getSession();
+      return joseService.getSession();
     },
 
     getCurrentUser: async () => {
-      return _getCurrentUser();
+      return joseService.getCurrentUser();
     },
 
     verifyEmail: async ({ query }: { query: { token: string } }) => {

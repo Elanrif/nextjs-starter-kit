@@ -12,6 +12,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
+  validationError,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import {
@@ -24,20 +25,14 @@ import {
   ProfileUserFormData,
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
-import { createSession } from "./jose";
-
-// ============================================================================
-// Auth API Service (Server-side)
-// ============================================================================
+import { createSession } from "@lib/auth/jose";
+import { validateId } from "@/utils/utils";
 
 /**
- * Use this service in:
- * - Server Components
- * - Route Handlers (API routes)
- * - Server Actions
+ * ⚠️ Never trust the client input
+ * ❌ Someone can bypass the form
+ * ✅ Protection against malicious bugs
  */
-
-// API endpoints from environment config
 const {
   api: {
     rest: {
@@ -55,33 +50,16 @@ const {
 } = environment;
 const logger = getLogger("server");
 
-// ============================================================================
-// Auth CRUD
-// ============================================================================
-
 /**
  * Sign in a user with email and password
  */
-export async function _signIn(
+export async function signIn(
   login: Login,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const validation = parseLogin(login);
-  if (!validation.success) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: validation.error.message,
-        error: "Bad Request",
-      },
-    };
-  }
+  if (!validation.success)
+    return validationError(validation.error.issues, "Invalid login data");
 
   try {
     const { data } = await apiClient(true, config).post<
@@ -100,26 +78,16 @@ export async function _signIn(
 /**
  * Register a new user with email and password
  */
-export async function _signUp(
+export async function signUp(
   registration: RegisterFormData,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const validation = parseRegister(registration);
-  if (!validation.success) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: validation.error.message,
-        error: "Bad Request",
-      },
-    };
-  }
+  if (!validation.success)
+    return validationError(
+      validation.error.issues,
+      "Invalid registration data",
+    );
 
   try {
     await apiClient(true, config).post<any, AxiosResponse<any>>(
@@ -131,7 +99,7 @@ export async function _signUp(
     return { ok: false, error: crudApiErrorResponse(error, "signUp") };
   }
 
-  const maybeUser = await _signIn(registration, config);
+  const maybeUser = await signIn(registration, config);
   if (!maybeUser.ok) {
     logger.error("Error after registration during sign in", {
       email: registration.email,
@@ -148,6 +116,9 @@ export async function changeUserPassword(
   oldPassword: string,
   newPassword: string,
 ): Promise<Result<User, CrudApiError>> {
+  const idError = validateId(userId);
+  if (idError) return idError;
+
   try {
     const body = {
       old_password: oldPassword,
@@ -177,22 +148,12 @@ export async function resetPassword(
   data: ResetPassword,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const validation = parseResetPassword(data);
-  if (!validation.success) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: validation.error.message,
-        error: "Bad Request",
-      },
-    };
-  }
+  if (!validation.success)
+    return validationError(
+      validation.error.issues,
+      "Invalid reset password data",
+    );
 
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
@@ -214,23 +175,9 @@ export async function editProfile(
   data: ProfileUserFormData,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const validation = parseProfileUser(data);
-
-  if (!validation.success) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: validation.error.message,
-        error: "Bad Request",
-      },
-    };
-  }
+  if (!validation.success)
+    return validationError(validation.error.issues, "Invalid profile data");
 
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
@@ -252,23 +199,9 @@ export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
-  /**
-   * ⚠️ Never trust the client input
-   * ❌ Someone can bypass the form
-   * ✅ Protection against malicious bugs
-   */
   const validation = parseChangePasswordProfile(data);
-
-  if (!validation.success) {
-    return {
-      ok: false,
-      error: {
-        status: 400,
-        message: validation.error.message,
-        error: "Bad Request",
-      },
-    };
-  }
+  if (!validation.success)
+    return validationError(validation.error.issues, "Invalid password data");
 
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
