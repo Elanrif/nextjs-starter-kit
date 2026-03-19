@@ -1,10 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  fetchCategories,
-  deleteCategory,
-} from "@/lib/categories/services/category.client.service";
+import { deleteCategory } from "@/lib/categories/services/category.client.service";
 import {
   DataTable,
   DataTableColumn,
@@ -18,7 +15,11 @@ import { ROUTES } from "@/utils/routes";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
-export function CategoryList() {
+export function CategoryList({
+  initialCategories,
+}: {
+  initialCategories: Category[];
+}) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -27,16 +28,17 @@ export function CategoryList() {
 
   useEffect(() => {
     let mounted = true;
-    fetchCategories().then((res) => {
+    const timer = setTimeout(() => {
       if (!mounted) return;
-      if (Array.isArray(res)) setCategories(res);
-      else setCategories([]);
+      setCategories(initialCategories);
       setLoading(false);
-    });
+    }, 100);
+
     return () => {
       mounted = false;
+      clearTimeout(timer);
     };
-  }, []);
+  }, [initialCategories]);
 
   const handleDelete = async () => {
     if (!deleteId) return;

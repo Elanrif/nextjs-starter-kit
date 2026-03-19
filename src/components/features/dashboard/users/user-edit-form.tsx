@@ -26,7 +26,7 @@ import { DashboardButton } from "../dashboard-button";
 
 const { DASHBOARD, USERS } = ROUTES;
 
-export function UserEditForm({ loadedUser }: { loadedUser: User | null }) {
+export function UserEditForm({ loadedUser }: { loadedUser: User }) {
   const router = useRouter();
   const {
     register,

@@ -1,4 +1,3 @@
-// TODO: delete src/app/account/page.tsx (route group migration)
 import { auth } from "@/lib/auth/api/auth";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
@@ -8,17 +7,6 @@ export const metadata = {
   description: "My personal account settings",
 };
 
-/**
- * Account Page (Protected)
- *
- * This is a Server Component that:
- * 1. Fetches the session on the server
- * 2. Redirects to sign-in if not authenticated
- * 3. Displays user information from the session
- *
- * The middleware also protects this route, but we add a server-side
- * check as an additional security layer.
- */
 export default async function AccountPage() {
   const response = await auth.api.getCurrentUser();
 

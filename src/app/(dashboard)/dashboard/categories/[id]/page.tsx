@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { CategoryDetail } from "@/components/features/dashboard/categories/category-detail";
 import { fetchCategory } from "@/lib/categories/services/category.service";
 import { headers } from "next/headers";
@@ -7,15 +8,17 @@ export const metadata = {
   description: "View details of a category",
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const reqHeaders = await headers();
   const config = { headers: reqHeaders };
-  // Server-side fetching
+
   const res = await fetchCategory(config, Number(id));
-  let category: any = null;
-  if ("id" in res) {
-    category = res;
-  }
-  return <CategoryDetail data={category} />;
+  if (!res.ok) notFound();
+
+  return <CategoryDetail data={res.data} />;
 }

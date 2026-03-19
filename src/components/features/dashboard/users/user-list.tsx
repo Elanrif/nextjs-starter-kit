@@ -20,6 +20,7 @@ type UserListPageProps = {
 };
 
 export function UserList({ initialUsers = [] }: UserListPageProps) {
+  // TODO: Refactoriser pour utiliser SWR ou React Query pour le fetching et la mutation
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -32,7 +33,7 @@ export function UserList({ initialUsers = [] }: UserListPageProps) {
       if (!mounted) return;
       setUsers(initialUsers);
       setLoading(false);
-    }, 500);
+    }, 100);
 
     return () => {
       mounted = false;

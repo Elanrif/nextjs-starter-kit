@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { ProductEditForm } from "@/components/features/dashboard/products/product-edit-form";
 import { fetchProductById } from "@/lib/products/services/product.service";
 import { headers } from "next/headers";
@@ -7,15 +8,17 @@ export const metadata = {
   description: "Edit a product",
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const reqHeaders = await headers();
   const config = { headers: reqHeaders };
-  // Server-side fetching
+
   const res = await fetchProductById(config, Number(id));
-  let fetchedProduct: any = null;
-  if (res.ok) {
-    fetchedProduct = res.data;
-  }
-  return <ProductEditForm loadedProduct={fetchedProduct} />;
+  if (!res.ok) notFound();
+
+  return <ProductEditForm loadedProduct={res.data} />;
 }

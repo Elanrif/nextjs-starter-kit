@@ -1,17 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import { toast } from "react-toastify";
-import {
-  fetchCategory,
-  updateCategory,
-} from "@/lib/categories/services/category.client.service";
+import { updateCategory } from "@/lib/categories/services/category.client.service";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/utils/routes";
 import LoadingPage from "@/components/features/loading";
 import {
+  Category,
   CategoryFormData,
   categorySchema,
 } from "@/lib/categories/models/category.model";
@@ -20,7 +18,7 @@ import { Edit, ArrowLeft, Tag } from "lucide-react";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
-export function CategoryEditForm({ id }: { id: string }) {
+export function CategoryEditForm({ category }: { category: Category }) {
   const {
     register,
     handleSubmit,
@@ -30,33 +28,17 @@ export function CategoryEditForm({ id }: { id: string }) {
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema) as any,
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      imageUrl: "",
-      isActive: true,
-      sortOrder: undefined,
+      name: category?.name || "",
+      slug: category?.slug || "",
+      description: category?.description || "",
+      imageUrl: category?.imageUrl || "",
+      isActive: category?.isActive ?? true,
+      sortOrder: category?.sortOrder,
     },
   });
 
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    fetchCategory(Number(id)).then((res) => {
-      if ("id" in res) {
-        reset({
-          name: res.name || "",
-          slug: res.slug || "",
-          description: res.description || "",
-          imageUrl: (res as any).imageUrl || "",
-          isActive: res.isActive ?? true,
-          sortOrder: (res as any).sortOrder,
-        });
-      }
-      setLoading(false);
-    });
-  }, [id, reset]);
 
   /**
    * Handles category update with robust error management.
@@ -66,7 +48,7 @@ export function CategoryEditForm({ id }: { id: string }) {
   const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
     try {
-      const anyRes = (await updateCategory(Number(id), data)) as any;
+      const anyRes = (await updateCategory(Number(category?.id), data)) as any;
       const updatedId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
       if (updatedId) {
         toast.success("Catégorie modifiée avec succès");

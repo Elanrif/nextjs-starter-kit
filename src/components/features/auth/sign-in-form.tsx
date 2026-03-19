@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { authClient } from "@/lib/auth/api/auth.client.service";
 
 /**
  * Sign In Form Component

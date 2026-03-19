@@ -20,6 +20,7 @@ type ProductListPageProps = {
 };
 
 export function ProductList({ initialProducts = [] }: ProductListPageProps) {
+  // TODO: Refactoriser pour utiliser SWR ou React Query pour le fetching et la mutation
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -32,7 +33,7 @@ export function ProductList({ initialProducts = [] }: ProductListPageProps) {
       if (!mounted) return;
       setProducts(initialProducts);
       setLoading(false);
-    }, 500);
+    }, 100);
 
     return () => {
       mounted = false;

@@ -1,6 +1,5 @@
 "use client";
-import LoadingPage from "@/components/features/loading";
-import { useEffect, useState } from "react";
+
 import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
@@ -18,35 +17,10 @@ import {
   UserIcon,
 } from "lucide-react";
 import { User, UserRole } from "@/lib/users/models/user.model";
-import { fetchUserById } from "@/lib/users/services/user.client.service";
 
 const { DASHBOARD, USERS } = ROUTES;
 
-export function UserDetail({ id }: { id: string }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Client Side fetching
-    fetchUserById(Number(id)).then((res) => {
-      if (res.ok) setUser(res.data);
-      setLoading(false);
-    });
-  }, [id]);
-
-  if (loading)
-    return (
-      <LoadingPage isLoading={true} text="Chargement de l'utilisateur..." />
-    );
-  if (!user)
-    return (
-      <div className="w-full max-w-4xl mx-auto">
-        <Card className="p-8 text-center">
-          <p className="text-gray-500 text-lg">Utilisateur introuvable.</p>
-        </Card>
-      </div>
-    );
-
+export function UserDetail({ user }: { user: User }) {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Header */}

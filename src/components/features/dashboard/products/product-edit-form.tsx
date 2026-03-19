@@ -19,11 +19,7 @@ import { Edit, ArrowLeft, Package, DollarSign, Layers } from "lucide-react";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
-export function ProductEditForm({
-  loadedProduct,
-}: {
-  loadedProduct: Product | null;
-}) {
+export function ProductEditForm({ loadedProduct }: { loadedProduct: Product }) {
   const {
     register,
     handleSubmit,

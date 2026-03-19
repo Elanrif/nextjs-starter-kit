@@ -1,11 +1,9 @@
 "use client";
-import LoadingPage from "@/components/features/loading";
-import { useEffect, useState } from "react";
+
 import { Product } from "@/lib/products/models/product.model";
 import { DashboardButton } from "@/components/features/dashboard/dashboard-button";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { fetchProduct } from "@/lib/products/services/product.client.service";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,36 +20,13 @@ import {
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
-// Helper pour le statut du stock
 const getStockInfo = (stock: number) => {
   if (stock > 10) return { status: "En stock", color: "text-green-600" };
   if (stock > 0) return { status: "Stock faible", color: "text-yellow-600" };
   return { status: "Rupture", color: "text-red-600" };
 };
 
-export function ProductDetail({ id }: { id: string }) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Client Side fetching
-    fetchProduct(Number(id)).then((res) => {
-      if (res.ok) setProduct(res.data);
-      setLoading(false);
-    });
-  }, [id]);
-
-  if (loading)
-    return <LoadingPage isLoading={true} text="Chargement du produit..." />;
-  if (!product)
-    return (
-      <div className="w-full max-w-4xl mx-auto">
-        <Card className="p-8 text-center">
-          <p className="text-gray-500 text-lg">Produit introuvable.</p>
-        </Card>
-      </div>
-    );
-
+export function ProductDetail({ product }: { product: Product }) {
   const { status: stockStatus, color: stockColor } = getStockInfo(
     product.stock,
   );
