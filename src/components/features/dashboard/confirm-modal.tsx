@@ -1,5 +1,6 @@
 "use client";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { ReactNode } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 
@@ -29,6 +30,9 @@ export function ConfirmModal({
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onCancel()}>
       <DialogContent className="p-0 overflow-hidden max-w-md border-0 shadow-2xl">
+        <VisuallyHidden.Root>
+          <DialogTitle>{title}</DialogTitle>
+        </VisuallyHidden.Root>
         {/* Top danger band */}
         <div className="relative overflow-hidden bg-linear-to-br from-red-600 via-rose-600 to-red-700 px-6 pt-6 pb-8">
           <div className="pointer-events-none absolute -top-10 -right-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
@@ -45,7 +49,7 @@ export function ConfirmModal({
 
           {/* Icon */}
           <div className="relative flex items-center gap-4">
-            <div className="flex-shrink-0 p-3 rounded-2xl bg-white/15 ring-1 ring-white/20 shadow-inner">
+            <div className="shrink-0 p-3 rounded-2xl bg-white/15 ring-1 ring-white/20 shadow-inner">
               <AlertTriangle className="w-6 h-6 text-white" />
             </div>
             <div>

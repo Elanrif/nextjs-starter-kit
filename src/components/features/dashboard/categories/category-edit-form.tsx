@@ -84,7 +84,7 @@ export function CategoryEditForm({ category }: { category: Category }) {
   return (
     <>
       <LoadingPage isLoading={loading} text="Mise à jour de la catégorie..." />
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-7 shadow-xl">
           <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-purple-500/15 blur-3xl" />
