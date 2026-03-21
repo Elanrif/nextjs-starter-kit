@@ -2,6 +2,10 @@ import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { NextRequest } from "next/server";
+import type { ZodError } from "zod";
+import { getLogger } from "@/config/logger.config";
+
+const logger = getLogger("server");
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,4 +28,19 @@ export function validateId(id: number): Result<never, CrudApiError> | null {
     };
   }
   return null;
+}
+
+/**
+ * Returns a structured 400 validation error from Zod issues.
+ * Use `message` to identify the entity (e.g. "Invalid user data", "Invalid product data").
+ */
+export function validationError(
+  issues: ZodError["issues"],
+  message: string,
+): Result<never, CrudApiError> {
+  logger.warn({ errors: issues }, message);
+  return {
+    ok: false,
+    error: { status: 400, message, error: "Bad Request", details: issues },
+  };
 }

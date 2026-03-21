@@ -9,11 +9,9 @@ import {
   parseProductUpdate,
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
-import {
-  crudApiErrorResponse,
-  validationError,
-} from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/jose/jose.service";
+import { validationError } from "@/utils/utils";
 
 const logger = getLogger("server");
 

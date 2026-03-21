@@ -12,7 +12,6 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-  validationError,
 } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@/config/logger.config";
 import {
@@ -26,7 +25,7 @@ import {
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
 import { createSession } from "@lib/auth/jose";
-import { validateId } from "@/utils/utils";
+import { validateId, validationError } from "@/utils/utils";
 
 /**
  * ⚠️ Never trust the client input
