@@ -12,26 +12,9 @@ import type {
   CategoryCreate,
   CategoryUpdate,
 } from "@/lib/categories/models/category.model";
-import type { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { isCrudError } from "@/lib/shared/helpers/crud-api-error";
 
-// ─── Type guard ───────────────────────────────────────────────────────────────
-
-/**
- * Narrows a `T | CrudApiError` union to `CrudApiError`.
- *
- * ℹ️ This is the alternative to the `Result<T,E>` pattern used in user/product hooks.
- * Instead of `if (!res.ok)`, callers use `if (isCrudError(res))` to check for errors.
- * Trade-off: the guard is a runtime check and can theoretically match a valid `T`
- * if `T` happens to have `status` + `message` properties — `Result<>` avoids this.
- */
-export function isCrudError(res: unknown): res is CrudApiError {
-  return (
-    typeof res === "object" &&
-    res !== null &&
-    "status" in res &&
-    "message" in res
-  );
-}
+export { isCrudError } from "@/lib/shared/helpers/crud-api-error";
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 

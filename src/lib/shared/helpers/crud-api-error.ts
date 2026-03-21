@@ -1,11 +1,6 @@
 import { getLogger } from "@/config/logger.config";
 import { AxiosError } from "axios";
 
-// NOTE: logger.error writes to console.error on the Node process. Using
-// logger.error for non-5xx conditions (auth/validation) will always produce
-// noisy server logs in the Node console / hosting platform. Use
-// logger.error prudently; prefer logger.warn for client/auth/validation
-// failures that shouldn't be treated as internal server errors.
 const logger = getLogger("server");
 
 /*
@@ -105,3 +100,22 @@ export function crudApiErrorResponse(
 
 // Generic Result type for API responses, can be used to represent success or error outcomes
 export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };
+
+/**
+ * Type guard for the T | CrudApiError union pattern (used by category client service).
+ * Use this instead of `"error" in res` — it narrows the type correctly.
+ *
+ * @example
+ * const res = await fetchCategories();
+ * if (isCrudError(res)) { console.error(res.message); return; }
+ * // res is Category[] here
+ */
+export function isCrudError(value: unknown): value is CrudApiError {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "error" in value &&
+    "status" in value &&
+    "message" in value
+  );
+}
