@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchAllUser");
     const status = errMsg.status || 500;
-    logger.error("Error during user fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during user fetching",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // UserFormData includes confirmPassword which the backend ignores
-     
+
     const response = await createUser(config, parsed.data as any);
 
     if (!response.ok) {
@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createUser");
     const status = errMsg.status || 500;
-    logger.error("Error during user creation", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during user creation",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

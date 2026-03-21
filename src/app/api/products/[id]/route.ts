@@ -47,10 +47,10 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during product fetching",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -75,10 +75,7 @@ export async function PATCH(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -87,7 +84,7 @@ export async function PATCH(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", { status: err.status, message: err.message });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -115,23 +112,22 @@ export async function PATCH(
 
     if (!response.ok) {
       const error = response.error;
-      logger.error("Failed to update product", {
-        productId,
-        status: error.status,
-        message: error.message,
-      });
+      logger.error(
+        { productId, status: error.status, message: error.message },
+        "Failed to update product",
+      );
       return NextResponse.json({ ok: false, error }, { status: error.status });
     }
 
-    logger.info("Product updated", { productId });
+    logger.info({ productId }, "Product updated");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product update", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during product update",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -156,10 +152,7 @@ export async function DELETE(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -168,10 +161,7 @@ export async function DELETE(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -183,23 +173,22 @@ export async function DELETE(
 
     if (!response.ok) {
       const error = response.error;
-      logger.error("Failed to delete product", {
-        productId,
-        status: error.status,
-        message: error.message,
-      });
+      logger.error(
+        { productId, status: error.status, message: error.message },
+        "Failed to delete product",
+      );
       return NextResponse.json(response, { status: error.status });
     }
 
-    logger.info("Product deleted", { productId });
+    logger.info({ productId }, "Product deleted");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product deletion", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during product deletion",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

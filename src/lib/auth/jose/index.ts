@@ -47,7 +47,7 @@ export async function decrypt(
     })) as { payload: SessionPayload };
     return payload;
   } catch (error) {
-    logger.error("Failed to decrypt session:", error);
+    logger.error({ err: error }, "Failed to decrypt session");
     return undefined;
   }
 }

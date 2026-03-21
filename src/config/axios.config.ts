@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { baseRequestConfig } from "@config/axios/base-request.config";
-import { Logger } from "@config/loggers/default.logger";
+import { Logger } from "@config/logger.config";
 import {
   requestLoggerInterceptor,
   responseLoggerInterceptor,
@@ -12,9 +12,10 @@ export default function httpClient({ logger }: { logger: Logger }) {
   instance.interceptors.request.use(
     requestLoggerInterceptor(logger),
     (error: any) => {
-      logger.error("[SpringBoot API] [Request Interceptor error]:", {
-        error: error.message,
-      });
+      logger.error(
+        { error: error.message },
+        "[SpringBoot API] [Request Interceptor error]",
+      );
       return Promise.reject(error);
     },
   );
@@ -33,10 +34,10 @@ export default function httpClient({ logger }: { logger: Logger }) {
         // @ts-expect-error: false positive error, it is always a string
         message = error.response?.data ?? "";
       }
-      logger.error("[SpringBoot API] [Response Interceptor error]:", {
-        error: error.message,
-        message,
-      });
+      logger.error(
+        { error: error.message, message },
+        "[SpringBoot API] [Response Interceptor error]",
+      );
       return Promise.reject(error);
     },
   );

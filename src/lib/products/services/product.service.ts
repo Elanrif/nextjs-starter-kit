@@ -80,10 +80,10 @@ export async function fetchProducts(
       AxiosResponse<PageProduct<Product[]>>
     >(url);
 
-    logger.debug("Products fetched", { count: res.data?.content?.length || 0 });
+    logger.debug({ count: res.data?.content?.length || 0 }, "Products fetched");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch products", { filters });
+    logger.error({ filters }, "Failed to fetch products");
     return { ok: false, error: crudApiErrorResponse(error, "fetchProducts") };
   }
 }
@@ -106,7 +106,7 @@ export async function fetchProductById(
 
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch product", { id });
+    logger.error({ id }, "Failed to fetch product");
     return {
       ok: false,
       error: crudApiErrorResponse(error, "fetchProductById"),
@@ -136,13 +136,13 @@ export async function createProduct(
       AxiosResponse<Product>
     >(PRODUCTS_URL, parse.data);
 
-    logger.info("Product created successfully", {
-      id: res.data.id,
-      name: res.data.name,
-    });
+    logger.info(
+      { id: res.data.id, name: res.data.name },
+      "Product created successfully",
+    );
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to create product", { productName: product.name });
+    logger.error({ productName: product.name }, "Failed to create product");
     return { ok: false, error: crudApiErrorResponse(error, "createProduct") };
   }
 }
@@ -173,10 +173,10 @@ export async function updateProduct(
       AxiosResponse<Product>
     >(`${PRODUCTS_URL}/${id}`, parse.data);
 
-    logger.info("Product updated successfully", { id, name: res.data.name });
+    logger.info({ id, name: res.data.name }, "Product updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to update product", { id });
+    logger.error({ id }, "Failed to update product");
     return { ok: false, error: crudApiErrorResponse(error, "updateProduct") };
   }
 }
@@ -193,10 +193,10 @@ export async function deleteProduct(
 
   try {
     await apiClient(true, config).delete(`${PRODUCTS_URL}/${id}`);
-    logger.info("Product deleted successfully", { id });
+    logger.info({ id }, "Product deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {
-    logger.error("Failed to delete product", { id });
+    logger.error({ id }, "Failed to delete product");
     return { ok: false, error: crudApiErrorResponse(error, "deleteProduct") };
   }
 }

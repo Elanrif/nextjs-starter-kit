@@ -26,15 +26,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response, { status: error.status });
     }
 
-    logger.info("User signed in", { userId: response.data.id });
+    logger.info({ userId: response.data.id }, "User signed in");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
-    logger.error("Error during sign in", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error({ status, message: errMsg.message }, "Error during sign in");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

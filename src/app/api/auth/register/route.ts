@@ -26,15 +26,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(res, { status: error.status });
     }
 
-    logger.info("User registered", { userId: res.data.id });
+    logger.info({ userId: res.data.id }, "User registered");
     return NextResponse.json(res, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
-    logger.error("Error during registration", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during registration",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

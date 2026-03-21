@@ -38,10 +38,7 @@ export async function GET(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -50,10 +47,7 @@ export async function GET(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -64,11 +58,14 @@ export async function GET(
     const response = await fetchCategory(config, categoryId);
 
     if (!response.ok) {
-      logger.warn("Category not found", {
-        categoryId,
-        status: response.error.status,
-        message: response.error.message,
-      });
+      logger.warn(
+        {
+          categoryId,
+          status: response.error.status,
+          message: response.error.message,
+        },
+        "Category not found",
+      );
       return NextResponse.json(response.error, {
         status: response.error.status,
       });
@@ -78,10 +75,10 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategory");
     const status = errMsg.status || 500;
-    logger.warn("Error during category fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during category fetching",
+    );
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -106,10 +103,7 @@ export async function PATCH(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -118,10 +112,7 @@ export async function PATCH(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -134,25 +125,28 @@ export async function PATCH(
     const response = await updateCategory(config, categoryId, body);
 
     if (!response.ok) {
-      logger.warn("Failed to update category", {
-        categoryId,
-        status: response.error.status,
-        message: response.error.message,
-      });
+      logger.warn(
+        {
+          categoryId,
+          status: response.error.status,
+          message: response.error.message,
+        },
+        "Failed to update category",
+      );
       return NextResponse.json(response.error, {
         status: response.error.status,
       });
     }
 
-    logger.info("Category updated", { categoryId });
+    logger.info({ categoryId }, "Category updated");
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
     const status = errMsg.status || 500;
-    logger.warn("Error during category update", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during category update",
+    );
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -177,10 +171,7 @@ export async function DELETE(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -189,10 +180,7 @@ export async function DELETE(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -203,23 +191,26 @@ export async function DELETE(
     const result = await deleteCategory(config, categoryId);
 
     if (!result.ok) {
-      logger.warn("Failed to delete category", {
-        categoryId,
-        status: result.error.status,
-        message: result.error.message,
-      });
+      logger.warn(
+        {
+          categoryId,
+          status: result.error.status,
+          message: result.error.message,
+        },
+        "Failed to delete category",
+      );
       return NextResponse.json(result.error, { status: result.error.status });
     }
 
-    logger.info("Category deleted", { categoryId });
+    logger.info({ categoryId }, "Category deleted");
     return NextResponse.json(result.data, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
     const status = errMsg.status || 500;
-    logger.warn("Error during category deletion", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during category deletion",
+    );
     return NextResponse.json(errMsg, { status });
   }
 }

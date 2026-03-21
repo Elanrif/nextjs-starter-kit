@@ -78,13 +78,13 @@ export function crudApiErrorResponse(
     // Log as warn for non-5xx statuses to avoid noisy server errors
     if (apiError.status >= 500) {
       logger.error(
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
         apiError,
+        `Nodejs server [Axios Error] [${context ?? "unknown"}]`,
       );
     } else {
       logger.warn(
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
         apiError,
+        `Nodejs server [Axios Error] [${context ?? "unknown"}]`,
       );
     }
     return apiError;
@@ -98,8 +98,8 @@ export function crudApiErrorResponse(
   };
   // Non-Axios errors are always unexpected internal failures (status 500) → log as error
   logger.error(
-    `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
     fallbackError,
+    `Nodejs server [HTTP Error] [${context ?? "unknown"}]`,
   );
   return fallbackError;
 }
@@ -115,7 +115,7 @@ export function validationError(
   issues: ZodError["issues"],
   message: string,
 ): Result<never, CrudApiError> {
-  logger.warn(message, { errors: issues });
+  logger.warn({ errors: issues }, message);
   return {
     ok: false,
     error: { status: 400, message, error: "Bad Request", details: issues },

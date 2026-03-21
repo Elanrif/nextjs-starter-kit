@@ -45,7 +45,7 @@ export async function fetchCategories(
       unknown,
       AxiosResponse<Category[]>
     >(CATEGORIES_URL);
-    logger.debug("Categories fetched", { count: res.data.length });
+    logger.debug({ count: res.data.length }, "Categories fetched");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to fetch categories");
@@ -70,7 +70,7 @@ export async function fetchCategory(
     >(`${CATEGORIES_URL}/${id}`);
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch category", { id });
+    logger.error({ id }, "Failed to fetch category");
     return { ok: false, error: crudApiErrorResponse(error, "fetchCategory") };
   }
 }
@@ -91,13 +91,13 @@ export async function createCategory(
       unknown,
       AxiosResponse<Category>
     >(CATEGORIES_URL, parse.data);
-    logger.info("Category created successfully", {
-      id: res.data.id,
-      name: res.data.name,
-    });
+    logger.info(
+      { id: res.data.id, name: res.data.name },
+      "Category created successfully",
+    );
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to create category", { categoryName: category.name });
+    logger.error({ categoryName: category.name }, "Failed to create category");
     return { ok: false, error: crudApiErrorResponse(error, "createCategory") };
   }
 }
@@ -122,10 +122,10 @@ export async function updateCategory(
       unknown,
       AxiosResponse<Category>
     >(`${CATEGORIES_URL}/${id}`, parse.data);
-    logger.info("Category updated successfully", { id, name: res.data.name });
+    logger.info({ id, name: res.data.name }, "Category updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to update category", { id });
+    logger.error({ id }, "Failed to update category");
     return { ok: false, error: crudApiErrorResponse(error, "updateCategory") };
   }
 }
@@ -142,10 +142,10 @@ export async function deleteCategory(
 
   try {
     await apiClient(true, config).delete(`${CATEGORIES_URL}/${id}`);
-    logger.info("Category deleted successfully", { id });
+    logger.info({ id }, "Category deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {
-    logger.error("Failed to delete category", { id });
+    logger.error({ id }, "Failed to delete category");
     return { ok: false, error: crudApiErrorResponse(error, "deleteCategory") };
   }
 }

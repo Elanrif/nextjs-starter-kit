@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
  */
 transporter.verify((error, success) => {
   if (error) {
-    logger.error("Nodemailer transporter error:", error);
+    logger.error({ err: error }, "Nodemailer transporter error");
   } else {
     logger.info("Nodemailer transporter ready");
   }
@@ -115,13 +115,13 @@ export async function sendPasswordResetEmail(
     };
 
     const info = await transporter.sendMail(mailOptions);
-    logger.info("Password reset email sent", {
-      messageId: info.messageId,
-      to: email,
-    });
+    logger.info(
+      { messageId: info.messageId, to: email },
+      "Password reset email sent",
+    );
     return true;
   } catch (error) {
-    logger.error("Failed to send password reset email", { email, error });
+    logger.error({ email, err: error }, "Failed to send password reset email");
     return false;
   }
 }
@@ -165,10 +165,10 @@ export async function sendWelcomeEmail(
     };
 
     await transporter.sendMail(mailOptions);
-    logger.info("Welcome email sent", { to: email });
+    logger.info({ to: email }, "Welcome email sent");
     return true;
   } catch (error) {
-    logger.error("Failed to send welcome email", { email, error });
+    logger.error({ email, err: error }, "Failed to send welcome email");
     return false;
   }
 }

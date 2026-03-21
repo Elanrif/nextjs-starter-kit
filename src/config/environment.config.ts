@@ -41,16 +41,14 @@ const environment = {
   },
   log: {
     client: {
-      format: process.env.NEXT_PUBLIC_LOG_FORMAT || "simple",
-      level:
-        process.env.NEXT_PUBLIC_LOG_LEVEL || process.env.LOG_LEVEL || "info",
+      level: process.env.NEXT_PUBLIC_LOG_LEVEL || "info",
+      // "console" → browser devtools | "none" → silence all (useful in test/CI)
       output: process.env.NEXT_PUBLIC_LOG_OUTPUT || "console",
     },
     server: {
       file: {
         path: process.env.LOG_FILE_PATH,
       },
-      format: process.env.LOG_FORMAT || "simple",
       level: process.env.LOG_LEVEL || "info",
       output: process.env.LOG_OUTPUT || "console",
     },

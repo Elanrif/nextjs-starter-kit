@@ -51,7 +51,7 @@ export const getSession = cache(
         },
       };
     } catch (error) {
-      logger.error("Error retrieving session", error);
+      logger.error({ err: error }, "Error retrieving session");
       return { ok: false, error: crudApiErrorResponse(error) };
     }
   },
@@ -71,10 +71,7 @@ export const getCurrentUser = cache(
         status: 401,
         message: "You must be logged in",
       };
-      logger.warn("Unauthorized", {
-        status: err.status,
-        message: err.message,
-      });
+      logger.warn({ status: err.status, message: err.message }, "Unauthorized");
       return { ok: false, error: err };
     }
 

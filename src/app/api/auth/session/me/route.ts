@@ -18,10 +18,10 @@ export async function GET() {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "session");
     const status = errMsg.status || 500;
-    logger.error("Error during session verification", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during session verification",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

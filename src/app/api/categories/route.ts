@@ -36,10 +36,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategories");
     const status = errMsg.status || 500;
-    logger.error("Error during category fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during category fetching",
+    );
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -58,10 +58,7 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -70,10 +67,7 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json(err, { status: err.status });
   }
 
@@ -91,15 +85,15 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    logger.info("Category created", { categoryId: response.data.id });
+    logger.info({ categoryId: response.data.id }, "Category created");
     return NextResponse.json(response.data, { status: 201 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category creation", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during category creation",
+    );
     return NextResponse.json(errMsg, { status });
   }
 }

@@ -4,6 +4,10 @@ import { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Keep pino and pino-pretty as native Node modules — never bundled by webpack.
+  // This lets the logger.config.ts lazy-require work on the server,
+  // while the browser receives only the console fallback.
+  serverExternalPackages: ["pino", "pino-pretty"],
 
   async headers() {
     return [

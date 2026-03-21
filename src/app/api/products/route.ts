@@ -54,10 +54,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProducts");
     const status = errMsg.status || 500;
-    logger.error("Error during product fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during product fetching",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -76,10 +76,7 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Unauthorized");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -88,10 +85,7 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
-      status: err.status,
-      message: err.message,
-    });
+    logger.error({ status: err.status, message: err.message }, "Forbidden");
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -117,10 +111,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createProduct");
     const status = errMsg.status || 500;
-    logger.error("Error during product creation", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during product creation",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

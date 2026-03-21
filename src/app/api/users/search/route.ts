@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "searchUsersFilter");
     const status = errMsg.status || 500;
-    logger.error("Error during users search", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during users search",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

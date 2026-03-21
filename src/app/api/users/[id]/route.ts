@@ -40,10 +40,10 @@ export async function GET(
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchUserById");
     const status = errMsg.status || 500;
-    logger.error("Error during user fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during user fetching",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -75,15 +75,15 @@ export async function PATCH(
       const error = response.error;
       return NextResponse.json(response, { status: error.status });
     }
-    logger.info("User updated", { userId });
+    logger.info({ userId }, "User updated");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateUser");
     const status = errMsg.status || 500;
-    logger.error("Error during user update", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during user update",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -110,15 +110,15 @@ export async function DELETE(
       return NextResponse.json(response, { status: error.status });
     }
 
-    logger.info("User deleted", { userId });
+    logger.info({ userId }, "User deleted");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteUser");
     const status = errMsg.status || 500;
-    logger.error("Error during user deletion", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error(
+      { status, message: errMsg.message },
+      "Error during user deletion",
+    );
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

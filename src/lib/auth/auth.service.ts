@@ -67,10 +67,10 @@ export async function signIn(
       AxiosResponse<User>
     >(loginUrl, login);
     await createSession(data.id, data.email, data.role);
-    logger.info("User signed in successfully", { email: data.email });
+    logger.info({ email: data.email }, "User signed in successfully");
     return { ok: true, data };
   } catch (error) {
-    logger.error("Failed to sign in", { email: login.email });
+    logger.error({ email: login.email }, "Failed to sign in");
     return { ok: false, error: crudApiErrorResponse(error, "signIn") };
   }
 }
@@ -95,16 +95,16 @@ export async function signUp(
       registration,
     );
   } catch (error) {
-    logger.error("Failed to register user", { email: registration.email });
+    logger.error({ email: registration.email }, "Failed to register user");
     return { ok: false, error: crudApiErrorResponse(error, "signUp") };
   }
 
   const maybeUser = await signIn(registration, config);
   if (!maybeUser.ok) {
-    logger.error("Error after registration during sign in", {
-      email: registration.email,
-      message: maybeUser.error.message,
-    });
+    logger.error(
+      { email: registration.email, message: maybeUser.error.message },
+      "Error after registration during sign in",
+    );
     throw new Error(maybeUser.error.message);
   }
   return maybeUser;
@@ -127,13 +127,13 @@ export async function changeUserPassword(
     const url = `/${userId}`;
     const result = await apiClient(true, config) //
       .patch<any, AxiosResponse<User>>(url, body);
-    logger.info("changeUserPassword", { userId });
+    logger.info({ userId }, "changeUserPassword");
     return { ok: true, data: result.data };
   } catch (error: any) {
-    logger.error("Error during changeUserPassword", {
-      userId,
-      message: error.response?.data || error,
-    });
+    logger.error(
+      { userId, err: error.response?.data ?? error },
+      "Error during changeUserPassword",
+    );
     return {
       ok: false,
       error: crudApiErrorResponse(error, "changeUserPassword"),
@@ -160,10 +160,13 @@ export async function resetPassword(
       resetPasswordUrl,
       data,
     );
-    logger.info("Password reset successfully", { id: res.data.id });
+    logger.info({ id: res.data.id }, "Password reset successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error("Failed to reset password", error.response?.data || error);
+    logger.error(
+      { err: error.response?.data ?? error },
+      "Failed to reset password",
+    );
     return { ok: false, error: crudApiErrorResponse(error, "resetPassword") };
   }
 }
@@ -184,10 +187,13 @@ export async function editProfile(
       editProfileUrl,
       data,
     );
-    logger.info("Profile updated successfully", { id: res.data.id });
+    logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error("Failed to update profile", error.response?.data || error);
+    logger.error(
+      { err: error.response?.data ?? error },
+      "Failed to update profile",
+    );
     return { ok: false, error: crudApiErrorResponse(error, "editProfile") };
   }
 }
@@ -208,10 +214,13 @@ export async function changePasswordProfile(
       changeProfilePasswordUrl,
       data,
     );
-    logger.info("Profile updated successfully", { id: res.data.id });
+    logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error("Failed to update profile", error.response?.data || error);
+    logger.error(
+      { err: error.response?.data ?? error },
+      "Failed to update profile",
+    );
     return {
       ok: false,
       error: crudApiErrorResponse(error, "changeProfilePassword"),
