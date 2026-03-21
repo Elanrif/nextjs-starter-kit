@@ -10,7 +10,7 @@ import {
 import {
   CrudApiError,
   crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import {
   ChangePasswordProfileFormData,
   Login,

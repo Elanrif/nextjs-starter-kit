@@ -9,7 +9,25 @@ import {
   ProductFiltersParams,
   PageProduct,
 } from "@/lib/products/models/product.model";
-import { buildProductsUrl } from "./product.service";
+
+function buildProductsUrl(
+  baseUrl: string,
+  filters?: ProductFiltersParams,
+): string {
+  if (!filters || Object.keys(filters).length === 0) return baseUrl;
+  const params = new URLSearchParams();
+  const entries: Array<[keyof ProductFiltersParams, string]> = [
+    ["search", "search"],
+    ["categoryId", "categoryId"],
+    ["sortBy", "sortBy"],
+  ];
+  for (const [key, param] of entries) {
+    if (filters[key] !== undefined) params.append(param, String(filters[key]));
+  }
+  if (filters.isActive !== undefined)
+    params.append("isActive", String(filters.isActive));
+  return `${baseUrl}?${params}`;
+}
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.

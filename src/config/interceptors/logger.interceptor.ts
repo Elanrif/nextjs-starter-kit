@@ -8,8 +8,8 @@ export const requestLoggerInterceptor =
       { method: config.method?.toUpperCase(), url: config.url },
       "Request",
     );
-    logger.debug({ headers: config.headers }, "Request headers");
-    logger.debug({ data: config.data }, "Request data");
+    // logger.debug({ headers: config.headers }, "Request headers");
+    // logger.debug({ data: config.data }, "Request data");
     return config;
   };
 
@@ -24,7 +24,7 @@ export const responseLoggerInterceptor =
       },
       "Response from xxx",
     );
-    logger.debug({ headers: response.headers }, "Response headers");
-    logger.debug({ data: response.data }, "Response data");
+    // logger.debug({ headers: response.headers }, "Response headers");
+    // logger.debug({ data: response.data }, "Response data");
     return response;
   };

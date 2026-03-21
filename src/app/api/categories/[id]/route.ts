@@ -6,7 +6,7 @@ import {
 } from "@/lib/categories/services/category.service";
 import { CategoryUpdate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");

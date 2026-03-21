@@ -2,8 +2,8 @@ import { fetchAllUsers, createUser } from "@lib/users/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { parseUserCreate } from "@/lib/users/models/user.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { validationError } from "@/utils/utils";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
+import { validationError } from "@/utils/utils.server";
 
 const logger = getLogger("server");
 

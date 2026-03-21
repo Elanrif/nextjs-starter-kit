@@ -1,109 +1,23 @@
-import { getLogger } from "@/config/logger.config";
-import { AxiosError } from "axios";
-
-const logger = getLogger("server");
-
-/*
- * ApiError class to represent API errors in a structured way.
- * This can be used to throw and handle errors consistently
- * across your application when making API calls.
- *
+/**
+ * Shared error types and helpers — safe to import in both server and client code.
+ * Do NOT add any server-only imports (pino, server actions, etc.) to this file.
  */
-export class ApiError extends Error {
-  public timestamp: string;
-  public error: string;
 
-  constructor(
-    message: string,
-    public status: number,
-    error?: string,
-  ) {
-    super(message);
-    this.name = "ApiError";
-    this.timestamp = new Date().toISOString();
-    this.error = error || (status === 400 ? "Bad Request" : "Error");
-  }
-
-  get statusCode() {
-    return this.status;
-  }
-
-  set statusCode(value) {
-    this.status = value;
-  }
-
-  get errorType() {
-    return this.error;
-  }
-
-  set errorType(value) {
-    this.error = value;
-  }
-}
-
-/*
- * ApiError reponse format from the API SPRING BOOT
- * You can customize this based on your API response structure.
- */
+/** Error shape returned by the Spring Boot API. */
 export type CrudApiError = {
   timestamp?: string;
-  error: string; // errorType e.g., "Bad Request", "Unauthorized", etc.
+  error: string; // e.g. "Bad Request", "Unauthorized"
   status: number; // HTTP status code
-  message: string; // error message from the API
-  details?: unknown; // optional validation details (e.g. Zod issues)
+  message: string; // human-readable error message
+  details?: unknown; // optional Zod validation issues
 };
 
-/**
- * Converts any caught error into a structured CrudApiError.
- * Handles both Axios errors and generic JS errors safely.
- */
-export function crudApiErrorResponse(
-  error: unknown,
-  context?: string,
-): CrudApiError {
-  // Runtime check: is it really an Axios error?
-  if (error instanceof AxiosError) {
-    const apiError: CrudApiError = error.response?.data || {
-      status: error.response?.status ?? 500,
-      message: error.message || "Unknown Axios error",
-      error: "Error",
-      timestamp: new Date().toISOString(),
-    };
-    // Log as warn for non-5xx statuses to avoid noisy server errors
-    if (apiError.status >= 500) {
-      logger.error(
-        apiError,
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]`,
-      );
-    } else {
-      logger.warn(
-        apiError,
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]`,
-      );
-    }
-    return apiError;
-  }
-
-  const fallbackError: CrudApiError = {
-    status: 500,
-    message: (error as Error)?.message || "Unknown error",
-    error: "Internal Error",
-    timestamp: new Date().toISOString(),
-  };
-  // Non-Axios errors are always unexpected internal failures (status 500) → log as error
-  logger.error(
-    fallbackError,
-    `Nodejs server [HTTP Error] [${context ?? "unknown"}]`,
-  );
-  return fallbackError;
-}
-
-// Generic Result type for API responses, can be used to represent success or error outcomes
+/** Discriminated union for API responses — use `res.ok` to narrow. */
 export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };
 
 /**
- * Type guard for the T | CrudApiError union pattern (used by category client service).
- * Use this instead of `"error" in res` — it narrows the type correctly.
+ * Type guard for the `T | CrudApiError` union pattern.
+ * Use instead of `"error" in res` — narrows the type correctly.
  *
  * @example
  * const res = await fetchCategories();
@@ -118,4 +32,37 @@ export function isCrudError(value: unknown): value is CrudApiError {
     "status" in value &&
     "message" in value
   );
+}
+
+/**
+ * Error class for programmatic API errors (e.g. thrown in interceptors).
+ * Provides `statusCode` and `errorType` accessors.
+ */
+export class ApiError extends Error {
+  public timestamp: string;
+  public error: string;
+
+  constructor(
+    message: string,
+    public status: number,
+    error?: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.timestamp = new Date().toISOString();
+    this.error = error ?? (status === 400 ? "Bad Request" : "Error");
+  }
+
+  get statusCode() {
+    return this.status;
+  }
+  set statusCode(value) {
+    this.status = value;
+  }
+  get errorType() {
+    return this.error;
+  }
+  set errorType(value) {
+    this.error = value;
+  }
 }

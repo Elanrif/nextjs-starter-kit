@@ -1,11 +1,7 @@
 "use client";
 
 import { Session } from "@/lib/auth/models/auth.model";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error";
+import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const SESSION_QUERY_KEY = ["session"];
@@ -29,7 +25,11 @@ const fetcher = async (): Promise<Result<Session, CrudApiError>> => {
     const errorData = await res
       .json()
       .catch(() => ({ message: "Failed to fetch session" }));
-    throw crudApiErrorResponse(errorData, "fetchSession");
+    throw {
+      error: errorData.error ?? "Error",
+      status: errorData.status ?? res.status,
+      message: errorData.message ?? "Failed to fetch session",
+    } as CrudApiError;
   }
 
   const session: Result<Session, CrudApiError> = await res.json();

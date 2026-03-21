@@ -8,7 +8,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import {
   Category,
   CategoryCreate,
@@ -16,7 +16,7 @@ import {
   parseCategoryCreate,
   parseCategoryUpdate,
 } from "@lib/categories/models/category.model";
-import { validateId, validationError } from "@/utils/utils";
+import { validateId, validationError } from "@/utils/utils.server";
 
 /**
  * ⚠️ Never trust the client input

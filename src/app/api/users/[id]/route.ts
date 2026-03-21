@@ -6,8 +6,8 @@ import {
   deleteUser,
 } from "@/lib/users/services/user.service";
 import { parseUserUpdate } from "@/lib/users/models/user.model";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import { validationError } from "@/utils/utils";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
+import { validationError } from "@/utils/utils.server";
 
 const logger = getLogger("server");
 

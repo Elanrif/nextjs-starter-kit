@@ -12,7 +12,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import { getLogger } from "@/config/logger.config";
 import {
   ChangePasswordProfileFormData,
@@ -25,7 +25,7 @@ import {
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
 import { createSession } from "@lib/auth/jose";
-import { validateId, validationError } from "@/utils/utils";
+import { validateId, validationError } from "@/utils/utils.server";
 
 /**
  * ⚠️ Never trust the client input

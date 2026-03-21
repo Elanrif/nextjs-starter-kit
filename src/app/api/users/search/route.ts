@@ -1,7 +1,7 @@
 import { searchUsersFilter } from "@lib/users/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 
 const logger = getLogger("server");
 

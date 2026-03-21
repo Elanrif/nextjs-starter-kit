@@ -19,6 +19,7 @@ const { DASHBOARD, USERS } = ROUTES;
 export function UserList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { id: currentUserId } = useAuthUser();
   const { data: users = [], isLoading } = useUsers();
@@ -27,6 +28,7 @@ export function UserList() {
 
   const handleDelete = () => {
     if (!deleteId) return;
+    setDeleteError(null);
     remove(deleteId, {
       onSuccess: () => {
         setModalOpen(false);
@@ -34,9 +36,7 @@ export function UserList() {
         toast.success("Utilisateur supprimé avec succès");
       },
       onError: (error) => {
-        setModalOpen(false);
-        setDeleteId(null);
-        toast.error(
+        setDeleteError(
           error instanceof Error
             ? error.message
             : "Erreur lors de la suppression",
@@ -184,9 +184,14 @@ export function UserList() {
 
         <ConfirmModal
           open={modalOpen}
-          onCancel={() => setModalOpen(false)}
+          onCancel={() => {
+            setModalOpen(false);
+            setDeleteError(null);
+            setDeleteId(null);
+          }}
           onConfirm={handleDelete}
           loading={deleteLoading}
+          error={deleteError ?? undefined}
           title="Supprimer cet utilisateur ?"
           description="Cette action est irréversible. L'utilisateur sera définitivement supprimé."
         />

@@ -10,10 +10,8 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
-      <body className="min-h-screen flex items-center justify-center bg-gray-50">
-        <ErrorPage error={error} reset={reset} />
-      </body>
-    </html>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <ErrorPage error={error} reset={reset} />
+    </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import { CurrentUser, Session } from "@lib/auth/models/auth.model";
 import { ApiError } from "next/dist/server/api-utils";
 import { decrypt } from ".";

@@ -8,7 +8,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import {
   Product,
   ProductCreate,
@@ -18,7 +18,7 @@ import {
   parseProductCreate,
   parseProductUpdate,
 } from "@/lib/products/models/product.model";
-import { validateId, validationError } from "@/utils/utils";
+import { validateId, validationError } from "@/utils/utils.server";
 
 /**
  * ⚠️ Never trust the client input

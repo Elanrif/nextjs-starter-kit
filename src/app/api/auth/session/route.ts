@@ -4,7 +4,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import { Session } from "@/lib/auth/models/auth.model";
 import { getSession } from "@/lib/auth/jose/jose.service";
 

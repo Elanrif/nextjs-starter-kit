@@ -29,6 +29,7 @@ const { DASHBOARD, PRODUCTS } = ROUTES;
 export function ProductList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { data, isLoading } = useProducts();
   const products = data?.content ?? [];
@@ -36,6 +37,7 @@ export function ProductList() {
 
   const handleDelete = () => {
     if (!deleteId) return;
+    setDeleteError(null);
     remove(deleteId, {
       onSuccess: () => {
         setModalOpen(false);
@@ -43,9 +45,7 @@ export function ProductList() {
         toast.success("Produit supprimé avec succès");
       },
       onError: (err) => {
-        setModalOpen(false);
-        setDeleteId(null);
-        toast.error(
+        setDeleteError(
           err instanceof Error ? err.message : "Erreur lors de la suppression",
         );
       },
@@ -200,9 +200,14 @@ export function ProductList() {
 
         <ConfirmModal
           open={modalOpen}
-          onCancel={() => setModalOpen(false)}
+          onCancel={() => {
+            setModalOpen(false);
+            setDeleteError(null);
+            setDeleteId(null);
+          }}
           onConfirm={handleDelete}
           loading={deleteLoading}
+          error={deleteError ?? undefined}
           title="Supprimer ce produit ?"
           description="Cette action est irréversible. Le produit sera définitivement supprimé."
         />

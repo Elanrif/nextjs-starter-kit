@@ -6,7 +6,15 @@ import { SignOutButton } from "@/components/features/auth/sign-out-button";
 import { ROUTES } from "@/utils/routes";
 import { useSession } from "@/hooks/use.session";
 import Logo from "./logo";
-import { Mail, LayoutDashboard, LogIn, UserPlus, Menu, X } from "lucide-react";
+import {
+  Mail,
+  LayoutDashboard,
+  LogIn,
+  UserPlus,
+  Menu,
+  X,
+  UserCheck,
+} from "lucide-react";
 
 const navLinks = [
   { href: "#features", label: "Fonctionnalités" },
@@ -89,13 +97,23 @@ export function Header() {
               if (session && session.ok && !error) {
                 return (
                   <>
-                    <Link
-                      href={DASHBOARD}
-                      className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${dashboardClass}`}
-                    >
-                      <LayoutDashboard className="w-3.5 h-3.5" />
-                      Dashboard
-                    </Link>
+                    {session.data.user.role === "admin" ? (
+                      <Link
+                        href={DASHBOARD}
+                        className={`flex items-center border border-white gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${dashboardClass}`}
+                      >
+                        <LayoutDashboard className="w-3.5 h-3.5" />
+                        Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        href={DASHBOARD}
+                        className={`flex items-center text-cyan-400 border border-white gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${dashboardClass}`}
+                      >
+                        <UserCheck className="w-3.5 h-3.5" />
+                        Mon compte
+                      </Link>
+                    )}
                     <SignOutButton
                       variant="destructive"
                       onSignOut={invalidate}

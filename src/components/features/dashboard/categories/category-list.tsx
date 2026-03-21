@@ -26,6 +26,7 @@ export function CategoryList({
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -43,16 +44,24 @@ export function CategoryList({
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleteLoading(true);
-    const res = await deleteCategory(deleteId);
-    setDeleteLoading(false);
-    setModalOpen(false);
-    if (isCrudError(res)) {
-      toast.error(res.message ?? "Erreur lors de la suppression");
-    } else {
-      setCategories((prev) => prev.filter((c) => c.id !== deleteId));
-      toast.success("Catégorie supprimée avec succès");
+    setDeleteError(null);
+    try {
+      const res = await deleteCategory(deleteId);
+      if (isCrudError(res)) {
+        setDeleteError(res.message ?? "Erreur lors de la suppression");
+      } else {
+        setModalOpen(false);
+        setDeleteId(null);
+        setCategories((prev) => prev.filter((c) => c.id !== deleteId));
+        toast.success("Catégorie supprimée avec succès");
+      }
+    } catch {
+      setDeleteError(
+        "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      );
+    } finally {
+      setDeleteLoading(false);
     }
-    setDeleteId(null);
   };
 
   const columns: DataTableColumn<Category>[] = [
@@ -180,9 +189,14 @@ export function CategoryList({
 
         <ConfirmModal
           open={modalOpen}
-          onCancel={() => setModalOpen(false)}
+          onCancel={() => {
+            setModalOpen(false);
+            setDeleteError(null);
+            setDeleteId(null);
+          }}
           onConfirm={handleDelete}
           loading={deleteLoading}
+          error={deleteError ?? undefined}
           title="Supprimer cette catégorie ?"
           description="Cette action est irréversible. La catégorie sera définitivement supprimée."
         />

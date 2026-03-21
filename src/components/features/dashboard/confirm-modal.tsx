@@ -1,8 +1,9 @@
+/* eslint-disable unicorn/no-nested-ternary */
 "use client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { ReactNode } from "react";
-import { AlertTriangle, Trash2, X } from "lucide-react";
+import { AlertTriangle, RefreshCw, Trash2, X } from "lucide-react";
 
 type ConfirmModalProps = {
   open: boolean;
@@ -13,6 +14,7 @@ type ConfirmModalProps = {
   loading?: boolean;
   confirmText?: string;
   cancelText?: string;
+  error?: string;
   children?: ReactNode;
 };
 
@@ -25,6 +27,7 @@ export function ConfirmModal({
   loading,
   confirmText = "Supprimer",
   cancelText = "Annuler",
+  error,
   children,
 }: ConfirmModalProps) {
   return (
@@ -42,9 +45,9 @@ export function ConfirmModal({
           <button
             onClick={onCancel}
             disabled={loading}
-            className="absolute top-3 right-3 p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
+            className="absolute top-3 right-3 p-1.5 rounded-lg text-white hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" color="white" />
           </button>
 
           {/* Icon */}
@@ -68,15 +71,28 @@ export function ConfirmModal({
           <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
 
           {/* Warning box */}
-          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-50 border border-red-100">
-            <Trash2 className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-            <p className="text-xs text-red-700 leading-relaxed">
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-100">
+            <Trash2 className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700 leading-relaxed">
               Une fois supprimé, cet élément ne pourra pas être restauré.
               Veuillez confirmer votre choix.
             </p>
           </div>
 
           {children}
+
+          {/* Error message */}
+          {error && (
+            <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-50 border border-red-200">
+              <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-red-700 mb-0.5">
+                  Échec de l&apos;opération
+                </p>
+                <p className="text-xs text-red-600 leading-relaxed">{error}</p>
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-3 pt-1">
@@ -94,8 +110,12 @@ export function ConfirmModal({
               disabled={loading}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
             >
-              <Trash2 className="w-4 h-4" />
-              {loading ? "Suppression..." : confirmText}
+              {error ? (
+                <RefreshCw className="w-4 h-4" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              {loading ? "Suppression..." : error ? "Réessayer" : confirmText}
             </button>
           </div>
         </div>
