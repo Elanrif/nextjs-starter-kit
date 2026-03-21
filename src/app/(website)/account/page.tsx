@@ -30,9 +30,7 @@ export default async function AccountPage() {
   const { session, user } = response.data;
 
   const initials =
-    user.firstName?.slice(0, 2).toUpperCase() ||
-    user.email?.slice(0, 2).toUpperCase() ||
-    "U";
+    user.firstName?.slice(0, 2).toUpperCase() || user.email?.slice(0, 2).toUpperCase() || "U";
 
   const memberSince = user.createdAt
     ? new Date(user.createdAt).toLocaleDateString("fr-FR", {
@@ -52,18 +50,34 @@ export default async function AccountPage() {
   return (
     <div className="min-h-screen p-6 space-y-6 max-w-7xl mx-auto">
       {/* Profile Hero Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-8 shadow-2xl">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-16 -left-8 h-48 w-48 rounded-full bg-blue-500/20 blur-3xl" />
+      <div
+        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
+          via-indigo-950 to-slate-900 p-8 shadow-2xl"
+      >
+        <div
+          className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full
+            bg-indigo-500/20 blur-3xl"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-16 -left-8 h-48 w-48 rounded-full
+            bg-blue-500/20 blur-3xl"
+        />
 
         <div className="relative flex items-center gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div className="h-20 w-20 rounded-2xl bg-linear-to-br from-indigo-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-2 ring-white/10">
+            <div
+              className="h-20 w-20 rounded-2xl bg-linear-to-br from-indigo-400 to-blue-600 flex
+                items-center justify-center text-white text-2xl font-bold shadow-lg ring-2
+                ring-white/10"
+            >
               {initials}
             </div>
             {user.emailVerified && (
-              <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 flex items-center justify-center ring-2 ring-slate-900">
+              <div
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 flex
+                  items-center justify-center ring-2 ring-slate-900"
+              >
                 <CheckCircle2 className="w-3 h-3 text-white" />
               </div>
             )}
@@ -76,7 +90,12 @@ export default async function AccountPage() {
                 {user.firstName} {user.lastName}
               </h1>
               <span
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${user.role === "ADMIN" ? "bg-indigo-500/30 text-indigo-300 ring-1 ring-indigo-400/30" : "bg-white/10 text-white/70"}`}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs
+                  font-semibold ${
+                    user.role === "ADMIN"
+                      ? "bg-indigo-500/30 text-indigo-300 ring-1 ring-indigo-400/30"
+                      : "bg-white/10 text-white/70"
+                  }`}
               >
                 {user.role === "ADMIN" && <Shield className="w-3 h-3" />}
                 {user.role}
@@ -92,7 +111,8 @@ export default async function AccountPage() {
           {/* Edit button */}
           <Link
             href={ROUTES.EDIT_PROFILE}
-            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors backdrop-blur-sm"
+            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10
+              hover:bg-white/20 text-white text-sm font-medium transition-colors backdrop-blur-sm"
           >
             <Pencil className="w-3.5 h-3.5" />
             Modifier
@@ -107,9 +127,7 @@ export default async function AccountPage() {
             <div className="p-2 rounded-lg bg-blue-50">
               <Fingerprint className="w-4 h-4 text-blue-600" />
             </div>
-            <h2 className="text-sm font-semibold text-gray-800">
-              Session active
-            </h2>
+            <h2 className="text-sm font-semibold text-gray-800">Session active</h2>
           </div>
 
           <div className="space-y-3">
@@ -118,9 +136,7 @@ export default async function AccountPage() {
                 <Clock className="w-3.5 h-3.5 shrink-0" />
                 <span>Expire le</span>
               </div>
-              <span className="text-xs font-medium text-gray-700 text-right">
-                {sessionExpires}
-              </span>
+              <span className="text-xs font-medium text-gray-700 text-right">{sessionExpires}</span>
             </div>
             <div className="h-px bg-gray-50" />
             <div className="flex items-start justify-between gap-2">
@@ -141,9 +157,7 @@ export default async function AccountPage() {
             <div className="p-2 rounded-lg bg-violet-50">
               <Mail className="w-4 h-4 text-violet-600" />
             </div>
-            <h2 className="text-sm font-semibold text-gray-800">
-              Vérification
-            </h2>
+            <h2 className="text-sm font-semibold text-gray-800">Vérification</h2>
           </div>
 
           <div className="flex items-center justify-between">
@@ -154,12 +168,18 @@ export default async function AccountPage() {
               </p>
             </div>
             {user.emailVerified ? (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50
+                  text-emerald-700 text-xs font-semibold"
+              >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Vérifié
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50
+                  text-amber-700 text-xs font-semibold"
+              >
                 <AlertCircle className="w-3.5 h-3.5" />
                 Non vérifié
               </div>
@@ -171,9 +191,7 @@ export default async function AccountPage() {
       {/* Quick Actions */}
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-50">
-          <h2 className="text-sm font-semibold text-gray-800">
-            Paramètres du compte
-          </h2>
+          <h2 className="text-sm font-semibold text-gray-800">Paramètres du compte</h2>
         </div>
         <div className="divide-y divide-gray-50">
           {[
@@ -205,7 +223,8 @@ export default async function AccountPage() {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/80 transition-colors group"
+              className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/80 transition-colors
+                group"
             >
               <div className={`${bg} ${color} p-2.5 rounded-xl shrink-0`}>
                 <Icon className="w-4 h-4" />
@@ -214,7 +233,10 @@ export default async function AccountPage() {
                 <p className="text-sm font-medium text-gray-800">{label}</p>
                 <p className="text-xs text-gray-400">{desc}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors shrink-0" />
+              <ChevronRight
+                className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors
+                  shrink-0"
+              />
             </Link>
           ))}
         </div>

@@ -10,10 +10,7 @@ import {
   PageProduct,
 } from "@/lib/products/models/product.model";
 
-function buildProductsUrl(
-  baseUrl: string,
-  filters?: ProductFiltersParams,
-): string {
+function buildProductsUrl(baseUrl: string, filters?: ProductFiltersParams): string {
   if (!filters || Object.keys(filters).length === 0) return baseUrl;
   const params = new URLSearchParams();
   const entries: Array<[keyof ProductFiltersParams, string]> = [
@@ -24,8 +21,7 @@ function buildProductsUrl(
   for (const [key, param] of entries) {
     if (filters[key] !== undefined) params.append(param, String(filters[key]));
   }
-  if (filters.isActive !== undefined)
-    params.append("isActive", String(filters.isActive));
+  if (filters.isActive !== undefined) params.append("isActive", String(filters.isActive));
   return `${baseUrl}?${params}`;
 }
 
@@ -59,13 +55,10 @@ export async function fetchProducts(
 /**
  * Fetch a single product by ID (client-side)
  */
-export async function fetchProduct(
-  id: number,
-): Promise<Result<Product, CrudApiError>> {
-  const res = await frontendHttp().get<
-    unknown,
-    AxiosResponse<Result<Product, CrudApiError>>
-  >(`${PRODUCTS_URL}/${id}`);
+export async function fetchProduct(id: number): Promise<Result<Product, CrudApiError>> {
+  const res = await frontendHttp().get<unknown, AxiosResponse<Result<Product, CrudApiError>>>(
+    `${PRODUCTS_URL}/${id}`,
+  );
   return res.data;
 }
 
@@ -75,10 +68,10 @@ export async function fetchProduct(
 export async function createProduct(
   product: ProductCreate,
 ): Promise<Result<Product, CrudApiError>> {
-  const res = await frontendHttp().post<
-    unknown,
-    AxiosResponse<Result<Product, CrudApiError>>
-  >(PRODUCTS_URL, product);
+  const res = await frontendHttp().post<unknown, AxiosResponse<Result<Product, CrudApiError>>>(
+    PRODUCTS_URL,
+    product,
+  );
   // data is the type of AxiosResponse's data
   return res.data;
 }
@@ -90,10 +83,10 @@ export async function updateProduct(
   id: number,
   product: ProductUpdate,
 ): Promise<Result<Product, CrudApiError>> {
-  const res = await frontendHttp().patch<
-    unknown,
-    AxiosResponse<Result<Product, CrudApiError>>
-  >(`${PRODUCTS_URL}/${id}`, product);
+  const res = await frontendHttp().patch<unknown, AxiosResponse<Result<Product, CrudApiError>>>(
+    `${PRODUCTS_URL}/${id}`,
+    product,
+  );
   // data is the type of AxiosResponse's data
   return res.data;
 }

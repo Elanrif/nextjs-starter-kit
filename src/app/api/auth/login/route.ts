@@ -19,15 +19,22 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const response = await auth.api.signIn({ body, config });
+    const response = await auth.api.signIn({
+      body,
+      config,
+    });
 
     if (!response.ok) {
       const error = response.error;
-      return NextResponse.json(response, { status: error.status });
+      return NextResponse.json(response, {
+        status: error.status,
+      });
     }
 
     logger.info({ userId: response.data.id }, "User signed in");
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;

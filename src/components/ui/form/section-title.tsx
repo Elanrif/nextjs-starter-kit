@@ -1,10 +1,4 @@
-export function SectionTitle({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
+export function SectionTitle({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
       <div className="text-gray-400">{icon}</div>

@@ -26,14 +26,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchAllUser");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during user fetching",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during user fetching");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -47,7 +46,9 @@ export async function POST(request: NextRequest) {
   const parsed = parseUserCreate(body);
   if (!parsed.success) {
     const err = validationError(parsed.error.issues, "Invalid user data");
-    return NextResponse.json(err, { status: 400 });
+    return NextResponse.json(err, {
+      status: 400,
+    });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -59,17 +60,18 @@ export async function POST(request: NextRequest) {
     const response = await createUser(config, parsed.data as any);
 
     if (!response.ok) {
-      return NextResponse.json(response, { status: response.error.status });
+      return NextResponse.json(response, {
+        status: response.error.status,
+      });
     }
 
-    return NextResponse.json(response, { status: 201 });
+    return NextResponse.json(response, {
+      status: 201,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createUser");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during user creation",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during user creation");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

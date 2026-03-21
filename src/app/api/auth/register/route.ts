@@ -19,22 +19,26 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const res = await auth.api.signUp({ body, config });
+    const res = await auth.api.signUp({
+      body,
+      config,
+    });
 
     if (!res.ok) {
       const error = res.error;
-      return NextResponse.json(res, { status: error.status });
+      return NextResponse.json(res, {
+        status: error.status,
+      });
     }
 
     logger.info({ userId: res.data.id }, "User registered");
-    return NextResponse.json(res, { status: 201 });
+    return NextResponse.json(res, {
+      status: 201,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during registration",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during registration");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

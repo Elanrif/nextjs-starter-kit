@@ -87,7 +87,11 @@ export default defineConfig([
       "no-empty": "error",
       "no-implicit-coercion": [
         "error",
-        { boolean: false, number: true, string: true },
+        {
+          boolean: false,
+          number: true,
+          string: true,
+        },
       ],
       "no-underscore-dangle": "off",
       "no-continue": "off",
@@ -113,17 +117,15 @@ export default defineConfig([
       ],
       "no-plusplus": ["warn", { allowForLoopAfterthoughts: true }],
       "no-param-reassign": ["error", { props: false }],
-      "no-restricted-syntax": [
-        "error",
-        "ForInStatement",
-        "LabeledStatement",
-        "WithStatement",
-      ],
+      "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
       "@typescript-eslint/no-explicit-any": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
       ],
       "import/first": "error",
       "import/newline-after-import": "error",
@@ -153,7 +155,9 @@ export default defineConfig([
       "react/no-typos": "warn",
       "react/function-component-definition": [
         "off",
-        { namedComponents: "function-declaration" },
+        {
+          namedComponents: "function-declaration",
+        },
       ],
       "react/jsx-key": [
         "error",
@@ -164,13 +168,7 @@ export default defineConfig([
         },
       ],
     },
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-    ],
+    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"],
   },
 
   {

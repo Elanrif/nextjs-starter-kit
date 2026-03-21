@@ -22,10 +22,7 @@ type Params = Promise<{ id: string }>;
  * ℹ️ Pattern: returns unwrapped T | CrudApiError (contrast with /api/users which returns Result<T,E>)
  * The client service uses an `isCrudError()` type guard to distinguish success from error.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Params },
-) {
+export async function GET(request: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -38,8 +35,16 @@ export async function GET(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error({ status: err.status, message: err.message }, "Unauthorized");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Unauthorized",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -47,8 +52,16 @@ export async function GET(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error({ status: err.status, message: err.message }, "Forbidden");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Forbidden",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -71,14 +84,13 @@ export async function GET(
       });
     }
 
-    return NextResponse.json(response.data, { status: 200 });
+    return NextResponse.json(response.data, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategory");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during category fetching",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during category fetching");
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -87,10 +99,7 @@ export async function GET(
  * PATCH /api/categories/[id]
  * Update a category (requires authentication)
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Params },
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -103,8 +112,16 @@ export async function PATCH(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error({ status: err.status, message: err.message }, "Unauthorized");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Unauthorized",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -112,8 +129,16 @@ export async function PATCH(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error({ status: err.status, message: err.message }, "Forbidden");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Forbidden",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   const body = (await request.json()) as CategoryUpdate;
@@ -139,14 +164,13 @@ export async function PATCH(
     }
 
     logger.info({ categoryId }, "Category updated");
-    return NextResponse.json(response.data, { status: 200 });
+    return NextResponse.json(response.data, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "updateCategory");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during category update",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during category update");
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -155,10 +179,7 @@ export async function PATCH(
  * DELETE /api/categories/[id]
  * Delete a category (requires authentication)
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Params },
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
   const categoryId = Number.parseInt(id, 10);
 
@@ -171,8 +192,16 @@ export async function DELETE(
       status: 401,
       message: "You must be logged in",
     };
-    logger.error({ status: err.status, message: err.message }, "Unauthorized");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Unauthorized",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -180,8 +209,16 @@ export async function DELETE(
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error({ status: err.status, message: err.message }, "Forbidden");
-    return NextResponse.json(err, { status: err.status });
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Forbidden",
+    );
+    return NextResponse.json(err, {
+      status: err.status,
+    });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -199,18 +236,19 @@ export async function DELETE(
         },
         "Failed to delete category",
       );
-      return NextResponse.json(result.error, { status: result.error.status });
+      return NextResponse.json(result.error, {
+        status: result.error.status,
+      });
     }
 
     logger.info({ categoryId }, "Category deleted");
-    return NextResponse.json(result.data, { status: 200 });
+    return NextResponse.json(result.data, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "deleteCategory");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during category deletion",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during category deletion");
     return NextResponse.json(errMsg, { status });
   }
 }

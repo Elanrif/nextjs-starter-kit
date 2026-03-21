@@ -23,13 +23,12 @@ export function ErrorPage({
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
         <p className="text-gray-500 max-w-md">{message}</p>
-        {error.digest && (
-          <p className="text-xs text-gray-400 font-mono">ID: {error.digest}</p>
-        )}
+        {error.digest && <p className="text-xs text-gray-400 font-mono">ID: {error.digest}</p>}
       </div>
       <button
         onClick={reset}
-        className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg
+          transition-colors"
       >
         Réessayer
       </button>

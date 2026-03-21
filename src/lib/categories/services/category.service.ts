@@ -36,19 +36,19 @@ const logger = getLogger("server");
 /**
  * Fetch all categories
  */
-export async function fetchCategories(
-  config: Config,
-): Promise<Result<Category[], CrudApiError>> {
+export async function fetchCategories(config: Config): Promise<Result<Category[], CrudApiError>> {
   try {
-    const res = await apiClient(true, config).get<
-      unknown,
-      AxiosResponse<Category[]>
-    >(CATEGORIES_URL);
+    const res = await apiClient(true, config).get<unknown, AxiosResponse<Category[]>>(
+      CATEGORIES_URL,
+    );
     logger.debug({ count: res.data.length }, "Categories fetched");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error("Failed to fetch categories");
-    return { ok: false, error: crudApiErrorResponse(error, "fetchCategories") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "fetchCategories"),
+    };
   }
 }
 
@@ -63,14 +63,16 @@ export async function fetchCategory(
   if (idError) return idError;
 
   try {
-    const res = await apiClient(true, config).get<
-      unknown,
-      AxiosResponse<Category>
-    >(`${CATEGORIES_URL}/${id}`);
+    const res = await apiClient(true, config).get<unknown, AxiosResponse<Category>>(
+      `${CATEGORIES_URL}/${id}`,
+    );
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ id }, "Failed to fetch category");
-    return { ok: false, error: crudApiErrorResponse(error, "fetchCategory") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "fetchCategory"),
+    };
   }
 }
 
@@ -82,22 +84,21 @@ export async function createCategory(
   category: CategoryCreate,
 ): Promise<Result<Category, CrudApiError>> {
   const parse = parseCategoryCreate(category);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid category data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid category data");
 
   try {
-    const res = await apiClient(true, config).post<
-      unknown,
-      AxiosResponse<Category>
-    >(CATEGORIES_URL, parse.data);
-    logger.info(
-      { id: res.data.id, name: res.data.name },
-      "Category created successfully",
+    const res = await apiClient(true, config).post<unknown, AxiosResponse<Category>>(
+      CATEGORIES_URL,
+      parse.data,
     );
+    logger.info({ id: res.data.id, name: res.data.name }, "Category created successfully");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ categoryName: category.name }, "Failed to create category");
-    return { ok: false, error: crudApiErrorResponse(error, "createCategory") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "createCategory"),
+    };
   }
 }
 
@@ -113,19 +114,21 @@ export async function updateCategory(
   if (idError) return idError;
 
   const parse = parseCategoryUpdate(category);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid category data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid category data");
 
   try {
-    const res = await apiClient(true, config).patch<
-      unknown,
-      AxiosResponse<Category>
-    >(`${CATEGORIES_URL}/${id}`, parse.data);
+    const res = await apiClient(true, config).patch<unknown, AxiosResponse<Category>>(
+      `${CATEGORIES_URL}/${id}`,
+      parse.data,
+    );
     logger.info({ id, name: res.data.name }, "Category updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ id }, "Failed to update category");
-    return { ok: false, error: crudApiErrorResponse(error, "updateCategory") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "updateCategory"),
+    };
   }
 }
 
@@ -145,6 +148,9 @@ export async function deleteCategory(
     return { ok: true, data: { success: true } };
   } catch (error) {
     logger.error({ id }, "Failed to delete category");
-    return { ok: false, error: crudApiErrorResponse(error, "deleteCategory") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "deleteCategory"),
+    };
   }
 }

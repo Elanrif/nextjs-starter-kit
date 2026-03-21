@@ -17,8 +17,7 @@ export const userKeys = {
   all: ["users"] as const,
   list: () => [...userKeys.all, "list"] as const,
   detail: (id: number) => [...userKeys.all, "detail", id] as const,
-  search: (filters: UserSearchFilter) =>
-    [...userKeys.all, "search", filters] as const,
+  search: (filters: UserSearchFilter) => [...userKeys.all, "search", filters] as const,
 };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -69,7 +68,9 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: (data: Parameters<typeof createUser>[0]) => createUser(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.list() });
+      queryClient.invalidateQueries({
+        queryKey: userKeys.list(),
+      });
     },
   });
 }
@@ -78,16 +79,15 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: number;
-      data: Parameters<typeof updateUser>[1];
-    }) => updateUser(id, data),
+    mutationFn: ({ id, data }: { id: number; data: Parameters<typeof updateUser>[1] }) =>
+      updateUser(id, data),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: userKeys.list() });
+      queryClient.invalidateQueries({
+        queryKey: userKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: userKeys.list(),
+      });
     },
   });
 }
@@ -102,8 +102,12 @@ export function useDeleteUser() {
       return res.data;
     },
     onSuccess: (_, id) => {
-      queryClient.removeQueries({ queryKey: userKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: userKeys.list() });
+      queryClient.removeQueries({
+        queryKey: userKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: userKeys.list(),
+      });
     },
   });
 }

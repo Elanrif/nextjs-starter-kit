@@ -10,11 +10,7 @@ export const metadata = {
 
 // SSR is intentional here: a detail page either has data or doesn't exist.
 // notFound() on the server gives a clean 404 without a client-side loading state.
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const reqHeaders = await headers();
   const config = { headers: reqHeaders };

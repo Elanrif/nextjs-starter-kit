@@ -1,8 +1,5 @@
 import httpClient from "@config/axios.config";
-import {
-  anonTokenInterceptor,
-  ownTokenInterceptor,
-} from "@config/interceptors/auth.interceptor";
+import { anonTokenInterceptor, ownTokenInterceptor } from "@config/interceptors/auth.interceptor";
 import { getLogger } from "@config/logger.config";
 import { Token } from "./auth.utils";
 

@@ -2,27 +2,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Product } from "@/lib/products/models/product.model";
-import {
-  DataTable,
-  DataTableColumn,
-} from "@/components/features/dashboard/data-table";
+import { DataTable, DataTableColumn } from "@/components/features/dashboard/data-table";
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
-import {
-  Eye,
-  Pencil,
-  Trash2,
-  Package,
-  Plus,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { Eye, Pencil, Trash2, Package, Plus, CheckCircle2, XCircle } from "lucide-react";
 import LoadingPage from "@components/features/loading-page";
-import {
-  useProducts,
-  useDeleteProduct,
-} from "@/lib/products/hooks/use-products";
+import { useProducts, useDeleteProduct } from "@/lib/products/hooks/use-products";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -45,9 +31,7 @@ export function ProductList() {
         toast.success("Produit supprimé avec succès");
       },
       onError: (err) => {
-        setDeleteError(
-          err instanceof Error ? err.message : "Erreur lors de la suppression",
-        );
+        setDeleteError(err instanceof Error ? err.message : "Erreur lors de la suppression");
       },
     });
   };
@@ -56,9 +40,7 @@ export function ProductList() {
     {
       key: "id",
       label: "ID",
-      render: (row) => (
-        <span className="font-mono text-xs text-gray-400">#{row.id}</span>
-      ),
+      render: (row) => <span className="font-mono text-xs text-gray-400">#{row.id}</span>,
     },
     {
       key: "name",
@@ -66,9 +48,7 @@ export function ProductList() {
       render: (row) => (
         <div>
           <p className="font-medium text-gray-800">{row.name}</p>
-          {row.category?.name && (
-            <p className="text-xs text-gray-400">{row.category.name}</p>
-          )}
+          {row.category?.name && <p className="text-xs text-gray-400">{row.category.name}</p>}
         </div>
       ),
     },
@@ -96,7 +76,7 @@ export function ProductList() {
                 row.stock > 0
                 ? "text-amber-600"
                 : "text-red-600"
-          }`}
+            }`}
         >
           {row.stock}
         </span>
@@ -136,7 +116,8 @@ export function ProductList() {
         <div className="flex items-center gap-1 justify-end">
           <Link href={`${DASHBOARD}${PRODUCTS}/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50
+                transition-colors"
               title="Détails"
             >
               <Eye className="w-4 h-4" />
@@ -144,14 +125,16 @@ export function ProductList() {
           </Link>
           <Link href={`${DASHBOARD}${PRODUCTS}/edit/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50
+                transition-colors"
               title="Modifier"
             >
               <Pencil className="w-4 h-4" />
             </button>
           </Link>
           <button
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50
+              transition-colors"
             title="Supprimer"
             onClick={() => {
               setDeleteId(row.id);
@@ -178,13 +161,18 @@ export function ProductList() {
               <h1 className="text-xl font-bold text-gray-900">Produits</h1>
               {!isLoading && (
                 <p className="text-xs text-gray-400">
-                  {products.length} produit{products.length === 1 ? "" : "s"}
+                  {products.length} produit
+                  {products.length === 1 ? "" : "s"}
                 </p>
               )}
             </div>
           </div>
           <Link href={`${DASHBOARD}${PRODUCTS}/create`}>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <button
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600
+                to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm
+                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+            >
               <Plus className="w-4 h-4" />
               Ajouter
             </button>

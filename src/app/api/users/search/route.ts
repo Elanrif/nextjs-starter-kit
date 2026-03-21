@@ -18,9 +18,7 @@ export async function GET(request: NextRequest) {
     email: searchParams.get("email") ?? undefined,
     firstName: searchParams.get("firstName") ?? undefined,
     lastName: searchParams.get("lastName") ?? undefined,
-    isActive: searchParams.has("isActive")
-      ? searchParams.get("isActive") === "true"
-      : undefined,
+    isActive: searchParams.has("isActive") ? searchParams.get("isActive") === "true" : undefined,
   };
 
   const reqHeaders = new Headers(request.headers);
@@ -35,14 +33,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "searchUsersFilter");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during users search",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during users search");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

@@ -17,7 +17,11 @@ export function validateId(id: number): Result<never, CrudApiError> | null {
   if (!Number.isInteger(id) || id <= 0) {
     return {
       ok: false,
-      error: { status: 400, message: "Invalid user ID", error: "Bad Request" },
+      error: {
+        status: 400,
+        message: "Invalid user ID",
+        error: "Bad Request",
+      },
     };
   }
   return null;
@@ -34,6 +38,11 @@ export function validationError(
   logger.warn({ errors: issues }, message);
   return {
     ok: false,
-    error: { status: 400, message, error: "Bad Request", details: issues },
+    error: {
+      status: 400,
+      message,
+      error: "Bad Request",
+      details: issues,
+    },
   };
 }

@@ -6,21 +6,18 @@ import { SignOutButton } from "@/components/features/auth/sign-out-button";
 import { ROUTES } from "@/utils/routes";
 import { useSession } from "@/hooks/use.session";
 import Logo from "./logo";
-import {
-  Mail,
-  LayoutDashboard,
-  LogIn,
-  UserPlus,
-  Menu,
-  X,
-  UserCheck,
-} from "lucide-react";
+import { Mail, LayoutDashboard, LogIn, UserPlus, Menu, X, UserCheck } from "lucide-react";
+import { cn } from "@/utils/utils";
 
 const navLinks = [
   { href: "#features", label: "Fonctionnalités" },
   { href: "#docs", label: "Documentation" },
   { href: "#getting-started", label: "Démarrer" },
-  { href: "#contact", label: "Nous contacter", icon: Mail },
+  {
+    href: "#contact",
+    label: "Nous contacter",
+    icon: Mail,
+  },
 ];
 
 const { SIGN_IN, SIGN_UP, DASHBOARD } = ROUTES;
@@ -62,7 +59,7 @@ export function Header() {
         isScrolled
           ? "bg-white/80 backdrop-blur-lg border-b border-white/20 shadow-sm shadow-black/5"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between gap-8">
@@ -75,7 +72,8 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${link.icon ? navContactClass : navLinkClass}`}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium
+                transition-all ${link.icon ? navContactClass : navLinkClass}`}
               >
                 {link.icon && <link.icon className="w-3 h-3" />}
                 {link.label}
@@ -100,7 +98,11 @@ export function Header() {
                     {session.data.user.role === "admin" ? (
                       <Link
                         href={DASHBOARD}
-                        className={`flex items-center border border-white gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${dashboardClass}`}
+                        className={cn(
+                          "flex items-center border border-white gap-1.5 px-3.5 py-1.5 rounded-lg",
+                          "text-xs font-medium transition-all",
+                          dashboardClass,
+                        )}
                       >
                         <LayoutDashboard className="w-3.5 h-3.5" />
                         Dashboard
@@ -108,16 +110,17 @@ export function Header() {
                     ) : (
                       <Link
                         href={DASHBOARD}
-                        className={`flex items-center text-cyan-400 border border-white gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${dashboardClass}`}
+                        className={cn(
+                          "flex items-center border border-white gap-1.5 px-3.5 py-1.5 rounded-lg",
+                          "text-cyan-400 text-xs font-medium transition-all",
+                          dashboardClass,
+                        )}
                       >
                         <UserCheck className="w-3.5 h-3.5" />
                         Mon compte
                       </Link>
                     )}
-                    <SignOutButton
-                      variant="destructive"
-                      onSignOut={invalidate}
-                    />
+                    <SignOutButton variant="destructive" onSignOut={invalidate} />
                   </>
                 );
               }
@@ -125,14 +128,24 @@ export function Header() {
                 <>
                   <Link
                     href={SIGN_IN}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-all ${loginClass}`}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg",
+                      "text-xs font-medium border transition-all",
+                      loginClass,
+                    )}
                   >
                     <LogIn className="w-3.5 h-3.5" />
                     Connexion
                   </Link>
                   <Link
                     href={SIGN_UP}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                    className={cn(
+                      "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg",
+                      "text-xs font-semibold text-white",
+                      "bg-linear-to-r from-green-500 to-emerald-600",
+                      "hover:from-green-600 hover:to-emerald-700",
+                      "shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all",
+                    )}
                   >
                     <UserPlus className="w-3.5 h-3.5" />
                     S&apos;inscrire
@@ -148,11 +161,7 @@ export function Header() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? (
-              <X className="w-5 h-5" />
-            ) : (
-              <Menu className="w-5 h-5" />
-            )}
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -163,14 +172,15 @@ export function Header() {
           isMobileMenuOpen
             ? "max-h-96 bg-white/90 backdrop-blur-lg border-t border-white/20"
             : "max-h-0"
-        }`}
+          }`}
       >
         <div className="mx-auto max-w-7xl px-4 py-3 space-y-0.5">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium
+              transition-colors ${
                 link.icon
                   ? "text-indigo-600 hover:bg-indigo-50"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -185,7 +195,11 @@ export function Header() {
           <div className="pt-2 pb-1 flex gap-2">
             <Link
               href={SIGN_IN}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors"
+              className={cn(
+                `flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs
+                font-medium text-gray-700`,
+                "borderborder-gray-200 hover:bg-gray-50 transition-colors",
+              )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -193,7 +207,11 @@ export function Header() {
             </Link>
             <Link
               href={SIGN_UP}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-linear-to-r from-green-500 to-emerald-600 shadow-sm transition-all"
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs",
+                "font-semibold text-white bg-linear-to-r from-green-500 to-emerald-600 shadow-sm",
+                "transition-all",
+              )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <UserPlus className="w-3.5 h-3.5" />

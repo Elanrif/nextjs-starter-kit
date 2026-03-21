@@ -5,7 +5,10 @@ export const requestLoggerInterceptor =
   (logger: Logger) =>
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     logger.debug(
-      { method: config.method?.toUpperCase(), url: config.url },
+      {
+        method: config.method?.toUpperCase(),
+        url: config.url,
+      },
       "Request",
     );
     // logger.debug({ headers: config.headers }, "Request headers");

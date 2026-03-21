@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  fetchProducts,
-  createProduct,
-} from "@/lib/products/services/product.service";
+import { fetchProducts, createProduct } from "@/lib/products/services/product.service";
 import {
   ProductCreate,
   ProductFiltersParams,
@@ -27,14 +24,10 @@ export async function GET(request: NextRequest) {
   // Build filters from query params
   const filters: ProductFiltersParams = {};
   if (searchParams.get("search")) filters.search = searchParams.get("search")!;
-  if (searchParams.get("categoryId"))
-    filters.categoryId = Number(searchParams.get("categoryId"));
-  if (searchParams.get("isActive"))
-    filters.isActive = searchParams.get("isActive") === "true";
+  if (searchParams.get("categoryId")) filters.categoryId = Number(searchParams.get("categoryId"));
+  if (searchParams.get("isActive")) filters.isActive = searchParams.get("isActive") === "true";
   if (searchParams.get("sortBy"))
-    filters.sortBy = searchParams.get(
-      "sortBy",
-    ) as ProductFiltersParams["sortBy"];
+    filters.sortBy = searchParams.get("sortBy") as ProductFiltersParams["sortBy"];
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
@@ -45,17 +38,18 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const error = response.error!;
-      return NextResponse.json(response, { status: error.status });
+      return NextResponse.json(response, {
+        status: error.status,
+      });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchProducts");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during product fetching",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during product fetching");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
@@ -74,7 +68,13 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    logger.error({ status: err.status, message: err.message }, "Unauthorized");
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Unauthorized",
+    );
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -83,7 +83,13 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error({ status: err.status, message: err.message }, "Forbidden");
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Forbidden",
+    );
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
@@ -91,7 +97,9 @@ export async function POST(request: NextRequest) {
   const parsed = parseProductCreate(body);
   if (!parsed.success) {
     const err = validationError(parsed.error.issues, "Invalid product data");
-    return NextResponse.json(err, { status: 400 });
+    return NextResponse.json(err, {
+      status: 400,
+    });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -102,17 +110,18 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const error = response.error;
-      return NextResponse.json(response, { status: error.status });
+      return NextResponse.json(response, {
+        status: error.status,
+      });
     }
 
-    return NextResponse.json(response, { status: 201 });
+    return NextResponse.json(response, {
+      status: 201,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createProduct");
     const status = errMsg.status || 500;
-    logger.error(
-      { status, message: errMsg.message },
-      "Error during product creation",
-    );
+    logger.error({ status, message: errMsg.message }, "Error during product creation");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

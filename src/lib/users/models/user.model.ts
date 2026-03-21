@@ -50,9 +50,7 @@ const UserBaseSchema = z.object({
     .max(15, "Phone number must be at most 15 digits"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z
-    .string()
-    .min(6, "Confirm password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
 });
 
 /**
@@ -75,13 +73,10 @@ export const parseResetPassword = ResetPasswordSchema.safeParse;
  * ⚠️ Never trust the client input
  * ❌ Someone can bypass the form
  */
-export const UserSchema = UserBaseSchema.refine(
-  (data) => data.password === data.confirmPassword,
-  {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  },
-);
+export const UserSchema = UserBaseSchema.refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 export type UserFormData = z.infer<typeof UserSchema>;
 export const parseUserCreate = UserSchema.safeParse;
 

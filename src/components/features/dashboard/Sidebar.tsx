@@ -14,8 +14,14 @@ import { authClient } from "@/lib/auth/api/auth.client";
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [
   { href: DASHBOARD, label: "Dashboard" },
-  { href: `${DASHBOARD}${PRODUCTS}`, label: "Produits" },
-  { href: `${DASHBOARD}${CATEGORIES}`, label: "Catégories" },
+  {
+    href: `${DASHBOARD}${PRODUCTS}`,
+    label: "Produits",
+  },
+  {
+    href: `${DASHBOARD}${CATEGORIES}`,
+    label: "Catégories",
+  },
 ];
 
 export default function Sidebar() {
@@ -49,7 +55,10 @@ export default function Sidebar() {
 
   if (loading) {
     return (
-      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
+      <aside
+        className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex
+          items-center justify-center shadow-lg"
+      >
         <span className="text-sm text-white/80">Loading...</span>
       </aside>
     );
@@ -57,19 +66,26 @@ export default function Sidebar() {
 
   if (userError) {
     return (
-      <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
+      <aside
+        className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex
+          items-center justify-center shadow-lg"
+      >
         <span className="text-sm text-red-400">Failed to load session</span>
       </aside>
     );
   }
 
   return (
-    <aside className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex flex-col shadow-lg">
+    <aside
+      className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex
+        flex-col shadow-lg"
+    >
       {/* Logo & Infos utilisateur */}
       <div className="flex items-center gap-2 px-6 py-5 border-b border-emerald-700">
         <button
           onClick={() => router.push(HOME)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-semibold shadow"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20
+            transition-colors text-white font-semibold shadow"
         >
           <UserCircle className="h-5 w-5" />
           <span>{user?.firstName || "Admin"}</span>
@@ -79,27 +95,22 @@ export default function Sidebar() {
         </span>
       </div>
       {user?.email && (
-        <div className="px-6 py-2 text-xs border-b bg-white text-muted-foreground border-emerald-700">
+        <div className="px-6 py-2 text-xs border-b bg-white text-muted-foreground
+          border-emerald-700">
           <span>{user.email}</span>
         </div>
       )}
       <nav className="flex-1 p-4 space-y-2">
         {links.map((link) => {
           const isActive =
-            link.href === DASHBOARD
-              ? pathname === link.href
-              : pathname.startsWith(link.href);
+            link.href === DASHBOARD ? pathname === link.href : pathname.startsWith(link.href);
           return (
-            <Link
-              key={link.href}
-              href={link.href}
-              passHref
-              className="flex flex-col space-y-5"
-            >
+            <Link key={link.href} href={link.href} passHref className="flex flex-col space-y-5">
               <Button
                 variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start rounded-lg px-2 py-2 text-base font-medium transition-colors
-                  ${isActive ? "bg-white/90 text-emerald-700" : "hover:bg-white/50 text-white"}`}
+                className={`w-full justify-start rounded-lg px-2 py-2 text-base font-medium
+                transition-colors
+                ${isActive ? "bg-white/90 text-emerald-700" : "hover:bg-white/50 text-white"}`}
               >
                 {link.label}
               </Button>

@@ -1,10 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import {
-  DataTable,
-  DataTableColumn,
-} from "@/components/features/dashboard/data-table";
+import { DataTable, DataTableColumn } from "@/components/features/dashboard/data-table";
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
@@ -36,11 +33,7 @@ export function UserList() {
         toast.success("Utilisateur supprimé avec succès");
       },
       onError: (error) => {
-        setDeleteError(
-          error instanceof Error
-            ? error.message
-            : "Erreur lors de la suppression",
-        );
+        setDeleteError(error instanceof Error ? error.message : "Erreur lors de la suppression");
       },
     });
   };
@@ -49,18 +42,18 @@ export function UserList() {
     {
       key: "id",
       label: "ID",
-      render: (row) => (
-        <span className="font-mono text-xs text-gray-400">#{row.id}</span>
-      ),
+      render: (row) => <span className="font-mono text-xs text-gray-400">#{row.id}</span>,
     },
     {
       key: "name",
       label: "Utilisateur",
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-linear-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-xs font-semibold shrink-0">
-            {row.firstName?.slice(0, 1).toUpperCase() ||
-              row.email?.slice(0, 1).toUpperCase()}
+          <div
+            className="h-8 w-8 rounded-full bg-linear-to-br from-emerald-400 to-teal-500 flex
+              items-center justify-center text-white text-xs font-semibold shrink-0"
+          >
+            {row.firstName?.slice(0, 1).toUpperCase() || row.email?.slice(0, 1).toUpperCase()}
           </div>
           <div>
             <p className="font-medium text-gray-800">
@@ -77,9 +70,7 @@ export function UserList() {
       render: (row) => (
         <span
           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-            row.role === "ADMIN"
-              ? "bg-slate-900 text-white"
-              : "bg-gray-100 text-gray-600"
+            row.role === "ADMIN" ? "bg-slate-900 text-white" : "bg-gray-100 text-gray-600"
           }`}
         >
           {row.role === "ADMIN" && <ShieldCheck className="w-3 h-3" />}
@@ -92,11 +83,8 @@ export function UserList() {
       label: "Statut",
       render: (row) => (
         <span
-          className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-            row.isActive
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-gray-100 text-gray-500"
-          }`}
+          className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+            ${row.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"}`}
         >
           {row.isActive ? "Actif" : "Inactif"}
         </span>
@@ -118,7 +106,8 @@ export function UserList() {
         <div className="flex items-center gap-1 justify-end">
           <Link href={`${DASHBOARD}${USERS}/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50
+                transition-colors"
               title="Détails"
             >
               <Eye className="w-4 h-4" />
@@ -126,14 +115,16 @@ export function UserList() {
           </Link>
           <Link href={`${DASHBOARD}${USERS}/edit/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50
+                transition-colors"
               title="Modifier"
             >
               <Pencil className="w-4 h-4" />
             </button>
           </Link>
           <button
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50
+              transition-colors"
             title="Supprimer"
             onClick={() => {
               setDeleteId(row.id);
@@ -168,7 +159,12 @@ export function UserList() {
             </div>
           </div>
           <Link href={`${DASHBOARD}${USERS}/create`}>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <button
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r
+                from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white
+                text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
+                transition-all"
+            >
               <Plus className="w-4 h-4" />
               Ajouter
             </button>

@@ -109,7 +109,7 @@ export default async function DashboardPage() {
 
   // ✅ Direct database access in server component
   const user = await db.user.findUnique({
-    where: { sessionToken: session?.value }
+    where: { sessionToken: session?.value },
   });
 
   return (
@@ -178,7 +178,7 @@ export async function getSessionData() {
   // Database operations (server-only)
   const user = await db.user.findUnique({
     where: { sessionToken: session.value },
-    include: { profile: true }
+    include: { profile: true },
   });
 
   if (!user) {
@@ -190,10 +190,10 @@ export async function getSessionData() {
     user: {
       id: user.id,
       email: user.email,
-      profile: user.profile
+      profile: user.profile,
     },
     metadata: { userAgent, ip, theme: theme?.value },
-    session: session.value
+    session: session.value,
   };
 }
 
@@ -203,12 +203,12 @@ export async function getUserPreferences(userId: number) {
 
   // Server-side database call
   const preferences = await db.userPreferences.findUnique({
-    where: { userId }
+    where: { userId },
   });
 
   return {
     ...preferences,
-    detectedLanguage: acceptLanguage?.split(",")[0] || "en"
+    detectedLanguage: acceptLanguage?.split(",")[0] || "en",
   };
 }
 
@@ -221,15 +221,12 @@ export async function GET() {
     const sessionData = await getSessionData();
     return NextResponse.json(sessionData);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to get session" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to get session" }, { status: 500 });
   }
 }
 
 // src/components/MyComponent.tsx (Client-side)
-"use client";
+("use client");
 import { useEffect, useState } from "react";
 
 export function MyComponent() {
@@ -269,19 +266,19 @@ export async function getSessionData() {
   }
 
   const user = await db.user.findUnique({
-    where: { sessionToken: session.value }
+    where: { sessionToken: session.value },
   });
 
   return {
     isAuth: true,
     user: { id: user.id, email: user.email },
     metadata: { userAgent },
-    session: session.value
+    session: session.value,
   };
 }
 
 // src/actions/session.ts (Server Action)
-"use server";
+("use server");
 import { getSessionData } from "@/lib/session/session.service";
 
 export async function getSessionAction() {
@@ -294,7 +291,7 @@ export async function getSessionAction() {
 }
 
 // src/components/MyComponent.tsx (Client-side)
-"use client";
+("use client");
 import { useEffect, useState } from "react";
 import { getSessionAction } from "@/actions/session";
 
@@ -335,7 +332,11 @@ export async function trackUserAction(userId: number, action: string) {
       Authorization: `Bearer ${API_SECRET}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, action, timestamp: Date.now() }),
+    body: JSON.stringify({
+      userId,
+      action,
+      timestamp: Date.now(),
+    }),
   });
 }
 
@@ -435,15 +436,11 @@ const fetcher = async (url: string) => {
 };
 
 export function UserProfile({ userId }: { userId: number }) {
-  const { data, error, isLoading, mutate } = useSWR(
-    `/api/users/${userId}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,    // Don't refetch on window focus
-      refreshInterval: 5000,       // Poll every 5 seconds
-      revalidateOnMount: true,     // Fetch on component mount
-    }
-  );
+  const { data, error, isLoading, mutate } = useSWR(`/api/users/${userId}`, fetcher, {
+    revalidateOnFocus: false, // Don't refetch on window focus
+    refreshInterval: 5000, // Poll every 5 seconds
+    revalidateOnMount: true, // Fetch on component mount
+  });
 
   if (isLoading) return <div>Loading user...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -479,15 +476,11 @@ const fetcher = async (url: string) => {
 };
 
 export function useSession() {
-  const { data, error, isLoading, mutate } = useSWR(
-    "/api/auth/session",
-    fetcher,
-    {
-      refreshInterval: 30000, // Check session every 30s
-      shouldRetryOnError: false, // Don't retry on errors
-      revalidateOnFocus: false,
-    },
-  );
+  const { data, error, isLoading, mutate } = useSWR("/api/auth/session", fetcher, {
+    refreshInterval: 30000, // Check session every 30s
+    shouldRetryOnError: false, // Don't retry on errors
+    revalidateOnFocus: false,
+  });
 
   return {
     session: data,
@@ -538,7 +531,9 @@ export async function registerUser(formData: FormData) {
   // Call external auth API
   const response = await fetch(`${process.env.API_BASE}/auth/register`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ email, password }),
   });
 
@@ -670,7 +665,7 @@ export async function fetchProducts(
 }
 
 // Usage in client component
-"use client";
+("use client");
 import { fetchProducts } from "@/lib/products/services/product.client.service";
 
 export function ProductList() {
@@ -694,7 +689,7 @@ export function ProductList() {
   if (loading) return <div>Loading...</div>;
   return (
     <div>
-      {products.map(product => (
+      {products.map((product) => (
         <div key={product.id}>{product.name}</div>
       ))}
     </div>
@@ -712,7 +707,9 @@ export async function GET(request: Request) {
   const search = searchParams.get("search");
 
   const response = await fetch(`${API_BASE}/products?search=${search}`, {
-    headers: { Authorization: `Bearer ${process.env.API_TOKEN}` },
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+    },
   });
   return NextResponse.json(await response.json());
 }
@@ -735,7 +732,9 @@ export async function fetchProductsAction(filters?: ProductFilters) {
   if (filters?.search) params.append("search", filters.search);
 
   const response = await fetch(`${process.env.API_BASE}/products?${params}`, {
-    headers: { Authorization: `Bearer ${process.env.API_TOKEN}` },
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+    },
   });
 
   if (!response.ok) throw new Error("Failed to fetch products");
@@ -751,7 +750,9 @@ export function ProductList() {
 
   useEffect(() => {
     const loadProducts = async () => {
-      const data = await fetchProductsAction({ search: "laptop" });
+      const data = await fetchProductsAction({
+        search: "laptop",
+      });
       setProducts(data);
     };
     loadProducts();
@@ -812,10 +813,7 @@ src/lib/
 // src/lib/auth/auth.service.ts
 import apiClient, { Config } from "@config/api.config";
 
-export async function signIn(
-  login: Login,
-  config?: Config,
-): Promise<User | CrudApiError> {
+export async function signIn(login: Login, config?: Config): Promise<User | CrudApiError> {
   try {
     const res = await apiClient(true, config).post<User>(loginUrl, login);
     return res.data;
@@ -855,9 +853,7 @@ export async function fetchProducts(
   return res.data;
 }
 
-export async function createProduct(
-  product: ProductCreate,
-): Promise<Product | CrudApiError> {
+export async function createProduct(product: ProductCreate): Promise<Product | CrudApiError> {
   const res = await frontendHttp().post(PRODUCTS_URL, product);
   return res.data;
 }
@@ -877,7 +873,7 @@ import { useState, useEffect } from "react";
 import {
   fetchProducts,
   createProduct,
-  deleteProduct
+  deleteProduct,
 } from "@/lib/products/services/product.client.service";
 import { Product, ProductCreate } from "@/lib/products/models/product.model";
 
@@ -921,7 +917,7 @@ export function ProductManager() {
       }
 
       // Add to local state
-      setProducts(prev => [...prev, result]);
+      setProducts((prev) => [...prev, result]);
       alert("Product created successfully!");
     } catch (error) {
       console.error("Create failed:", error);
@@ -937,7 +933,7 @@ export function ProductManager() {
 
     try {
       await deleteProduct(productId);
-      setProducts(prev => prev.filter(p => p.id !== productId));
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
       alert("Product deleted successfully!");
     } catch (error) {
       console.error("Delete failed:", error);
@@ -959,12 +955,10 @@ export function ProductManager() {
       </button>
 
       <ul>
-        {products.map(product => (
+        {products.map((product) => (
           <li key={product.id}>
             {product.name} - ${product.price}
-            <button onClick={() => handleDelete(product.id)}>
-              Delete
-            </button>
+            <button onClick={() => handleDelete(product.id)}>Delete</button>
           </li>
         ))}
       </ul>

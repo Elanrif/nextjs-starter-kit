@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { deleteCategory } from "@/lib/categories/services/category.client.service";
 import { isCrudError } from "@/lib/categories/hooks/use-categories";
-import {
-  DataTable,
-  DataTableColumn,
-} from "@/components/features/dashboard/data-table";
+import { DataTable, DataTableColumn } from "@/components/features/dashboard/data-table";
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { Category } from "@/lib/categories/models/category.model";
@@ -16,11 +13,7 @@ import LoadingPage from "@components/features/loading-page";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
-export function CategoryList({
-  initialCategories,
-}: {
-  initialCategories: Category[];
-}) {
+export function CategoryList({ initialCategories }: { initialCategories: Category[] }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -56,9 +49,7 @@ export function CategoryList({
         toast.success("Catégorie supprimée avec succès");
       }
     } catch {
-      setDeleteError(
-        "Une erreur inattendue s'est produite. Veuillez réessayer.",
-      );
+      setDeleteError("Une erreur inattendue s'est produite. Veuillez réessayer.");
     } finally {
       setDeleteLoading(false);
     }
@@ -68,9 +59,7 @@ export function CategoryList({
     {
       key: "id",
       label: "ID",
-      render: (row) => (
-        <span className="font-mono text-xs text-gray-400">#{row.id}</span>
-      ),
+      render: (row) => <span className="font-mono text-xs text-gray-400">#{row.id}</span>,
     },
     {
       key: "name",
@@ -78,9 +67,7 @@ export function CategoryList({
       render: (row) => (
         <div>
           <p className="font-medium text-gray-800">{row.name}</p>
-          {row.slug && (
-            <p className="text-xs text-gray-400 font-mono">{row.slug}</p>
-          )}
+          {row.slug && <p className="text-xs text-gray-400 font-mono">{row.slug}</p>}
         </div>
       ),
     },
@@ -88,9 +75,7 @@ export function CategoryList({
       key: "description",
       label: "Description",
       render: (row) => (
-        <p className="text-sm text-gray-500 truncate max-w-xs">
-          {row.description || "—"}
-        </p>
+        <p className="text-sm text-gray-500 truncate max-w-xs">{row.description || "—"}</p>
       ),
     },
     {
@@ -98,11 +83,8 @@ export function CategoryList({
       label: "Statut",
       render: (row) => (
         <span
-          className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-            row.isActive
-              ? "bg-violet-50 text-violet-700"
-              : "bg-gray-100 text-gray-500"
-          }`}
+          className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+            ${row.isActive ? "bg-violet-50 text-violet-700" : "bg-gray-100 text-gray-500"}`}
         >
           {row.isActive ? "Active" : "Inactive"}
         </span>
@@ -124,7 +106,8 @@ export function CategoryList({
         <div className="flex items-center gap-1 justify-end">
           <Link href={`${DASHBOARD}${CATEGORIES}/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50
+                transition-colors"
               title="Détails"
             >
               <Eye className="w-4 h-4" />
@@ -132,14 +115,16 @@ export function CategoryList({
           </Link>
           <Link href={`${DASHBOARD}${CATEGORIES}/edit/${row.id}`}>
             <button
-              className="p-1.5 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50
+                transition-colors"
               title="Modifier"
             >
               <Pencil className="w-4 h-4" />
             </button>
           </Link>
           <button
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50
+              transition-colors"
             title="Supprimer"
             onClick={() => {
               setDeleteId(row.id);
@@ -173,7 +158,12 @@ export function CategoryList({
             </div>
           </div>
           <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <button
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r
+                from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white
+                text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
+                transition-all"
+            >
               <Plus className="w-4 h-4" />
               Ajouter
             </button>

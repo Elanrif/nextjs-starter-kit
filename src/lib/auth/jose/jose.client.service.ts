@@ -20,21 +20,17 @@ const {
 } = proxyEnvironment;
 
 export async function getSession(): Promise<Result<Session, CrudApiError>> {
-  const response = await frontendHttp().get<
-    any,
-    AxiosResponse<Result<Session, CrudApiError>>
-  >(sessionUrl);
+  const response = await frontendHttp().get<any, AxiosResponse<Result<Session, CrudApiError>>>(
+    sessionUrl,
+  );
   // data is the type of AxiosResponse's data
   return response.data;
 }
 
-export async function getCurrentUser(): Promise<
-  Result<CurrentUser, CrudApiError>
-> {
-  const response = await frontendHttp().get<
-    any,
-    AxiosResponse<Result<CurrentUser, CrudApiError>>
-  >(meUrl);
+export async function getCurrentUser(): Promise<Result<CurrentUser, CrudApiError>> {
+  const response = await frontendHttp().get<any, AxiosResponse<Result<CurrentUser, CrudApiError>>>(
+    meUrl,
+  );
   // data is the type of AxiosResponse's data
   return response.data;
 }

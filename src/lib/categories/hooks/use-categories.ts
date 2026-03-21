@@ -8,10 +8,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "@/lib/categories/services/category.client.service";
-import type {
-  CategoryCreate,
-  CategoryUpdate,
-} from "@/lib/categories/models/category.model";
+import type { CategoryCreate, CategoryUpdate } from "@/lib/categories/models/category.model";
 import { isCrudError } from "@/lib/shared/helpers/crud-api-error";
 
 export { isCrudError } from "@/lib/shared/helpers/crud-api-error";
@@ -63,7 +60,9 @@ export function useCreateCategory() {
       return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: categoryKeys.list() });
+      queryClient.invalidateQueries({
+        queryKey: categoryKeys.list(),
+      });
     },
   });
 }
@@ -78,8 +77,12 @@ export function useUpdateCategory() {
       return res;
     },
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: categoryKeys.list() });
+      queryClient.invalidateQueries({
+        queryKey: categoryKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: categoryKeys.list(),
+      });
     },
   });
 }
@@ -94,8 +97,12 @@ export function useDeleteCategory() {
       return res;
     },
     onSuccess: (_, id) => {
-      queryClient.removeQueries({ queryKey: categoryKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: categoryKeys.list() });
+      queryClient.removeQueries({
+        queryKey: categoryKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: categoryKeys.list(),
+      });
     },
   });
 }

@@ -15,10 +15,7 @@ const logger = getLogger("server");
  *
  * @param context - call-site label shown in the log (e.g. `"fetchProducts"`)
  */
-export function crudApiErrorResponse(
-  error: unknown,
-  context?: string,
-): CrudApiError {
+export function crudApiErrorResponse(error: unknown, context?: string): CrudApiError {
   if (error instanceof AxiosError) {
     const raw = error.response?.data || {
       status: error.response?.status ?? 500,
@@ -27,7 +24,9 @@ export function crudApiErrorResponse(
       timestamp: new Date().toISOString(),
     };
     // Strip backend stack trace — it belongs in the backend logs, not ours.
-    const { trace: _, ...apiError } = raw as CrudApiError & { trace?: string };
+    const { trace: _, ...apiError } = raw as CrudApiError & {
+      trace?: string;
+    };
     if (apiError.status >= 500) {
       logger.error(apiError, `[Axios Error] [${context ?? "unknown"}]`);
     } else {

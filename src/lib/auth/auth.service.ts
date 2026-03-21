@@ -3,11 +3,7 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import {
-  parseResetPassword,
-  ResetPassword,
-  User,
-} from "@lib/users/models/user.model";
+import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
 import {
   CrudApiError,
   crudApiErrorResponse,
@@ -36,10 +32,7 @@ const {
   api: {
     rest: {
       endpoints: {
-        auth: {
-          editProfile: editProfileUrl,
-          changeProfilePasswordUrl: changeProfilePasswordUrl,
-        },
+        auth: { editProfile: editProfileUrl, changeProfilePasswordUrl: changeProfilePasswordUrl },
         register: registerUrl,
         login: loginUrl,
         resetPassword: resetPasswordUrl,
@@ -52,25 +45,21 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(
-  login: Login,
-  config?: Config,
-): Promise<Result<User, CrudApiError>> {
+export async function signIn(login: Login, config?: Config): Promise<Result<User, CrudApiError>> {
   const validation = parseLogin(login);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid login data");
+  if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
 
   try {
-    const { data } = await apiClient(true, config).post<
-      any,
-      AxiosResponse<User>
-    >(loginUrl, login);
+    const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
     await createSession(data.id, data.email, data.role);
     logger.info({ email: data.email }, "User signed in successfully");
     return { ok: true, data };
   } catch (error) {
     logger.error({ email: login.email }, "Failed to sign in");
-    return { ok: false, error: crudApiErrorResponse(error, "signIn") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "signIn"),
+    };
   }
 }
 
@@ -83,25 +72,25 @@ export async function signUp(
 ): Promise<Result<User, CrudApiError>> {
   const validation = parseRegister(registration);
   if (!validation.success)
-    return validationError(
-      validation.error.issues,
-      "Invalid registration data",
-    );
+    return validationError(validation.error.issues, "Invalid registration data");
 
   try {
-    await apiClient(true, config).post<any, AxiosResponse<any>>(
-      registerUrl,
-      registration,
-    );
+    await apiClient(true, config).post<any, AxiosResponse<any>>(registerUrl, registration);
   } catch (error) {
     logger.error({ email: registration.email }, "Failed to register user");
-    return { ok: false, error: crudApiErrorResponse(error, "signUp") };
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "signUp"),
+    };
   }
 
   const maybeUser = await signIn(registration, config);
   if (!maybeUser.ok) {
     logger.error(
-      { email: registration.email, message: maybeUser.error.message },
+      {
+        email: registration.email,
+        message: maybeUser.error.message,
+      },
       "Error after registration during sign in",
     );
     throw new Error(maybeUser.error.message);
@@ -130,7 +119,10 @@ export async function changeUserPassword(
     return { ok: true, data: result.data };
   } catch (error: any) {
     logger.error(
-      { userId, err: error.response?.data ?? error },
+      {
+        userId,
+        err: error.response?.data ?? error,
+      },
       "Error during changeUserPassword",
     );
     return {
@@ -149,10 +141,7 @@ export async function resetPassword(
 ): Promise<Result<User, CrudApiError>> {
   const validation = parseResetPassword(data);
   if (!validation.success)
-    return validationError(
-      validation.error.issues,
-      "Invalid reset password data",
-    );
+    return validationError(validation.error.issues, "Invalid reset password data");
 
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
@@ -162,11 +151,11 @@ export async function resetPassword(
     logger.info({ id: res.data.id }, "Password reset successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to reset password",
-    );
-    return { ok: false, error: crudApiErrorResponse(error, "resetPassword") };
+    logger.error({ err: error.response?.data ?? error }, "Failed to reset password");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "resetPassword"),
+    };
   }
 }
 
@@ -178,22 +167,18 @@ export async function editProfile(
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
   const validation = parseProfileUser(data);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid profile data");
+  if (!validation.success) return validationError(validation.error.issues, "Invalid profile data");
 
   try {
-    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
-      editProfileUrl,
-      data,
-    );
+    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(editProfileUrl, data);
     logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to update profile",
-    );
-    return { ok: false, error: crudApiErrorResponse(error, "editProfile") };
+    logger.error({ err: error.response?.data ?? error }, "Failed to update profile");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "editProfile"),
+    };
   }
 }
 
@@ -205,8 +190,7 @@ export async function changePasswordProfile(
   config?: Config,
 ): Promise<Result<User, CrudApiError>> {
   const validation = parseChangePasswordProfile(data);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid password data");
+  if (!validation.success) return validationError(validation.error.issues, "Invalid password data");
 
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
@@ -216,10 +200,7 @@ export async function changePasswordProfile(
     logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
-    logger.error(
-      { err: error.response?.data ?? error },
-      "Failed to update profile",
-    );
+    logger.error({ err: error.response?.data ?? error }, "Failed to update profile");
     return {
       ok: false,
       error: crudApiErrorResponse(error, "changeProfilePassword"),

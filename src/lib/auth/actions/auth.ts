@@ -7,10 +7,7 @@ import {
   signIn as serverSignIn,
   signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-} from "@/lib/shared/helpers/crud-api-error.server";
+import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 import {
   ChangePasswordProfileFormData,
   Login,
@@ -18,24 +15,15 @@ import {
   ProfileUserFormData,
   Registrer,
 } from "@/lib/auth/models/auth.model";
-import {
-  parseResetPassword,
-  ResetPassword,
-  User,
-} from "@/lib/users/models/user.model";
-import {
-  sendPasswordResetEmail,
-  generateResetToken,
-} from "@/config/mail.config";
+import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user.model";
+import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { createSession, deleteSession } from "@lib/auth/jose";
 
 /**
  * Server Action: Sign In
  * Safely handles authentication on the server side
  */
-export async function signInAction(
-  credentials: Login,
-): Promise<User | CrudApiError> {
+export async function signInAction(credentials: Login): Promise<User | CrudApiError> {
   try {
     const res = await serverSignIn(credentials);
 
@@ -57,9 +45,7 @@ export async function signInAction(
  * Server Action: Sign Up
  * Safely handles user registration on the server side
  */
-export async function signUpAction(
-  userData: Registrer,
-): Promise<User | CrudApiError> {
+export async function signUpAction(userData: Registrer): Promise<User | CrudApiError> {
   try {
     const res = await serverSignUp(userData);
 
@@ -81,9 +67,7 @@ export async function signUpAction(
  * Server Action: Edit Profile
  * Safely handles profile editing on the server side
  */
-export async function editProfileAction(
-  data: ProfileUserFormData,
-): Promise<User | CrudApiError> {
+export async function editProfileAction(data: ProfileUserFormData): Promise<User | CrudApiError> {
   try {
     const res = await editProfile(data);
 
@@ -149,9 +133,7 @@ export async function sendPasswordResetAction(
  * Safely handles password change on the server side
  * Requires current password for security
  */
-export async function resetPasswordTokenAction(
-  data: ResetPassword,
-): Promise<User | CrudApiError> {
+export async function resetPasswordTokenAction(data: ResetPassword): Promise<User | CrudApiError> {
   const validation = parseResetPassword(data);
   if (!validation.success) {
     return {
@@ -203,10 +185,7 @@ export async function changePasswordProfileAction(
     // Go to sign in page after successful password reset
     return res.data;
   } catch (error) {
-    const errMsg = crudApiErrorResponse(
-      error,
-      "error changePasswordProfile action",
-    );
+    const errMsg = crudApiErrorResponse(error, "error changePasswordProfile action");
     return errMsg;
   }
 }

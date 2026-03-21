@@ -9,19 +9,22 @@ export async function deleteUserAction(id: number) {
     revalidatePath("/dashboard/users");
     return { ok: true };
   } catch (error: any) {
-    return { ok: false, error: error.message || "Failed to delete user" };
+    return {
+      ok: false,
+      error: error.message || "Failed to delete user",
+    };
   }
 }
 
-export async function updateUserAction(
-  id: number,
-  data: Record<string, unknown>,
-) {
+export async function updateUserAction(id: number, data: Record<string, unknown>) {
   try {
     await updateUser(id, data);
     revalidatePath("/dashboard/users");
     return { ok: true };
   } catch (error: any) {
-    return { ok: false, error: error.message || "Failed to update user" };
+    return {
+      ok: false,
+      error: error.message || "Failed to update user",
+    };
   }
 }

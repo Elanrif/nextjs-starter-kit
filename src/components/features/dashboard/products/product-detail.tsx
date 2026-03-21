@@ -62,34 +62,46 @@ export function ProductDetail({ product }: { product: Product }) {
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 shadow-xl">
-        <div className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-16 -left-12 h-56 w-56 rounded-full bg-indigo-500/15 blur-3xl" />
+      <div
+        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900 via-blue-950
+          to-slate-900 shadow-xl"
+      >
+        <div
+          className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full
+            bg-blue-500/20 blur-3xl"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-16 -left-12 h-56 w-56 rounded-full
+            bg-indigo-500/15 blur-3xl"
+        />
 
         <div className="relative p-8">
           <div className="flex items-start gap-6">
             {/* Icon */}
             <div className="relative shrink-0">
-              <div className="h-20 w-20 rounded-2xl bg-blue-500/20 ring-2 ring-blue-400/30 flex items-center justify-center shadow-lg">
+              <div
+                className="h-20 w-20 rounded-2xl bg-blue-500/20 ring-2 ring-blue-400/30 flex
+                  items-center justify-center shadow-lg"
+              >
                 <Package className="w-9 h-9 text-blue-300" />
               </div>
               <div
-                className={`absolute -bottom-2 -right-2 w-5 h-5 rounded-full border-2 border-slate-900 ${stock.dot}`}
+                className={`absolute -bottom-2 -right-2 w-5 h-5 rounded-full border-2
+                  border-slate-900 ${stock.dot}`}
               />
             </div>
 
             {/* Identity */}
             <div className="flex-1 min-w-0 pt-1">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold text-white tracking-tight">
-                  {product.name}
-                </h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">{product.name}</h1>
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ${
-                    product.isActive
-                      ? "bg-blue-500/25 text-blue-300 ring-blue-400/30"
-                      : "bg-red-500/20 text-red-300 ring-red-400/30"
-                  }`}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs
+                    font-semibold ring-1 ${
+                      product.isActive
+                        ? "bg-blue-500/25 text-blue-300 ring-blue-400/30"
+                        : "bg-red-500/20 text-red-300 ring-red-400/30"
+                    }`}
                 >
                   {product.isActive ? (
                     <CheckCircle2 className="w-3 h-3" />
@@ -101,9 +113,7 @@ export function ProductDetail({ product }: { product: Product }) {
               </div>
 
               {product.slug && (
-                <p className="text-slate-500 text-sm mt-1.5 font-mono truncate">
-                  /{product.slug}
-                </p>
+                <p className="text-slate-500 text-sm mt-1.5 font-mono truncate">/{product.slug}</p>
               )}
 
               {/* Meta row */}
@@ -139,15 +149,16 @@ export function ProductDetail({ product }: { product: Product }) {
             <span>{product.stock} unités</span>
           </div>
           <div className="w-px h-4 bg-white/10" />
-          <div className={`text-xs font-medium ${stock.cls.split(" ")[1]}`}>
-            {stock.label}
-          </div>
+          <div className={`text-xs font-medium ${stock.cls.split(" ")[1]}`}>{stock.label}</div>
         </div>
       </div>
 
       {/* Metrics row */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 text-center">
+        <div
+          className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md
+            transition-all hover:-translate-y-0.5 text-center"
+        >
           <div className="flex items-center justify-center mb-2">
             <div className="p-2 rounded-lg bg-emerald-50">
               <Euro className="w-4 h-4 text-emerald-500" />
@@ -157,7 +168,10 @@ export function ProductDetail({ product }: { product: Product }) {
           <p className="text-xs text-gray-400 mt-0.5">Prix unitaire</p>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 text-center">
+        <div
+          className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md
+            transition-all hover:-translate-y-0.5 text-center"
+        >
           <div className="flex items-center justify-center mb-2">
             <div className="p-2 rounded-lg bg-blue-50">
               <Box className="w-4 h-4 text-blue-500" />
@@ -167,12 +181,16 @@ export function ProductDetail({ product }: { product: Product }) {
           <p className="text-xs text-gray-400 mt-0.5">Unités en stock</p>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 text-center">
+        <div
+          className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md
+            transition-all hover:-translate-y-0.5 text-center"
+        >
           <div className="flex items-center justify-center mb-2">
             <div className={`w-2.5 h-2.5 rounded-full ${stock.dot}`} />
           </div>
           <div
-            className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ${stock.cls}`}
+            className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ring-1
+              ${stock.cls}`}
           >
             {stock.label}
           </div>
@@ -206,9 +224,7 @@ export function ProductDetail({ product }: { product: Product }) {
             icon: product.isActive ? CheckCircle2 : XCircle,
             label: "Statut",
             value: product.isActive ? "Actif" : "Inactif",
-            sub: product.isActive
-              ? "Visible en catalogue"
-              : "Masqué du catalogue",
+            sub: product.isActive ? "Visible en catalogue" : "Masqué du catalogue",
             color: product.isActive ? "text-emerald-600" : "text-red-500",
             bg: product.isActive ? "bg-emerald-50" : "bg-red-50",
             ring: product.isActive ? "ring-emerald-100" : "ring-red-100",
@@ -225,19 +241,17 @@ export function ProductDetail({ product }: { product: Product }) {
         ].map(({ icon: Icon, label, value, sub, color, bg, ring, mono }) => (
           <div
             key={label}
-            className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
+            className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5
+              shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
           >
-            <div
-              className={`${bg} ${color} ${ring} p-3 rounded-xl shrink-0 ring-1`}
-            >
+            <div className={`${bg} ${color} ${ring} p-3 rounded-xl shrink-0 ring-1`}>
               <Icon className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                {label}
-              </p>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{label}</p>
               <p
-                className={`text-sm font-semibold text-gray-800 mt-0.5 truncate ${mono ? "font-mono" : ""}`}
+                className={`text-sm font-semibold text-gray-800 mt-0.5 truncate
+                ${mono ? "font-mono" : ""}`}
               >
                 {value}
               </p>
@@ -250,16 +264,15 @@ export function ProductDetail({ product }: { product: Product }) {
       {/* Description */}
       {product.description && (
         <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <div className="bg-gray-50 text-gray-500 ring-1 ring-gray-100 p-3 rounded-xl shrink-0 h-fit">
+          <div className="bg-gray-50 text-gray-500 ring-1 ring-gray-100 p-3 rounded-xl shrink-0
+            h-fit">
             <FileText className="w-4 h-4" />
           </div>
           <div>
             <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
               Description
             </p>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {product.description}
-            </p>
+            <p className="text-sm text-gray-700 leading-relaxed">{product.description}</p>
           </div>
         </div>
       )}
@@ -268,14 +281,19 @@ export function ProductDetail({ product }: { product: Product }) {
       <div className="flex gap-3">
         <Link
           href={`${DASHBOARD}${PRODUCTS}`}
-          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border
+            border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+            transition-colors shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour
         </Link>
         <Link
           href={`${DASHBOARD}${PRODUCTS}/edit/${product.id}`}
-          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
+            bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
+            text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
+            transition-all"
         >
           <Pencil className="w-4 h-4" />
           Modifier le produit

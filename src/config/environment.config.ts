@@ -1,5 +1,4 @@
-const BACKEND_BASE_URL =
-  process.env.BACKEND_BASE_URL ?? "http://localhost:8081";
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL ?? "http://localhost:8081";
 const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000";
 const HOST_NAME = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost";
 const BACKEND_BASE_V1 = `${BACKEND_BASE_URL}/api/v1`;

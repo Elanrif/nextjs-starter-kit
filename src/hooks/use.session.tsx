@@ -7,7 +7,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 export const SESSION_QUERY_KEY = ["session"];
 
 const fetcher = async (): Promise<Result<Session, CrudApiError>> => {
-  const res = await fetch("/api/auth/session", { credentials: "include" });
+  const res = await fetch("/api/auth/session", {
+    credentials: "include",
+  });
 
   // 401 / 403 is expected when not authenticated — not an error, just unauthenticated state
   if (res.status === 401 || res.status === 403) {
@@ -22,9 +24,9 @@ const fetcher = async (): Promise<Result<Session, CrudApiError>> => {
   }
 
   if (!res.ok) {
-    const errorData = await res
-      .json()
-      .catch(() => ({ message: "Failed to fetch session" }));
+    const errorData = await res.json().catch(() => ({
+      message: "Failed to fetch session",
+    }));
     throw {
       error: errorData.error ?? "Error",
       status: errorData.status ?? res.status,
@@ -64,7 +66,9 @@ export const useSession = () => {
     error,
     // Refetch latest session data from server
     refresh: () =>
-      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+      queryClient.invalidateQueries({
+        queryKey: SESSION_QUERY_KEY,
+      }),
     // Clear session cache (e.g. after sign-out) without refetching
     invalidate: () => queryClient.setQueryData(SESSION_QUERY_KEY, undefined),
   };

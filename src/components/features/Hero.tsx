@@ -21,7 +21,10 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+    <section
+      className="relative min-h-screen flex items-center justify-center overflow-hidden
+        bg-slate-950"
+    >
       {/* Dot grid pattern */}
       <div
         className="absolute inset-0 opacity-40"
@@ -34,8 +37,12 @@ export default function Hero() {
 
       {/* Aurora gradients */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-225 h-150 bg-indigo-500/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -left-40 w-125 h-125 bg-violet-500/10 rounded-full blur-3xl" />
+        <div
+          className="absolute -top-40 left-1/2 -translate-x-1/2 w-225 h-150 bg-indigo-500/15
+            rounded-full blur-3xl"
+        />
+        <div className="absolute top-1/3 -left-40 w-125 h-125 bg-violet-500/10 rounded-full
+          blur-3xl" />
         <div className="absolute top-1/4 -right-40 w-125 h-125 bg-cyan-500/10 rounded-full blur-3xl" />
       </div>
 
@@ -43,7 +50,10 @@ export default function Hero() {
         {/* Top content */}
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-8">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border
+              border-indigo-500/30 bg-indigo-500/10 mb-8"
+          >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
             <span className="text-sm text-indigo-300 font-medium">
               Next.js 15 · React 19 · TypeScript · Tailwind v4
@@ -51,26 +61,32 @@ export default function Hero() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 text-white leading-[0.92]">
+          <h1
+            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 text-white
+              leading-[0.92]"
+          >
             Lancez votre
             <br />
-            <span className="bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span
+              className="bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text
+                text-transparent"
+            >
               app en minutes
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Un boilerplate Next.js production-ready avec authentification,
-            dashboard admin, composants UI et bien plus. Concentrez-vous sur
-            votre produit.
+            Un boilerplate Next.js production-ready avec authentification, dashboard admin,
+            composants UI et bien plus. Concentrez-vous sur votre produit.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button
               size="lg"
-              className="px-8 h-12 bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 border-0 group transition-all duration-200 hover:scale-105"
+              className="px-8 h-12 bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg
+                shadow-indigo-500/30 border-0 group transition-all duration-200 hover:scale-105"
             >
               <Rocket className="w-4 h-4 mr-2" />
               Commencer maintenant
@@ -79,7 +95,8 @@ export default function Hero() {
             <Button
               size="lg"
               variant="outline"
-              className="px-8 h-12 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:border-white/25 transition-all duration-200"
+              className="px-8 h-12 border-white/15 bg-white/5 text-white hover:bg-white/10
+                hover:border-white/25 transition-all duration-200"
               asChild
             >
               <a
@@ -97,7 +114,10 @@ export default function Hero() {
           {/* Feature pills */}
           <div className="flex flex-wrap justify-center gap-2 mb-16">
             {[
-              { icon: <Zap className="w-3.5 h-3.5" />, text: "Ultra rapide" },
+              {
+                icon: <Zap className="w-3.5 h-3.5" />,
+                text: "Ultra rapide",
+              },
               {
                 icon: <Shield className="w-3.5 h-3.5" />,
                 text: "Auth sécurisée",
@@ -113,7 +133,8 @@ export default function Hero() {
             ].map((pill, i) => (
               <div
                 key={i}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-400 text-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border
+                  border-white/10 text-slate-400 text-sm"
               >
                 <span className="text-slate-500">{pill.icon}</span>
                 {pill.text}
@@ -128,16 +149,25 @@ export default function Hero() {
           <div className="absolute -inset-4 bg-indigo-500/10 rounded-3xl blur-2xl" />
 
           {/* Browser window */}
-          <div className="relative rounded-2xl border border-white/10 bg-slate-900/80 backdrop-blur-sm shadow-2xl shadow-black/50 overflow-hidden">
+          <div
+            className="relative rounded-2xl border border-white/10 bg-slate-900/80 backdrop-blur-sm
+              shadow-2xl shadow-black/50 overflow-hidden"
+          >
             {/* Browser bar */}
-            <div className="flex items-center gap-3 px-5 py-3.5 border-b border-white/10 bg-slate-950/60">
+            <div
+              className="flex items-center gap-3 px-5 py-3.5 border-b border-white/10
+                bg-slate-950/60"
+            >
               <div className="flex gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <div className="w-3 h-3 rounded-full bg-green-500/80" />
               </div>
               <div className="flex-1 flex justify-center">
-                <div className="px-4 py-1 rounded-md bg-slate-800/80 border border-white/10 text-xs text-slate-400 font-mono">
+                <div
+                  className="px-4 py-1 rounded-md bg-slate-800/80 border border-white/10 text-xs
+                    text-slate-400 font-mono"
+                >
                   localhost:3000/dashboard
                 </div>
               </div>
@@ -146,14 +176,15 @@ export default function Hero() {
             {/* Dashboard preview */}
             <div className="flex h-72 sm:h-96">
               {/* Sidebar */}
-              <div className="hidden sm:flex flex-col w-56 bg-slate-950 border-r border-white/10 p-4 gap-1.5 shrink-0">
+              <div
+                className="hidden sm:flex flex-col w-56 bg-slate-950 border-r border-white/10 p-4
+                  gap-1.5 shrink-0"
+              >
                 <div className="flex items-center gap-2.5 mb-4 px-2">
                   <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center">
                     <Sparkles className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <span className="text-sm font-semibold text-white">
-                    Kickstart
-                  </span>
+                  <span className="text-sm font-semibold text-white">Kickstart</span>
                 </div>
                 {[
                   {
@@ -174,11 +205,8 @@ export default function Hero() {
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm ${
-                      item.active
-                        ? "bg-indigo-600/20 text-indigo-300"
-                        : "text-slate-500"
-                    }`}
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                    ${item.active ? "bg-indigo-600/20 text-indigo-300" : "text-slate-500"}`}
                   >
                     {item.icon}
                     {item.label}
@@ -212,47 +240,36 @@ export default function Hero() {
                       color: "text-pink-400",
                     },
                   ].map((stat, i) => (
-                    <div
-                      key={i}
-                      className="bg-slate-800/60 border border-white/5 rounded-xl p-3"
-                    >
-                      <div className="text-slate-500 text-xs mb-1">
-                        {stat.label}
-                      </div>
-                      <div className={`text-lg font-bold ${stat.color}`}>
-                        {stat.value}
-                      </div>
+                    <div key={i} className="bg-slate-800/60 border border-white/5 rounded-xl p-3">
+                      <div className="text-slate-500 text-xs mb-1">{stat.label}</div>
+                      <div className={`text-lg font-bold ${stat.color}`}>{stat.value}</div>
                     </div>
                   ))}
                 </div>
 
                 {/* Chart placeholder */}
-                <div className="bg-slate-800/40 border border-white/5 rounded-xl p-4 mb-3 h-28 flex items-end gap-1.5">
-                  {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map(
-                    (h, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-t-sm"
-                        style={{
-                          height: `${h}%`,
-                          background:
-                            i === 10
-                              ? "rgba(99,102,241,0.9)"
-                              : `rgba(99,102,241,${0.2 + i * 0.02})`,
-                        }}
-                      />
-                    ),
-                  )}
+                <div
+                  className="bg-slate-800/40 border border-white/5 rounded-xl p-4 mb-3 h-28 flex
+                    items-end gap-1.5"
+                >
+                  {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-t-sm"
+                      style={{
+                        height: `${h}%`,
+                        background:
+                          i === 10 ? "rgba(99,102,241,0.9)" : `rgba(99,102,241,${0.2 + i * 0.02})`,
+                      }}
+                    />
+                  ))}
                 </div>
 
                 {/* Table placeholder */}
                 <div className="bg-slate-800/40 border border-white/5 rounded-xl overflow-hidden">
                   <div className="grid grid-cols-3 px-4 py-2 border-b border-white/5">
                     {["Nom", "Statut", "Date"].map((h, i) => (
-                      <div
-                        key={i}
-                        className="text-xs text-slate-500 font-medium"
-                      >
+                      <div key={i} className="text-xs text-slate-500 font-medium">
                         {h}
                       </div>
                     ))}
@@ -275,16 +292,10 @@ export default function Hero() {
                     >
                       <div className="text-xs text-slate-300">{row.name}</div>
                       <div className="flex items-center gap-1.5">
-                        <div
-                          className={`w-1.5 h-1.5 rounded-full ${row.color}`}
-                        />
-                        <span className="text-xs text-slate-400">
-                          {row.status}
-                        </span>
+                        <div className={`w-1.5 h-1.5 rounded-full ${row.color}`} />
+                        <span className="text-xs text-slate-400">{row.status}</span>
                       </div>
-                      <div className="text-xs text-slate-500">
-                        Aujourd&apos;hui
-                      </div>
+                      <div className="text-xs text-slate-500">Aujourd&apos;hui</div>
                     </div>
                   ))}
                 </div>
@@ -296,15 +307,29 @@ export default function Hero() {
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-16">
           {[
-            { number: "15+", label: "Composants", color: "text-indigo-400" },
-            { number: "100%", label: "TypeScript", color: "text-purple-400" },
-            { number: "0", label: "Config requise", color: "text-pink-400" },
-            { number: "∞", label: "Possibilités", color: "text-cyan-400" },
+            {
+              number: "15+",
+              label: "Composants",
+              color: "text-indigo-400",
+            },
+            {
+              number: "100%",
+              label: "TypeScript",
+              color: "text-purple-400",
+            },
+            {
+              number: "0",
+              label: "Config requise",
+              color: "text-pink-400",
+            },
+            {
+              number: "∞",
+              label: "Possibilités",
+              color: "text-cyan-400",
+            },
           ].map((stat, i) => (
             <div key={i} className="text-center">
-              <div className={`text-3xl font-bold mb-1 ${stat.color}`}>
-                {stat.number}
-              </div>
+              <div className={`text-3xl font-bold mb-1 ${stat.color}`}>{stat.number}</div>
               <div className="text-slate-500 text-sm">{stat.label}</div>
             </div>
           ))}

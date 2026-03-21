@@ -33,7 +33,10 @@ transporter.verify((error, success) => {
  * Generate password reset token using a secret key
  * The token is a HMAC-SHA256 hash of a random string and the secret key
  */
-export function generateResetToken(): { resetToken: string; code: string } {
+export function generateResetToken(): {
+  resetToken: string;
+  code: string;
+} {
   const secret = process.env.SMTP_RESET_TOKEN_SECRET!;
   const code = randomBytes(16).toString("hex"); // Generate random string
   const resetToken = createHmac("sha256", secret).update(code).digest("hex"); // HMAC-SHA256
@@ -115,10 +118,7 @@ export async function sendPasswordResetEmail(
     };
 
     const info = await transporter.sendMail(mailOptions);
-    logger.info(
-      { messageId: info.messageId, to: email },
-      "Password reset email sent",
-    );
+    logger.info({ messageId: info.messageId, to: email }, "Password reset email sent");
     return true;
   } catch (error) {
     logger.error({ email, err: error }, "Failed to send password reset email");
@@ -129,10 +129,7 @@ export async function sendPasswordResetEmail(
 /**
  * Send welcome email
  */
-export async function sendWelcomeEmail(
-  email: string,
-  firstName: string,
-): Promise<boolean> {
+export async function sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
   try {
     const mailOptions = {
       from: process.env.SMTP_FROM || "noreply@example.com",

@@ -25,7 +25,12 @@ export interface Logger {
 }
 
 // Level hierarchy — same order as Pino.
-const LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3 } as const;
+const LOG_LEVELS = {
+  debug: 0,
+  info: 1,
+  warn: 2,
+  error: 3,
+} as const;
 type ClientLevel = keyof typeof LOG_LEVELS;
 
 // eslint-disable-next-line no-empty-function
@@ -56,18 +61,10 @@ function buildConsoleFallback(): Logger {
 
   /* eslint-disable no-console */
   return {
-    error: allow("error")
-      ? (o: any, m?: string) => console.error(m ?? o, m ? o : "")
-      : noop,
-    warn: allow("warn")
-      ? (o: any, m?: string) => console.warn(m ?? o, m ? o : "")
-      : noop,
-    info: allow("info")
-      ? (o: any, m?: string) => console.info(m ?? o, m ? o : "")
-      : noop,
-    debug: allow("debug")
-      ? (o: any, m?: string) => console.debug(m ?? o, m ? o : "")
-      : noop,
+    error: allow("error") ? (o: any, m?: string) => console.error(m ?? o, m ? o : "") : noop,
+    warn: allow("warn") ? (o: any, m?: string) => console.warn(m ?? o, m ? o : "") : noop,
+    info: allow("info") ? (o: any, m?: string) => console.info(m ?? o, m ? o : "") : noop,
+    debug: allow("debug") ? (o: any, m?: string) => console.debug(m ?? o, m ? o : "") : noop,
     child() {
       return this;
     },
@@ -108,26 +105,34 @@ function buildServerLogger(): Logger {
             },
             level,
           }
-        : { target: "pino/file", options: { destination: 1 }, level },
+        : {
+            target: "pino/file",
+            options: { destination: 1 },
+            level,
+          },
     );
   }
 
   if (output.includes("file") && file?.path) {
     targets.push({
       target: "pino/file",
-      options: { destination: file.path, mkdir: true },
+      options: {
+        destination: file.path,
+        mkdir: true,
+      },
       level,
     });
   }
 
   if (targets.length === 0) {
-    targets.push({ target: "pino/file", options: { destination: 1 }, level });
+    targets.push({
+      target: "pino/file",
+      options: { destination: 1 },
+      level,
+    });
   }
 
-  const transport =
-    targets.length > 1
-      ? pino.transport({ targets })
-      : pino.transport(targets[0]);
+  const transport = targets.length > 1 ? pino.transport({ targets }) : pino.transport(targets[0]);
   return pino({ level: level as Level }, transport) as unknown as Logger;
 }
 
@@ -151,9 +156,7 @@ function buildServerLogger(): Logger {
  * logger.warn("Something odd happened");
  * ```
  */
-export function getLogger(
-  type: "client" | "server" | "default" = "default",
-): Logger {
+export function getLogger(type: "client" | "server" | "default" = "default"): Logger {
   if (typeof window !== "undefined") {
     if (type === "server") {
       throw new Error(

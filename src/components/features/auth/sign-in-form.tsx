@@ -60,7 +60,10 @@ export function SignInForm() {
       <LoadingPage loading={loading} text="Connexion en cours..." />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {error && (
-          <div className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl">
+          <div
+            className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
+              border-red-500/20 rounded-xl"
+          >
             <span className="shrink-0">⚠</span>
             <span>{error}</span>
           </div>
@@ -92,11 +95,7 @@ export function SignInForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="text-white/30 hover:text-white/60 transition-colors"
             >
-              {showPassword ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           }
         >
@@ -123,7 +122,11 @@ export function SignInForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-semibold shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+            bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500
+            text-white text-sm font-semibold shadow-lg shadow-emerald-900/30
+            hover:shadow-emerald-900/50 hover:-translate-y-0.5 transition-all disabled:opacity-50
+            disabled:translate-y-0"
         >
           {loading ? (
             "Connexion..."
@@ -146,7 +149,8 @@ export function SignInForm() {
           <button
             type="button"
             onClick={fillDemo}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/20 text-blue-400 hover:bg-blue-500/25 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/15 border
+              border-blue-500/20 text-blue-400 hover:bg-blue-500/25 transition-colors"
             title="Remplir avec compte démo"
           >
             <User className="w-4 h-4" />
@@ -163,14 +167,11 @@ function SocialButton({ icon }: { icon: "facebook" | "google" }) {
   return (
     <button
       type="button"
-      className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
+      className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/10
+        bg-white/5 hover:bg-white/10 transition-colors"
     >
       {icon === "facebook" ? (
-        <svg
-          className="w-4 h-4 text-blue-400"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       ) : (

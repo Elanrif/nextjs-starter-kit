@@ -18,8 +18,7 @@ import type {
 
 export const productKeys = {
   all: ["products"] as const,
-  list: (filters?: ProductFiltersParams) =>
-    [...productKeys.all, "list", filters ?? {}] as const,
+  list: (filters?: ProductFiltersParams) => [...productKeys.all, "list", filters ?? {}] as const,
   detail: (id: number) => [...productKeys.all, "detail", id] as const,
 };
 
@@ -62,7 +61,9 @@ export function useCreateProduct() {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.all,
+      });
     },
   });
 }
@@ -77,8 +78,12 @@ export function useUpdateProduct() {
       return res.data;
     },
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.all,
+      });
     },
   });
 }
@@ -93,8 +98,12 @@ export function useDeleteProduct() {
       return res.data;
     },
     onSuccess: (_, id) => {
-      queryClient.removeQueries({ queryKey: productKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.removeQueries({
+        queryKey: productKeys.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.all,
+      });
     },
   });
 }
