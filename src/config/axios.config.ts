@@ -12,10 +12,7 @@ export default function httpClient({ logger }: { logger: Logger }) {
   instance.interceptors.request.use(
     requestLoggerInterceptor(logger),
     (error: any) => {
-      logger.error(
-        { error: error.message },
-        "[SpringBoot API] [Request Interceptor error]",
-      );
+      logger.error({ error: error.message }, "Outgoing request failed");
       return Promise.reject(error);
     },
   );
@@ -34,10 +31,7 @@ export default function httpClient({ logger }: { logger: Logger }) {
         // @ts-expect-error: false positive error, it is always a string
         message = error.response?.data ?? "";
       }
-      logger.error(
-        { error: error.message, message },
-        "[SpringBoot API] [Response Interceptor error]",
-      );
+      logger.error({ error: error.message, message }, "Upstream API error");
       return Promise.reject(error);
     },
   );
