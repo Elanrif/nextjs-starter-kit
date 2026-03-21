@@ -4,9 +4,15 @@ import {
   deleteProduct,
   fetchProductById,
 } from "@/lib/products/services/product.service";
-import { ProductUpdate } from "@/lib/products/models/product.model";
+import {
+  ProductUpdate,
+  parseProductUpdate,
+} from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  crudApiErrorResponse,
+  validationError,
+} from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
@@ -85,20 +91,27 @@ export async function PATCH(
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
-  const body = (await request.json()) as ProductUpdate;
+  const body = await request.json().catch(() => null);
+  const parsed = parseProductUpdate(body);
+  if (!parsed.success) {
+    const err = validationError(parsed.error.issues, "Invalid product data");
+    return NextResponse.json(err, { status: 400 });
+  }
 
-  if (Object.keys(body).length === 0) {
-    const status = 400;
-    const message = "Request body cannot be empty";
-    logger.error("Bad Request", { status, message });
-    return NextResponse.json({ message }, { status });
+  if (Object.keys(parsed.data).length === 0) {
+    const err = validationError([], "Request body cannot be empty");
+    return NextResponse.json(err, { status: 400 });
   }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const response = await updateProduct(config, productId, body);
+    const response = await updateProduct(
+      config,
+      productId,
+      parsed.data as ProductUpdate,
+    );
 
     if (!response.ok) {
       const error = response.error;
@@ -187,6 +200,6 @@ export async function DELETE(
       status,
       message: errMsg.message,
     });
-    return NextResponse.json(errMsg, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

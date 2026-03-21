@@ -12,6 +12,10 @@ import {
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
  * Category client service for handling category operations.
  * This service interacts with the proxy API endpoints for category management.
+ *
+ * ℹ️ Pattern: returns T | CrudApiError union instead of Result<T, E>.
+ * Callers use the `isCrudError()` type guard to distinguish success from error.
+ * Contrast with user/product services which use the Result<T, E> discriminated union.
  */
 
 const {

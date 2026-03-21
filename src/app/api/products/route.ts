@@ -6,9 +6,13 @@ import {
 import {
   ProductCreate,
   ProductFiltersParams,
+  parseProductCreate,
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import {
+  crudApiErrorResponse,
+  validationError,
+} from "@/lib/shared/helpers/crud-api-error";
 import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
@@ -54,7 +58,7 @@ export async function GET(request: NextRequest) {
       status,
       message: errMsg.message,
     });
-    return NextResponse.json({ ok: false, error }, { status });
+    return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }
 
@@ -91,13 +95,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
-  const body = (await request.json()) as ProductCreate;
+  const body = await request.json().catch(() => null);
+  const parsed = parseProductCreate(body);
+  if (!parsed.success) {
+    const err = validationError(parsed.error.issues, "Invalid product data");
+    return NextResponse.json(err, { status: 400 });
+  }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const response = await createProduct(config, body);
+    const response = await createProduct(config, parsed.data as ProductCreate);
 
     if (!response.ok) {
       const error = response.error;

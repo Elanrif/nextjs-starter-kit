@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { deleteCategory } from "@/lib/categories/services/category.client.service";
+import { isCrudError } from "@/lib/categories/hooks/use-categories";
 import {
   DataTable,
   DataTableColumn,
@@ -45,15 +46,11 @@ export function CategoryList({
     const res = await deleteCategory(deleteId);
     setDeleteLoading(false);
     setModalOpen(false);
-    if ("success" in res && res.success) {
+    if (isCrudError(res)) {
+      toast.error(res.message ?? "Erreur lors de la suppression");
+    } else {
       setCategories((prev) => prev.filter((c) => c.id !== deleteId));
       toast.success("Catégorie supprimée avec succès");
-    } else {
-      toast.error(
-        "message" in res && res.message
-          ? res.message
-          : "Erreur lors de la suppression",
-      );
     }
     setDeleteId(null);
   };

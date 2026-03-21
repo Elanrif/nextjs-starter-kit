@@ -5,8 +5,11 @@ import {
   updateUser,
   deleteUser,
 } from "@/lib/users/services/user.service";
-import { UserUpdate } from "@/lib/users/models/user.model";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { parseUserUpdate } from "@/lib/users/models/user.model";
+import {
+  crudApiErrorResponse,
+  validationError,
+} from "@/lib/shared/helpers/crud-api-error";
 
 const logger = getLogger("server");
 
@@ -56,13 +59,18 @@ export async function PATCH(
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
 
-  const body = (await request.json()) as UserUpdate;
+  const body = await request.json().catch(() => null);
+  const parsed = parseUserUpdate(body);
+  if (!parsed.success) {
+    const err = validationError(parsed.error.issues, "Invalid user data");
+    return NextResponse.json(err, { status: 400 });
+  }
 
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders };
 
   try {
-    const response = await updateUser(userId, body, config);
+    const response = await updateUser(userId, parsed.data, config);
     if (!response.ok) {
       const error = response.error;
       return NextResponse.json(response, { status: error.status });

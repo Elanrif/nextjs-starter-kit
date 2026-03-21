@@ -96,7 +96,8 @@ export function crudApiErrorResponse(
     error: "Internal Error",
     timestamp: new Date().toISOString(),
   };
-  logger.warn(
+  // Non-Axios errors are always unexpected internal failures (status 500) → log as error
+  logger.error(
     `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
     fallbackError,
   );

@@ -18,6 +18,9 @@ type Params = Promise<{ id: string }>;
 /**
  * GET /api/categories/[id]
  * Fetch a single category by ID
+ *
+ * ℹ️ Pattern: returns unwrapped T | CrudApiError (contrast with /api/users which returns Result<T,E>)
+ * The client service uses an `isCrudError()` type guard to distinguish success from error.
  */
 export async function GET(
   request: NextRequest,
@@ -39,7 +42,7 @@ export async function GET(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -51,7 +54,7 @@ export async function GET(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   const reqHeaders = new Headers(request.headers);
@@ -107,7 +110,7 @@ export async function PATCH(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -119,7 +122,7 @@ export async function PATCH(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   const body = (await request.json()) as CategoryUpdate;
@@ -178,7 +181,7 @@ export async function DELETE(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -190,7 +193,7 @@ export async function DELETE(
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   const reqHeaders = new Headers(request.headers);

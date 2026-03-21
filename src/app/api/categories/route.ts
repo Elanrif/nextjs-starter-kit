@@ -15,6 +15,9 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/categories
  * Fetch all product categories
+ *
+ * ℹ️ Pattern: returns unwrapped T | CrudApiError (contrast with /api/users which returns Result<T,E>)
+ * The client service uses an `isCrudError()` type guard to distinguish success from error.
  */
 export async function GET(request: NextRequest) {
   const reqHeaders = new Headers(request.headers);
@@ -59,7 +62,7 @@ export async function POST(request: NextRequest) {
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -71,7 +74,7 @@ export async function POST(request: NextRequest) {
       status: err.status,
       message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
+    return NextResponse.json(err, { status: err.status });
   }
 
   const body = (await request.json()) as CategoryCreate;
