@@ -155,7 +155,7 @@ export function ProductList() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-50">
-              <Package className="w-5 h-5 text-blue-600" />
+              <Package className="w-5 h-5 text-secondary" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Produits</h1>

@@ -146,7 +146,7 @@ export function UserList() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-emerald-50">
-              <Users className="w-5 h-5 text-emerald-600" />
+              <Users className="w-5 h-5 text-secondary" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>

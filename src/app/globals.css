@@ -105,12 +105,12 @@ html {
 
   /* Primary brand color (currently indigo) ──────────────────────────────── */
   --brand: oklch(0.511 0.262 276.966); /* indigo-600 */
-  --brand-muted: oklch(0.511 0.262 276.966 / 0.2);
+  --brand-muted: oklch(0.79 0.2264 144.8 / 0.2);
   --brand-foreground: oklch(1 0 0); /* white */
 
   /* Secondary brand color (currently violet) ────────────────────────────── */
   --brand-secondary: oklch(0.541 0.281 293.009); /* violet-600 */
-  --brand-secondary-muted: oklch(0.541 0.281 293.009 / 0.15);
+  --brand-secondary-muted: oklch(0.64 0.2242 297.4 / 0.15);
 
   /* Gradient mid-color for dark cards and sections ──────────────────────── */
   --card-gradient-via: oklch(0.282 0.091 272.788); /* blue-950 */
@@ -129,10 +129,9 @@ html {
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: oklch(0.26 0.1305 294.53);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.52 0.1759 25.87);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: oklch(0.25 0.0124 18.02) --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -294,54 +293,6 @@ html {
   .gradient-primary:hover {
     filter: brightness(1.15);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Dashboard action buttons and icon wrappers (currently emerald → teal).
-     Change --action and --action-to in :root to restyle all at once. */
-  .gradient-action {
-    background-image: linear-gradient(to right, var(--action), var(--action-to));
-    color: var(--action-foreground);
-    transition:
-      filter 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .gradient-action:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 16px color-mix(in oklch, var(--action) 40%, transparent);
-    transform: translateY(-1px);
-  }
-
-  .gradient-action:active {
-    filter: brightness(0.95);
-    transform: translateY(0);
-  }
-
-  /* Categories buttons and icon wrappers (currently violet → purple).
-     Change --action-secondary and --action-secondary-to in :root to restyle. */
-  .gradient-secondary {
-    background-image: linear-gradient(
-      to right,
-      var(--action-secondary),
-      var(--action-secondary-to)
-    );
-    color: var(--action-secondary-foreground);
-    transition:
-      filter 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .gradient-secondary:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 16px color-mix(in oklch, var(--action-secondary) 40%, transparent);
-    transform: translateY(-1px);
-  }
-
-  .gradient-secondary:active {
-    filter: brightness(0.95);
-    transform: translateY(0);
   }
 
   /* Fond de section sombre pleine page */

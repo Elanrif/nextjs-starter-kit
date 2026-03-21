@@ -101,24 +101,24 @@ export function ProductDetail({ product }: { product: Product }) {
               </div>
 
               {product.slug && (
-                <p className="text-slate-500 text-sm mt-1.5 font-mono truncate">/{product.slug}</p>
+                <p className="text-white/70 text-sm mt-1.5 font-mono truncate">/{product.slug}</p>
               )}
 
               {/* Meta row */}
               <div className="flex items-center gap-4 mt-3 flex-wrap">
                 {product.category?.name && (
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                  <div className="flex items-center gap-1.5 text-white/70 text-xs">
                     <Tag className="w-3.5 h-3.5" />
                     <span>{product.category.name}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                <div className="flex items-center gap-1.5 text-white/70 text-xs">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>Ajouté le {createdAt}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs">
-                  <Hash className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="font-mono text-slate-400">{product.id}</span>
+                  <Hash className="w-3.5 h-3.5 text-white/60" />
+                  <span className="font-mono text-white/70">{product.id}</span>
                 </div>
               </div>
             </div>
@@ -132,12 +132,12 @@ export function ProductDetail({ product }: { product: Product }) {
             <span>{price}</span>
           </div>
           <div className="w-px h-4 bg-white/10" />
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-white/70">
             <Box className="w-3.5 h-3.5" />
             <span>{product.stock} unités</span>
           </div>
           <div className="w-px h-4 bg-white/10" />
-          <div className={`text-xs font-medium ${stock.cls.split(" ")[1]}`}>{stock.label}</div>
+          <div className="text-xs font-medium text-cyan-300">{stock.label}</div>
         </div>
       </div>
 
@@ -236,14 +236,16 @@ export function ProductDetail({ product }: { product: Product }) {
               <Icon className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{label}</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {label}
+              </p>
               <p
-                className={`text-sm font-semibold text-gray-800 mt-0.5 truncate
+                className={`text-sm font-semibold text-muted-foreground mt-0.5 truncate
                 ${mono ? "font-mono" : ""}`}
               >
                 {value}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
             </div>
           </div>
         ))}

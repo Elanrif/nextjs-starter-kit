@@ -145,7 +145,7 @@ export function CategoryList({ initialCategories }: { initialCategories: Categor
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-violet-50">
-              <Tag className="w-5 h-5 text-violet-600" />
+              <Tag className="w-5 h-5 text-secondary" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">Catégories</h1>
@@ -159,7 +159,7 @@ export function CategoryList({ initialCategories }: { initialCategories: Categor
           </div>
           <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
             <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-secondary text-sm
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
                 font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <Plus className="w-4 h-4" />
