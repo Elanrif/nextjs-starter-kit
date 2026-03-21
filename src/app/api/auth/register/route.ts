@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 import { auth } from "@/lib/auth/api/auth";
 
 const logger = getLogger("server");
@@ -19,22 +19,26 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const res = await auth.api.signUp({ body, config });
+    const res = await auth.api.signUp({
+      body,
+      config,
+    });
 
     if (!res.ok) {
       const error = res.error;
-      return NextResponse.json(res, { status: error.status });
+      return NextResponse.json(res, {
+        status: error.status,
+      });
     }
 
-    logger.info("User registered", { userId: res.data.id });
-    return NextResponse.json(res, { status: 201 });
+    logger.info({ userId: res.data.id }, "User registered");
+    return NextResponse.json(res, {
+      status: 201,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "register");
     const status = errMsg.status || 500;
-    logger.error("Error during registration", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error({ status, message: errMsg.message }, "Error during registration");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

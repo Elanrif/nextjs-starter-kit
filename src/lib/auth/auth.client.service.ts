@@ -24,26 +24,22 @@ const {
 /**
  * Sign in a user with email and password (client-side)
  */
-export async function signIn(
-  login: Login,
-): Promise<Result<User, CrudApiError>> {
-  const result = await frontendHttp().post<
-    any,
-    AxiosResponse<Result<User, CrudApiError>>
-  >(loginUrl, login);
+export async function signIn(login: Login): Promise<Result<User, CrudApiError>> {
+  const result = await frontendHttp().post<any, AxiosResponse<Result<User, CrudApiError>>>(
+    loginUrl,
+    login,
+  );
   return result.data;
 }
 
 /**
  * Register a new user (client-side)
  */
-export async function signUp(
-  registration: Registrer,
-): Promise<Result<User, CrudApiError>> {
-  const res = await frontendHttp().post<
-    any,
-    AxiosResponse<Result<User, CrudApiError>>
-  >(registerUrl, registration);
+export async function signUp(registration: Registrer): Promise<Result<User, CrudApiError>> {
+  const res = await frontendHttp().post<any, AxiosResponse<Result<User, CrudApiError>>>(
+    registerUrl,
+    registration,
+  );
   return res.data;
 }
 
@@ -59,10 +55,14 @@ export async function changeUserPassword({
   newPassword: string;
   confirmPassword: string;
 }): Promise<Result<User, CrudApiError>> {
-  const body = { oldPassword, newPassword, confirmPassword };
-  const result = await frontendHttp().patch<
-    any,
-    AxiosResponse<Result<User, CrudApiError>>
-  >(passwordChangeUrl, body);
+  const body = {
+    oldPassword,
+    newPassword,
+    confirmPassword,
+  };
+  const result = await frontendHttp().patch<any, AxiosResponse<Result<User, CrudApiError>>>(
+    passwordChangeUrl,
+    body,
+  );
   return result.data;
 }

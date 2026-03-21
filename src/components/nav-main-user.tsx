@@ -4,11 +4,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -44,11 +40,7 @@ export function NavMainUser({
     if (item.url === accountBase && pathname === accountBase) {
       return { ...item, isActive: true };
     }
-    if (
-      item.url === "#" &&
-      pathname.startsWith(accountBase) &&
-      pathname !== accountBase
-    ) {
+    if (item.url === "#" && pathname.startsWith(accountBase) && pathname !== accountBase) {
       return { ...item, isActive: true };
     }
     return { ...item, isActive: false };
@@ -56,7 +48,8 @@ export function NavMainUser({
 
   return (
     <SidebarGroup className="px-3 py-3">
-      <SidebarGroupLabel className="text-gray-400 text-[10px] uppercase tracking-widest font-semibold px-1 mb-2">
+      <SidebarGroupLabel className="text-gray-400 text-[10px] uppercase tracking-widest
+        font-semibold px-1 mb-2">
         Navigation
       </SidebarGroupLabel>
       <SidebarMenu className="gap-1">
@@ -64,9 +57,7 @@ export function NavMainUser({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={
-              item.items && item.items.length > 0 ? true : item.isActive
-            }
+            defaultOpen={item.items && item.items.length > 0 ? true : item.isActive}
             className="group/collapsible"
           >
             {item.items && item.items.length > 0 ? (
@@ -92,7 +83,8 @@ export function NavMainUser({
                     <span>{item.title}</span>
                     <ChevronRight
                       className={cn(
-                        "ml-auto w-3.5 h-3.5 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90",
+                        `ml-auto w-3.5 h-3.5 transition-transform duration-200
+                          group-data-[state=open]/collapsible:rotate-90`,
                         item.isActive ? "text-indigo-400" : "text-gray-300",
                       )}
                     />
@@ -103,10 +95,7 @@ export function NavMainUser({
                     {(() => {
                       const bestMatch = item
                         .items!.map((i) => i.url)
-                        .filter(
-                          (url) =>
-                            pathname === url || pathname.startsWith(url + "/"),
-                        )
+                        .filter((url) => pathname === url || pathname.startsWith(url + "/"))
                         .toSorted((a, b) => b.length - a.length)[0];
                       return item.items!.map((subItem) => {
                         const isSubActive = subItem.url === bestMatch;
@@ -117,24 +106,23 @@ export function NavMainUser({
                               className={cn(
                                 "rounded-lg h-8 text-xs font-medium transition-all duration-150",
                                 isSubActive
-                                  ? "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700"
+                                  ? "bg-indigo-50 text-indigo-600" +
+                                      " hover:bg-indigo-100 hover:text-indigo-700"
                                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-700",
                               )}
                             >
-                              <Link
-                                href={subItem.url}
-                                className="flex items-center gap-2"
-                              >
+                              <Link href={subItem.url} className="flex items-center gap-2">
                                 {subItem.icon && (
                                   <subItem.icon
-                                    className={cn(
-                                      "w-3.5 h-3.5 shrink-0 text-current!",
-                                    )}
+                                    className={cn("w-3.5 h-3.5 shrink-0 text-current!")}
                                   />
                                 )}
                                 <span>{subItem.title}</span>
                                 {isSubActive && (
-                                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                  <span
+                                    className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500
+                                    shrink-0"
+                                  />
                                 )}
                               </Link>
                             </SidebarMenuSubButton>

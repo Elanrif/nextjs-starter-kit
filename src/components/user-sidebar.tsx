@@ -35,17 +35,27 @@ const data = {
       icon: Settings,
       isActive: true,
       items: [
-        { title: "Voir le profil", url: VIEW_PROFILE, icon: User },
-        { title: "Modifier le profil", url: EDIT_PROFILE, icon: Pencil },
-        { title: "Mot de passe", url: CHANGE_PASSWORD, icon: Lock },
+        {
+          title: "Voir le profil",
+          url: VIEW_PROFILE,
+          icon: User,
+        },
+        {
+          title: "Modifier le profil",
+          url: EDIT_PROFILE,
+          icon: Pencil,
+        },
+        {
+          title: "Mot de passe",
+          url: CHANGE_PASSWORD,
+          icon: Lock,
+        },
       ],
     },
   ],
 };
 
-export function UserSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [auth, setAuth] = React.useState<UserType | null>(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -72,11 +82,7 @@ export function UserSidebar({
   }
 
   return (
-    <Sidebar
-      collapsible="icon"
-      {...props}
-      className="bg-white border-r border-gray-350"
-    >
+    <Sidebar collapsible="icon" {...props} className="bg-white border-r border-gray-350">
       <SidebarHeader className="bg-white">
         <AccountBrand />
       </SidebarHeader>

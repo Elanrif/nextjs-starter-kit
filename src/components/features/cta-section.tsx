@@ -74,10 +74,7 @@ const features = [
 
 export default function CTASection() {
   return (
-    <section
-      id="features"
-      className="relative py-24 bg-slate-950 overflow-hidden"
-    >
+    <section id="features" className="relative py-24 bg-slate-950 overflow-hidden">
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-20"
@@ -89,13 +86,19 @@ export default function CTASection() {
       />
       {/* Glow accents */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-225 h-96 bg-indigo-500/8 rounded-full blur-3xl" />
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-225 h-96 bg-indigo-500/8
+            rounded-full blur-3xl"
+        />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-6">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border
+              border-indigo-500/30 bg-indigo-500/10 mb-6"
+          >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
             <span className="text-sm text-indigo-300 font-medium">
               Tout ce qu&apos;il vous faut
@@ -103,14 +106,14 @@ export default function CTASection() {
           </div>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4">
             Construisez quelque chose{" "}
-            <span className="bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text
+              text-transparent">
               d&apos;incroyable
             </span>
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Démarrez votre prochain projet avec notre template et
-            concentrez-vous sur ce qui compte : créer des produits que vos
-            utilisateurs adoreront.
+            Démarrez votre prochain projet avec notre template et concentrez-vous sur ce qui compte
+            : créer des produits que vos utilisateurs adoreront.
           </p>
         </div>
 
@@ -119,11 +122,13 @@ export default function CTASection() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className={`group rounded-2xl border ${feature.border} ${feature.bg} p-6 hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm`}
+              className={`group rounded-2xl border ${feature.border} ${feature.bg} p-6
+              hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm`}
             >
               <div className="flex items-center gap-3 mb-4">
                 <div
-                  className={`w-9 h-9 rounded-xl bg-slate-900/60 border border-white/10 flex items-center justify-center ${feature.accent}`}
+                  className={`w-9 h-9 rounded-xl bg-slate-900/60 border border-white/10 flex
+                  items-center justify-center ${feature.accent}`}
                 >
                   {feature.icon}
                 </div>
@@ -131,13 +136,8 @@ export default function CTASection() {
               </div>
               <ul className="space-y-1.5">
                 {feature.items.map((item, i) => (
-                  <li
-                    key={i}
-                    className="flex items-center gap-2 text-sm text-slate-400"
-                  >
-                    <div
-                      className={`w-1 h-1 rounded-full shrink-0 ${feature.accent} bg-current`}
-                    />
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-400">
+                    <div className={`w-1 h-1 rounded-full shrink-0 ${feature.accent} bg-current`} />
                     {item}
                   </li>
                 ))}
@@ -149,28 +149,33 @@ export default function CTASection() {
         {/* CTA Card */}
         <div className="relative rounded-3xl border border-white/10 bg-white/3 overflow-hidden">
           {/* Inner glow */}
-          <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 via-transparent to-purple-500/5" />
+          <div
+            className="absolute inset-0 bg-linear-to-br from-indigo-500/5 via-transparent
+              to-purple-500/5"
+          />
 
           <div className="relative px-8 py-14 sm:px-16 text-center">
             <div className="max-w-xl mx-auto">
               {/* Rocket icon */}
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 mb-6">
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl
+                  bg-indigo-500/15 border border-indigo-500/30 mb-6"
+              >
                 <Rocket className="w-7 h-7 text-indigo-400" />
               </div>
 
-              <h3 className="text-3xl md:text-4xl font-black text-white mb-4">
-                Prêt à démarrer ?
-              </h3>
+              <h3 className="text-3xl md:text-4xl font-black text-white mb-4">Prêt à démarrer ?</h3>
               <p className="text-slate-400 mb-8 leading-relaxed">
-                Utilisez ce template pour votre prochain projet et gagnez des
-                jours de configuration.
+                Utilisez ce template pour votre prochain projet et gagnez des jours de
+                configuration.
               </p>
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <Button
                   size="lg"
-                  className="px-8 h-12 bg-white text-slate-900 hover:bg-slate-100 shadow-lg shadow-black/20 font-semibold group transition-all duration-200 hover:scale-105"
+                  className="px-8 h-12 bg-white text-slate-900 hover:bg-slate-100 shadow-lg
+                    shadow-black/20 font-semibold group transition-all duration-200 hover:scale-105"
                   asChild
                 >
                   <a
@@ -181,14 +186,16 @@ export default function CTASection() {
                   >
                     <GithubIcon className="mr-2 h-4 w-4" />
                     Utiliser ce template
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform
+                      group-hover:translate-x-1" />
                   </a>
                 </Button>
 
                 <Button
                   size="lg"
                   variant="outline"
-                  className="px-8 h-12 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:border-white/25 transition-all duration-200"
+                  className="px-8 h-12 border-white/15 bg-white/5 text-white hover:bg-white/10
+                    hover:border-white/25 transition-all duration-200"
                   asChild
                 >
                   <a href="#docs" className="flex items-center">

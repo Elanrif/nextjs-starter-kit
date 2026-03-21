@@ -74,8 +74,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
   const showSessionExpired = useCallback(() => {
     showModal("session-expired", {
       title: "Session Expired",
-      description:
-        "Your session has expired. Please sign in again to continue.",
+      description: "Your session has expired. Please sign in again to continue.",
       confirmText: "Sign In",
       onConfirm: () => {
         hideModal();
@@ -111,10 +110,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
       {children}
 
       {/* Session Expired Modal */}
-      <Dialog
-        open={modalType === "session-expired"}
-        onOpenChange={handleOpenChange}
-      >
+      <Dialog open={modalType === "session-expired"} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -134,8 +130,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
               {options.title || "Session Expired"}
             </DialogTitle>
             <DialogDescription>
-              {options.description ||
-                "Your session has expired. Please sign in again."}
+              {options.description || "Your session has expired. Please sign in again."}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
@@ -159,9 +154,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
             <Button variant="outline" onClick={() => handleOpenChange(false)}>
               {options.cancelText || "Cancel"}
             </Button>
-            <Button onClick={options.onConfirm}>
-              {options.confirmText || "Confirm"}
-            </Button>
+            <Button onClick={options.onConfirm}>{options.confirmText || "Confirm"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -174,9 +167,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
             <DialogDescription>{options.description}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => handleOpenChange(false)}>
-              {options.confirmText || "OK"}
-            </Button>
+            <Button onClick={() => handleOpenChange(false)}>{options.confirmText || "OK"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

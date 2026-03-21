@@ -29,12 +29,18 @@ export function AccountBreadcrumb() {
   const after = pathname.replace(ROUTES.MY_ACCOUNT, "").replace(/^\//, "");
   const segments = after ? after.split("/").filter(Boolean) : [];
 
-  const crumbs: { label: string; href?: string }[] = [];
+  const crumbs: {
+    label: string;
+    href?: string;
+  }[] = [];
   let href: any = ROUTES.MY_ACCOUNT;
 
   for (const seg of segments) {
     href = `${href}/${seg}`;
-    crumbs.push({ label: getSegmentLabel(seg), href });
+    crumbs.push({
+      label: getSegmentLabel(seg),
+      href,
+    });
   }
 
   return (
@@ -53,9 +59,7 @@ export function AccountBreadcrumb() {
           <>
             <BreadcrumbSeparator className="hidden md:block text-gray-300" />
             <BreadcrumbItem>
-              <BreadcrumbPage className="font-medium text-gray-700">
-                Mon espace
-              </BreadcrumbPage>
+              <BreadcrumbPage className="font-medium text-gray-700">Mon espace</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         ) : (

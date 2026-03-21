@@ -1,19 +1,42 @@
-import { getLogger } from "@/config/logger.config";
-import { AxiosError } from "axios";
-import type { ZodError } from "zod";
+/**
+ * Shared error types and helpers — safe to import in both server and client code.
+ * Do NOT add any server-only imports (pino, server actions, etc.) to this file.
+ */
 
-// NOTE: logger.error writes to console.error on the Node process. Using
-// logger.error for non-5xx conditions (auth/validation) will always produce
-// noisy server logs in the Node console / hosting platform. Use
-// logger.error prudently; prefer logger.warn for client/auth/validation
-// failures that shouldn't be treated as internal server errors.
-const logger = getLogger("server");
+/** Error shape returned by the Spring Boot API. */
+export type CrudApiError = {
+  timestamp?: string;
+  error: string; // e.g. "Bad Request", "Unauthorized"
+  status: number; // HTTP status code
+  message: string; // human-readable error message
+  details?: unknown; // optional Zod validation issues
+};
 
-/*
- * ApiError class to represent API errors in a structured way.
- * This can be used to throw and handle errors consistently
- * across your application when making API calls.
+/** Discriminated union for API responses — use `res.ok` to narrow. */
+export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };
+
+/**
+ * Type guard for the `T | CrudApiError` union pattern.
+ * Use instead of `"error" in res` — narrows the type correctly.
  *
+ * @example
+ * const res = await fetchCategories();
+ * if (isCrudError(res)) { console.error(res.message); return; }
+ * // res is Category[] here
+ */
+export function isCrudError(value: unknown): value is CrudApiError {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "error" in value &&
+    "status" in value &&
+    "message" in value
+  );
+}
+
+/**
+ * Error class for programmatic API errors (e.g. thrown in interceptors).
+ * Provides `statusCode` and `errorType` accessors.
  */
 export class ApiError extends Error {
   public timestamp: string;
@@ -27,96 +50,19 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
     this.timestamp = new Date().toISOString();
-    this.error = error || (status === 400 ? "Bad Request" : "Error");
+    this.error = error ?? (status === 400 ? "Bad Request" : "Error");
   }
 
   get statusCode() {
     return this.status;
   }
-
   set statusCode(value) {
     this.status = value;
   }
-
   get errorType() {
     return this.error;
   }
-
   set errorType(value) {
     this.error = value;
   }
-}
-
-/*
- * ApiError reponse format from the API SPRING BOOT
- * You can customize this based on your API response structure.
- */
-export type CrudApiError = {
-  timestamp?: string;
-  error: string; // errorType e.g., "Bad Request", "Unauthorized", etc.
-  status: number; // HTTP status code
-  message: string; // error message from the API
-  details?: unknown; // optional validation details (e.g. Zod issues)
-};
-
-/**
- * Converts any caught error into a structured CrudApiError.
- * Handles both Axios errors and generic JS errors safely.
- */
-export function crudApiErrorResponse(
-  error: unknown,
-  context?: string,
-): CrudApiError {
-  // Runtime check: is it really an Axios error?
-  if (error instanceof AxiosError) {
-    const apiError: CrudApiError = error.response?.data || {
-      status: error.response?.status ?? 500,
-      message: error.message || "Unknown Axios error",
-      error: "Error",
-      timestamp: new Date().toISOString(),
-    };
-    // Log as warn for non-5xx statuses to avoid noisy server errors
-    if (apiError.status >= 500) {
-      logger.error(
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
-        apiError,
-      );
-    } else {
-      logger.warn(
-        `Nodejs server [Axios Error] [${context ?? "unknown"}]:`,
-        apiError,
-      );
-    }
-    return apiError;
-  }
-
-  const fallbackError: CrudApiError = {
-    status: 500,
-    message: (error as Error)?.message || "Unknown error",
-    error: "Internal Error",
-    timestamp: new Date().toISOString(),
-  };
-  logger.warn(
-    `Nodejs server [HTTP Error] [${context ?? "unknown"}]:`,
-    fallbackError,
-  );
-  return fallbackError;
-}
-
-// Generic Result type for API responses, can be used to represent success or error outcomes
-export type Result<T, E> = { ok: true; data: T } | { ok: false; error: E };
-
-/**
- * Returns a structured 400 validation error from Zod issues.
- * Use `message` to identify the entity (e.g. "Invalid user data", "Invalid product data").
- */
-export function validationError(
-  issues: ZodError["issues"],
-  message: string,
-): Result<never, CrudApiError> {
-  logger.warn(message, { errors: issues });
-  return {
-    ok: false,
-    error: { status: 400, message, error: "Bad Request", details: issues },
-  };
 }

@@ -33,18 +33,14 @@ import { ROUTES } from "@/utils/routes";
 import { SignOutButton } from "./features/auth/sign-out-button";
 
 function getInitials(user: User) {
-  return (
-    (user.firstName?.slice(0, 1) ?? "") + (user.lastName?.slice(0, 1) ?? "")
-  ).toUpperCase();
+  return ((user.firstName?.slice(0, 1) ?? "") + (user.lastName?.slice(0, 1) ?? "")).toUpperCase();
 }
 
 function renderAccountMenuItem(user: User, pathname?: string | null) {
   if (!user) return null;
-  if (pathname?.startsWith("/account") && user.role !== UserRole.ADMIN)
-    return null;
+  if (pathname?.startsWith("/account") && user.role !== UserRole.ADMIN) return null;
 
-  let target =
-    user.role === UserRole.ADMIN ? ROUTES.DASHBOARD : ROUTES.MY_ACCOUNT;
+  let target = user.role === UserRole.ADMIN ? ROUTES.DASHBOARD : ROUTES.MY_ACCOUNT;
   let label = user.role === UserRole.ADMIN ? "Admin dashboard" : "Mon espace";
 
   if (pathname?.startsWith("/dashboard")) {
@@ -69,13 +65,7 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
   );
 }
 
-export function NavUser({
-  user,
-  variant = "dark",
-}: {
-  user: User;
-  variant?: "dark" | "light";
-}) {
+export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dark" | "light" }) {
   const { session, error, invalidate } = useSession();
   const { isMobile } = useSidebar();
   const pathname = usePathname();
@@ -95,8 +85,10 @@ export function NavUser({
               size="lg"
               className={
                 isDark
-                  ? "h-12 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 transition-all data-[state=open]:bg-white/10"
-                  : "h-12 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all data-[state=open]:bg-gray-100"
+                  ? `h-12 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8
+                    transition-all data-[state=open]:bg-white/10`
+                  : `h-12 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200
+                    transition-all data-[state=open]:bg-gray-100`
               }
             >
               <Avatar className="h-7 w-7 rounded-lg shrink-0">
@@ -142,7 +134,8 @@ export function NavUser({
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-xl border border-gray-100 shadow-xl"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-xl border
+              border-gray-100 shadow-xl"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={8}
@@ -152,7 +145,8 @@ export function NavUser({
               <div className="flex items-center gap-3 px-3 py-3">
                 <Avatar className="h-9 w-9 rounded-xl">
                   <AvatarImage src={user.avatar} alt={user.firstName} />
-                  <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm font-semibold">
+                  <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm
+                    font-semibold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -160,18 +154,14 @@ export function NavUser({
                   <span className="truncate text-sm font-semibold text-gray-900">
                     {user.firstName} {user.lastName}
                   </span>
-                  <span className="truncate text-xs text-gray-400">
-                    {user.email}
-                  </span>
+                  <span className="truncate text-xs text-gray-400">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuGroup>
-              {renderAccountMenuItem(user, pathname)}
-            </DropdownMenuGroup>
+            <DropdownMenuGroup>{renderAccountMenuItem(user, pathname)}</DropdownMenuGroup>
 
             <DropdownMenuSeparator />
 

@@ -82,9 +82,7 @@ export async function deleteProduct(id): Promise<ApiResponse<void>>;
 **`product.client.service.ts`** (client — appelle les API routes Next.js)
 
 ```ts
-export async function createProduct(
-  data,
-): Promise<{ ok: true } | { ok: false; error }>;
+export async function createProduct(data): Promise<{ ok: true } | { ok: false; error }>;
 export async function updateProduct(id, data);
 export async function deleteProduct(id);
 ```

@@ -26,7 +26,8 @@ export function NotFound({
       </div>
       <Link
         href={backHref}
-        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
+          rounded-lg transition-colors"
       >
         {backLabel}
       </Link>

@@ -4,6 +4,10 @@ import { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Keep pino and pino-pretty as native Node modules — never bundled by webpack.
+  // This lets the logger.config.ts lazy-require work on the server,
+  // while the browser receives only the console fallback.
+  serverExternalPackages: ["pino", "pino-pretty"],
 
   async headers() {
     return [
@@ -26,23 +30,10 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-          {
-            key: "Access-Control-Allow-Credentials",
-            value: "true",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value:
-              "Accept,Authorization,Cache-Control,Content-Type,DNT,Expires,If-Modified-Since,Pragma,Range,User-Agent,X-Requested-With",
-          },
+          // CORS headers are intentionally omitted here.
+          // "Access-Control-Allow-Origin: *" combined with "credentials: true" is
+          // invalid per the CORS spec and will be rejected by browsers.
+          // CORS for Next.js API routes is handled per-route when needed.
         ],
       },
     ];

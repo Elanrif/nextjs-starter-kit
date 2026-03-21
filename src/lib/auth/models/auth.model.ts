@@ -56,9 +56,7 @@ const BaseSchema = z.object({
     .max(15, "Phone number must be at most 15 digits"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z
-    .string()
-    .min(6, "Confirm password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
 });
 
 /**
@@ -118,7 +116,5 @@ export const ChangePasswordProfileSchema = BaseSchema.pick({
     path: ["confirmPassword"],
   });
 
-export type ChangePasswordProfileFormData = z.infer<
-  typeof ChangePasswordProfileSchema
->;
+export type ChangePasswordProfileFormData = z.infer<typeof ChangePasswordProfileSchema>;
 export const parseChangePasswordProfile = ChangePasswordProfileSchema.safeParse;

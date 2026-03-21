@@ -38,11 +38,7 @@ export function Field({
       <div className="relative">
         {icon && <div className={v.icon}>{icon}</div>}
         {children}
-        {action && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            {action}
-          </div>
-        )}
+        {action && <div className="absolute right-3 top-1/2 -translate-y-1/2">{action}</div>}
       </div>
       {error && <p className={v.error}>{error}</p>}
     </div>

@@ -29,7 +29,8 @@ export function DataTable<T extends { id: string | number }>({
               {columns.map((col) => (
                 <th
                   key={col.key as string}
-                  className={`px-5 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider ${col.className || ""}`}
+                  className={`px-5 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase
+                  tracking-wider ${col.className || ""}`}
                 >
                   {col.label}
                 </th>
@@ -58,18 +59,13 @@ export function DataTable<T extends { id: string | number }>({
 
             {!loading &&
               data.map((row) => (
-                <tr
-                  key={row.id}
-                  className="hover:bg-gray-50/80 transition-colors"
-                >
+                <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
                   {columns.map((col) => (
                     <td
                       key={col.key as string}
                       className={`px-5 py-3.5 text-sm text-gray-700 ${col.className || ""}`}
                     >
-                      {col.render
-                        ? col.render(row)
-                        : (row[col.key as keyof T] as ReactNode)}
+                      {col.render ? col.render(row) : (row[col.key as keyof T] as ReactNode)}
                     </td>
                   ))}
                 </tr>

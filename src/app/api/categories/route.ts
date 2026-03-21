@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
-import {
-  createCategory,
-  fetchCategories,
-} from "@/lib/categories/services/category.service";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
+import { createCategory, fetchCategories } from "@/lib/categories/services/category.service";
 import { getSession } from "@/lib/auth/jose/jose.service";
 
 const logger = getLogger("server");
@@ -15,6 +12,9 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/categories
  * Fetch all product categories
+ *
+ * ℹ️ Pattern: returns unwrapped T | CrudApiError (contrast with /api/users which returns Result<T,E>)
+ * The client service uses an `isCrudError()` type guard to distinguish success from error.
  */
 export async function GET(request: NextRequest) {
   const reqHeaders = new Headers(request.headers);
@@ -29,14 +29,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(response.data, { status: 200 });
+    return NextResponse.json(response.data, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "fetchCategories");
     const status = errMsg.status || 500;
-    logger.error("Error during category fetching", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error({ status, message: errMsg.message }, "Error during category fetching");
     return NextResponse.json(errMsg, { status });
   }
 }
@@ -55,11 +54,16 @@ export async function POST(request: NextRequest) {
       status: 401,
       message: "You must be logged in",
     };
-    logger.error("Unauthorized", {
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Unauthorized",
+    );
+    return NextResponse.json(err, {
       status: err.status,
-      message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
@@ -67,11 +71,16 @@ export async function POST(request: NextRequest) {
       status: 403,
       message: "You do not have permission to perform this action",
     };
-    logger.error("Forbidden", {
+    logger.error(
+      {
+        status: err.status,
+        message: err.message,
+      },
+      "Forbidden",
+    );
+    return NextResponse.json(err, {
       status: err.status,
-      message: err.message,
     });
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
   }
 
   const body = (await request.json()) as CategoryCreate;
@@ -88,15 +97,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    logger.info("Category created", { categoryId: response.data.id });
-    return NextResponse.json(response.data, { status: 201 });
+    logger.info({ categoryId: response.data.id }, "Category created");
+    return NextResponse.json(response.data, {
+      status: 201,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
-    logger.error("Error during category creation", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error({ status, message: errMsg.message }, "Error during category creation");
     return NextResponse.json(errMsg, { status });
   }
 }

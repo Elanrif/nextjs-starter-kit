@@ -8,8 +8,7 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   // normalize path (remove trailing slash except for root)
-  const normalized =
-    path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+  const normalized = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
 
   const isProtectedRoute = protectedRoutes.some(
     (p) => normalized === p || normalized.startsWith(p + "/"),

@@ -38,7 +38,10 @@ export function DashboardBreadcrumb() {
   const segments = after ? after.split("/").filter(Boolean) : [];
 
   // Build breadcrumb items: skip bare numeric IDs (show "Détails" instead)
-  const crumbs: { label: string; href?: string }[] = [];
+  const crumbs: {
+    label: string;
+    href?: string;
+  }[] = [];
   let href: string = DASHBOARD;
 
   for (const seg of segments) {
@@ -47,7 +50,10 @@ export function DashboardBreadcrumb() {
     if (isId(seg)) {
       crumbs.push({ label: "Détails" });
     } else {
-      crumbs.push({ label: getSegmentLabel(seg), href });
+      crumbs.push({
+        label: getSegmentLabel(seg),
+        href,
+      });
     }
   }
 
@@ -55,10 +61,7 @@ export function DashboardBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <Link
-            href={DASHBOARD}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <Link href={DASHBOARD} className="text-gray-400 hover:text-gray-600 transition-colors">
             <HomeIcon size={14} />
           </Link>
         </BreadcrumbItem>

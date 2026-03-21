@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error";
+import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 import { auth } from "@/lib/auth/api/auth";
 
 const logger = getLogger("server");
@@ -19,22 +19,26 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const response = await auth.api.signIn({ body, config });
+    const response = await auth.api.signIn({
+      body,
+      config,
+    });
 
     if (!response.ok) {
       const error = response.error;
-      return NextResponse.json(response, { status: error.status });
+      return NextResponse.json(response, {
+        status: error.status,
+      });
     }
 
-    logger.info("User signed in", { userId: response.data.id });
-    return NextResponse.json(response, { status: 200 });
+    logger.info({ userId: response.data.id }, "User signed in");
+    return NextResponse.json(response, {
+      status: 200,
+    });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
-    logger.error("Error during sign in", {
-      status,
-      message: errMsg.message,
-    });
+    logger.error({ status, message: errMsg.message }, "Error during sign in");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

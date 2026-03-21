@@ -14,9 +14,8 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-  validationError,
-} from "@/lib/shared/helpers/crud-api-error";
-import { validateId } from "@/utils/utils";
+} from "@/lib/shared/helpers/crud-api-error.server";
+import { validateId, validationError } from "@/utils/utils.server";
 
 /**
  * ⚠️ Never trust the client input
@@ -33,16 +32,17 @@ const {
 
 const logger = getLogger("server");
 
-export async function fetchAllUsers(
-  config: Config,
-): Promise<Result<User[], CrudApiError>> {
+export async function fetchAllUsers(config: Config): Promise<Result<User[], CrudApiError>> {
   try {
     const res = await apiClient(true, config).get<User[]>(usersUrl);
-    logger.info("Fetched users", { count: res.data.length });
+    logger.info({ count: res.data.length }, "Fetched users");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Error fetching users", { context: "fetchAllUsers" });
-    return { ok: false, error: crudApiErrorResponse(error, "fetchAllUsers") };
+    logger.error({ context: "fetchAllUsers" }, "Error fetching users");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "fetchAllUsers"),
+    };
   }
 }
 
@@ -54,17 +54,19 @@ export async function createUser(
   user: Omit<User, "id">,
 ): Promise<Result<User, CrudApiError>> {
   const parse = parseUserCreate(user);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid user data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
 
   try {
     const res = await apiClient(true, config).post<User>(usersUrl, parse.data);
-    logger.info("User created successfully", { id: res.data.id });
+    logger.info({ id: res.data.id }, "User created successfully");
     return { ok: true, data: res.data };
   } catch (error) {
     // ✅ Email supprimé des logs (RGPD — PII)
-    logger.error("Failed to create user", { context: "createUser" });
-    return { ok: false, error: crudApiErrorResponse(error, "createUser") };
+    logger.error({ context: "createUser" }, "Failed to create user");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "createUser"),
+    };
   }
 }
 
@@ -79,8 +81,11 @@ export async function fetchUserById(
     const res = await apiClient(true, config).get<User>(`${usersUrl}/${id}`);
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch user", { id });
-    return { ok: false, error: crudApiErrorResponse(error, "fetchUserById") };
+    logger.error({ id }, "Failed to fetch user");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "fetchUserById"),
+    };
   }
 }
 
@@ -92,17 +97,16 @@ export async function searchUsersFilter(
   if (filters.email) params.set("email", filters.email);
   if (filters.firstName) params.set("firstName", filters.firstName);
   if (filters.lastName) params.set("lastName", filters.lastName);
-  if (filters.isActive !== undefined)
-    params.set("isActive", String(filters.isActive));
+  if (filters.isActive !== undefined) params.set("isActive", String(filters.isActive));
 
   try {
     const res = await apiClient(true, config).get<User[]>(
       `${usersUrl}/search?${params.toString()}`,
     );
-    logger.info("Users search completed", { count: res.data.length, filters });
+    logger.info({ count: res.data.length, filters }, "Users search completed");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to search users", { filters });
+    logger.error({ filters }, "Failed to search users");
     return {
       ok: false,
       error: crudApiErrorResponse(error, "searchUsersFilter"),
@@ -119,19 +123,18 @@ export async function updateUser(
   if (idError) return idError;
 
   const parse = parseUserUpdate(user);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid user data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
 
   try {
-    const res = await apiClient(true, config).patch<User>(
-      `${usersUrl}/${id}`,
-      parse.data,
-    );
-    logger.info("User updated successfully", { id });
+    const res = await apiClient(true, config).patch<User>(`${usersUrl}/${id}`, parse.data);
+    logger.info({ id }, "User updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to update user", { id });
-    return { ok: false, error: crudApiErrorResponse(error, "updateUser") };
+    logger.error({ id }, "Failed to update user");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "updateUser"),
+    };
   }
 }
 
@@ -147,10 +150,13 @@ export async function deleteUser(
 
   try {
     await apiClient(true, config).delete(`${usersUrl}/${id}`);
-    logger.info("User deleted successfully", { id });
+    logger.info({ id }, "User deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {
-    logger.error("Failed to delete user", { id });
-    return { ok: false, error: crudApiErrorResponse(error, "deleteUser") };
+    logger.error({ id }, "Failed to delete user");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "deleteUser"),
+    };
   }
 }

@@ -1,12 +1,6 @@
 import { Check, Circle } from "lucide-react";
 
-export default function ValidationItem({
-  valid,
-  text,
-}: {
-  valid: boolean;
-  text: string;
-}) {
+export default function ValidationItem({ valid, text }: { valid: boolean; text: string }) {
   return (
     <div className="flex items-center gap-2">
       {valid ? (
@@ -14,9 +8,7 @@ export default function ValidationItem({
       ) : (
         <Circle className="h-4 w-4 text-gray-300" />
       )}
-      <span className={valid ? "text-emerald-600" : "text-gray-400"}>
-        {text}
-      </span>
+      <span className={valid ? "text-emerald-600" : "text-gray-400"}>{text}</span>
     </div>
   );
 }

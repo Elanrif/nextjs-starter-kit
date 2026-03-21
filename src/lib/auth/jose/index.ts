@@ -36,9 +36,7 @@ export async function encrypt(payload: SessionPayload) {
  * @param session - JWT token string
  * @returns SessionPayload or undefined if invalid
  */
-export async function decrypt(
-  session?: string,
-): Promise<SessionPayload | undefined> {
+export async function decrypt(session?: string): Promise<SessionPayload | undefined> {
   if (!session) return undefined;
 
   try {
@@ -47,7 +45,7 @@ export async function decrypt(
     })) as { payload: SessionPayload };
     return payload;
   } catch (error) {
-    logger.error("Failed to decrypt session:", error);
+    logger.error({ err: error }, "Failed to decrypt session");
     return undefined;
   }
 }
@@ -58,13 +56,12 @@ export async function decrypt(
  * @param email - User email
  * @param role - User role
  */
-export async function createSession(
-  userId: number,
-  email: string,
-  role: string,
-) {
+export async function createSession(userId: number, email: string, role: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Expires in 7 days
-  const session = await encrypt({ user: { userId, email, role }, expiresAt });
+  const session = await encrypt({
+    user: { userId, email, role },
+    expiresAt,
+  });
   const cookieStore = await cookies();
 
   cookieStore.set("session", session, {

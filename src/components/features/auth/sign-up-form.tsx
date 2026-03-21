@@ -2,16 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  User,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Phone,
-  ShieldCheck,
-} from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
@@ -47,8 +38,7 @@ export function SignUpForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const validation = usePasswordValidation(password);
-  const allValid =
-    validation.minLength && validation.hasNumber && validation.hasCase;
+  const allValid = validation.minLength && validation.hasNumber && validation.hasCase;
 
   const fillDemo = () => {
     setValue("firstName", "Elanrif");
@@ -91,7 +81,10 @@ export function SignUpForm() {
       <LoadingPage loading={loading} text="Création de votre compte..." />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {error && (
-          <div className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl">
+          <div
+            className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
+              border-red-500/20 rounded-xl"
+          >
             <span className="shrink-0">⚠</span>
             <span>{error}</span>
           </div>
@@ -112,11 +105,7 @@ export function SignUpForm() {
               className={icDark}
             />
           </Field>
-          <Field
-            label="Nom"
-            error={errors.lastName?.message}
-            icon={<User className="w-4 h-4" />}
-          >
+          <Field label="Nom" error={errors.lastName?.message} icon={<User className="w-4 h-4" />}>
             <input
               type="text"
               {...register("lastName")}
@@ -142,11 +131,7 @@ export function SignUpForm() {
               className={icDark}
             />
           </Field>
-          <Field
-            label="Email"
-            error={errors.email?.message}
-            icon={<Mail className="w-4 h-4" />}
-          >
+          <Field label="Email" error={errors.email?.message} icon={<Mail className="w-4 h-4" />}>
             <input
               type="email"
               {...register("email")}
@@ -169,11 +154,7 @@ export function SignUpForm() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="text-white/30 hover:text-white/60 transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             }
           >
@@ -196,11 +177,7 @@ export function SignUpForm() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="text-white/30 hover:text-white/60 transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             }
           >
@@ -217,26 +194,23 @@ export function SignUpForm() {
         {/* Password strength */}
         {password && (
           <div
-            className={`p-2.5 rounded-xl space-y-1 border ${allValid ? "bg-emerald-500/10 border-emerald-500/20" : "bg-white/5 border-white/8"}`}
+            className={`p-2.5 rounded-xl space-y-1 border ${
+              allValid ? "bg-emerald-500/10 border-emerald-500/20" : "bg-white/5 border-white/8"
+            }`}
           >
             <div className="flex items-center gap-1.5 mb-1">
               <ShieldCheck
                 className={`w-3 h-3 ${allValid ? "text-emerald-400" : "text-white/30"}`}
               />
               <span
-                className={`text-[10px] font-semibold ${allValid ? "text-emerald-400" : "text-white/40"}`}
+                className={`text-[10px] font-semibold
+                ${allValid ? "text-emerald-400" : "text-white/40"}`}
               >
                 {allValid ? "Fort" : "Exigences"}
               </span>
             </div>
-            <ValidationItem
-              valid={validation.minLength}
-              text="8 caractères min."
-            />
-            <ValidationItem
-              valid={validation.hasNumber}
-              text="Chiffre ou symbole"
-            />
+            <ValidationItem valid={validation.minLength} text="8 caractères min." />
+            <ValidationItem valid={validation.hasNumber} text="Chiffre ou symbole" />
             <ValidationItem valid={validation.hasCase} text="Maj. et min." />
           </div>
         )}
@@ -245,7 +219,10 @@ export function SignUpForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold shadow-lg shadow-indigo-900/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+            bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+            text-white text-sm font-semibold shadow-lg shadow-indigo-900/30 hover:-translate-y-0.5
+            transition-all disabled:opacity-50 disabled:translate-y-0"
         >
           {loading ? (
             "Création..."
@@ -265,7 +242,9 @@ export function SignUpForm() {
         <button
           type="button"
           onClick={fillDemo}
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/8 text-white/50 hover:text-white/70 text-xs transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border
+            border-white/10 bg-white/5 hover:bg-white/8 text-white/50 hover:text-white/70 text-xs
+            transition-colors"
         >
           <User className="w-3.5 h-3.5" />
           Remplir avec un compte démo

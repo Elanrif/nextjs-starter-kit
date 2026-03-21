@@ -1,7 +1,7 @@
-const XXX_BASEURL = process.env.XXX_BASEURL ?? "http://localhost:8081";
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL ?? "http://localhost:8081";
 const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000";
 const HOST_NAME = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost";
-const XXX_BASE_V1 = `${XXX_BASEURL}/api/v1`;
+const BACKEND_BASE_V1 = `${BACKEND_BASE_URL}/api/v1`;
 
 const environment = {
   name: process.env.ENV,
@@ -9,21 +9,21 @@ const environment = {
   rootDomain: HOST_NAME,
   apiBaseUrl: `${BASE_URL}/api`,
   apiProxyBase: `/api`,
-  baApiBaseUrl: XXX_BASEURL,
+  baApiBaseUrl: BACKEND_BASE_URL,
   api: {
     rest: {
       endpoints: {
-        categories: `${XXX_BASE_V1}/categories`,
-        products: `${XXX_BASE_V1}/products`,
-        users: `${XXX_BASE_V1}/users`,
-        login: `${XXX_BASE_V1}/auth/login`,
-        register: `${XXX_BASE_V1}/auth/register`,
-        resetPassword: `${XXX_BASE_V1}/auth/reset-password`,
+        categories: `${BACKEND_BASE_V1}/categories`,
+        products: `${BACKEND_BASE_V1}/products`,
+        users: `${BACKEND_BASE_V1}/users`,
+        login: `${BACKEND_BASE_V1}/auth/login`,
+        register: `${BACKEND_BASE_V1}/auth/register`,
+        resetPassword: `${BACKEND_BASE_V1}/auth/reset-password`,
         // auth endpoints
         auth: {
-          baseUrl: `${XXX_BASE_V1}/auth`,
-          editProfile: `${XXX_BASE_V1}/auth/edit-profile`,
-          changeProfilePasswordUrl: `${XXX_BASE_V1}/auth/change-password-profile`,
+          baseUrl: `${BACKEND_BASE_V1}/auth`,
+          editProfile: `${BACKEND_BASE_V1}/auth/edit-profile`,
+          changeProfilePasswordUrl: `${BACKEND_BASE_V1}/auth/change-password-profile`,
         },
       },
     },
@@ -31,8 +31,8 @@ const environment = {
 
   auth: {
     endpoints: {
-      token: `${XXX_BASEURL}/auth/v1/token`,
-      introspect: `${XXX_BASEURL}/auth/v1/introspect`,
+      token: `${BACKEND_BASE_URL}/auth/v1/token`,
+      introspect: `${BACKEND_BASE_URL}/auth/v1/introspect`,
     },
   },
   format: {
@@ -40,27 +40,18 @@ const environment = {
   },
   log: {
     client: {
-      format: process.env.NEXT_PUBLIC_LOG_FORMAT || "simple",
-      level:
-        process.env.NEXT_PUBLIC_LOG_LEVEL || process.env.LOG_LEVEL || "info",
+      level: process.env.NEXT_PUBLIC_LOG_LEVEL || "info",
+      // "console" → browser devtools | "none" → silence all (useful in test/CI)
       output: process.env.NEXT_PUBLIC_LOG_OUTPUT || "console",
     },
     server: {
       file: {
         path: process.env.LOG_FILE_PATH,
       },
-      format: process.env.LOG_FORMAT || "simple",
       level: process.env.LOG_LEVEL || "info",
       output: process.env.LOG_OUTPUT || "console",
     },
   },
 } as const;
-
-function parseBoolean(
-  value: string | undefined,
-  dft: boolean = false,
-): boolean {
-  return value ? value.trim().toLocaleLowerCase() === "true" : dft;
-}
 
 export default environment;

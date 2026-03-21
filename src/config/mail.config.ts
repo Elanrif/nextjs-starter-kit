@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
  */
 transporter.verify((error, success) => {
   if (error) {
-    logger.error("Nodemailer transporter error:", error);
+    logger.error({ err: error }, "Nodemailer transporter error");
   } else {
     logger.info("Nodemailer transporter ready");
   }
@@ -33,7 +33,10 @@ transporter.verify((error, success) => {
  * Generate password reset token using a secret key
  * The token is a HMAC-SHA256 hash of a random string and the secret key
  */
-export function generateResetToken(): { resetToken: string; code: string } {
+export function generateResetToken(): {
+  resetToken: string;
+  code: string;
+} {
   const secret = process.env.SMTP_RESET_TOKEN_SECRET!;
   const code = randomBytes(16).toString("hex"); // Generate random string
   const resetToken = createHmac("sha256", secret).update(code).digest("hex"); // HMAC-SHA256
@@ -115,13 +118,10 @@ export async function sendPasswordResetEmail(
     };
 
     const info = await transporter.sendMail(mailOptions);
-    logger.info("Password reset email sent", {
-      messageId: info.messageId,
-      to: email,
-    });
+    logger.info({ messageId: info.messageId, to: email }, "Password reset email sent");
     return true;
   } catch (error) {
-    logger.error("Failed to send password reset email", { email, error });
+    logger.error({ email, err: error }, "Failed to send password reset email");
     return false;
   }
 }
@@ -129,10 +129,7 @@ export async function sendPasswordResetEmail(
 /**
  * Send welcome email
  */
-export async function sendWelcomeEmail(
-  email: string,
-  firstName: string,
-): Promise<boolean> {
+export async function sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
   try {
     const mailOptions = {
       from: process.env.SMTP_FROM || "noreply@example.com",
@@ -165,10 +162,10 @@ export async function sendWelcomeEmail(
     };
 
     await transporter.sendMail(mailOptions);
-    logger.info("Welcome email sent", { to: email });
+    logger.info({ to: email }, "Welcome email sent");
     return true;
   } catch (error) {
-    logger.error("Failed to send welcome email", { email, error });
+    logger.error({ email, err: error }, "Failed to send welcome email");
     return false;
   }
 }

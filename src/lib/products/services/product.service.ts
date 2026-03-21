@@ -8,8 +8,7 @@ import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
-  validationError,
-} from "@/lib/shared/helpers/crud-api-error";
+} from "@/lib/shared/helpers/crud-api-error.server";
 import {
   Product,
   ProductCreate,
@@ -19,7 +18,7 @@ import {
   parseProductCreate,
   parseProductUpdate,
 } from "@/lib/products/models/product.model";
-import { validateId } from "@/utils/utils";
+import { validateId, validationError } from "@/utils/utils.server";
 
 /**
  * ⚠️ Never trust the client input
@@ -36,10 +35,7 @@ const {
 
 const logger = getLogger("server");
 
-export function buildProductsUrl(
-  baseUrl: string,
-  filters?: ProductFiltersParams,
-): string {
+export function buildProductsUrl(baseUrl: string, filters?: ProductFiltersParams): string {
   if (!filters || Object.keys(filters).length === 0) {
     return baseUrl;
   }
@@ -75,16 +71,18 @@ export async function fetchProducts(
   try {
     const url = buildProductsUrl(PRODUCTS_URL, filters);
 
-    const res = await apiClient(true, config).get<
-      unknown,
-      AxiosResponse<PageProduct<Product[]>>
-    >(url);
+    const res = await apiClient(true, config).get<unknown, AxiosResponse<PageProduct<Product[]>>>(
+      url,
+    );
 
-    logger.debug("Products fetched", { count: res.data?.content?.length || 0 });
+    logger.debug({ count: res.data?.content?.length || 0 }, "Products fetched");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch products", { filters });
-    return { ok: false, error: crudApiErrorResponse(error, "fetchProducts") };
+    logger.error({ filters }, "Failed to fetch products");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "fetchProducts"),
+    };
   }
 }
 
@@ -99,14 +97,13 @@ export async function fetchProductById(
   if (idError) return idError;
 
   try {
-    const res = await apiClient(true, config).get<
-      unknown,
-      AxiosResponse<Product>
-    >(`${PRODUCTS_URL}/${id}`);
+    const res = await apiClient(true, config).get<unknown, AxiosResponse<Product>>(
+      `${PRODUCTS_URL}/${id}`,
+    );
 
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to fetch product", { id });
+    logger.error({ id }, "Failed to fetch product");
     return {
       ok: false,
       error: crudApiErrorResponse(error, "fetchProductById"),
@@ -127,23 +124,22 @@ export async function createProduct(
    * ✅ Protection against malicious bugs
    */
   const parse = parseProductCreate(product);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid product data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid product data");
 
   try {
-    const res = await apiClient(true, config).post<
-      unknown,
-      AxiosResponse<Product>
-    >(PRODUCTS_URL, parse.data);
+    const res = await apiClient(true, config).post<unknown, AxiosResponse<Product>>(
+      PRODUCTS_URL,
+      parse.data,
+    );
 
-    logger.info("Product created successfully", {
-      id: res.data.id,
-      name: res.data.name,
-    });
+    logger.info({ id: res.data.id, name: res.data.name }, "Product created successfully");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to create product", { productName: product.name });
-    return { ok: false, error: crudApiErrorResponse(error, "createProduct") };
+    logger.error({ productName: product.name }, "Failed to create product");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "createProduct"),
+    };
   }
 }
 
@@ -164,20 +160,22 @@ export async function updateProduct(
   if (idError) return idError;
 
   const parse = parseProductUpdate(product);
-  if (!parse.success)
-    return validationError(parse.error.issues, "Invalid product data");
+  if (!parse.success) return validationError(parse.error.issues, "Invalid product data");
 
   try {
-    const res = await apiClient(true, config).patch<
-      unknown,
-      AxiosResponse<Product>
-    >(`${PRODUCTS_URL}/${id}`, parse.data);
+    const res = await apiClient(true, config).patch<unknown, AxiosResponse<Product>>(
+      `${PRODUCTS_URL}/${id}`,
+      parse.data,
+    );
 
-    logger.info("Product updated successfully", { id, name: res.data.name });
+    logger.info({ id, name: res.data.name }, "Product updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
-    logger.error("Failed to update product", { id });
-    return { ok: false, error: crudApiErrorResponse(error, "updateProduct") };
+    logger.error({ id }, "Failed to update product");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "updateProduct"),
+    };
   }
 }
 
@@ -193,10 +191,13 @@ export async function deleteProduct(
 
   try {
     await apiClient(true, config).delete(`${PRODUCTS_URL}/${id}`);
-    logger.info("Product deleted successfully", { id });
+    logger.info({ id }, "Product deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {
-    logger.error("Failed to delete product", { id });
-    return { ok: false, error: crudApiErrorResponse(error, "deleteProduct") };
+    logger.error({ id }, "Failed to delete product");
+    return {
+      ok: false,
+      error: crudApiErrorResponse(error, "deleteProduct"),
+    };
   }
 }

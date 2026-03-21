@@ -14,8 +14,7 @@ export interface Token {
 }
 
 export const isTokenExpired = (expiryOrToken: string | Token): boolean => {
-  const expiry =
-    typeof expiryOrToken === "string" ? expiryOrToken : expiryOrToken.expiry;
+  const expiry = typeof expiryOrToken === "string" ? expiryOrToken : expiryOrToken.expiry;
   if (!expiry) {
     return true;
   }
