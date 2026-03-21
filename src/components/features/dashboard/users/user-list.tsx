@@ -160,10 +160,8 @@ export function UserList() {
           </div>
           <Link href={`${DASHBOARD}${USERS}/create`}>
             <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r
-                from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white
-                text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
-                transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
+                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <Plus className="w-4 h-4" />
               Ajouter

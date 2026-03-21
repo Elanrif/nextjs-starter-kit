@@ -50,10 +50,7 @@ export default async function AccountPage() {
   return (
     <div className="min-h-screen p-6 space-y-6 max-w-7xl mx-auto">
       {/* Profile Hero Card */}
-      <div
-        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
-          via-indigo-950 to-slate-900 p-8 shadow-2xl"
-      >
+      <div className="relative overflow-hidden rounded-2xl card-gradient p-8 shadow-2xl">
         <div
           className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full
             bg-indigo-500/20 blur-3xl"

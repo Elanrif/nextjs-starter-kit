@@ -148,9 +148,9 @@ export function CategoryList({ initialCategories }: { initialCategories: Categor
               <Tag className="w-5 h-5 text-violet-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Catégories</h1>
+              <h1 className="text-xl font-bold text-foreground">Catégories</h1>
               {!loading && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-foreground/50">
                   {categories.length} catégorie
                   {categories.length === 1 ? "" : "s"}
                 </p>
@@ -159,10 +159,8 @@ export function CategoryList({ initialCategories }: { initialCategories: Categor
           </div>
           <Link href={`${DASHBOARD}${CATEGORIES}/create`}>
             <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r
-                from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white
-                text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
-                transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-secondary text-sm
+                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <Plus className="w-4 h-4" />
               Ajouter

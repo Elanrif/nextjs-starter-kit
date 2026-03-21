@@ -48,10 +48,7 @@ export function CategoryDetail({ data }: { data: Category | null }) {
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       {/* Hero */}
-      <div
-        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
-          via-violet-950 to-slate-900 shadow-xl"
-      >
+      <div className="relative overflow-hidden rounded-2xl card-gradient shadow-xl">
         <div
           className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full
             bg-violet-500/20 blur-3xl"

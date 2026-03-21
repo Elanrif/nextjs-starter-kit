@@ -75,16 +75,15 @@ export function UserCreateForm() {
       <LoadingPage loading={loading} text="Création de l'utilisateur..." />
       <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
         <div
-          className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
-            via-emerald-950 to-slate-900 p-7 shadow-xl"
+          className="card-gradient relative overflow-hidden rounded-2xl card-gradient p-7 shadow-xl"
         >
           <div
             className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full
-              bg-emerald-500/20 blur-3xl"
+              blur-3xl"
           />
           <div
             className="pointer-events-none absolute -bottom-12 -left-8 h-40 w-40 rounded-full
-              bg-teal-500/15 blur-3xl"
+              blur-3xl"
           />
           <div className="relative flex items-center gap-4">
             <div className="p-3 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-400/30">
@@ -260,8 +259,7 @@ export function UserCreateForm() {
                 type="submit"
                 disabled={loading}
                 className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
-                  bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700
-                  hover:to-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow-md
+                  card-gradient text-white text-sm font-semibold shadow-sm hover:shadow-md
                   hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
               >
                 <Save className="w-4 h-4" />

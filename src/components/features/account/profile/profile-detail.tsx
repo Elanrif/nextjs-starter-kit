@@ -38,10 +38,7 @@ export function ProfileDetail() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Hero */}
-      <div
-        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
-          via-indigo-950 to-slate-900 p-8 shadow-2xl"
-      >
+      <div className="relative overflow-hidden rounded-2xl card-gradient p-8 shadow-2xl">
         <div
           className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full
             bg-indigo-500/20 blur-3xl"

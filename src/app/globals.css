@@ -45,86 +45,15 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-}
 
-/* Custom Animations for Modern Design */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes gradient {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.animation-delay-100 {
-  animation-delay: 0.1s;
-}
-
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-
-.animation-delay-300 {
-  animation-delay: 0.3s;
-}
-
-.animation-delay-400 {
-  animation-delay: 0.4s;
-}
-
-.animation-delay-500 {
-  animation-delay: 0.5s;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+  /* Brand tokens → classes bg-hero-bg, bg-brand, text-brand, etc. */
+  --color-hero-bg: var(--hero-bg);
+  --color-hero-surface: var(--hero-surface);
+  --color-brand: var(--brand);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-secondary-muted: var(--brand-secondary-muted);
 }
 
 /* Smooth scroll behavior */
@@ -165,6 +94,32 @@ html {
 }
 
 :root {
+  /* ─── Customize Brand / Website tokens ─────────────────────────────────────────────
+     👉 Change these variables to restyle the entire site at once.
+     All pages (hero, header, landing) update automatically.
+ */
+
+  /* Dark backgrounds ─────────────────────────────────────────────────────── */
+  --hero-bg: oklch(0.129 0.042 264.695); /* slate-950 */
+  --hero-surface: oklch(0.208 0.042 265.755); /* slate-900 */
+
+  /* Primary brand color (currently indigo) ──────────────────────────────── */
+  --brand: oklch(0.511 0.262 276.966); /* indigo-600 */
+  --brand-muted: oklch(0.511 0.262 276.966 / 0.2);
+  --brand-foreground: oklch(1 0 0); /* white */
+
+  /* Secondary brand color (currently violet) ────────────────────────────── */
+  --brand-secondary: oklch(0.541 0.281 293.009); /* violet-600 */
+  --brand-secondary-muted: oklch(0.541 0.281 293.009 / 0.15);
+
+  /* Gradient mid-color for dark cards and sections ──────────────────────── */
+  --card-gradient-via: oklch(0.282 0.091 272.788); /* blue-950 */
+  --section-dark-via: oklch(0.282 0.091 272.788); /* blue-950 */
+
+  /**
+     ─── 👆 Customize Brand / Website tokens ─────────────────────────────────────────────
+  */
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -176,7 +131,7 @@ html {
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
+  --muted: oklch(0.52 0.1759 25.87);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
@@ -242,229 +197,173 @@ html {
   }
 }
 
-/* Custom Animations */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* ─── Reusable gradient utilities ────────────────────────────────────────────
+   Utilise ces classes partout dans l'app.
+   Pour changer le design global → modifie uniquement les variables dans :root.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Dark card with gradient background + automatic glow blobs.
+     Just add this class — no extra divs needed.
+     Requires: rounded-* and overflow-hidden on the element. */
+  .card-gradient {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(
+      to bottom right,
+      var(--hero-surface),
+      var(--card-gradient-via),
+      var(--hero-surface)
+    );
   }
-  to {
-    opacity: 1;
+
+  /* Top-right glow blob — matches: -top-16 -right-16 h-56 w-56 blur-3xl */
+  .card-gradient::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: -4rem;
+    right: -4rem;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 9999px;
+    background-color: var(--brand-muted);
+    filter: blur(64px);
+  }
+
+  /* Bottom-left glow blob — matches: -bottom-12 -left-8 h-40 w-40 blur-3xl */
+  .card-gradient::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    bottom: -3rem;
+    left: -2rem;
+    width: 10rem;
+    height: 10rem;
+    border-radius: 9999px;
+    background-color: var(--brand-secondary-muted);
+    filter: blur(64px);
+  }
+
+  /* Generic dark gradient for any UI element: buttons, icon wrappers, badges, chips.
+     Same glow blobs as card-gradient but scaled down for smaller elements.
+     Hover brightens via filter — no extra pseudo-element needed. */
+  .gradient-primary {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(
+      to bottom right,
+      var(--hero-surface),
+      var(--card-gradient-via),
+      var(--hero-surface)
+    );
+    color: var(--brand-foreground);
+    transition:
+      filter 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  /* Top-right glow blob — smaller than card-gradient */
+  .gradient-primary::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: -1.5rem;
+    right: -1.5rem;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 9999px;
+    background-color: var(--brand-muted);
+    filter: blur(20px);
+  }
+
+  /* Bottom-left glow blob — smaller than card-gradient */
+  .gradient-primary::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    bottom: -1.5rem;
+    left: -1rem;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+    background-color: var(--brand-secondary-muted);
+    filter: blur(20px);
+  }
+
+  .gradient-primary:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Dashboard action buttons and icon wrappers (currently emerald → teal).
+     Change --action and --action-to in :root to restyle all at once. */
+  .gradient-action {
+    background-image: linear-gradient(to right, var(--action), var(--action-to));
+    color: var(--action-foreground);
+    transition:
+      filter 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .gradient-action:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 16px color-mix(in oklch, var(--action) 40%, transparent);
+    transform: translateY(-1px);
+  }
+
+  .gradient-action:active {
+    filter: brightness(0.95);
     transform: translateY(0);
   }
-}
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
+  /* Categories buttons and icon wrappers (currently violet → purple).
+     Change --action-secondary and --action-secondary-to in :root to restyle. */
+  .gradient-secondary {
+    background-image: linear-gradient(
+      to right,
+      var(--action-secondary),
+      var(--action-secondary-to)
+    );
+    color: var(--action-secondary-foreground);
+    transition:
+      filter 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
   }
-  to {
-    opacity: 1;
-  }
-}
 
-@keyframes slide-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+  .gradient-secondary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 16px color-mix(in oklch, var(--action-secondary) 40%, transparent);
+    transform: translateY(-1px);
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
+  .gradient-secondary:active {
+    filter: brightness(0.95);
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-10px);
+
+  /* Fond de section sombre pleine page */
+  .section-dark {
+    background-image: linear-gradient(
+      to bottom right,
+      var(--hero-bg),
+      var(--section-dark-via),
+      var(--hero-bg)
+    );
   }
-}
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.5;
+  /* Bouton brand principal */
+  .btn-brand {
+    background-image: linear-gradient(to right, var(--brand), var(--brand-secondary));
   }
-  50% {
-    opacity: 1;
+
+  .btn-brand:hover {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in oklch, var(--brand) 85%, black),
+      color-mix(in oklch, var(--brand-secondary) 85%, black)
+    );
   }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-slide-in-left {
-  animation: slide-in-left 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Animation Delays */
-.animation-delay-100 {
-  animation-delay: 100ms;
-}
-
-.animation-delay-200 {
-  animation-delay: 200ms;
-}
-
-.animation-delay-300 {
-  animation-delay: 300ms;
-}
-
-.animation-delay-400 {
-  animation-delay: 400ms;
-}
-
-.animation-delay-500 {
-  animation-delay: 500ms;
-}
-
-/* Gradient Animation */
-@keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
-}
-
-/* Shimmer effect */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Glow effect */
-@keyframes glow {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.6);
-  }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-/* Bounce */
-@keyframes bounce-gentle {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.animate-bounce-gentle {
-  animation: bounce-gentle 2s ease-in-out infinite;
-}
-
-/* Scale pulse */
-@keyframes scale-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.animate-scale-pulse {
-  animation: scale-pulse 2s ease-in-out infinite;
-}
-
-/* Grid Background Pattern */
-.bg-grid-white\/10 {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-}
-
-/* Dot pattern */
-.bg-dots {
-  background-image: radial-gradient(circle, rgba(139, 92, 246, 0.15) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Text gradient */
-.text-gradient {
-  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Hover lift effect */
-.hover-lift {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }

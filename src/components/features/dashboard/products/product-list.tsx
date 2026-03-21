@@ -169,8 +169,7 @@ export function ProductList() {
           </div>
           <Link href={`${DASHBOARD}${PRODUCTS}/create`}>
             <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-blue-600
-                to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
                 font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <Plus className="w-4 h-4" />

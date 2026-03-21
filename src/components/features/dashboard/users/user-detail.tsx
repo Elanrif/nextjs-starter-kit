@@ -35,20 +35,7 @@ export function UserDetail({ user }: { user: User }) {
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       {/* Hero */}
-      <div
-        className="relative overflow-hidden rounded-2xl bg-linear-to-br from-slate-900
-          via-emerald-950 to-slate-900 shadow-xl"
-      >
-        {/* Ambient glows */}
-        <div
-          className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full
-            bg-emerald-500/20 blur-3xl"
-        />
-        <div
-          className="pointer-events-none absolute -bottom-16 -left-12 h-56 w-56 rounded-full
-            bg-teal-500/15 blur-3xl"
-        />
-
+      <div className="relative overflow-hidden rounded-2xl card-gradient shadow-xl">
         <div className="relative p-8">
           <div className="flex items-start gap-6">
             {/* Avatar */}
@@ -206,8 +193,7 @@ export function UserDetail({ user }: { user: User }) {
         <Link
           href={`${DASHBOARD}${USERS}/edit/${user.id}`}
           className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
-            bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700
-            text-white text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
+            gradient-primary text-sm font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5
             transition-all"
         >
           <Pencil className="w-4 h-4" />

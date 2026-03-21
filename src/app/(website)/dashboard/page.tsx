@@ -60,10 +60,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen p-6 space-y-8">
       {/* Hero */}
-      <div
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900
-          via-blue-950 to-slate-900 p-8 shadow-2xl"
-      >
+      <div className="card-gradient relative overflow-hidden rounded-2xl p-8 shadow-2xl">
         <div
           className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full
             bg-blue-500/20 blur-3xl"
