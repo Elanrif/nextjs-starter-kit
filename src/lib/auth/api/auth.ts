@@ -1,10 +1,11 @@
 "server-only";
 
 import * as authService from "@lib/auth/auth.service";
-import * as joseService from "@lib/auth/jose/jose.service";
+import * as baService from "@lib/auth/better-auth/better-auth.service";
 import { Login, Registrer } from "@lib/auth/models/auth.model";
-import { deleteSession } from "@lib/auth/jose";
 import { Config } from "@/config/api.config";
+import { auth as baAuth } from "@/lib/auth/better-auth/auth";
+import { headers } from "next/headers";
 
 export const auth = {
   api: {
@@ -17,19 +18,19 @@ export const auth = {
     },
 
     signOut: async () => {
-      deleteSession();
+      await baAuth.api.signOut({ headers: await headers() });
     },
 
     getSession: async () => {
-      return joseService.getSession();
+      return baService.getSession();
     },
 
     getCurrentUser: async () => {
-      return joseService.getCurrentUser();
+      return baService.getCurrentUser();
     },
 
     verifyEmail: async ({ query }: { query: { token: string } }) => {
-      // Simulate API call delay
+      // TODO: implement email verification
     },
   },
 };

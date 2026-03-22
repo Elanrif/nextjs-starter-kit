@@ -6,7 +6,7 @@ import {
   Result,
 } from "@/lib/shared/helpers/crud-api-error.server";
 import { Session } from "@/lib/auth/models/auth.model";
-import { getSession } from "@/lib/auth/jose/jose.service";
+import { getSession } from "@/lib/auth/better-auth/better-auth.service";
 
 const logger = getLogger("server");
 
@@ -14,31 +14,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET(): Promise<NextResponse<Result<Session, CrudApiError>>> {
   try {
-    // Use getSession instead of getSession to avoid redirects
     const session = await getSession();
 
     if (!session.ok) {
-      const err = {
-        error: "Unauthorized",
-        status: 401,
-        message: "You must be logged in",
-      };
-      logger.error(
-        {
-          status: err.status,
-          message: err.message,
-        },
-        "Unauthorized",
-      );
-      return NextResponse.json({
-        ok: false,
-        error: err,
-      });
+      logger.warn({ message: session.error.message }, "Unauthorized session request");
+      return NextResponse.json({ ok: false, error: session.error }, { status: 401 });
     }
 
-    return NextResponse.json(session, {
-      status: 200,
-    });
+    return NextResponse.json(session, { status: 200 });
   } catch (error) {
     const errMsg = crudApiErrorResponse(error, "session");
     const status = errMsg.status || 500;

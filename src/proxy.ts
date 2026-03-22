@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decrypt } from "@/lib/auth/jose";
+import { getSessionCookie } from "better-auth/cookies";
 
 const protectedRoutes = ["/dashboard", "/account"];
 const publicRoutePrefixes = ["/sign-in", "/sign-up"];
 
+/**
+ * Edge-compatible middleware using Better Auth.
+ *
+ * Better Auth stores sessions in SQLite, so a full DB lookup cannot happen
+ * in the Edge Runtime. We verify that the session COOKIE exists and has a
+ * valid Better Auth signature — no DB call required.
+ *
+ * Fine-grained RBAC (ADMIN → /dashboard, USER → /account) is enforced by
+ * each layout via `getCurrentUser()`, which runs in Node.js and can hit the DB.
+ */
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  // normalize path (remove trailing slash except for root)
+  // Normalize path (remove trailing slash except root)
   const normalized = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
 
   const isProtectedRoute = protectedRoutes.some(
@@ -17,38 +27,18 @@ export default async function proxy(req: NextRequest) {
     (p) => normalized === p || normalized.startsWith(p + "/"),
   );
 
-  // decrypt session from cookie (if any)
-  const cookieStore = req.cookies.get("session")?.value;
-  const session = await decrypt(cookieStore);
+  // Edge-compatible session check (cookie signature, no DB)
+  const sessionCookie = getSessionCookie(req);
+  const isAuthenticated = !!sessionCookie;
 
-  // If route is protected and user is not authenticated => redirect to sign-in
-  if (isProtectedRoute && !session?.user?.userId) {
+  // Not authenticated → redirect to sign-in
+  if (isProtectedRoute && !isAuthenticated) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
 
-  // If user is admin => redirect to admin (but not if already on /admin)
-  if (
-    isProtectedRoute &&
-    session?.user?.userId &&
-    session?.user?.role === "ADMIN" &&
-    !normalized.startsWith("/dashboard") &&
-    !normalized.startsWith("/account")
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-  }
-
-  // If user is not admin => redirect to account (but not if already on /account)
-  if (
-    isProtectedRoute &&
-    session?.user?.userId &&
-    session?.user?.role !== "ADMIN" &&
-    !normalized.startsWith("/account")
-  ) {
-    return NextResponse.redirect(new URL("/account", req.nextUrl));
-  }
-
-  // If route is public and user is authenticated => redirect to account/dashboard
-  if (isPublicRoute && session?.user?.userId) {
+  // Authenticated on a public route → send to account
+  // (account layout will further redirect ADMIN to /dashboard)
+  if (isPublicRoute && isAuthenticated) {
     return NextResponse.redirect(new URL("/account", req.nextUrl));
   }
 

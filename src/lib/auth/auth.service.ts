@@ -20,7 +20,6 @@ import {
   ProfileUserFormData,
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
-import { createSession } from "@lib/auth/jose";
 import { validateId, validationError } from "@/utils/utils.server";
 
 /**
@@ -51,7 +50,6 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 
   try {
     const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
-    await createSession(data.id, data.email, data.role);
     logger.info({ email: data.email }, "User signed in successfully");
     return { ok: true, data };
   } catch (error) {

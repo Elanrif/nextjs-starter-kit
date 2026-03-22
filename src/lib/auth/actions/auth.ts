@@ -17,7 +17,8 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
-import { createSession, deleteSession } from "@lib/auth/jose";
+import { auth } from "@/lib/auth/better-auth/auth";
+import { headers, cookies } from "next/headers";
 
 /**
  * Server Action: Sign In
@@ -26,18 +27,10 @@ import { createSession, deleteSession } from "@lib/auth/jose";
 export async function signInAction(credentials: Login): Promise<User | CrudApiError> {
   try {
     const res = await serverSignIn(credentials);
-
-    if (!res.ok) {
-      return res.error;
-    }
-
-    // Create session with user data
-    await createSession(res.data.id, res.data.email, res.data.role);
-
+    if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "signIn action");
-    return errMsg;
+    return crudApiErrorResponse(error, "signIn action");
   }
 }
 
@@ -48,18 +41,10 @@ export async function signInAction(credentials: Login): Promise<User | CrudApiEr
 export async function signUpAction(userData: Registrer): Promise<User | CrudApiError> {
   try {
     const res = await serverSignUp(userData);
-
-    if (!res.ok) {
-      return res.error;
-    }
-
-    // Create session after successful registration
-    await createSession(res.data.id, res.data.email, res.data.role);
-
+    if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "signUp action");
-    return errMsg;
+    return crudApiErrorResponse(error, "signUp action");
   }
 }
 
@@ -191,8 +176,10 @@ export async function changePasswordProfileAction(
 }
 
 /**
- * Delete session cookie to log out user
+ * Sign out: invalidate Better Auth session and clear the role cookie.
  */
 export async function signOutAction() {
-  await deleteSession();
+  await auth.api.signOut({ headers: await headers() });
+  const cookieStore = await cookies();
+  cookieStore.delete("ba_role");
 }
