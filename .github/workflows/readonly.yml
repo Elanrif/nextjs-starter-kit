@@ -4,7 +4,7 @@ name: ⛔ Readonly
 on:
   pull_request:
     branches:
-      - "**" # trigger on all target branches
+      - "**" # trigger on all target branches.
 
 jobs:
   block:
