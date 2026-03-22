@@ -1,5 +1,5 @@
 # .github/workflows/readonly.yml
-name: Readonly 🚫
+name: Readonly test 🚫
 
 on:
   pull_request:
