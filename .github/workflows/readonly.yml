@@ -1,5 +1,5 @@
 # .github/workflows/readonly.yml
-name: 🚫 Block kit/* branches from merging
+name: Readonly 🚫
 
 on:
   pull_request:
