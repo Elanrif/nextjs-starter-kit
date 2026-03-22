@@ -1,5 +1,5 @@
 # .github/workflows/readonly.yml
-name: Readonly 🚫
+name: ⛔ Readonly
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   block:
-    name: ⛔ Block merge of kit/* branches
+    name: readonly
     runs-on: ubuntu-latest
     if: startsWith(github.head_ref, 'kit/')
     steps:
