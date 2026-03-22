@@ -1,23 +1,13 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
-import { redirect } from "next/navigation";
 import { DashboardBreadcrumb } from "@/components/features/dashboard/dashboard-breadcrumb";
-import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
+import { ProtectedRoute } from "@/components/features/protected-route";
 
-export const dynamic = "force-dynamic";
-
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const currentUser = await auth.api.getCurrentUser();
-
-  if (!currentUser.ok) {
-    redirect("/sign-in?callbackUrl=/dashboard");
-  }
-
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthUserProvider user={currentUser.data.user}>
+    <ProtectedRoute adminOnly>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset
@@ -42,7 +32,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <DashboardBreadcrumb />
             </div>
 
-            {/* Right side */}
             <div className="flex items-center gap-2">
               <div
                 className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full
@@ -67,6 +56,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="flex flex-1 flex-col gap-4 mt-5 p-16 pt-0">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-    </AuthUserProvider>
+    </ProtectedRoute>
   );
 }

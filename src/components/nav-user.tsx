@@ -26,7 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { User, UserRole } from "@/lib/users/models/user.model";
-import { useSession } from "@/hooks/use.session";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
@@ -66,11 +66,11 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
 }
 
 export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dark" | "light" }) {
-  const { session, error, invalidate } = useSession();
+  const { signOut } = useAuthUser();
   const { isMobile } = useSidebar();
   const pathname = usePathname();
 
-  if (!user || !session) return null;
+  if (!user) return null;
 
   const initials = getInitials(user);
 
@@ -183,13 +183,11 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
             <DropdownMenuSeparator />
 
             <DropdownMenuItem className="p-0" asChild>
-              {session && !error && (
-                <SignOutButton
-                  variant="destructive"
-                  className="w-full flex justify-center items-center rounded-lg"
-                  onSignOut={invalidate}
-                />
-              )}
+              <SignOutButton
+                variant="destructive"
+                className="w-full flex justify-center items-center rounded-lg"
+                onSignOut={signOut}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

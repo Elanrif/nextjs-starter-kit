@@ -22,7 +22,7 @@ const { MY_ACCOUNT } = ROUTES;
 
 export function ChangePassword() {
   const router = useRouter();
-  const user = useAuthUser();
+  const { user } = useAuthUser();
 
   const {
     register,

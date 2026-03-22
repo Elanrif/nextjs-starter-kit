@@ -25,7 +25,7 @@ const { SIGN_IN, SIGN_UP, DASHBOARD } = ROUTES;
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { session, isLoading, error, invalidate } = useSession();
+  const { user, isLoading, signOut } = useSession();
 
   const navLinkClass = isScrolled
     ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100/70"
@@ -92,10 +92,10 @@ export function Header() {
                   </>
                 );
               }
-              if (session && session.ok && !error) {
+              if (user) {
                 return (
                   <>
-                    {session.data.user.role === "admin" ? (
+                    {user.role === "ADMIN" ? (
                       <Link
                         href={DASHBOARD}
                         className={cn(
@@ -120,7 +120,7 @@ export function Header() {
                         Mon compte
                       </Link>
                     )}
-                    <SignOutButton variant="destructive" onSignOut={invalidate} />
+                    <SignOutButton variant="destructive" onSignOut={signOut} />
                   </>
                 );
               }

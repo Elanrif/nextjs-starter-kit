@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import Link from "next/link";
@@ -6,10 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { UserCircle } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
-import { useEffect, useState } from "react";
-import { User } from "@/lib/users/models/user.model";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 
 const { HOME, DASHBOARD, PRODUCTS, CATEGORIES } = ROUTES;
 const links = [
@@ -28,52 +24,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [userError, setUserError] = useState<CrudApiError | null>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    authClient
-      .getCurrentUser()
-      .then((res) => {
-        if (res.ok) {
-          setUserError(null);
-          setUser(res.data.user);
-        } else {
-          setUserError(res.error);
-          setUser(null);
-        }
-      })
-      .finally(() => setLoading(false));
-
-    return () => {
-      setUser(null);
-      setUserError(null);
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <aside
-        className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex
-          items-center justify-center shadow-lg"
-      >
-        <span className="text-sm text-white/80">Loading...</span>
-      </aside>
-    );
-  }
-
-  if (userError) {
-    return (
-      <aside
-        className="w-48 min-h-screen bg-linear-to-b from-emerald-600 to-teal-500 text-white flex
-          items-center justify-center shadow-lg"
-      >
-        <span className="text-sm text-red-400">Failed to load session</span>
-      </aside>
-    );
-  }
+  const { user } = useAuthUser();
+  if (!user) return null;
 
   return (
     <aside

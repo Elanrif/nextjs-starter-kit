@@ -1,23 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { UserSidebar } from "@/components/user-sidebar";
-import { redirect } from "next/navigation";
-import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
-import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
 import { AccountBreadcrumb } from "@/components/features/account/account-breadcrumb";
+import { ProtectedRoute } from "@/components/features/protected-route";
 
-export const dynamic = "force-dynamic";
-
-export default async function AccountLayout({ children }: { children: React.ReactNode }) {
-  const response = await auth.api.getCurrentUser();
-
-  if (!response.ok || !response.data) {
-    redirect("/sign-in?callbackUrl=/account");
-  }
-
+export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthUserProvider user={response.data.user}>
+    <ProtectedRoute>
       <SidebarProvider>
         <UserSidebar />
         <SidebarInset className="bg-gray-50/50">
@@ -35,7 +25,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
               <AccountBreadcrumb />
             </div>
 
-            {/* Right side */}
             <div className="flex items-center gap-2 px-4">
               <div
                 className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full
@@ -60,6 +49,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
           <div className="flex flex-1 flex-col gap-4 p-16 pt-0 mt-5">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-    </AuthUserProvider>
+    </ProtectedRoute>
   );
 }

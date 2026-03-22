@@ -5,6 +5,7 @@ import { ModalProvider } from "@components/providers/modal-provider";
 import { ToastProvider } from "@components/toast-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <QueryProvider>
-          <ModalProvider>
-            <ToastProvider />
-            <TooltipProvider>{children}</TooltipProvider>
-          </ModalProvider>
-        </QueryProvider>
+        <AuthUserProvider>
+          <QueryProvider>
+            <ModalProvider>
+              <ToastProvider />
+              <TooltipProvider>{children}</TooltipProvider>
+            </ModalProvider>
+          </QueryProvider>
+        </AuthUserProvider>
       </body>
     </html>
   );

@@ -1,18 +1,11 @@
+"use client";
+
 import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
-import { getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 
-export const metadata = {
-  title: "Edit Profile",
-  description: "Edit my profile",
-};
-
-export default async function Page() {
-  const res = await getCurrentUser();
-  if (!res.ok) {
-    // Handle error, e.g., redirect to sign-in
-    return <div>Error: Unauthorized</div>;
-  }
-  const { user } = res.data;
+export default function Page() {
+  const { user } = useAuthUser();
+  if (!user) return null;
 
   return <ProfileEditForm loadedUser={user} />;
 }

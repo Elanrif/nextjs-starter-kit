@@ -20,7 +20,8 @@ import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 const { MY_ACCOUNT, EDIT_PROFILE } = ROUTES;
 
 export function ProfileDetail() {
-  const user = useAuthUser();
+  const { user } = useAuthUser();
+  if (!user) return null;
 
   const initials =
     user.firstName?.slice(0, 1).toUpperCase() + (user.lastName?.slice(0, 1).toUpperCase() || "");

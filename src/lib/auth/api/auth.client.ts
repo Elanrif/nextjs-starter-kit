@@ -1,5 +1,4 @@
 import * as authClientService from "@lib/auth/auth.client.service";
-import * as joseClientService from "@lib/auth/jose/jose.client.service";
 import { signInAction, signOutAction } from "@/lib/auth/actions/auth";
 import { Registrer } from "@lib/auth/models/auth.model";
 
@@ -8,24 +7,20 @@ export const authClient = {
     email: async ({ email, password }: { email: string; password: string }) => {
       return signInAction({ email, password });
     },
-    social: async (provider: string) => {
-      // Simulate API call delay
+    social: async (_provider: string) => {
+      // TODO: implement social sign-in
     },
   },
 
   signUp: async ({ body }: { body: Registrer }) => {
-    authClientService.signUp(body);
+    return authClientService.signUp(body);
   },
 
   signOut: async () => {
-    signOutAction();
-  },
-
-  getCurrentUser: async () => {
-    return joseClientService.getCurrentUser();
+    return signOutAction();
   },
 
   useSession: () => {
-    // ton hook React actuel
+    // use useAuthUser() from AuthUserContext instead
   },
 };

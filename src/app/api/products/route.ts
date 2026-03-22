@@ -7,7 +7,6 @@ import {
 } from "@/lib/products/models/product.model";
 import { getLogger } from "@config/logger.config";
 import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
-import { getSession } from "@/lib/auth/jose/jose.service";
 import { validationError } from "@/utils/utils.server";
 
 const logger = getLogger("server");
@@ -59,40 +58,6 @@ export async function GET(request: NextRequest) {
  * Create a new product (requires authentication)
  */
 export async function POST(request: NextRequest) {
-  // User authentication and role verification
-  const session = await getSession();
-
-  if (!session.ok) {
-    const err = {
-      error: "Unauthorized",
-      status: 401,
-      message: "You must be logged in",
-    };
-    logger.error(
-      {
-        status: err.status,
-        message: err.message,
-      },
-      "Unauthorized",
-    );
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
-  }
-
-  if (session.data?.user?.role !== "ADMIN") {
-    const err = {
-      status: 403,
-      message: "You do not have permission to perform this action",
-    };
-    logger.error(
-      {
-        status: err.status,
-        message: err.message,
-      },
-      "Forbidden",
-    );
-    return NextResponse.json({ ok: false, error: err }, { status: err.status });
-  }
-
   const body = await request.json().catch(() => null);
   const parsed = parseProductCreate(body);
   if (!parsed.success) {

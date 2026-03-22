@@ -1,6 +1,7 @@
-import { auth } from "@/lib/auth/api/auth";
+"use client";
+
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { ROUTES } from "@/utils/routes";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   Mail,
@@ -16,18 +17,11 @@ import {
   Fingerprint,
 } from "lucide-react";
 
-export const metadata = {
-  title: "Mon compte",
-  description: "Gérez votre profil et vos paramètres",
-};
+export default function AccountPage() {
+  const { user } = useAuthUser();
+  if (!user) return null;
 
-export default async function AccountPage() {
-  const response = await auth.api.getCurrentUser();
-
-  if (!response.ok || !response.data) {
-    redirect("/sign-in?callbackUrl=/account");
-  }
-  const { session, user } = response.data;
+  const session = null; // No server session on main branch
 
   const initials =
     user.firstName?.slice(0, 2).toUpperCase() || user.email?.slice(0, 2).toUpperCase() || "U";
@@ -40,12 +34,7 @@ export default async function AccountPage() {
       })
     : "—";
 
-  const sessionExpires = session.expiresAt
-    ? new Date(session.expiresAt).toLocaleString("fr-FR", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      })
-    : "N/A";
+  const sessionExpires = "—";
 
   return (
     <div className="min-h-screen p-6 space-y-6 max-w-7xl mx-auto">

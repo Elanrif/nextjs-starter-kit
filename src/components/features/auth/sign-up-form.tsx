@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
 import { signUpAction } from "@/lib/auth/actions/auth";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
@@ -15,6 +16,7 @@ import LoadingPage from "@components/features/loading-page";
 
 export function SignUpForm() {
   const router = useRouter();
+  const { setUser } = useAuthUser();
   const {
     register,
     handleSubmit,
@@ -67,8 +69,8 @@ export function SignUpForm() {
         setLoading(false);
         return;
       }
-      router.push("/dashboard");
-      router.refresh();
+      setUser(result);
+      router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
       // loading reste true pendant la navigation
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");

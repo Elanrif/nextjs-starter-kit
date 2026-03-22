@@ -18,7 +18,8 @@ export function UserList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const { id: currentUserId } = useAuthUser();
+  const { user } = useAuthUser();
+  const currentUserId = user?.id;
   const { data: users = [], isLoading } = useUsers();
   const filteredUsers = users.filter((u) => u.id !== currentUserId);
   const { mutate: remove, isPending: deleteLoading } = useDeleteUser();

@@ -9,12 +9,14 @@ import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
 import { authClient } from "@/lib/auth/api/auth.client";
+import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { Field } from "@/components/ui/form/field";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import LoadingPage from "@components/features/loading-page";
 
 export function SignInForm() {
   const router = useRouter();
+  const { setUser } = useAuthUser();
   const {
     register,
     handleSubmit,
@@ -47,7 +49,8 @@ export function SignInForm() {
         setLoading(false);
         return;
       }
-      router.push("/dashboard");
+      setUser(result);
+      router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
       // isLoading reste true pendant la navigation
     } catch (error: any) {
       setError(error?.message || "Une erreur est survenue.");
