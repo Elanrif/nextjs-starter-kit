@@ -21,10 +21,6 @@ export const auth = {
       await baAuth.api.signOut({ headers: await headers() });
     },
 
-    getSession: async () => {
-      return baService.getSession();
-    },
-
     getCurrentUser: async () => {
       return baService.getCurrentUser();
     },

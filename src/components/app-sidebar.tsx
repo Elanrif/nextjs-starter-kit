@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const fetchAuthData = async () => {
       try {
         const response = await authClient.getCurrentUser();
-        if (!response.ok) {
+        if (!response.ok || !response.data) {
           redirect("/sign-in?callbackUrl=/account");
         }
         setAuth(response.data.user);

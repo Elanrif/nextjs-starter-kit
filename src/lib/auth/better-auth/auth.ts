@@ -25,7 +25,8 @@ const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 export const auth = betterAuth({
   database: new Database(process.env.DATABASE_URL ?? "./dev.db"),
   secret: process.env.BETTER_AUTH_SECRET!,
-  baseURL: process.env.BETTER_AUTH_URL!,
+  baseURL:
+    process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
 
   /**
    * Extend the BA user with role + the backend's numeric id.

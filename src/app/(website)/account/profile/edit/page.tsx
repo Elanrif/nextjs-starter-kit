@@ -1,5 +1,5 @@
 import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
-import { getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { getCurrentUser } from "@/lib/auth/better-auth/better-auth.service";
 
 export const metadata = {
   title: "Edit Profile",

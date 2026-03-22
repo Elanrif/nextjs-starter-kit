@@ -2,8 +2,8 @@
 
 import { betterAuthClient } from "@lib/auth/better-auth/auth.client";
 import { signOutAction } from "@/lib/auth/actions/auth";
-import { Registrer, Login } from "@lib/auth/models/auth.model";
-import { CrudApiError } from "@/lib/shared/helpers/crud-api-error";
+import { Registrer, Login, CurrentUser } from "@lib/auth/models/auth.model";
+import { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 
 type SignInResult = { user: { role: string; email: string } } | { error: CrudApiError };
 type SignUpResult = { user: { email: string } } | { error: CrudApiError };
@@ -69,11 +69,18 @@ export const authClient = {
     await signOutAction();
   },
 
-  getCurrentUser: async () => {
-    const { data, error } = await betterAuthClient.$fetch("/api/auth/session/me");
-    if (error) return { ok: false, error };
-    return { ok: true, data };
+  getCurrentUser: async (): Promise<Result<CurrentUser, CrudApiError>> => {
+    const { data, error } =
+      await betterAuthClient.$fetch<Result<CurrentUser, CrudApiError>>("/api/auth/session/me");
+    if (error)
+      return {
+        ok: false,
+        error: {
+          error: error.statusText,
+          status: error.status ?? 401,
+          message: error.message ?? "Unauthorized",
+        },
+      };
+    return data!;
   },
-
-  useSession: () => betterAuthClient.useSession(),
 };
