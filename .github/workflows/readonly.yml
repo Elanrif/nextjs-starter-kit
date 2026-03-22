@@ -1,0 +1,19 @@
+# .github/workflows/readonly.yml
+name: 🚫 Block kit/* branches from merging
+
+on:
+  pull_request:
+    branches:
+      - "**" # trigger on all target branches
+
+jobs:
+  block:
+    name: ⛔ Block merge of kit/* branches
+    runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'kit/')
+    steps:
+      - name: Block merge
+        run: |
+          echo "❌ kit/* branches are standalone variants"
+          echo "❌ They must never be merged into any branch"
+          exit 1
