@@ -40,7 +40,9 @@ export type Session = {
     firstName?: string;
     lastName?: string;
     phoneNumber?: string;
-    kcSub?: string;
+    externalId?: string;
+    accessToken?: string;
+    refreshToken?: string;
   };
   isAuth: boolean;
   expiresAt?: Date;

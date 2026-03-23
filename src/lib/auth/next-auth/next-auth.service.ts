@@ -15,7 +15,7 @@ const logger = getLogger("server");
 
 /**
  * Reads the current NextAuth session.
- * Returns a normalized Session object with all user fields from the Keycloak JWT.
+ * Returns a normalized Session object with all user fields from the JWT.
  */
 export const getSession = cache(async (): Promise<Result<Session, CrudApiError>> => {
   try {
@@ -33,13 +33,14 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
       ok: true,
       data: {
         user: {
-          userId: session.user.backendId,
           email: session.user.email ?? undefined,
           role: session.user.role ?? "USER",
           firstName: session.user.firstName,
           lastName: session.user.lastName,
           phoneNumber: session.user.phoneNumber,
-          kcSub: session.user.kcSub,
+          externalId: session.user.externalId,
+          accessToken: session.user.accessToken,
+          refreshToken: session.user.refreshToken,
         },
         isAuth: true,
         expiresAt: session.expires ? new Date(session.expires) : undefined,
@@ -52,8 +53,8 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
 });
 
 /**
- * Returns the full User object.
- * With Keycloak, all user data is embedded in the JWT — no backend fetch needed.
+ * Returns the full User object built from the JWT session.
+ * No backend fetch needed — all user data is embedded in the token.
  */
 export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
   const session = await getSession();
@@ -69,7 +70,7 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudAp
   const { user: s } = session.data;
 
   const user: User = {
-    id: s.userId ?? 0,
+    id: 0,
     email: s.email ?? "",
     firstName: s.firstName ?? "",
     lastName: s.lastName ?? "",
@@ -78,7 +79,7 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudAp
     avatarUrl: null,
     role: (s.role as UserRole) ?? UserRole.USER,
     isActive: true,
-    kcSub: s.kcSub,
+    externalId: s.externalId,
   };
 
   return { ok: true, data: { user, session: session.data } };

@@ -4,7 +4,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getLogger } from "@/config/logger.config";
 import { LoginSchema } from "@/lib/auth/models/auth.model";
-import { kcSignIn } from "@/lib/auth/keycloak/keycloak.service";
+import { authProvider } from "@/lib/auth/providers";
 
 const logger = getLogger("server");
 
@@ -14,21 +14,23 @@ declare module "next-auth" {
   interface Session {
     user: {
       role: string;
-      backendId: number;
-      kcSub: string;
+      externalId: string;
       firstName: string;
       lastName: string;
       phoneNumber: string;
+      accessToken?: string;
+      refreshToken?: string;
     } & DefaultSession["user"];
   }
 
   interface User {
     role: string;
-    backendId: number;
-    kcSub: string;
+    externalId: string;
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    accessToken?: string;
+    refreshToken?: string;
   }
 }
 
@@ -45,24 +47,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = LoginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const result = await kcSignIn(parsed.data.email, parsed.data.password);
+        const result = await authProvider.signIn(parsed.data.email, parsed.data.password);
         if (!result.ok) {
-          logger.warn({ email: parsed.data.email }, "Keycloak authorize failed");
+          logger.warn({ email: parsed.data.email }, "Auth provider signIn failed");
           return null;
         }
 
         const user = result.data;
 
         return {
-          id: String(user.id),
+          id: user.externalId,
           email: user.email,
           name: `${user.firstName} ${user.lastName}`,
           role: user.role,
-          backendId: user.id,
-          kcSub: user.kcSub,
+          externalId: user.externalId,
           firstName: user.firstName,
           lastName: user.lastName,
           phoneNumber: user.phoneNumber,
+          accessToken: user.tokens?.accessToken,
+          refreshToken: user.tokens?.refreshToken,
         };
       },
     }),
@@ -72,22 +75,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.backendId = user.backendId;
-        token.kcSub = user.kcSub;
+        token.externalId = user.externalId;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.phoneNumber = user.phoneNumber;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
       }
       return token;
     },
     session({ session, token }) {
       session.user.role = token.role as string;
-      session.user.backendId = token.backendId as number;
-      session.user.kcSub = token.kcSub as string;
+      session.user.externalId = token.externalId as string;
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
       session.user.phoneNumber = token.phoneNumber as string;
-      session.user.id = token.kcSub as string;
+      session.user.id = token.externalId as string;
+      session.user.accessToken = token.accessToken as string | undefined;
+      session.user.refreshToken = token.refreshToken as string | undefined;
       return session;
     },
   },
