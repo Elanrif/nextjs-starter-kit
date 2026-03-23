@@ -19,16 +19,18 @@ type BaUser = {
   email: string;
   name?: string;
   role?: string;
-  kcSub?: string;
+  externalId?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  accessToken?: string;
+  refreshToken?: string;
   [key: string]: unknown;
 };
 
 /**
  * Reads the current Better Auth session from the request headers.
- * Returns a normalized Session object with all Keycloak user fields.
+ * Returns a normalized Session populated from BA's local SQLite user record.
  */
 export const getSession = cache(async (): Promise<Result<Session, CrudApiError>> => {
   try {
@@ -55,7 +57,9 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
           firstName: user.firstName,
           lastName: user.lastName,
           phoneNumber: user.phoneNumber,
-          kcSub: user.kcSub,
+          externalId: user.externalId,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
         },
         isAuth: true,
         expiresAt: new Date(baSession.session.expiresAt),
@@ -69,7 +73,7 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
 
 /**
  * Returns the full User object.
- * With Keycloak, all user data is synced into BA's local DB on sign-in
+ * User data is synced into BA's local SQLite on every sign-in
  * — no external backend fetch needed.
  */
 export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
@@ -95,7 +99,7 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudAp
     avatarUrl: null,
     role: (s.role as UserRole) ?? UserRole.USER,
     isActive: true,
-    kcSub: s.kcSub,
+    externalId: s.externalId,
   };
 
   return { ok: true, data: { user, session: session.data } };
