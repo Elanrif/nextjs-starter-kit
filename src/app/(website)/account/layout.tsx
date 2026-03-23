@@ -19,7 +19,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
   return (
     <AuthUserProvider user={response.data.user}>
       <SidebarProvider>
-        <UserSidebar />
+        <UserSidebar user={response.data.user} />
         <SidebarInset className="bg-gray-50/50">
           <header
             className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-100 bg-white

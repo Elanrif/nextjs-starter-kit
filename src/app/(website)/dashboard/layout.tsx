@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <AuthUserProvider user={currentUser.data.user}>
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar user={currentUser.data.user} />
         <SidebarInset
           className="bg-[#faf7f0]
             bg-[linear-gradient(rgba(139,115,85,0.08)_1px,transparent_1px),linear-gradient(to_right,rgba(139,115,85,0.08)_1px,transparent_1px)]

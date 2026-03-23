@@ -42,7 +42,7 @@ export function SignInForm() {
         password: data.password,
       });
       if ("error" in result) {
-        setError(result.error?.message || "Une erreur est survenue.");
+        setError(result.message || "Une erreur est survenue.");
         setLoading(false);
         return;
       }
