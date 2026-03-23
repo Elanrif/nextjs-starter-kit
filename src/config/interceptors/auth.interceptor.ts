@@ -1,6 +1,6 @@
 import environment from "@config/environment.config";
 import { InternalAxiosRequestConfig } from "axios";
-import { isTokenExpired, Token } from "@config/auth.utils";
+import { Token } from "@config/auth.utils";
 import { ApiError } from "@/lib/shared/helpers/crud-api-error";
 import { getLogger } from "@config/logger.config";
 
@@ -22,12 +22,8 @@ export const anonTokenInterceptor = async (config: InternalAxiosRequestConfig) =
 
 export const ownTokenInterceptor = async (config: InternalAxiosRequestConfig, token?: Token) => {
   const { headers } = config;
-  if (token && isTokenExpired(token.expiry) && token.refresh_token) {
-    // token = await refreshOwnToken(token.refresh_token);
-    logger.info(`Token expired, not refreshing token token expired at ${token.expiry}`);
-  }
   if (token) {
-    headers["Authorization"] = `Bearer ${token.access_token}`;
+    headers["Authorization"] = `Bearer ${token.accessToken}`;
   } else {
     throw new ApiError("Not Authenticated", 401);
   }

@@ -14,53 +14,59 @@ const logger = getLogger("server");
 const {
   api: {
     rest: {
-      endpoints: { login: loginUrl, register: registerUrl },
+      endpoints: { kc_login: loginUrl, register: registerUrl },
     },
   },
 } = environment;
 
 /**
- * Shape returned by the backend login endpoint.
- * Case A: returns only a User object        → no tokens field
- * Case B: returns User + JWT tokens         → tokens field present
+ * Shape returned by the backend /keycloak/login endpoint.
+ * { token: { accessToken, refreshToken, ... }, user: { id, email, ... } }
  */
-type BackendLoginResponse = {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: string;
-  // Optional — only if the backend issues its own JWT
-  accessToken?: string;
-  refreshToken?: string;
-  expiresIn?: number;
+type AuthResponse = {
+  token: {
+    accessToken: string;
+    refreshToken?: string;
+    expiresIn?: number;
+    refreshExpiresIn?: number;
+    tokenType?: string;
+    scope?: string;
+  };
+  user: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string | null;
+    role: string;
+  };
 };
 
 export const restProvider: AuthProvider = {
   async signIn(email: string, password: string): Promise<Result<AuthUser, CrudApiError>> {
     try {
-      const { data } = await apiClient(true).post<any, AxiosResponse<BackendLoginResponse>>(
-        loginUrl,
-        { email, password },
-      );
+      const { data } = await apiClient(true).post<any, AxiosResponse<AuthResponse>>(loginUrl, {
+        email,
+        password,
+      });
 
+      const { token, user: u } = data;
       logger.info({ email }, "Backend sign-in successful");
       return {
         ok: true,
         data: {
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phoneNumber: data.phoneNumber,
-          role: data.role,
-          externalId: String(data.id),
-          // tokens is set only when the backend returns them
-          ...(data.accessToken && {
+          email: u.email,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          phoneNumber: u.phoneNumber ?? "",
+          role: u.role,
+          externalId: String(u.id),
+          ...(token?.accessToken && {
             tokens: {
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-              expiresIn: data.expiresIn,
+              accessToken: token.accessToken,
+              refreshToken: token.refreshToken,
+              expiresIn: token.expiresIn,
+              refreshExpiresIn: token.refreshExpiresIn,
             },
           }),
         },

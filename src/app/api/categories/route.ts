@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as CategoryCreate;
 
   const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
+  const config = { headers: reqHeaders, token: session.data?.token };
 
   try {
     const response = await createCategory(config, body);

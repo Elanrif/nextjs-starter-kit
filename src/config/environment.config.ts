@@ -17,6 +17,7 @@ const environment = {
         products: `${BACKEND_BASE_V1}/products`,
         users: `${BACKEND_BASE_V1}/users`,
         login: `${BACKEND_BASE_V1}/auth/login`,
+        kc_login: `${BACKEND_BASE_V1}/keycloak/login`,
         register: `${BACKEND_BASE_V1}/auth/register`,
         resetPassword: `${BACKEND_BASE_V1}/auth/reset-password`,
         // auth endpoints

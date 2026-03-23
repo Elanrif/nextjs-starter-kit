@@ -11,22 +11,15 @@ const fetcher = async (): Promise<Result<Session, CrudApiError>> => {
     credentials: "include",
   });
 
-  // 401 / 403 is expected when not authenticated — not an error, just unauthenticated state
   if (res.status === 401 || res.status === 403) {
     return {
       ok: false,
-      error: {
-        error: "Unauthorized",
-        status: 401,
-        message: "Not authenticated",
-      },
+      error: { error: "Unauthorized", status: 401, message: "Not authenticated" },
     };
   }
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({
-      message: "Failed to fetch session",
-    }));
+    const errorData = await res.json().catch(() => ({ message: "Failed to fetch session" }));
     throw {
       error: errorData.error ?? "Error",
       status: errorData.status ?? res.status,
@@ -36,14 +29,10 @@ const fetcher = async (): Promise<Result<Session, CrudApiError>> => {
 
   const session: Result<Session, CrudApiError> = await res.json();
 
-  if (!session.ok || !session.data?.user?.userId) {
+  if (!session.ok || !session.data?.user?.externalId) {
     return {
       ok: false,
-      error: {
-        error: "Unauthorized",
-        status: 401,
-        message: "You must be logged in",
-      },
+      error: { error: "Unauthorized", status: 401, message: "You must be logged in" },
     };
   }
 

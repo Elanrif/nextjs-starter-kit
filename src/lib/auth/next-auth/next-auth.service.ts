@@ -32,6 +32,12 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
     return {
       ok: true,
       data: {
+        token: session.user.accessToken
+          ? {
+              accessToken: session.user.accessToken,
+              refreshToken: session.user.refreshToken,
+            }
+          : undefined,
         user: {
           email: session.user.email ?? undefined,
           role: session.user.role ?? "USER",
@@ -39,10 +45,7 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
           lastName: session.user.lastName,
           phoneNumber: session.user.phoneNumber,
           externalId: session.user.externalId,
-          accessToken: session.user.accessToken,
-          refreshToken: session.user.refreshToken,
         },
-        isAuth: true,
         expiresAt: session.expires ? new Date(session.expires) : undefined,
       },
     };

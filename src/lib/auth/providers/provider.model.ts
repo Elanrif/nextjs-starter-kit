@@ -10,7 +10,8 @@ import type { Registrer } from "@/lib/auth/models/auth.model";
 export type AuthTokens = {
   accessToken: string;
   refreshToken?: string;
-  expiresIn?: number; // seconds
+  expiresIn?: number;
+  refreshExpiresIn?: number;
 };
 
 /**
