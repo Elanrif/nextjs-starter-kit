@@ -21,7 +21,7 @@ const { MY_ACCOUNT } = ROUTES;
 
 export function ChangePasswordForm() {
   const router = useRouter();
-  const { user } = useAuthUser();
+  const user = useAuthUser();
 
   const {
     register,
