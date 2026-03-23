@@ -11,6 +11,7 @@ import {
 } from "@/lib/shared/helpers/crud-api-error.server";
 import { getLogger } from "@/config/logger.config";
 import {
+  AuthResponse,
   ChangePasswordProfileFormData,
   Login,
   parseChangePasswordProfile,
@@ -32,8 +33,8 @@ const {
     rest: {
       endpoints: {
         auth: { editProfile: editProfileUrl, changeProfilePasswordUrl: changeProfilePasswordUrl },
-        register: registerUrl,
-        login: loginUrl,
+        kc_login: kc_loginUrl,
+        kc_register: kc_registerUrl,
         resetPassword: resetPasswordUrl,
       },
     },
@@ -44,14 +45,20 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(login: Login, config?: Config): Promise<Result<User, CrudApiError>> {
+export async function signIn(
+  login: Login,
+  config?: Config,
+): Promise<Result<AuthResponse, CrudApiError>> {
   const validation = parseLogin(login);
   if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
 
   try {
-    const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
-    logger.info({ email: data.email }, "User signed in successfully");
-    return { ok: true, data };
+    const { data } = await apiClient(true, config).post<any, AxiosResponse<AuthResponse>>(
+      kc_loginUrl,
+      login,
+    );
+    logger.info({ email: data.user.email }, "User signed in successfully");
+    return { ok: true, data: { token: data.token, user: data.user } };
   } catch (error) {
     logger.error({ email: login.email }, "Failed to sign in");
     return {
@@ -67,13 +74,13 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 export async function signUp(
   registration: RegisterFormData,
   config?: Config,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<AuthResponse, CrudApiError>> {
   const validation = parseRegister(registration);
   if (!validation.success)
     return validationError(validation.error.issues, "Invalid registration data");
 
   try {
-    await apiClient(true, config).post<any, AxiosResponse<any>>(registerUrl, registration);
+    await apiClient(true, config).post<any, AxiosResponse<any>>(kc_registerUrl, registration);
   } catch (error) {
     logger.error({ email: registration.email }, "Failed to register user");
     return {

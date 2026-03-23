@@ -95,7 +95,7 @@ export function Header() {
               if (session && session.ok && !error) {
                 return (
                   <>
-                    {session.data.user.role === "admin" ? (
+                    {session.data.user.role === "ADMIN" ? (
                       <Link
                         href={DASHBOARD}
                         className={cn(

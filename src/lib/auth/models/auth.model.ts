@@ -20,29 +20,21 @@ export interface Login extends AuthSignIn {
   password: string;
 }
 
-export interface SessionPayload {
-  user: {
-    userId: number;
-    email: string;
-    role: string;
-  };
-  expiresAt: Date;
-  [key: string]: any;
-}
+/**
+ * Raw response from the backend login endpoint.
+ * Mirrors the Spring Boot AuthResponse : { token, user }
+ */
+export type AuthResponse = {
+  token: Token;
+  user: User;
+};
 
 /**
  * Type representing the result of session verification.
  */
 export type Session = {
   token?: Token;
-  user: {
-    email?: string;
-    role?: string;
-    firstName?: string;
-    lastName?: string;
-    phoneNumber?: string;
-    externalId?: string;
-  };
+  user: Partial<User>;
   expiresAt?: Date;
 };
 

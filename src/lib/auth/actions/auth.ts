@@ -14,6 +14,7 @@ import {
   parseChangePasswordProfile,
   ProfileUserFormData,
   Registrer,
+  Session,
 } from "@/lib/auth/models/auth.model";
 import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
@@ -24,7 +25,7 @@ import { headers, cookies } from "next/headers";
  * Server Action: Sign In
  * Safely handles authentication on the server side
  */
-export async function signInAction(credentials: Login): Promise<User | CrudApiError> {
+export async function signInAction(credentials: Login): Promise<Session | CrudApiError> {
   try {
     const res = await serverSignIn(credentials);
     if (!res.ok) return res.error;
@@ -38,7 +39,7 @@ export async function signInAction(credentials: Login): Promise<User | CrudApiEr
  * Server Action: Sign Up
  * Safely handles user registration on the server side
  */
-export async function signUpAction(userData: Registrer): Promise<User | CrudApiError> {
+export async function signUpAction(userData: Registrer): Promise<Session | CrudApiError> {
   try {
     const res = await serverSignUp(userData);
     if (!res.ok) return res.error;
@@ -182,4 +183,5 @@ export async function signOutAction() {
   await auth.api.signOut({ headers: await headers() });
   const cookieStore = await cookies();
   cookieStore.delete("ba_role");
+  cookieStore.delete("ba_access_token");
 }

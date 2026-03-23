@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
     token: session.data?.token,
   };
 
+  logger.info({ token: config.token }, "token");
   try {
     const response = await createCategory(config, body);
 

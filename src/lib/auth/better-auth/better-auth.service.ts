@@ -1,6 +1,6 @@
 import "server-only";
 
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { cache } from "react";
 import { auth } from "./auth";
 import { getLogger } from "@/config/logger.config";
@@ -49,12 +49,17 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
 
     const user = baSession.user as BaUser;
 
+    // BA's getSession doesn't return additionalFields — fall back to the signed cookie
+    const cookieStore = await cookies();
+    const cookieAccessToken = cookieStore.get("ba_access_token")?.value;
+    const resolvedAccessToken = user.accessToken ?? cookieAccessToken;
+
     return {
       ok: true,
       data: {
-        token: user.accessToken
+        token: resolvedAccessToken
           ? {
-              accessToken: user.accessToken,
+              accessToken: resolvedAccessToken,
               refreshToken: user.refreshToken,
               expiresIn: user.expiresIn,
               refreshExpiresIn: user.refreshExpiresIn,
@@ -62,7 +67,7 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
           : undefined,
         user: {
           email: user.email,
-          role: user.role ?? "USER",
+          role: (user.role as UserRole) ?? UserRole.USER,
           firstName: user.firstName,
           lastName: user.lastName,
           phoneNumber: user.phoneNumber,

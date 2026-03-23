@@ -87,7 +87,7 @@ export async function createCategory(
   if (!parse.success) return validationError(parse.error.issues, "Invalid category data");
 
   try {
-    const res = await apiClient(true, config).post<unknown, AxiosResponse<Category>>(
+    const res = await apiClient(false, config).post<unknown, AxiosResponse<Category>>(
       CATEGORIES_URL,
       parse.data,
     );

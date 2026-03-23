@@ -12,16 +12,16 @@ const logger = getLogger("server");
 const {
   api: {
     rest: {
-      endpoints: { login: loginUrl, register: registerUrl },
+      endpoints: { kc_login: loginUrl, register: registerUrl },
     },
   },
 } = environment;
 
 /**
- * Shape returned by the backend login endpoint.
- * { accessToken, refreshToken, expiresIn, user: { id, email, ... } }
+ * Shape returned by the backend /keycloak/login endpoint.
+ * { token: { accessToken, refreshToken, ... }, user: { id, email, ... } }
  */
-type BackendLoginResponse = {
+type AuthResponse = {
   token: {
     accessToken: string;
     refreshToken?: string;
@@ -43,10 +43,10 @@ type BackendLoginResponse = {
 export const restProvider: AuthProvider = {
   async signIn(email: string, password: string): Promise<Result<AuthUser, CrudApiError>> {
     try {
-      const { data } = await apiClient(true).post<any, AxiosResponse<BackendLoginResponse>>(
-        loginUrl,
-        { email, password },
-      );
+      const { data } = await apiClient(true).post<any, AxiosResponse<AuthResponse>>(loginUrl, {
+        email,
+        password,
+      });
 
       const { token, user: u } = data;
       logger.info({ email }, "Backend sign-in successful");

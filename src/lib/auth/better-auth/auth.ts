@@ -115,6 +115,19 @@ export const auth = betterAuth({
               },
             );
 
+            // Store access token in a separate httpOnly cookie since BA's getSession
+            // does not return additionalFields server-side
+            if (authUser.tokens?.accessToken) {
+              ctx.setCookie("ba_access_token", authUser.tokens.accessToken, {
+                httpOnly: true,
+                secure: process.env.ENV === "production",
+                sameSite: "lax",
+                path: "/",
+                maxAge: SESSION_MAX_AGE,
+              });
+              logger.debug("ba_access_token cookie set");
+            }
+
             logger.info({ email, baUserId }, "Sign-in successful");
             return ctx.json({
               user: {
