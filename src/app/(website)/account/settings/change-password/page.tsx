@@ -1,4 +1,4 @@
-import { ChangePassword } from "@/components/features/account/change-password";
+import { ChangePasswordForm } from "@/components/features/account/change-password-form";
 
 export const metadata = {
   title: "Change Password",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default async function Page() {
-  return <ChangePassword />;
+  return <ChangePasswordForm />;
 }
