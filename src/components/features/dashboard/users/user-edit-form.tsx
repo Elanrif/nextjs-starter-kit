@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import LoadingPage from "@components/features/loading-page";
 import { ROUTES } from "@/utils/routes";
 import { User, UserFormData, UserSchema } from "@/lib/users/models/user.model";
 import { useUpdateUser } from "@/lib/users/hooks/use-users";
@@ -74,149 +73,100 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
   };
 
   return (
-    <>
-      <LoadingPage loading={loading} text="Chargement du produit..." />
-      <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
-        <div className="relative overflow-hidden rounded-2xl card-gradient p-7 shadow-xl">
-          <div className="relative flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-400/30">
-              <Pencil className="w-5 h-5 text-emerald-300" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">Modifier l&apos;utilisateur</h1>
-              <p className="text-sm text-slate-400 mt-0.5">
-                {loadedUser.firstName} {loadedUser.lastName}
-              </p>
-            </div>
+    <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
+      <div className="relative overflow-hidden rounded-2xl card-gradient p-7 shadow-xl">
+        <div className="relative flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-400/30">
+            <Pencil className="w-5 h-5 text-emerald-300" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-white">Modifier l&apos;utilisateur</h1>
+            <p className="text-sm text-slate-400 mt-0.5">
+              {loadedUser.firstName} {loadedUser.lastName}
+            </p>
           </div>
         </div>
+      </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {error && (
-              <div
-                className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
-                  border-red-100 rounded-xl"
-              >
-                <span className="shrink-0">⚠</span>
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <Field
-                variant="light"
-                label="Prénom"
-                error={errors.firstName?.message}
-                icon={<UserIcon className="w-4 h-4" />}
-              >
-                <input
-                  type="text"
-                  {...register("firstName")}
-                  placeholder="Prénom"
-                  disabled={loading}
-                  className={icLight}
-                />
-              </Field>
-              <Field
-                variant="light"
-                label="Nom"
-                error={errors.lastName?.message}
-                icon={<UserIcon className="w-4 h-4" />}
-              >
-                <input
-                  type="text"
-                  {...register("lastName")}
-                  placeholder="Nom"
-                  disabled={loading}
-                  className={icLight}
-                />
-              </Field>
-              <Field
-                variant="light"
-                label="E-mail"
-                error={errors.email?.message}
-                icon={<Mail className="w-4 h-4" />}
-              >
-                <input
-                  type="email"
-                  {...register("email")}
-                  placeholder="exemple@email.com"
-                  disabled={loading}
-                  className={icLight}
-                />
-              </Field>
-              <Field
-                variant="light"
-                label="Téléphone"
-                error={errors.phoneNumber?.message}
-                icon={<Phone className="w-4 h-4" />}
-              >
-                <input
-                  type="tel"
-                  {...register("phoneNumber")}
-                  placeholder="+33 6 00 00 00 00"
-                  disabled={loading}
-                  className={icLight}
-                />
-              </Field>
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {error && (
+            <div
+              className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
+                border-red-100 rounded-xl"
+            >
+              <span className="shrink-0">⚠</span>
+              <span>{error}</span>
             </div>
+          )}
 
-            <div className="h-px bg-gray-100" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <Field
+              variant="light"
+              label="Prénom"
+              error={errors.firstName?.message}
+              icon={<UserIcon className="w-4 h-4" />}
+            >
+              <input
+                type="text"
+                {...register("firstName")}
+                placeholder="Prénom"
+                disabled={loading}
+                className={icLight}
+              />
+            </Field>
+            <Field
+              variant="light"
+              label="Nom"
+              error={errors.lastName?.message}
+              icon={<UserIcon className="w-4 h-4" />}
+            >
+              <input
+                type="text"
+                {...register("lastName")}
+                placeholder="Nom"
+                disabled={loading}
+                className={icLight}
+              />
+            </Field>
+            <Field
+              variant="light"
+              label="E-mail"
+              error={errors.email?.message}
+              icon={<Mail className="w-4 h-4" />}
+            >
+              <input
+                type="email"
+                {...register("email")}
+                placeholder="exemple@email.com"
+                disabled={loading}
+                className={icLight}
+              />
+            </Field>
+            <Field
+              variant="light"
+              label="Téléphone"
+              error={errors.phoneNumber?.message}
+              icon={<Phone className="w-4 h-4" />}
+            >
+              <input
+                type="tel"
+                {...register("phoneNumber")}
+                placeholder="+33 6 00 00 00 00"
+                disabled={loading}
+                className={icLight}
+              />
+            </Field>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <Field
-                  variant="light"
-                  label="Nouveau mot de passe"
-                  error={errors.password?.message}
-                  icon={<Lock className="w-4 h-4" />}
-                  action={
-                    <button
-                      type="button"
-                      onClick={() => setShowPwd(!showPwd)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  }
-                >
-                  <input
-                    type={showPwd ? "text" : "password"}
-                    {...register("password")}
-                    placeholder="Nouveau mot de passe"
-                    disabled={loading}
-                    className={icLightPwd}
-                  />
-                </Field>
-                {password && (
-                  <div
-                    className={cn(
-                      "mt-2 p-3 rounded-xl space-y-1.5 border",
-                      allValid ? "bg-emerald-50 border-emerald-100" : "bg-gray-50 border-gray-100",
-                    )}
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <ShieldCheck
-                        className={`w-3.5 h-3.5 ${allValid ? "text-emerald-600" : "text-gray-400"}`}
-                      />
-                      <span
-                        className={`text-xs font-semibold
-                        ${allValid ? "text-emerald-700" : "text-gray-500"}`}
-                      >
-                        {allValid ? "Mot de passe fort" : "Exigences"}
-                      </span>
-                    </div>
-                    <ValidationItem valid={validation.minLength} text="Au moins 8 caractères" />
-                    <ValidationItem valid={validation.hasNumber} text="Un chiffre ou symbole" />
-                    <ValidationItem valid={validation.hasCase} text="Majuscule et minuscule" />
-                  </div>
-                )}
-              </div>
+          <div className="h-px bg-gray-100" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
               <Field
                 variant="light"
-                label="Confirmer le mot de passe"
-                error={errors.confirmPassword?.message}
+                label="Nouveau mot de passe"
+                error={errors.password?.message}
                 icon={<Lock className="w-4 h-4" />}
                 action={
                   <button
@@ -230,40 +180,86 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
               >
                 <input
                   type={showPwd ? "text" : "password"}
-                  {...register("confirmPassword")}
-                  placeholder="Répéter le mot de passe"
+                  {...register("password")}
+                  placeholder="Nouveau mot de passe"
                   disabled={loading}
                   className={icLightPwd}
                 />
               </Field>
+              {password && (
+                <div
+                  className={cn(
+                    "mt-2 p-3 rounded-xl space-y-1.5 border",
+                    allValid ? "bg-emerald-50 border-emerald-100" : "bg-gray-50 border-gray-100",
+                  )}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <ShieldCheck
+                      className={`w-3.5 h-3.5 ${allValid ? "text-emerald-600" : "text-gray-400"}`}
+                    />
+                    <span
+                      className={`text-xs font-semibold
+                      ${allValid ? "text-emerald-700" : "text-gray-500"}`}
+                    >
+                      {allValid ? "Mot de passe fort" : "Exigences"}
+                    </span>
+                  </div>
+                  <ValidationItem valid={validation.minLength} text="Au moins 8 caractères" />
+                  <ValidationItem valid={validation.hasNumber} text="Un chiffre ou symbole" />
+                  <ValidationItem valid={validation.hasCase} text="Majuscule et minuscule" />
+                </div>
+              )}
             </div>
+            <Field
+              variant="light"
+              label="Confirmer le mot de passe"
+              error={errors.confirmPassword?.message}
+              icon={<Lock className="w-4 h-4" />}
+              action={
+                <button
+                  type="button"
+                  onClick={() => setShowPwd(!showPwd)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
+            >
+              <input
+                type={showPwd ? "text" : "password"}
+                {...register("confirmPassword")}
+                placeholder="Répéter le mot de passe"
+                disabled={loading}
+                className={icLightPwd}
+              />
+            </Field>
+          </div>
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border
-                  border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
-                  transition-colors disabled:opacity-50"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Annuler
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
-                  gradient-primary text-sm font-semibold shadow-sm hover:shadow-md
-                  hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
-              >
-                <Save className="w-4 h-4" />
-                {loading ? "Enregistrement..." : "Enregistrer"}
-              </button>
-            </div>
-          </form>
-        </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl border
+                border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                transition-colors disabled:opacity-50"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
+                gradient-primary text-sm font-semibold shadow-sm hover:shadow-md
+                hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+            >
+              <Save className="w-4 h-4" />
+              {loading ? "Enregistrement..." : "Enregistrer"}
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
