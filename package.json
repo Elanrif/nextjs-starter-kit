@@ -19,7 +19,10 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix --max-warnings=0",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "auth:migrate": "npx @better-auth/cli migrate --config src/lib/auth/better-auth/auth.ts",
+    "auth:generate": "npx @better-auth/cli generate --config src/lib/auth/better-auth/auth.ts",
+    "auth:db:reset": "shx rm -f dev.db && npm run auth:migrate"
   },
   "lint-staged": {
     "*.+(js|jsx|ts|tsx|json|css|scss|md)": [

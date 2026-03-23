@@ -91,6 +91,42 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Better Auth — Setup
+
+Better Auth utilise une **base de données SQLite locale** pour stocker les sessions et un miroir des utilisateurs.
+
+### Emplacement de la base de données
+
+```
+./dev.db   ← racine du projet (configurable via DATABASE_URL)
+```
+
+### Variables d'environnement requises
+
+```env
+BETTER_AUTH_SECRET=une-clé-secrète-longue-et-aléatoire
+BETTER_AUTH_URL=http://localhost:3000
+DATABASE_URL=./dev.db
+```
+
+### Initialiser la base de données (première fois)
+
+La migration crée les tables `user`, `session`, `account`, `verification` dans la SQLite.
+
+**1.** Retirer temporairement `import "server-only"` dans `src/lib/auth/better-auth/auth.ts`
+
+**2.** Lancer la migration :
+
+```bash
+npx @better-auth/cli migrate --config src/lib/auth/better-auth/auth.ts
+```
+
+**3.** Remettre `import "server-only"` dans `auth.ts`
+
+> À relancer si tu ajoutes un plugin BA ou un champ custom — la migration est incrémentale.
+
+---
+
 ## Key Concepts & Architecture
 
 ### Server vs Client Components

@@ -3,10 +3,12 @@ import { toNextJsHandler } from "better-auth/next-js";
 
 /**
  * Better Auth catch-all route.
- * Handles all /api/auth/* requests including:
- *   - POST /api/auth/sign-in/backend   (custom backend credentials)
- *   - POST /api/auth/sign-up/backend   (custom backend registration)
- *   - POST /api/auth/sign-out
- *   - GET  /api/auth/get-session
+ * Intercepts all /api/auth/* requests and delegates to the BA handler.
+ *
+ * Endpoints exposés :
+ *   - POST /api/auth/sign-in     → plugin custom (vérifie via backend externe)
+ *   - POST /api/auth/sign-up     → plugin custom (inscription via backend externe)
+ *   - POST /api/auth/sign-out    → natif BA (invalide la session + supprime le cookie)
+ *   - GET  /api/auth/get-session → natif BA (retourne la session courante)
  */
 export const { GET, POST } = toNextJsHandler(auth);
