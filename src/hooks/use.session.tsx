@@ -1,6 +1,6 @@
 "use client";
 
-import { betterAuthClient } from "@/lib/auth/better-auth/auth.client";
+import { authClient } from "@/lib/auth/better-auth/auth.client";
 import type { Session } from "@/lib/auth/models/auth.model";
 
 /**
@@ -8,7 +8,7 @@ import type { Session } from "@/lib/auth/models/auth.model";
  * Normalizes the BA session format to the app's Session type.
  */
 export const useSession = () => {
-  const { data, isPending, error, refetch } = betterAuthClient.useSession();
+  const { data, isPending, error, refetch } = authClient.useSession();
 
   const session: ({ ok: true; data: Session } | { ok: false }) | undefined = data
     ? {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { authClient } from "@/lib/auth/better-auth/auth.client";
 import LoadingPage from "@/components/features/loading-page";
 
 interface SignOutButtonProps {
@@ -24,11 +24,14 @@ export function SignOutButton({
 
   const handleSignOut = () => {
     setLoading(true);
-    authClient.signOut();
-    setTimeout(() => {
-      if (onSignOut) onSignOut();
-      window.location.href = redirectTo;
-    }, 800);
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          if (onSignOut) onSignOut();
+          window.location.href = redirectTo;
+        },
+      },
+    });
   };
 
   const variantStyles = {

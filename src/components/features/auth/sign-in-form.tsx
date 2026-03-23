@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { authClient } from "@/lib/auth/better-auth/auth.client";
 import { Field } from "@/components/ui/form/field";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import LoadingPage from "@components/features/loading-page";
@@ -38,12 +38,12 @@ export function SignInForm() {
     setLoading(true);
     setError(null);
     try {
-      const result = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
+      const { error } = await authClient.$fetch("/sign-in", {
+        method: "POST",
+        body: { email: data.email, password: data.password },
       });
-      if ("error" in result) {
-        setError(result.error?.message || "Une erreur est survenue.");
+      if (error) {
+        setError(error.message || "Une erreur est survenue.");
         setLoading(false);
         return;
       }

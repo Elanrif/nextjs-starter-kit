@@ -1,6 +1,6 @@
 "server-only";
 
-import { getCurrentUser } from "@lib/auth/better-auth/better-auth.service";
+import { getCurrentUser } from "@/lib/auth/better-auth/better-auth.service";
 import { auth as baAuth } from "@/lib/auth/better-auth/auth";
 import { headers } from "next/headers";
 

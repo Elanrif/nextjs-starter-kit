@@ -15,7 +15,7 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { authClient } from "@/lib/auth/better-auth/auth.client";
 import LoadingPage from "@components/features/loading-page";
 
 const { MY_ACCOUNT } = ROUTES;

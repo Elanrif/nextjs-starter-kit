@@ -6,7 +6,7 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "l
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
-import { signUpAction } from "@/lib/auth/actions/auth";
+import { authClient } from "@/lib/auth/better-auth/auth.client";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
@@ -53,22 +53,23 @@ export function SignUpForm() {
     setLoading(true);
     setError(null);
     try {
-      const result = await signUpAction({
-        action: "SIGN_UP",
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
+      const { error } = await authClient.$fetch("/sign-up", {
+        method: "POST",
+        body: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phoneNumber: data.phoneNumber,
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+        },
       });
-      if ("error" in result) {
-        setError(result.message || "Échec de la création du compte");
+      if (error) {
+        setError(error.message || "Échec de la création du compte");
         setLoading(false);
         return;
       }
       router.push("/dashboard");
-      router.refresh();
       // loading reste true pendant la navigation
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");

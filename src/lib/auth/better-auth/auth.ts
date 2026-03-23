@@ -53,12 +53,12 @@ export const auth = betterAuth({
       id: "backend-credentials",
       endpoints: {
         /**
-         * POST /api/auth/sign-in/backend
+         * POST /api/auth/sign-in
          * Verifies credentials against the external backend, syncs the user
          * into Better Auth's local DB, and creates a BA session + cookie.
          */
         signInWithBackend: createAuthEndpoint(
-          "/sign-in/backend",
+          "/sign-in",
           {
             method: "POST",
             body: z.object({
@@ -139,11 +139,11 @@ export const auth = betterAuth({
         ),
 
         /**
-         * POST /api/auth/sign-up/backend
+         * POST /api/auth/sign-up
          * Registers via the external backend then immediately creates a BA session.
          */
         signUpWithBackend: createAuthEndpoint(
-          "/sign-up/backend",
+          "/sign-up",
           {
             method: "POST",
             body: z.object({
