@@ -11,7 +11,6 @@ import { ROUTES } from "@/utils/routes";
 import { authClient } from "@/lib/auth/better-auth/auth.client";
 import { Field } from "@/components/ui/form/field";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import LoadingPage from "@components/features/loading-page";
 
 export function SignInForm() {
   const router = useRouter();
@@ -56,110 +55,107 @@ export function SignInForm() {
   };
 
   return (
-    <>
-      <LoadingPage loading={loading} text="Connexion en cours..." />
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && (
-          <div
-            className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
-              border-red-500/20 rounded-xl"
-          >
-            <span className="shrink-0">⚠</span>
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Email */}
-        <Field
-          label="Adresse email"
-          error={errors.email?.message}
-          icon={<Mail className="w-4 h-4" />}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {error && (
+        <div
+          className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
+            border-red-500/20 rounded-xl"
         >
-          <input
-            type="email"
-            {...register("email")}
-            placeholder="exemple@email.com"
-            disabled={loading}
-            className={icDark}
-          />
-        </Field>
-
-        {/* Password */}
-        <Field
-          label="Mot de passe"
-          error={errors.password?.message}
-          icon={<Lock className="w-4 h-4" />}
-          action={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-white/30 hover:text-white/60 transition-colors"
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          }
-        >
-          <input
-            type={showPassword ? "text" : "password"}
-            {...register("password")}
-            placeholder="Votre mot de passe"
-            disabled={loading}
-            className={icDarkPwd}
-          />
-        </Field>
-
-        {/* Forgot password */}
-        <div className="text-right">
-          <Link
-            href={ROUTES.FORGOT_PASSWORD}
-            className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            Mot de passe oublié ?
-          </Link>
+          <span className="shrink-0">⚠</span>
+          <span>{error}</span>
         </div>
+      )}
 
-        {/* Submit */}
-        <button
-          type="submit"
+      {/* Email */}
+      <Field
+        label="Adresse email"
+        error={errors.email?.message}
+        icon={<Mail className="w-4 h-4" />}
+      >
+        <input
+          type="email"
+          {...register("email")}
+          placeholder="exemple@email.com"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-            bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500
-            text-white text-sm font-semibold shadow-lg shadow-emerald-900/30
-            hover:shadow-emerald-900/50 hover:-translate-y-0.5 transition-all disabled:opacity-50
-            disabled:translate-y-0"
-        >
-          {loading ? (
-            "Connexion..."
-          ) : (
-            <>
-              Se connecter <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
+          className={icDark}
+        />
+      </Field>
 
-        {/* Divider + socials */}
-        <div className="flex items-center gap-3 pt-1">
-          <div className="flex-1 h-px bg-white/8" />
-          <span className="text-xs text-white/25">ou</span>
-          <div className="flex-1 h-px bg-white/8" />
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Demo fill */}
+      {/* Password */}
+      <Field
+        label="Mot de passe"
+        error={errors.password?.message}
+        icon={<Lock className="w-4 h-4" />}
+        action={
           <button
             type="button"
-            onClick={fillDemo}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/15 border
-              border-blue-500/20 text-blue-400 hover:bg-blue-500/25 transition-colors"
-            title="Remplir avec compte démo"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-white/30 hover:text-white/60 transition-colors"
           >
-            <User className="w-4 h-4" />
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
-          <SocialButton icon="google" />
-          <SocialButton icon="facebook" />
-        </div>
-      </form>
-    </>
+        }
+      >
+        <input
+          type={showPassword ? "text" : "password"}
+          {...register("password")}
+          placeholder="Votre mot de passe"
+          disabled={loading}
+          className={icDarkPwd}
+        />
+      </Field>
+
+      {/* Forgot password */}
+      <div className="text-right">
+        <Link
+          href={ROUTES.FORGOT_PASSWORD}
+          className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+        >
+          Mot de passe oublié ?
+        </Link>
+      </div>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+          bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500
+          text-white text-sm font-semibold shadow-lg shadow-emerald-900/30
+          hover:shadow-emerald-900/50 hover:-translate-y-0.5 transition-all disabled:opacity-50
+          disabled:translate-y-0"
+      >
+        {loading ? (
+          "Connexion en cours..."
+        ) : (
+          <>
+            Se connecter <ArrowRight className="w-4 h-4" />
+          </>
+        )}
+      </button>
+
+      {/* Divider + socials */}
+      <div className="flex items-center gap-3 pt-1">
+        <div className="flex-1 h-px bg-white/8" />
+        <span className="text-xs text-white/25">ou</span>
+        <div className="flex-1 h-px bg-white/8" />
+      </div>
+
+      <div className="flex items-center gap-2">
+        {/* Demo fill */}
+        <button
+          type="button"
+          onClick={fillDemo}
+          className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/15 border
+            border-blue-500/20 text-blue-400 hover:bg-blue-500/25 transition-colors"
+          title="Remplir avec compte démo"
+        >
+          <User className="w-4 h-4" />
+        </button>
+        <SocialButton icon="google" />
+        <SocialButton icon="facebook" />
+      </div>
+    </form>
   );
 }
 
