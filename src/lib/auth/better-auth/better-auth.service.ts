@@ -4,19 +4,31 @@ import { headers } from "next/headers";
 import { cache } from "react";
 import { auth } from "./auth";
 import { getLogger } from "@/config/logger.config";
-import { fetchUserById } from "@/lib/users/services/user.service";
 import {
   CrudApiError,
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error.server";
 import { CurrentUser, Session } from "@/lib/auth/models/auth.model";
+import { User, UserRole } from "@/lib/users/models/user.model";
 
 const logger = getLogger("server");
 
+type BaUser = {
+  id: string;
+  email: string;
+  name?: string;
+  role?: string;
+  kcSub?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  [key: string]: unknown;
+};
+
 /**
  * Reads the current Better Auth session from the request headers.
- * Equivalent of the JOSE getSession — returns a normalized Session object.
+ * Returns a normalized Session object with all Keycloak user fields.
  */
 export const getSession = cache(async (): Promise<Result<Session, CrudApiError>> => {
   try {
@@ -31,15 +43,19 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
       };
     }
 
-    const user = baSession.user as typeof baSession.user & { backendId?: number; role?: string };
+    const user = baSession.user as BaUser;
 
     return {
       ok: true,
       data: {
         user: {
-          userId: user.backendId ?? undefined,
+          userId: undefined,
           email: user.email,
           role: user.role ?? "USER",
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phoneNumber: user.phoneNumber,
+          kcSub: user.kcSub,
         },
         isAuth: true,
         expiresAt: new Date(baSession.session.expiresAt),
@@ -52,13 +68,14 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
 });
 
 /**
- * Returns the full User object from the external backend, using the
- * backendId stored in the BA session.
+ * Returns the full User object.
+ * With Keycloak, all user data is synced into BA's local DB on sign-in
+ * — no external backend fetch needed.
  */
 export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
   const session = await getSession();
 
-  if (!session.ok || !session.data?.user?.userId) {
+  if (!session.ok || !session.data?.user) {
     logger.warn("getCurrentUser: no valid session");
     return {
       ok: false,
@@ -66,8 +83,20 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudAp
     };
   }
 
-  const response = await fetchUserById(session.data.user.userId, {});
-  if (!response.ok) return { ok: false, error: response.error! };
+  const { user: s } = session.data;
 
-  return { ok: true, data: { user: response.data, session: session.data } };
+  const user: User = {
+    id: 0,
+    email: s.email ?? "",
+    firstName: s.firstName ?? "",
+    lastName: s.lastName ?? "",
+    phoneNumber: s.phoneNumber ?? "",
+    password: "",
+    avatarUrl: null,
+    role: (s.role as UserRole) ?? UserRole.USER,
+    isActive: true,
+    kcSub: s.kcSub,
+  };
+
+  return { ok: true, data: { user, session: session.data } };
 });

@@ -4,21 +4,10 @@ import { APIError, betterAuth } from "better-auth";
 import Database from "better-sqlite3";
 import { z } from "zod";
 import { getLogger } from "@/config/logger.config";
-import apiClient from "@/config/api.config";
-import environment from "@/config/environment.config";
-import { User } from "@/lib/users/models/user.model";
-import { AxiosResponse } from "axios";
 import { createAuthEndpoint } from "better-auth/api";
+import { kcSignIn, kcSignUp } from "@/lib/auth/keycloak/keycloak.service";
 
 const logger = getLogger("server");
-
-const {
-  api: {
-    rest: {
-      endpoints: { login: loginUrl, register: registerUrl },
-    },
-  },
-} = environment;
 
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
@@ -29,35 +18,29 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
 
   /**
-   * Extend the BA user with role + the backend's numeric id.
-   * These are synced from the external backend on every sign-in.
+   * Extend the BA user with Keycloak fields.
+   * These are synced from the Keycloak id_token on every sign-in.
    */
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "USER",
-        input: false,
-      },
-      backendId: {
-        type: "number",
-        required: false,
-        input: false,
-      },
+      role: { type: "string", required: false, defaultValue: "USER", input: false },
+      kcSub: { type: "string", required: false, input: false },
+      firstName: { type: "string", required: false, input: false },
+      lastName: { type: "string", required: false, input: false },
+      phoneNumber: { type: "string", required: false, input: false },
     },
   },
 
   plugins: [
     {
-      id: "backend-credentials",
+      id: "keycloak-credentials",
       endpoints: {
         /**
          * POST /api/auth/sign-in
-         * Verifies credentials against the external backend, syncs the user
-         * into Better Auth's local DB, and creates a BA session + cookie.
+         * Verifies credentials via Keycloak ROPC, syncs the user into BA's
+         * local SQLite DB, and creates a BA session + cookie.
          */
-        signInWithBackend: createAuthEndpoint(
+        signInWithKeycloak: createAuthEndpoint(
           "/sign-in",
           {
             method: "POST",
@@ -69,20 +52,16 @@ export const auth = betterAuth({
           async (ctx) => {
             const { email, password } = ctx.body;
 
-            // 1. Verify against external backend
-            let backendUser: User;
-            try {
-              const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, {
-                email,
-                password,
-              });
-              backendUser = data;
-            } catch {
-              logger.warn({ email }, "Backend sign-in failed");
-              throw new APIError("UNAUTHORIZED", { message: "Invalid email or password" });
+            // 1. ROPC → Keycloak
+            const kcResult = await kcSignIn(email, password);
+            if (!kcResult.ok) {
+              logger.warn({ email }, "Keycloak sign-in failed");
+              throw new APIError("UNAUTHORIZED", { message: kcResult.error.message });
             }
 
-            // 2. Upsert user in BA's local DB
+            const kcUser = kcResult.data;
+
+            // 2. Upsert user in BA local SQLite
             const existing = await ctx.context.internalAdapter.findUserByEmail(email, {
               includeAccounts: false,
             });
@@ -91,25 +70,29 @@ export const auth = betterAuth({
             if (existing?.user) {
               baUserId = existing.user.id;
               await ctx.context.internalAdapter.updateUser(baUserId, {
-                name: `${backendUser.firstName} ${backendUser.lastName}`,
-                role: backendUser.role,
-                backendId: backendUser.id,
+                name: `${kcUser.firstName} ${kcUser.lastName}`,
+                role: kcUser.role,
+                kcSub: kcUser.kcSub,
+                firstName: kcUser.firstName,
+                lastName: kcUser.lastName,
+                phoneNumber: kcUser.phoneNumber,
               });
             } else {
               const newUser = await ctx.context.internalAdapter.createUser({
-                email: backendUser.email,
-                name: `${backendUser.firstName} ${backendUser.lastName}`,
+                email: kcUser.email,
+                name: `${kcUser.firstName} ${kcUser.lastName}`,
                 emailVerified: true,
-                role: backendUser.role,
-                backendId: backendUser.id,
+                role: kcUser.role,
+                kcSub: kcUser.kcSub,
+                firstName: kcUser.firstName,
+                lastName: kcUser.lastName,
+                phoneNumber: kcUser.phoneNumber,
               });
               baUserId = newUser.id;
             }
 
-            // 3. Create BA session
+            // 3. Create BA session + cookie
             const session = await ctx.context.internalAdapter.createSession(baUserId);
-
-            // 4. Set the BA session cookie
             await ctx.setSignedCookie(
               ctx.context.authCookies.sessionToken.name,
               session.token,
@@ -123,15 +106,14 @@ export const auth = betterAuth({
               },
             );
 
-            logger.info({ email, baUserId }, "Sign-in via backend credentials successful");
-
+            logger.info({ email, baUserId }, "Keycloak sign-in → BA session created");
             return ctx.json({
               user: {
                 id: baUserId,
-                backendId: backendUser.id,
-                email: backendUser.email,
-                name: `${backendUser.firstName} ${backendUser.lastName}`,
-                role: backendUser.role,
+                kcSub: kcUser.kcSub,
+                email: kcUser.email,
+                name: `${kcUser.firstName} ${kcUser.lastName}`,
+                role: kcUser.role,
               },
               session: { id: session.id, expiresAt: session.expiresAt },
             });
@@ -140,9 +122,10 @@ export const auth = betterAuth({
 
         /**
          * POST /api/auth/sign-up
-         * Registers via the external backend then immediately creates a BA session.
+         * Creates the user in Keycloak via Admin API, then signs in via ROPC
+         * to get the full user, creates a BA user + session.
          */
-        signUpWithBackend: createAuthEndpoint(
+        signUpWithKeycloak: createAuthEndpoint(
           "/sign-up",
           {
             method: "POST",
@@ -158,36 +141,29 @@ export const auth = betterAuth({
           async (ctx) => {
             const { email, password, firstName, lastName, phoneNumber, confirmPassword } = ctx.body;
 
-            // 1. Register via external backend
-            try {
-              await apiClient(true).post(registerUrl, {
-                email,
-                password,
-                firstName,
-                lastName,
-                phoneNumber,
-                confirmPassword,
-              });
-            } catch {
-              logger.warn({ email }, "Backend sign-up failed");
-              throw new APIError("UNPROCESSABLE_ENTITY", {
-                message: "Registration failed. Email may already be in use.",
+            // 1. Create user in Keycloak via Admin API
+            const signUpResult = await kcSignUp({
+              email,
+              password,
+              firstName,
+              lastName,
+              phoneNumber,
+              confirmPassword,
+            });
+            if (!signUpResult.ok) {
+              logger.warn({ email }, "Keycloak sign-up failed");
+              throw new APIError("UNPROCESSABLE_ENTITY", { message: signUpResult.error.message });
+            }
+
+            // 2. ROPC to get the full user from the id_token
+            const kcResult = await kcSignIn(email, password);
+            if (!kcResult.ok) {
+              throw new APIError("INTERNAL_SERVER_ERROR", {
+                message: "Inscription réussie mais connexion échouée. Veuillez vous connecter.",
               });
             }
 
-            // 2. Authenticate to get the full User object
-            let backendUser: User;
-            try {
-              const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, {
-                email,
-                password,
-              });
-              backendUser = data;
-            } catch {
-              throw new APIError("INTERNAL_SERVER_ERROR", {
-                message: "Registration succeeded but sign-in failed. Please sign in manually.",
-              });
-            }
+            const kcUser = kcResult.data;
 
             // 3. Create BA user + session
             const existing = await ctx.context.internalAdapter.findUserByEmail(email, {
@@ -199,17 +175,19 @@ export const auth = betterAuth({
               baUserId = existing.user.id;
             } else {
               const newUser = await ctx.context.internalAdapter.createUser({
-                email: backendUser.email,
-                name: `${backendUser.firstName} ${backendUser.lastName}`,
+                email: kcUser.email,
+                name: `${kcUser.firstName} ${kcUser.lastName}`,
                 emailVerified: true,
-                role: backendUser.role,
-                backendId: backendUser.id,
+                role: kcUser.role,
+                kcSub: kcUser.kcSub,
+                firstName: kcUser.firstName,
+                lastName: kcUser.lastName,
+                phoneNumber: kcUser.phoneNumber,
               });
               baUserId = newUser.id;
             }
 
             const session = await ctx.context.internalAdapter.createSession(baUserId);
-
             await ctx.setSignedCookie(
               ctx.context.authCookies.sessionToken.name,
               session.token,
@@ -223,15 +201,14 @@ export const auth = betterAuth({
               },
             );
 
-            logger.info({ email, baUserId }, "Sign-up via backend credentials successful");
-
+            logger.info({ email, baUserId }, "Keycloak sign-up → BA session created");
             return ctx.json({
               user: {
                 id: baUserId,
-                backendId: backendUser.id,
-                email: backendUser.email,
-                name: `${backendUser.firstName} ${backendUser.lastName}`,
-                role: backendUser.role,
+                kcSub: kcUser.kcSub,
+                email: kcUser.email,
+                name: `${kcUser.firstName} ${kcUser.lastName}`,
+                role: kcUser.role,
               },
               session: { id: session.id, expiresAt: session.expiresAt },
             });
