@@ -25,6 +25,8 @@ type BaUser = {
   phoneNumber?: string;
   accessToken?: string;
   refreshToken?: string;
+  expiresIn?: number;
+  refreshExpiresIn?: number;
   [key: string]: unknown;
 };
 
@@ -50,18 +52,22 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
     return {
       ok: true,
       data: {
+        token: user.accessToken
+          ? {
+              accessToken: user.accessToken,
+              refreshToken: user.refreshToken,
+              expiresIn: user.expiresIn,
+              refreshExpiresIn: user.refreshExpiresIn,
+            }
+          : undefined,
         user: {
-          userId: undefined,
           email: user.email,
           role: user.role ?? "USER",
           firstName: user.firstName,
           lastName: user.lastName,
           phoneNumber: user.phoneNumber,
           externalId: user.externalId,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
         },
-        isAuth: true,
         expiresAt: new Date(baSession.session.expiresAt),
       },
     };

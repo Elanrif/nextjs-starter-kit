@@ -1,5 +1,3 @@
-"server-only";
-
 import { kcSignIn, kcSignUp } from "@/lib/auth/keycloak/keycloak.service";
 import type { Registrer } from "@/lib/auth/models/auth.model";
 import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error.server";

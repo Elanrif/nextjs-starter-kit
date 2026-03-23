@@ -1,5 +1,3 @@
-import "server-only";
-
 import { APIError, betterAuth } from "better-auth";
 import Database from "better-sqlite3";
 import { z } from "zod";
@@ -30,6 +28,8 @@ export const auth = betterAuth({
       phoneNumber: { type: "string", required: false, input: false },
       accessToken: { type: "string", required: false, input: false },
       refreshToken: { type: "string", required: false, input: false },
+      expiresIn: { type: "number", required: false, input: false },
+      refreshExpiresIn: { type: "number", required: false, input: false },
     },
   },
 
@@ -70,6 +70,8 @@ export const auth = betterAuth({
             const tokenFields = {
               accessToken: authUser.tokens?.accessToken,
               refreshToken: authUser.tokens?.refreshToken,
+              expiresIn: authUser.tokens?.expiresIn,
+              refreshExpiresIn: authUser.tokens?.refreshExpiresIn,
             };
 
             let baUserId: string;

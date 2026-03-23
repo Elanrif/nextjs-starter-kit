@@ -1,5 +1,3 @@
-import "server-only";
-
 import { AxiosError } from "axios";
 import { getLogger } from "@/config/logger.config";
 import type { CrudApiError } from "./crud-api-error";

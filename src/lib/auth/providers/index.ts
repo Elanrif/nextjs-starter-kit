@@ -1,5 +1,3 @@
-"server-only";
-
 import { keycloakProvider } from "./keycloak.provider";
 import { restProvider } from "./rest.provider";
 import type { AuthProvider } from "./provider.model";

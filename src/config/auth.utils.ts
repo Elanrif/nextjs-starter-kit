@@ -1,24 +1,19 @@
 import moment from "moment/moment";
-import environment from "@config/environment.config";
-
-const { format: formatConfig } = environment;
 
 export interface Token {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
-  refresh_token: string;
-  expiry: string;
-  owned: boolean;
+  accessToken: string;
+  refreshToken?: string;
+  expiresIn?: number; // secondes (ex: 300)
+  refreshExpiresIn?: number;
+  tokenType?: string;
+  scope?: string;
 }
 
-export const isTokenExpired = (expiryOrToken: string | Token): boolean => {
-  const expiry = typeof expiryOrToken === "string" ? expiryOrToken : expiryOrToken.expiry;
-  if (!expiry) {
-    return true;
-  }
-  const date = moment(expiry, formatConfig.dateTime);
-  const now = moment();
-  return date.isSameOrBefore(now);
+/**
+ * Vérifie si le token est expiré.
+ * Utilise expiresIn (secondes) + issuedAt (optionnel) ou une date d'expiration calculée.
+ */
+export const isTokenExpired = (token: Token, issuedAt: moment.Moment): boolean => {
+  const expiry = issuedAt.clone().add(token.expiresIn, "seconds");
+  return expiry.isSameOrBefore(moment());
 };

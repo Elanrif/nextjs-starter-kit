@@ -1,4 +1,5 @@
 import { User } from "@/lib/users/models/user.model";
+import { Token } from "@/config/auth.utils";
 import { z } from "zod";
 
 export interface AuthSignIn {
@@ -33,18 +34,15 @@ export interface SessionPayload {
  * Type representing the result of session verification.
  */
 export type Session = {
+  token?: Token;
   user: {
-    userId?: number;
     email?: string;
     role?: string;
     firstName?: string;
     lastName?: string;
     phoneNumber?: string;
     externalId?: string;
-    accessToken?: string;
-    refreshToken?: string;
   };
-  isAuth: boolean;
   expiresAt?: Date;
 };
 

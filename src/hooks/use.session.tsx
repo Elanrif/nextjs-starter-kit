@@ -15,11 +15,13 @@ export const useSession = () => {
         ok: true,
         data: {
           user: {
-            userId: (data.user as any).backendId,
-            email: data.user.email,
+            externalId: (data.user as any).externalId,
+            email: data.user.email ?? undefined,
             role: (data.user as any).role ?? "USER",
+            firstName: (data.user as any).firstName,
+            lastName: (data.user as any).lastName,
+            phoneNumber: (data.user as any).phoneNumber,
           },
-          isAuth: true,
           expiresAt: new Date(data.session.expiresAt),
         },
       }

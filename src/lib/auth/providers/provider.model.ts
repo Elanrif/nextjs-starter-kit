@@ -1,5 +1,3 @@
-"server-only";
-
 import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error.server";
 import type { Registrer } from "@/lib/auth/models/auth.model";
 
@@ -10,7 +8,8 @@ import type { Registrer } from "@/lib/auth/models/auth.model";
 export type AuthTokens = {
   accessToken: string;
   refreshToken?: string;
-  expiresIn?: number; // seconds
+  expiresIn?: number; // seconds (ex: 300)
+  refreshExpiresIn?: number; // seconds (ex: 1800)
 };
 
 /**
