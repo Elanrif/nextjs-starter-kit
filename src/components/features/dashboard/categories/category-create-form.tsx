@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/utils/routes";
 import { CategoryFormData, categorySchema } from "@/lib/categories/models/category.model";
+import { isCrudError } from "@/lib/shared/helpers/crud-api-error";
 import {
   ArrowLeft,
   Tag,
@@ -17,6 +18,7 @@ import {
   CheckSquare,
 } from "lucide-react";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 
 const { DASHBOARD, CATEGORIES } = ROUTES;
 
@@ -31,7 +33,6 @@ export function CategoryCreateForm() {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema) as any,
     defaultValues: {
@@ -45,32 +46,22 @@ export function CategoryCreateForm() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
 
   const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
+    setApiError(null);
     try {
-      const anyRes = (await createCategory(data)) as any;
-      const createdId = anyRes?.id ?? anyRes?.data?.id ?? anyRes?.result?.id;
-      if (createdId) {
-        toast.success("Catégorie créée avec succès");
-        router.push(`${DASHBOARD}${CATEGORIES}/${createdId}`);
+      const res = await createCategory(data);
+      if (isCrudError(res)) {
+        setApiError(res.message);
         return;
       }
-      if (anyRes?.message && Array.isArray(anyRes.message.details)) {
-        for (const d of anyRes.message.details) {
-          if (d.field)
-            setError(d.field as keyof CategoryFormData, {
-              type: "server",
-              message: d.message,
-            });
-        }
-        toast.error("Erreur de validation côté serveur");
-        return;
-      }
-      toast.error(anyRes?.message?.message || anyRes?.message || "Erreur lors de la création");
+      toast.success("Catégorie créée avec succès");
+      router.push(`${DASHBOARD}${CATEGORIES}/${res.id}`);
     } catch (error: any) {
-      toast.error(error.message || "Erreur inattendue lors de la création");
+      setApiError(error?.message || "Erreur inattendue lors de la création");
     } finally {
       setLoading(false);
     }
@@ -94,6 +85,7 @@ export function CategoryCreateForm() {
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <FormError message={apiError} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field
               variant="light"
@@ -101,7 +93,12 @@ export function CategoryCreateForm() {
               error={errors.name?.message}
               icon={<Tag className="w-4 h-4" />}
             >
-              <input {...register("name")} placeholder="Ex: Électronique" className={icv} />
+              <input
+                {...register("name")}
+                placeholder="Ex: Électronique"
+                disabled={loading}
+                className={icv}
+              />
             </Field>
             <Field
               variant="light"
@@ -109,7 +106,12 @@ export function CategoryCreateForm() {
               error={errors.slug?.message}
               icon={<LinkIcon className="w-4 h-4" />}
             >
-              <input {...register("slug")} placeholder="Ex: electronique" className={icv} />
+              <input
+                {...register("slug")}
+                placeholder="Ex: electronique"
+                disabled={loading}
+                className={icv}
+              />
             </Field>
           </div>
 
@@ -123,9 +125,11 @@ export function CategoryCreateForm() {
               {...register("description")}
               placeholder="Décrivez cette catégorie..."
               rows={3}
+              disabled={loading}
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm
                 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2
-                focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none"
+                focus:ring-violet-500/30 focus:border-violet-400 transition-all resize-none
+                disabled:opacity-50"
             />
           </Field>
 
@@ -138,6 +142,7 @@ export function CategoryCreateForm() {
             <input
               {...register("imageUrl")}
               placeholder="https://example.com/image.jpg"
+              disabled={loading}
               className={icv}
             />
           </Field>
@@ -173,7 +178,7 @@ export function CategoryCreateForm() {
               type="submit"
               disabled={loading}
               className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl
-                bg-linear-to-r gradient-primary text-sm font-semibold shadow-sm hover:shadow-md
+                gradient-primary text-sm font-semibold shadow-sm hover:shadow-md
                 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
             >
               <Save className="w-4 h-4" />
