@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 import { icLight, icLightPwd } from "@/components/ui/form/input-class";
 import { cn } from "@/utils/utils";
 
@@ -48,32 +49,32 @@ export function UserCreateForm() {
 
   const password = watch("password");
   const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const validation = usePasswordValidation(password);
   const allValid = validation.minLength && validation.hasNumber && validation.hasCase;
 
   const { mutate: create, isPending: loading } = useCreateUser();
 
   const onSubmit = (data: UserFormData) => {
-    setError(null);
-    create(data, {
-      onSuccess: () => {
-        toast.success("Utilisateur créé avec succès !");
-        router.push(`${DASHBOARD}${USERS}`);
+    setApiError(null);
+    create(
+      { ...data, password: data.password || "tempPassword123" },
+      {
+        onSuccess: () => {
+          toast.success("Utilisateur créé avec succès !");
+          router.push(`${DASHBOARD}${USERS}`);
+        },
+        onError: (err) => {
+          const message = err instanceof Error ? err.message : "Erreur lors de la création";
+          setApiError(message);
+        },
       },
-      onError: (err) => {
-        const message = err instanceof Error ? err.message : "Erreur lors de la création";
-        setError(message);
-        toast.error(message);
-      },
-    });
+    );
   };
 
   return (
     <div className="max-w-3xl lg:min-w-2xl mx-auto space-y-6">
-      <div
-        className="card-gradient relative overflow-hidden rounded-2xl card-gradient p-7 shadow-xl"
-      >
+      <div className="card-gradient relative overflow-hidden rounded-2xl p-7 shadow-xl">
         <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full
           blur-3xl" />
         <div
@@ -93,15 +94,7 @@ export function UserCreateForm() {
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error && (
-            <div
-              className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
-                border-red-100 rounded-xl"
-            >
-              <span className="shrink-0">⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
+          <FormError message={apiError} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field

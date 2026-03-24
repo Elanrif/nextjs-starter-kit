@@ -10,39 +10,10 @@ import { User } from "@/lib/users/models/user.model";
 import { User as UserIcon, Mail, Phone, Pencil, ArrowLeft, Save } from "lucide-react";
 import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.model";
 import { editProfileAction } from "@/lib/auth/actions/auth";
+import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 
 const { MY_ACCOUNT } = ROUTES;
-
-interface FieldProps {
-  label: string;
-  error?: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}
-
-function Field({ label, error, icon, children }: FieldProps) {
-  return (
-    <div className="space-y-1.5">
-      <label
-        className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center
-          gap-1.5"
-      >
-        {label}
-        <span className="text-red-400">*</span>
-      </label>
-      <div className="relative">
-        <div
-          className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none
-            text-gray-400"
-        >
-          {icon}
-        </div>
-        {children}
-      </div>
-      {error && <p className="text-xs text-red-500 flex items-center gap-1">{error}</p>}
-    </div>
-  );
-}
 
 export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
   const router = useRouter();
@@ -121,18 +92,11 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
       {/* Form */}
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error && (
-            <div
-              className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
-                border-red-100 rounded-xl"
-            >
-              <span className="mt-0.5 shrink-0">⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
+          <FormError message={error} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field
+              variant="light"
               label="Prénom"
               error={errors.firstName?.message}
               icon={<UserIcon className="w-4 h-4" />}
@@ -147,6 +111,7 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
             </Field>
 
             <Field
+              variant="light"
               label="Nom"
               error={errors.lastName?.message}
               icon={<UserIcon className="w-4 h-4" />}
@@ -161,6 +126,7 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
             </Field>
 
             <Field
+              variant="light"
               label="Adresse e-mail"
               error={errors.email?.message}
               icon={<Mail className="w-4 h-4" />}
@@ -175,6 +141,7 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
             </Field>
 
             <Field
+              variant="light"
               label="Téléphone"
               error={errors.phoneNumber?.message}
               icon={<Phone className="w-4 h-4" />}

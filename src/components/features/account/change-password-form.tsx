@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import { Lock, Eye, EyeOff, ArrowLeft, ShieldCheck, KeyRound, Save } from "lucide-react";
+import { FormError } from "@/components/ui/form/form-error";
 import ValidationItem from "@/components/ui/validation-item";
 import {
   ChangePasswordProfileFormData,
@@ -101,15 +102,7 @@ export function ChangePasswordForm() {
       {/* Form */}
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-5">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error && (
-            <div
-              className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
-                border-red-100 rounded-xl"
-            >
-              <span className="mt-0.5 shrink-0">⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
+          <FormError message={error} />
 
           {/* Old password */}
           <div className="space-y-1.5">
