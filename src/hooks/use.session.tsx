@@ -1,28 +1,28 @@
 "use client";
 
 import { authClient } from "@/lib/auth/better-auth/auth.client";
-import type { Session } from "@/lib/auth/models/auth.model";
+import type { AuthPayload } from "@/lib/auth/models/auth.model";
+import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
 
-/**
- * Wrapper around Better Auth's native useSession hook.
- * Normalizes the BA session format to the app's Session type.
- */
 export const useSession = () => {
   const { data, isPending, error, refetch } = authClient.useSession();
 
-  const session: ({ ok: true; data: Session } | { ok: false }) | undefined = data
+  const session: Result<AuthPayload, CrudApiError> | undefined = data
     ? {
         ok: true,
         data: {
+          access_token: (data.user as any).accessToken,
+          refresh_token: (data.user as any).refreshToken,
+          expires_in: (data.user as any).expiresIn,
+          refresh_expires_in: (data.user as any).refreshExpiresIn,
           user: {
-            externalId: (data.user as any).externalId,
-            email: data.user.email ?? undefined,
+            id: (data.user as any).externalId ?? data.user.id,
+            email: data.user.email,
+            firstName: (data.user as any).firstName ?? "",
+            lastName: (data.user as any).lastName ?? "",
+            phoneNumber: (data.user as any).phoneNumber ?? "",
             role: (data.user as any).role ?? "USER",
-            firstName: (data.user as any).firstName,
-            lastName: (data.user as any).lastName,
-            phoneNumber: (data.user as any).phoneNumber,
           },
-          expiresAt: new Date(data.session.expiresAt),
         },
       }
     : undefined;

@@ -9,7 +9,7 @@ import {
   crudApiErrorResponse,
   Result,
 } from "@/lib/shared/helpers/crud-api-error.server";
-import { CurrentUser, Session } from "@/lib/auth/models/auth.model";
+import { AuthPayload, CurrentUser } from "@/lib/auth/models/auth.model";
 import { User, UserRole } from "@/lib/users/models/user.model";
 
 const logger = getLogger("server");
@@ -17,7 +17,6 @@ const logger = getLogger("server");
 type BaUser = {
   id: string;
   email: string;
-  name?: string;
   role?: string;
   externalId?: string;
   firstName?: string;
@@ -30,11 +29,7 @@ type BaUser = {
   [key: string]: unknown;
 };
 
-/**
- * Reads the current Better Auth session from the request headers.
- * Returns a normalized Session populated from BA's local SQLite user record.
- */
-export const getSession = cache(async (): Promise<Result<Session, CrudApiError>> => {
+export const getSession = cache(async (): Promise<Result<AuthPayload, CrudApiError>> => {
   try {
     const reqHeaders = await headers();
     const baSession = await auth.api.getSession({ headers: reqHeaders });
@@ -47,33 +42,30 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
       };
     }
 
-    const user = baSession.user as BaUser;
+    const u = baSession.user as BaUser;
 
     // BA's getSession doesn't return additionalFields — fall back to the signed cookie
     const cookieStore = await cookies();
     const cookieAccessToken = cookieStore.get("ba_access_token")?.value;
-    const resolvedAccessToken = user.accessToken ?? cookieAccessToken;
+    const access_token = u.accessToken ?? cookieAccessToken;
 
     return {
       ok: true,
       data: {
-        token: resolvedAccessToken
-          ? {
-              accessToken: resolvedAccessToken,
-              refreshToken: user.refreshToken,
-              expiresIn: user.expiresIn,
-              refreshExpiresIn: user.refreshExpiresIn,
-            }
-          : undefined,
+        ...(access_token && {
+          access_token,
+          refresh_token: u.refreshToken,
+          expires_in: u.expiresIn,
+          refresh_expires_in: u.refreshExpiresIn,
+        }),
         user: {
-          email: user.email,
-          role: (user.role as UserRole) ?? UserRole.USER,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phoneNumber: user.phoneNumber,
-          externalId: user.externalId,
+          id: u.externalId ?? u.id,
+          email: u.email,
+          firstName: u.firstName ?? "",
+          lastName: u.lastName ?? "",
+          phoneNumber: u.phoneNumber ?? "",
+          role: u.role ?? UserRole.USER,
         },
-        expiresAt: new Date(baSession.session.expiresAt),
       },
     };
   } catch (error) {
@@ -82,11 +74,6 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
   }
 });
 
-/**
- * Returns the full User object.
- * User data is synced into BA's local SQLite on every sign-in
- * — no external backend fetch needed.
- */
 export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
   const session = await getSession();
 
@@ -102,15 +89,15 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudAp
 
   const user: User = {
     id: 0,
-    email: s.email ?? "",
-    firstName: s.firstName ?? "",
-    lastName: s.lastName ?? "",
-    phoneNumber: s.phoneNumber ?? "",
+    email: s.email,
+    firstName: s.firstName,
+    lastName: s.lastName,
+    phoneNumber: s.phoneNumber,
     password: "",
     avatarUrl: null,
     role: (s.role as UserRole) ?? UserRole.USER,
     isActive: true,
-    externalId: s.externalId,
+    externalId: s.id,
   };
 
   return { ok: true, data: { user, session: session.data } };

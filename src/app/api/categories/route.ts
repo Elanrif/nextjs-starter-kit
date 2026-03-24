@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   const reqHeaders = new Headers(request.headers);
   const config = { headers: reqHeaders, access_token: session.data?.access_token };
 
-  logger.info({ token: config.token }, "token");
+  logger.info({ token: config.access_token }, "token");
   try {
     const response = await createCategory(config, body);
 

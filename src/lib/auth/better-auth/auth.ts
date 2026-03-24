@@ -60,7 +60,13 @@ export const auth = betterAuth({
               throw new APIError("UNAUTHORIZED", { message: result.error.message });
             }
 
-            const authUser = result.data;
+            const {
+              user: u,
+              access_token,
+              refresh_token,
+              expires_in,
+              refresh_expires_in,
+            } = result.data;
 
             // Upsert user in BA local SQLite
             const existing = await ctx.context.internalAdapter.findUserByEmail(email, {
@@ -68,34 +74,34 @@ export const auth = betterAuth({
             });
 
             const tokenFields = {
-              accessToken: authUser.tokens?.accessToken,
-              refreshToken: authUser.tokens?.refreshToken,
-              expiresIn: authUser.tokens?.expiresIn,
-              refreshExpiresIn: authUser.tokens?.refreshExpiresIn,
+              accessToken: access_token,
+              refreshToken: refresh_token,
+              expiresIn: expires_in,
+              refreshExpiresIn: refresh_expires_in,
             };
 
             let baUserId: string;
             if (existing?.user) {
               baUserId = existing.user.id;
               await ctx.context.internalAdapter.updateUser(baUserId, {
-                name: `${authUser.firstName} ${authUser.lastName}`,
-                role: authUser.role,
-                externalId: authUser.externalId,
-                firstName: authUser.firstName,
-                lastName: authUser.lastName,
-                phoneNumber: authUser.phoneNumber,
+                name: `${u.firstName} ${u.lastName}`,
+                role: u.role,
+                externalId: u.id,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                phoneNumber: u.phoneNumber,
                 ...tokenFields,
               });
             } else {
               const newUser = await ctx.context.internalAdapter.createUser({
-                email: authUser.email,
-                name: `${authUser.firstName} ${authUser.lastName}`,
+                email: u.email,
+                name: `${u.firstName} ${u.lastName}`,
                 emailVerified: true,
-                role: authUser.role,
-                externalId: authUser.externalId,
-                firstName: authUser.firstName,
-                lastName: authUser.lastName,
-                phoneNumber: authUser.phoneNumber,
+                role: u.role,
+                externalId: u.id,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                phoneNumber: u.phoneNumber,
                 ...tokenFields,
               });
               baUserId = newUser.id;
@@ -117,8 +123,8 @@ export const auth = betterAuth({
 
             // Store access token in a separate httpOnly cookie since BA's getSession
             // does not return additionalFields server-side
-            if (authUser.tokens?.accessToken) {
-              ctx.setCookie("ba_access_token", authUser.tokens.accessToken, {
+            if (access_token) {
+              ctx.setCookie("ba_access_token", access_token, {
                 httpOnly: true,
                 secure: process.env.ENV === "production",
                 sameSite: "lax",
@@ -132,10 +138,10 @@ export const auth = betterAuth({
             return ctx.json({
               user: {
                 id: baUserId,
-                externalId: authUser.externalId,
-                email: authUser.email,
-                name: `${authUser.firstName} ${authUser.lastName}`,
-                role: authUser.role,
+                externalId: u.id,
+                email: u.email,
+                name: `${u.firstName} ${u.lastName}`,
+                role: u.role,
               },
               session: { id: session.id, expiresAt: session.expiresAt },
             });
@@ -179,17 +185,9 @@ export const auth = betterAuth({
               });
             }
 
-            // 2. Sign in to get the full user from the provider
-            const signInResult = await authProvider.signIn(email, password);
-            if (!signInResult.ok) {
-              throw new APIError("INTERNAL_SERVER_ERROR", {
-                message: "Inscription réussie mais connexion échouée. Veuillez vous connecter.",
-              });
-            }
+            const { user: su } = signUpResult.data;
 
-            const authUser = signInResult.data;
-
-            // 3. Create BA user + session
+            // 2. Create BA user + session
             const existing = await ctx.context.internalAdapter.findUserByEmail(email, {
               includeAccounts: false,
             });
@@ -199,14 +197,14 @@ export const auth = betterAuth({
               baUserId = existing.user.id;
             } else {
               const newUser = await ctx.context.internalAdapter.createUser({
-                email: authUser.email,
-                name: `${authUser.firstName} ${authUser.lastName}`,
+                email: su.email,
+                name: `${su.firstName} ${su.lastName}`,
                 emailVerified: true,
-                role: authUser.role,
-                externalId: authUser.externalId,
-                firstName: authUser.firstName,
-                lastName: authUser.lastName,
-                phoneNumber: authUser.phoneNumber,
+                role: su.role,
+                externalId: su.id,
+                firstName: su.firstName,
+                lastName: su.lastName,
+                phoneNumber: su.phoneNumber,
               });
               baUserId = newUser.id;
             }
@@ -229,10 +227,10 @@ export const auth = betterAuth({
             return ctx.json({
               user: {
                 id: baUserId,
-                externalId: authUser.externalId,
-                email: authUser.email,
-                name: `${authUser.firstName} ${authUser.lastName}`,
-                role: authUser.role,
+                externalId: su.id,
+                email: su.email,
+                name: `${su.firstName} ${su.lastName}`,
+                role: su.role,
               },
               session: { id: session.id, expiresAt: session.expiresAt },
             });
