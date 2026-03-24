@@ -11,6 +11,7 @@ import { ROUTES } from "@/utils/routes";
 import { authClient } from "@/lib/auth/api/auth.client";
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 
 export function SignInForm() {
@@ -27,7 +28,7 @@ export function SignInForm() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const fillDemo = () => {
@@ -37,14 +38,14 @@ export function SignInForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
-    setError(null);
+    setApiError(null);
     try {
       const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
       });
       if ("error" in result) {
-        setError(result.error?.message || "Une erreur est survenue.");
+        setApiError(result.error?.message || "Une erreur est survenue.");
         setLoading(false);
         return;
       }
@@ -52,22 +53,14 @@ export function SignInForm() {
       router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
       // isLoading reste true pendant la navigation
     } catch (error: any) {
-      setError(error?.message || "Une erreur est survenue.");
+      setApiError(error?.message || "Une erreur est survenue.");
       setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {error && (
-        <div
-          className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
-            border-red-500/20 rounded-xl"
-        >
-          <span className="shrink-0">⚠</span>
-          <span>{error}</span>
-        </div>
-      )}
+      <FormError message={apiError} variant="dark" />
 
       {/* Email */}
       <Field

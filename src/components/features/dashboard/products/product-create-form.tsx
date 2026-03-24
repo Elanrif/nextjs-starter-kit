@@ -22,6 +22,7 @@ import {
 import { icLight } from "@/components/ui/form/input-class";
 import { SectionTitle } from "@/components/ui/form/section-title";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 
 const { DASHBOARD, PRODUCTS } = ROUTES;
 
@@ -58,9 +59,11 @@ export function ProductCreateForm() {
     });
   }, []);
 
+  const [apiError, setApiError] = useState<string | null>(null);
   const { mutate: create, isPending: loading } = useCreateProduct();
 
   const onSubmit = (data: ProductFormData) => {
+    setApiError(null);
     create(
       {
         ...data,
@@ -74,7 +77,8 @@ export function ProductCreateForm() {
           router.push(`${DASHBOARD}${PRODUCTS}/${product?.id}`);
         },
         onError: (err) => {
-          toast.error(err instanceof Error ? err.message : "Erreur lors de la création");
+          const message = err instanceof Error ? err.message : "Erreur lors de la création";
+          setApiError(message);
         },
       },
     );
@@ -98,6 +102,7 @@ export function ProductCreateForm() {
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7 space-y-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <FormError message={apiError} />
           {/* Info section */}
           <div className="space-y-4">
             <SectionTitle icon={<Package className="w-4 h-4" />} label="Informations du produit" />

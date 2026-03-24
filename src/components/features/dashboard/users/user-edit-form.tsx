@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 import { icLight, icLightPwd } from "@/components/ui/form/input-class";
 import { cn } from "@/utils/utils";
 
@@ -48,14 +49,14 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
 
   const password = watch("password");
   const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const validation = usePasswordValidation(password);
   const allValid = validation.minLength && validation.hasNumber && validation.hasCase;
 
   const { mutate: update, isPending: loading } = useUpdateUser();
 
   const onSubmit = (data: UserFormData) => {
-    setError(null);
+    setApiError(null);
     update(
       { id: Number(loadedUser.id), data },
       {
@@ -65,8 +66,7 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "Erreur lors de la mise à jour";
-          setError(message);
-          toast.error(message);
+          setApiError(message);
         },
       },
     );
@@ -90,15 +90,7 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {error && (
-            <div
-              className="flex items-start gap-2.5 p-4 text-sm text-red-700 bg-red-50 border
-                border-red-100 rounded-xl"
-            >
-              <span className="shrink-0">⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
+          <FormError message={apiError} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field
