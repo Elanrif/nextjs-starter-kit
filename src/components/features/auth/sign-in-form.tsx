@@ -43,7 +43,7 @@ export function SignInForm() {
         password: data.password,
       });
       if ("error" in result) {
-        setApiError(result.error?.message || "Une erreur est survenue.");
+        setApiError(result.message || "Une erreur est survenue.");
         setLoading(false);
         return;
       }
