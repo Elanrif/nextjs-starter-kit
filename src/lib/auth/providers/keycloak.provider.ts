@@ -8,7 +8,7 @@ export const keycloakProvider: AuthProvider = {
     const result = await kcSignIn(email, password);
     if (!result.ok) return result;
 
-    const u = result.data;
+    const { user: u, accessToken, refreshToken } = result.data;
     return {
       ok: true,
       data: {
@@ -18,6 +18,7 @@ export const keycloakProvider: AuthProvider = {
         phoneNumber: u.phoneNumber,
         role: u.role,
         externalId: u.kcSub,
+        tokens: { accessToken, refreshToken },
       },
     };
   },
