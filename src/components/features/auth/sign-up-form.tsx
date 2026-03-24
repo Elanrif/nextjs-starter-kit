@@ -10,6 +10,7 @@ import { signUpAction } from "@/lib/auth/actions/auth";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
+import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 
 export function SignUpForm() {
@@ -45,7 +46,7 @@ export function SignUpForm() {
     setValue("phoneNumber", "0612345678");
     setValue("email", "saidbacoelanrif@gmail.com");
     setValue("password", "Demo1234");
-    setValue("confirmPassword", "Simple1234");
+    setValue("confirmPassword", "Demo1234");
   };
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -77,15 +78,7 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {error && (
-        <div
-          className="flex items-start gap-2 p-3 text-xs text-red-400 bg-red-500/10 border
-            border-red-500/20 rounded-xl"
-        >
-          <span className="shrink-0">⚠</span>
-          <span>{error}</span>
-        </div>
-      )}
+      <FormError message={error} variant="dark" />
 
       {/* Name row */}
       <div className="grid grid-cols-2 gap-3">
