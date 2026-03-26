@@ -8,14 +8,11 @@ import { cookies } from "next/headers";
 import { getLogger } from "@/config/logger.config";
 import { fetchUserById } from "@/lib/users/services/user.service";
 import { cache } from "react";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error.server";
 import { CurrentUser, Session } from "@lib/auth/models/auth.model";
-import { ApiError } from "next/dist/server/api-utils";
 import { decrypt } from ".";
+import { Result } from "@/shared/models/response.model";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { ApiError } from "@/shared/errors/api-error";
 
 /** Logger instance for session operations */
 const logger = getLogger("server");
@@ -25,18 +22,24 @@ const logger = getLogger("server");
  * Used for API routes that need to check session status.
  * @returns Session object or null if no valid session
  */
-export const getSession = cache(async (): Promise<Result<Session, CrudApiError>> => {
+export const getSession = cache(async (): Promise<Result<Session, ApiError>> => {
   try {
     const cookie = await cookies();
     const sess = cookie.get("session")?.value;
     const session = await decrypt(sess);
 
     if (!session || !session.user?.userId) {
-      const err = new ApiError(401, "No active session");
+      const err = {
+        title: "Unauthorized",
+        status: 401,
+        detail: "No active session",
+        instance: undefined,
+        errorCode: "NO_ACTIVE_SESSION",
+      };
       logger.warn("No active session found during session check");
       return {
         ok: false,
-        error: crudApiErrorResponse(err),
+        error: err,
       };
     }
 
@@ -56,7 +59,7 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
     logger.error({ err: error }, "Error retrieving session");
     return {
       ok: false,
-      error: crudApiErrorResponse(error),
+      error: ApiErrorResponse(error),
     };
   }
 });
@@ -66,18 +69,20 @@ export const getSession = cache(async (): Promise<Result<Session, CrudApiError>>
  * Returns null if user cannot be fetched or session is invalid.
  * @returns User object or null
  */
-export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
+export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, ApiError>> => {
   const session = await getSession();
   if (!session.ok || !session.data?.user?.userId) {
     const err = {
-      error: "Unauthorized",
+      title: "Unauthorized",
       status: 401,
-      message: "You must be logged in",
+      detail: "You must be logged in",
+      instance: undefined,
+      errorCode: "UNAUTHORIZED_ACCESS",
     };
     logger.warn(
       {
         status: err.status,
-        message: err.message,
+        detail: err.detail,
       },
       "Unauthorized",
     );

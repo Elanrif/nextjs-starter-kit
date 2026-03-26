@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
 import { getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
 
@@ -20,9 +20,9 @@ export async function GET() {
       status: 200,
     });
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "session");
+    const errMsg = ApiErrorResponse(error, "session");
     const status = errMsg.status || 500;
-    logger.error({ status, message: errMsg.message }, "Error during session verification");
+    logger.error({ status, detail: errMsg.detail }, "Error during session verification");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
   }
 }

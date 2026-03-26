@@ -20,7 +20,7 @@ type Params = Promise<{ id: string }>;
  * GET /api/categories/[id]
  * Fetch a single category by ID
  *
- * ℹ️ Pattern: returns unwrapped T | CrudApiError (contrast with /api/users which returns Result<T,E>)
+ * ℹ️ Pattern: returns unwrapped T | ApiError (contrast with /api/users which returns Result<T,E>)
  * The client service uses an `isCrudError()` type guard to distinguish success from error.
  */
 export async function GET(request: NextRequest, { params }: { params: Params }) {
