@@ -27,7 +27,7 @@ export async function encrypt(payload: SessionPayload) {
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(encodedKey);
-  console.warn("token:", token);
+  logger.info({ token }, "token:");
   return token;
 }
 
