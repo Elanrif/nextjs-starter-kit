@@ -2,26 +2,31 @@ import "server-only";
 
 import { cache } from "react";
 import { auth } from "./auth";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error.server";
 import { CurrentUser, AuthPayload } from "@/lib/auth/models/auth.model";
 import { User, UserRole } from "@/lib/users/models/user.model";
 import { getLogger } from "@/config/logger.config";
+import { Result } from "@/shared/models/response.model";
+import { ApiError } from "@/shared/errors/api-error";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
 
-export const getSession = cache(async (): Promise<Result<AuthPayload, CrudApiError>> => {
+export const getSession = cache(async (): Promise<Result<AuthPayload, ApiError>> => {
   try {
     const session = await auth();
 
     if (!session?.user) {
+      const errMsg = {
+        title: "Unauthorized",
+        status: 401,
+        detail: "No active NextAuth session",
+        errorCode: "Unauthorized",
+      } as ApiError;
+
       logger.warn("No active NextAuth session");
       return {
         ok: false,
-        error: { error: "Unauthorized", status: 401, message: "No active session" },
+        error: errMsg,
       };
     }
 
@@ -42,18 +47,25 @@ export const getSession = cache(async (): Promise<Result<AuthPayload, CrudApiErr
     };
   } catch (error) {
     logger.error({ err: error }, "Error retrieving NextAuth session");
-    return { ok: false, error: crudApiErrorResponse(error) };
+    return { ok: false, error: ApiErrorResponse(error) };
   }
 });
 
-export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, CrudApiError>> => {
+export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, ApiError>> => {
   const session = await getSession();
 
   if (!session.ok || !session.data?.user) {
+    const errMsg = {
+      title: "Unauthorized",
+      status: 401,
+      detail: "No active NextAuth session",
+      errorCode: "Unauthorized",
+    } as ApiError;
+
     logger.warn("getCurrentUser: no valid session");
     return {
       ok: false,
-      error: { error: "Unauthorized", status: 401, message: "You must be logged in" },
+      error: errMsg,
     };
   }
 

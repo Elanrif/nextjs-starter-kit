@@ -1,12 +1,13 @@
 "use client";
 
 import { AuthPayload } from "@/lib/auth/models/auth.model";
-import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
+import { ApiError } from "@/shared/errors/api-error";
+import { Result } from "@/shared/models/response.model";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const SESSION_QUERY_KEY = ["session"];
 
-const fetcher = async (): Promise<Result<AuthPayload, CrudApiError>> => {
+const fetcher = async (): Promise<Result<AuthPayload, ApiError>> => {
   const res = await fetch("/api/auth/session", {
     credentials: "include",
   });
@@ -14,25 +15,39 @@ const fetcher = async (): Promise<Result<AuthPayload, CrudApiError>> => {
   if (res.status === 401 || res.status === 403) {
     return {
       ok: false,
-      error: { error: "Unauthorized", status: 401, message: "Not authenticated" },
+      error: {
+        title: "Unauthorized",
+        status: 401,
+        detail: "Not authenticated",
+        errorCode: "UNAUTHORIZED",
+        instance: undefined,
+      },
     };
   }
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ message: "Failed to fetch session" }));
+    const errorData = await res.json().catch(() => ({ detail: "Failed to fetch session" }));
     throw {
-      error: errorData.error ?? "Error",
+      title: errorData.title ?? "Error",
       status: errorData.status ?? res.status,
-      message: errorData.message ?? "Failed to fetch session",
-    } as CrudApiError;
+      detail: errorData.detail ?? "Failed to fetch session",
+      errorCode: errorData.errorCode ?? "FETCH_ERROR",
+      instance: undefined,
+    } as ApiError;
   }
 
-  const session: Result<AuthPayload, CrudApiError> = await res.json();
+  const session: Result<AuthPayload, ApiError> = await res.json();
 
   if (!session.ok || !session.data?.user?.id) {
     return {
       ok: false,
-      error: { error: "Unauthorized", status: 401, message: "You must be logged in" },
+      error: {
+        title: "Unauthorized",
+        status: 401,
+        detail: "You must be logged in",
+        errorCode: "NO_SESSION",
+        instance: undefined,
+      },
     };
   }
 
@@ -42,7 +57,7 @@ const fetcher = async (): Promise<Result<AuthPayload, CrudApiError>> => {
 export const useSession = () => {
   const queryClient = useQueryClient();
 
-  const { data, error, isLoading } = useQuery<Result<AuthPayload, CrudApiError>>({
+  const { data, error, isLoading } = useQuery<Result<AuthPayload, ApiError>>({
     queryKey: SESSION_QUERY_KEY,
     queryFn: fetcher,
     refetchOnWindowFocus: false,
