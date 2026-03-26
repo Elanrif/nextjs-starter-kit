@@ -2,7 +2,7 @@ import environment from "@config/environment.config";
 import { InternalAxiosRequestConfig } from "axios";
 import { isTokenExpired, Token } from "@config/auth.utils";
 import { getLogger } from "@config/logger.config";
-import { ApiError } from "@/lib/errors/crud-api-error";
+import { ApiError_ } from "@/shared/errors/api-error";
 
 const { api: apiConfig, auth: authConfig } = environment;
 const logger = getLogger();
@@ -29,7 +29,7 @@ export const ownTokenInterceptor = async (config: InternalAxiosRequestConfig, to
   if (token) {
     headers["Authorization"] = `Bearer ${token.access_token}`;
   } else {
-    throw new ApiError("Not Authenticated", 401);
+    throw new ApiError_("Not Authenticated", 401);
   }
   return config;
 };

@@ -4,7 +4,6 @@ import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
 import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
-import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import { getLogger } from "@/config/logger.config";
 import {
   ChangePasswordProfileFormData,
@@ -17,7 +16,9 @@ import {
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
 import { validateId, validationError } from "@/utils/utils.server";
-import { CrudApiError, Result } from "../errors/crud-api-error";
+import { ApiError } from "@/shared/errors/api-error";
+import { Result } from "@/shared/models/response.model";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 /**
  * ⚠️ Never trust the client input
@@ -41,7 +42,7 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(login: Login, config?: Config): Promise<Result<User, CrudApiError>> {
+export async function signIn(login: Login, config?: Config): Promise<Result<User, ApiError>> {
   const validation = parseLogin(login);
   if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
 
@@ -53,7 +54,7 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
     logger.error({ email: login.email }, "Failed to sign in");
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "signIn"),
+      error: ApiErrorResponse(error, "signIn"),
     };
   }
 }
@@ -64,7 +65,7 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 export async function signUp(
   registration: RegisterFormData,
   config?: Config,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<User, ApiError>> {
   const validation = parseRegister(registration);
   if (!validation.success)
     return validationError(validation.error.issues, "Invalid registration data");
@@ -75,7 +76,7 @@ export async function signUp(
     logger.error({ email: registration.email }, "Failed to register user");
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "signUp"),
+      error: ApiErrorResponse(error, "signUp"),
     };
   }
 
@@ -98,7 +99,7 @@ export async function changeUserPassword(
   userId: number,
   oldPassword: string,
   newPassword: string,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<User, ApiError>> {
   const idError = validateId(userId);
   if (idError) return idError;
 
@@ -122,7 +123,7 @@ export async function changeUserPassword(
     );
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "changeUserPassword"),
+      error: ApiErrorResponse(error, "changeUserPassword"),
     };
   }
 }
@@ -133,7 +134,7 @@ export async function changeUserPassword(
 export async function resetPassword(
   data: ResetPassword,
   config?: Config,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<User, ApiError>> {
   const validation = parseResetPassword(data);
   if (!validation.success)
     return validationError(validation.error.issues, "Invalid reset password data");
@@ -149,7 +150,7 @@ export async function resetPassword(
     logger.error({ err: error.response?.data ?? error }, "Failed to reset password");
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "resetPassword"),
+      error: ApiErrorResponse(error, "resetPassword"),
     };
   }
 }
@@ -160,7 +161,7 @@ export async function resetPassword(
 export async function editProfile(
   data: ProfileUserFormData,
   config?: Config,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<User, ApiError>> {
   const validation = parseProfileUser(data);
   if (!validation.success) return validationError(validation.error.issues, "Invalid profile data");
 
@@ -172,7 +173,7 @@ export async function editProfile(
     logger.error({ err: error.response?.data ?? error }, "Failed to update profile");
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "editProfile"),
+      error: ApiErrorResponse(error, "editProfile"),
     };
   }
 }
@@ -183,7 +184,7 @@ export async function editProfile(
 export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
   config?: Config,
-): Promise<Result<User, CrudApiError>> {
+): Promise<Result<User, ApiError>> {
   const validation = parseChangePasswordProfile(data);
   if (!validation.success) return validationError(validation.error.issues, "Invalid password data");
 
@@ -198,7 +199,7 @@ export async function changePasswordProfile(
     logger.error({ err: error.response?.data ?? error }, "Failed to update profile");
     return {
       ok: false,
-      error: crudApiErrorResponse(error, "changeProfilePassword"),
+      error: ApiErrorResponse(error, "changeProfilePassword"),
     };
   }
 }
