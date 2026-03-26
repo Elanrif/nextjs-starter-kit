@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
-import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import { auth } from "@/lib/auth/api/auth";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       status: 200,
     });
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "login");
+    const errMsg = ApiErrorResponse(error, "login");
     const status = errMsg.status || 500;
     logger.error({ status, message: errMsg.detail }, "Error during sign in");
     return NextResponse.json({ ok: false, error: errMsg }, { status });
