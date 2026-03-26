@@ -8,14 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/better-auth/auth.client";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { isCrudError } from "@/lib/errors/crud-api-error";
+import { useSignIn } from "@/lib/auth/hooks/use-auth";
 
 export function SignInForm() {
   const router = useRouter();
+  const signInMutation = useSignIn();
   const {
     register,
     handleSubmit,
@@ -39,12 +39,14 @@ export function SignInForm() {
     setLoading(true);
     setApiError(null);
     try {
-      const result = await authClient.$fetch("/sign-in", {
-        method: "POST",
-        body: { email: data.email, password: data.password },
+      const result = await signInMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
       });
-      if (isCrudError(result)) {
-        setApiError(result.detail || "Une erreur est survenue.");
+
+      if (!result.ok) {
+        const errorDetail = result.error?.detail || "Une erreur est survenue lors de la connexion.";
+        setApiError(errorDetail);
         setLoading(false);
         return;
       }

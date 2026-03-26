@@ -1,9 +1,11 @@
-import { APIError, betterAuth } from "better-auth";
+import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
 import { z } from "zod";
 import { getLogger } from "@/config/logger.config";
 import { createAuthEndpoint } from "better-auth/api";
-import { authProvider } from "@/lib/auth/providers";
+import { signIn, signUp } from "../auth.service";
+import type { Result } from "@/shared/models/response.model";
+import type { ApiError } from "@/shared/errors/api-error";
 
 const logger = getLogger("server");
 
@@ -54,10 +56,22 @@ export const auth = betterAuth({
           async (ctx) => {
             const { email, password } = ctx.body;
 
-            const result = await authProvider.signIn(email, password);
+            const result = await signIn({ email, password });
             if (!result.ok) {
               logger.warn({ email }, "Auth provider sign-in failed");
-              throw new APIError("UNAUTHORIZED", { message: result.error.message });
+              return ctx.json(
+                {
+                  ok: false,
+                  error: {
+                    title: "Unauthorized",
+                    status: 401,
+                    detail: result.error.detail || "Invalid email or password",
+                    errorCode: "SIGN_IN_FAILED",
+                    instance: undefined,
+                  },
+                } as Result<unknown, ApiError>,
+                { status: 401 },
+              );
             }
 
             const {
@@ -135,16 +149,22 @@ export const auth = betterAuth({
             }
 
             logger.info({ email, baUserId }, "Sign-in successful");
-            return ctx.json({
-              user: {
-                id: baUserId,
-                externalId: u.id,
-                email: u.email,
-                name: `${u.firstName} ${u.lastName}`,
-                role: u.role,
-              },
-              session: { id: session.id, expiresAt: session.expiresAt },
-            });
+            return ctx.json(
+              {
+                ok: true,
+                data: {
+                  user: {
+                    id: baUserId,
+                    externalId: u.id,
+                    email: u.email,
+                    name: `${u.firstName} ${u.lastName}`,
+                    role: u.role,
+                  },
+                  session: { id: session.id, expiresAt: session.expiresAt },
+                },
+              } as Result<any, ApiError>,
+              { status: 200 },
+            );
           },
         ),
 
@@ -170,7 +190,7 @@ export const auth = betterAuth({
             const { email, password, firstName, lastName, phoneNumber, confirmPassword } = ctx.body;
 
             // 1. Register via active provider
-            const signUpResult = await authProvider.signUp({
+            const signUpResult = await signUp({
               email,
               password,
               firstName,
@@ -180,9 +200,19 @@ export const auth = betterAuth({
             });
             if (!signUpResult.ok) {
               logger.warn({ email }, "Auth provider sign-up failed");
-              throw new APIError("UNPROCESSABLE_ENTITY", {
-                message: signUpResult.error.message,
-              });
+              return ctx.json(
+                {
+                  ok: false,
+                  error: {
+                    title: "Unprocessable Entity",
+                    status: 422,
+                    detail: signUpResult.error.detail || "Failed to create account",
+                    errorCode: "SIGN_UP_FAILED",
+                    instance: undefined,
+                  },
+                } as Result<unknown, ApiError>,
+                { status: 422 },
+              );
             }
 
             const { user: su } = signUpResult.data;
@@ -224,16 +254,22 @@ export const auth = betterAuth({
             );
 
             logger.info({ email, baUserId }, "Sign-up successful");
-            return ctx.json({
-              user: {
-                id: baUserId,
-                externalId: su.id,
-                email: su.email,
-                name: `${su.firstName} ${su.lastName}`,
-                role: su.role,
-              },
-              session: { id: session.id, expiresAt: session.expiresAt },
-            });
+            return ctx.json(
+              {
+                ok: true,
+                data: {
+                  user: {
+                    id: baUserId,
+                    externalId: su.id,
+                    email: su.email,
+                    name: `${su.firstName} ${su.lastName}`,
+                    role: su.role,
+                  },
+                  session: { id: session.id, expiresAt: session.expiresAt },
+                },
+              } as Result<any, ApiError>,
+              { status: 200 },
+            );
           },
         ),
       },

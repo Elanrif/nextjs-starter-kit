@@ -1,14 +1,12 @@
 "server-only";
 
 import { kcConfig, kcAdminConfig, kcUrls } from "./keycloak.config";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error.server";
 import { User, UserRole } from "@/lib/users/models/user.model";
 import { Registrer } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
+import { Result } from "@/shared/models/response.model";
+import { ApiError } from "@/shared/errors/api-error";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
 
@@ -97,7 +95,7 @@ type KcSignInResult = { user: User; accessToken: string; refreshToken?: string }
 export async function kcSignIn(
   email: string,
   password: string,
-): Promise<Result<KcSignInResult, CrudApiError>> {
+): Promise<Result<KcSignInResult, ApiError>> {
   try {
     const res = await fetch(kcUrls.token(), {
       method: "POST",
@@ -118,9 +116,11 @@ export async function kcSignIn(
       return {
         ok: false,
         error: {
-          error: "Unauthorized",
+          title: "Unauthorized",
           status: 401,
-          message: err.error_description ?? "Email ou mot de passe incorrect",
+          detail: "Invalid email or password",
+          errorCode: "INVALID_CREDENTIALS",
+          instance: undefined,
         },
       };
     }
@@ -142,7 +142,7 @@ export async function kcSignIn(
     };
   } catch (error) {
     logger.error({ err: error }, "Keycloak sign-in error");
-    return { ok: false, error: crudApiErrorResponse(error, "kcSignIn") };
+    return { ok: false, error: ApiErrorResponse(error, "kcSignIn") };
   }
 }
 
@@ -150,7 +150,7 @@ export async function kcSignIn(
  * Register a new user via the Keycloak Admin REST API.
  * Uses admin credentials (master realm) to create the user in the app realm.
  */
-export async function kcSignUp(data: Registrer): Promise<Result<void, CrudApiError>> {
+export async function kcSignUp(data: Registrer): Promise<Result<void, ApiError>> {
   try {
     const adminToken = await getAdminToken();
 
@@ -182,9 +182,11 @@ export async function kcSignUp(data: Registrer): Promise<Result<void, CrudApiErr
         return {
           ok: false,
           error: {
-            error: "Conflict",
+            title: "Conflict",
             status: 409,
-            message: "Un compte avec cet email existe déjà",
+            detail: "Un compte avec cet email existe déjà",
+            errorCode: "CONFLICT",
+            instance: undefined,
           },
         };
       }
@@ -192,9 +194,11 @@ export async function kcSignUp(data: Registrer): Promise<Result<void, CrudApiErr
       return {
         ok: false,
         error: {
-          error: "Bad Request",
+          title: "Bad Request",
           status: res.status,
-          message: err.errorMessage ?? "Erreur lors de l'inscription",
+          detail: err.errorMessage ?? "Erreur lors de l'inscription",
+          errorCode: "BAD_REQUEST",
+          instance: undefined,
         },
       };
     }
@@ -203,6 +207,6 @@ export async function kcSignUp(data: Registrer): Promise<Result<void, CrudApiErr
     return { ok: true, data: undefined };
   } catch (error) {
     logger.error({ err: error }, "Keycloak sign-up error");
-    return { ok: false, error: crudApiErrorResponse(error, "kcSignUp") };
+    return { ok: false, error: ApiErrorResponse(error, "kcSignUp") };
   }
 }

@@ -25,7 +25,7 @@ const { SIGN_IN, SIGN_UP, DASHBOARD } = ROUTES;
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { session, isLoading, error, invalidate } = useSession();
+  const { session, isLoading, refresh, invalidate } = useSession();
 
   const navLinkClass = isScrolled
     ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100/70"
@@ -92,10 +92,10 @@ export function Header() {
                   </>
                 );
               }
-              if (session && session.ok && !error) {
+              if (session?.ok && session.data?.user) {
                 return (
                   <>
-                    {session.data.user.role === "ADMIN" ? (
+                    {session.data.user?.role === "ADMIN" ? (
                       <Link
                         href={DASHBOARD}
                         className={cn(
@@ -120,7 +120,15 @@ export function Header() {
                         Mon compte
                       </Link>
                     )}
-                    <SignOutButton variant="destructive" onSignOut={invalidate} />
+                    <SignOutButton
+                      variant="destructive"
+                      onSignOut={() => {
+                        // Ensure the header reflects logout immediately
+                        invalidate();
+                        refresh();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
                   </>
                 );
               }
@@ -193,30 +201,47 @@ export function Header() {
           ))}
 
           <div className="pt-2 pb-1 flex gap-2">
-            <Link
-              href={SIGN_IN}
-              className={cn(
-                `flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs
-                font-medium text-gray-700`,
-                "borderborder-gray-200 hover:bg-gray-50 transition-colors",
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              Connexion
-            </Link>
-            <Link
-              href={SIGN_UP}
-              className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs",
-                "font-semibold text-white bg-linear-to-r from-green-500 to-emerald-600 shadow-sm",
-                "transition-all",
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              S&apos;inscrire
-            </Link>
+            {session?.ok && session.data ? (
+              <div className="flex-1">
+                <SignOutButton
+                  className="w-full"
+                  variant="destructive"
+                  onSignOut={() => {
+                    invalidate();
+                    refresh();
+                    setIsMobileMenuOpen(false);
+                  }}
+                />
+              </div>
+            ) : (
+              <>
+                <Link
+                  href={SIGN_IN}
+                  className={cn(
+                    `flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs
+                      font-medium text-gray-700`,
+                    "borderborder-gray-200 hover:bg-gray-50 transition-colors",
+                  )}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  Connexion
+                </Link>
+                <Link
+                  href={SIGN_UP}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs",
+                    `font-semibold text-white bg-linear-to-r from-green-500 to-emerald-600
+                      shadow-sm`,
+                    "transition-all",
+                  )}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  S&apos;inscrire
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

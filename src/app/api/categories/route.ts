@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CategoryCreate } from "@/lib/categories/models/category.model";
 import { getLogger } from "@config/logger.config";
-import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import { createCategory, fetchCategories } from "@/lib/categories/services/category.service";
 import { getSession } from "@/lib/auth/better-auth/better-auth.service";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { isApiError } from "@/shared/errors/api-error";
 
 const logger = getLogger("server");
 
@@ -16,17 +17,13 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetchCategories(config);
 
-    if (!response.ok) {
-      return NextResponse.json(response.error, {
-        status: response.error.status,
-      });
+    if (isApiError(response)) {
+      return NextResponse.json(response, { status: response.status });
     }
 
-    return NextResponse.json(response.data, {
-      status: 200,
-    });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "fetchCategories");
+    const errMsg = ApiErrorResponse(error, "fetchCategories");
     const status = errMsg.status || 500;
     logger.error({ status, message: errMsg.detail }, "Error during category fetching");
     return NextResponse.json(errMsg, { status });
@@ -43,31 +40,34 @@ export async function POST(request: NextRequest) {
 
   if (!session.ok) {
     const err = {
-      error: "Unauthorized",
+      title: "Unauthorized",
       status: 401,
-      message: "You must be logged in",
+      detail: "You must be logged in",
+      errorCode: "UNAUTHORIZED",
+      instance: undefined,
     };
     logger.error(
       {
         status: err.status,
-        message: err.message,
+        detail: err.detail,
       },
       "Unauthorized",
     );
-    return NextResponse.json(err, {
-      status: err.status,
-    });
+    return NextResponse.json(err, { status: err.status });
   }
 
   if (session.data?.user?.role !== "ADMIN") {
     const err = {
+      title: "Forbidden",
       status: 403,
-      message: "You do not have permission to perform this action",
+      detail: "You do not have permission to perform this action",
+      errorCode: "FORBIDDEN",
+      instance: undefined,
     };
     logger.error(
       {
         status: err.status,
-        message: err.message,
+        detail: err.detail,
       },
       "Forbidden",
     );
@@ -85,18 +85,14 @@ export async function POST(request: NextRequest) {
   try {
     const response = await createCategory(config, body);
 
-    if (!response.ok) {
-      return NextResponse.json(response.error, {
-        status: response.error.status,
-      });
+    if (isApiError(response)) {
+      return NextResponse.json(response, { status: response.status });
     }
 
-    logger.info({ categoryId: response.data.id }, "Category created");
-    return NextResponse.json(response.data, {
-      status: 201,
-    });
+    logger.info({ categoryId: response.id }, "Category created");
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "createCategory");
+    const errMsg = ApiErrorResponse(error, "createCategory");
     const status = errMsg.status || 500;
     logger.error({ status, message: errMsg.detail }, "Error during category creation");
     return NextResponse.json(errMsg, { status });

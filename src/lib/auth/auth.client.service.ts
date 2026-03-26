@@ -3,7 +3,8 @@ import { proxyEnvironment } from "@config/proxy-api.config";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { AuthPayload, Login, Registrer } from "@lib/auth/models/auth.model";
 import { User } from "@lib/users/models/user.model";
-import { CrudApiError, Result } from "../errors/crud-api-error";
+import { Result } from "@/shared/models/response.model";
+import { ApiError } from "@/shared/errors/api-error";
 
 /**
  * ⚠️ NO Logging and error Handling is needed here as the proxy API routes will handle logging.
@@ -16,6 +17,7 @@ const {
       passwordChange: passwordChangeUrl,
       register: registerUrl,
       login: loginUrl,
+      session: sessionUrl,
       signOut: _signOutUrl,
     },
   },
@@ -24,8 +26,8 @@ const {
 /**
  * Sign in a user with email and password (client-side)
  */
-export async function signIn(login: Login): Promise<Result<AuthPayload, CrudApiError>> {
-  const result = await frontendHttp().post<any, AxiosResponse<Result<AuthPayload, CrudApiError>>>(
+export async function signIn(login: Login): Promise<Result<AuthPayload, ApiError>> {
+  const result = await frontendHttp().post<any, AxiosResponse<Result<AuthPayload, ApiError>>>(
     loginUrl,
     login,
   );
@@ -35,10 +37,20 @@ export async function signIn(login: Login): Promise<Result<AuthPayload, CrudApiE
 /**
  * Register a new user (client-side)
  */
-export async function signUp(registration: Registrer): Promise<Result<AuthPayload, CrudApiError>> {
-  const res = await frontendHttp().post<any, AxiosResponse<Result<AuthPayload, CrudApiError>>>(
+export async function signUp(registration: Registrer): Promise<Result<AuthPayload, ApiError>> {
+  const res = await frontendHttp().post<any, AxiosResponse<Result<AuthPayload, ApiError>>>(
     registerUrl,
     registration,
+  );
+  return res.data;
+}
+
+/**
+ * Get current session (client-side)
+ */
+export async function getSession(): Promise<Result<AuthPayload, ApiError>> {
+  const res = await frontendHttp().get<any, AxiosResponse<Result<AuthPayload, ApiError>>>(
+    sessionUrl,
   );
   return res.data;
 }
@@ -55,13 +67,13 @@ export async function changeUserPassword({
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
-}): Promise<Result<User, CrudApiError>> {
+}): Promise<Result<User, ApiError>> {
   const body = {
     oldPassword,
     newPassword,
     confirmPassword,
   };
-  const result = await frontendHttp().patch<any, AxiosResponse<Result<User, CrudApiError>>>(
+  const result = await frontendHttp().patch<any, AxiosResponse<Result<User, ApiError>>>(
     passwordChangeUrl,
     body,
   );

@@ -7,7 +7,6 @@ import {
   signIn as serverSignIn,
   signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
-import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import {
   AuthPayload,
   ChangePasswordProfileFormData,
@@ -20,19 +19,20 @@ import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { auth } from "@/lib/auth/better-auth/auth";
 import { headers, cookies } from "next/headers";
-import { CrudApiError } from "@/lib/errors/crud-api-error";
+import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { ApiError } from "@/shared/errors/api-error";
 
 /**
  * Server Action: Sign In
  * Safely handles authentication on the server side
  */
-export async function signInAction(credentials: Login): Promise<AuthPayload | CrudApiError> {
+export async function signInAction(credentials: Login): Promise<AuthPayload | ApiError> {
   try {
     const res = await serverSignIn(credentials);
     if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
-    return crudApiErrorResponse(error, "signIn action");
+    return ApiErrorResponse(error, "signIn action");
   }
 }
 
@@ -40,13 +40,13 @@ export async function signInAction(credentials: Login): Promise<AuthPayload | Cr
  * Server Action: Sign Up
  * Safely handles user registration on the server side
  */
-export async function signUpAction(userData: Registrer): Promise<AuthPayload | CrudApiError> {
+export async function signUpAction(userData: Registrer): Promise<AuthPayload | ApiError> {
   try {
     const res = await serverSignUp(userData);
     if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
-    return crudApiErrorResponse(error, "signUp action");
+    return ApiErrorResponse(error, "signUp action");
   }
 }
 
@@ -54,7 +54,7 @@ export async function signUpAction(userData: Registrer): Promise<AuthPayload | C
  * Server Action: Edit Profile
  * Safely handles profile editing on the server side
  */
-export async function editProfileAction(data: ProfileUserFormData): Promise<User | CrudApiError> {
+export async function editProfileAction(data: ProfileUserFormData): Promise<User | ApiError> {
   try {
     const res = await editProfile(data);
 
@@ -63,7 +63,7 @@ export async function editProfileAction(data: ProfileUserFormData): Promise<User
     }
     return res.data;
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "editProfile action");
+    const errMsg = ApiErrorResponse(error, "editProfile action");
     return errMsg;
   }
 }
@@ -74,7 +74,7 @@ export async function editProfileAction(data: ProfileUserFormData): Promise<User
  */
 export async function sendPasswordResetAction(
   email: string,
-): Promise<{ success: boolean; message: string } | CrudApiError> {
+): Promise<{ success: boolean; message: string } | ApiError> {
   try {
     // Check if email is valid
     if (!email || !email.includes("@")) {
@@ -84,7 +84,7 @@ export async function sendPasswordResetAction(
         detail: "Please provide a valid email address",
         instance: undefined,
         errorCode: "INVALID_EMAIL",
-      } as CrudApiError;
+      } as ApiError;
     }
 
     // Generate reset token
@@ -104,7 +104,7 @@ export async function sendPasswordResetAction(
         detail: "Failed to send reset email. Please try again later.",
         instance: undefined,
         errorCode: "EMAIL_SERVICE_UNAVAILABLE",
-      } as CrudApiError;
+      } as ApiError;
     }
 
     // Always return success message for security (don't reveal if email exists)
@@ -114,7 +114,7 @@ export async function sendPasswordResetAction(
         "If an account exists with this email, you will receive password reset instructions.",
     };
   } catch (error: any) {
-    const errMsg = crudApiErrorResponse(error, "sendPasswordReset action");
+    const errMsg = ApiErrorResponse(error, "sendPasswordReset action");
     return errMsg;
   }
 }
@@ -124,7 +124,7 @@ export async function sendPasswordResetAction(
  * Safely handles password change on the server side
  * Requires current password for security
  */
-export async function resetPasswordTokenAction(data: ResetPassword): Promise<User | CrudApiError> {
+export async function resetPasswordTokenAction(data: ResetPassword): Promise<User | ApiError> {
   const validation = parseResetPassword(data);
   if (!validation.success) {
     return {
@@ -133,7 +133,7 @@ export async function resetPasswordTokenAction(data: ResetPassword): Promise<Use
       title: "Bad Request",
       instance: undefined,
       errorCode: "VALIDATION_ERROR",
-    } as CrudApiError;
+    } as ApiError;
   }
 
   try {
@@ -146,7 +146,7 @@ export async function resetPasswordTokenAction(data: ResetPassword): Promise<Use
     // Go to sign in page after successful password reset
     return res.data;
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "error resetPassword action");
+    const errMsg = ApiErrorResponse(error, "error resetPassword action");
     return errMsg;
   }
 }
@@ -158,7 +158,7 @@ export async function resetPasswordTokenAction(data: ResetPassword): Promise<Use
  */
 export async function changePasswordProfileAction(
   data: ChangePasswordProfileFormData,
-): Promise<User | CrudApiError> {
+): Promise<User | ApiError> {
   const validation = parseChangePasswordProfile(data);
   if (!validation.success) {
     return {
@@ -167,7 +167,7 @@ export async function changePasswordProfileAction(
       title: "Bad Request",
       instance: undefined,
       errorCode: "VALIDATION_ERROR",
-    } as CrudApiError;
+    } as ApiError;
   }
 
   try {
@@ -180,7 +180,7 @@ export async function changePasswordProfileAction(
     // Go to sign in page after successful password reset
     return res.data;
   } catch (error) {
-    const errMsg = crudApiErrorResponse(error, "error changePasswordProfile action");
+    const errMsg = ApiErrorResponse(error, "error changePasswordProfile action");
     return errMsg;
   }
 }

@@ -1,7 +1,8 @@
 import { User } from "@/lib/users/models/user.model";
 import { Token } from "@/config/auth.utils";
-import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error.server";
 import { z } from "zod";
+import { Result } from "@/shared/models/response.model";
+import { ApiError } from "@/shared/errors/api-error";
 
 export interface AuthSignIn {
   action?: "SIGN_IN" | "SIGN_UP";
@@ -43,8 +44,8 @@ export type AuthPayload = Partial<Token> & {
  * Contract every auth provider must implement.
  */
 export interface AuthProvider {
-  signIn(email: string, password: string): Promise<Result<AuthPayload, CrudApiError>>;
-  signUp(data: Registrer): Promise<Result<AuthPayload, CrudApiError>>;
+  signIn(email: string, password: string): Promise<Result<AuthPayload, ApiError>>;
+  signUp(data: Registrer): Promise<Result<AuthPayload, ApiError>>;
 }
 
 // ─── Current user ─────────────────────────────────────────────────────────────

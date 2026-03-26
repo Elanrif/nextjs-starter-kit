@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/better-auth/auth.client";
 import LoadingPage from "@/components/features/loading-page";
+import { SESSION_QUERY_KEY } from "@/hooks/use.session";
 
 interface SignOutButtonProps {
   children?: React.ReactNode;
@@ -21,17 +22,28 @@ export function SignOutButton({
   onSignOut,
 }: SignOutButtonProps) {
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setLoading(true);
-    authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          if (onSignOut) onSignOut();
-          window.location.href = redirectTo;
-        },
-      },
-    });
+    try {
+      // Use a dedicated app route that clears BOTH BA session cookie and our custom cookies.
+      await fetch("/api/sign-out", { method: "POST" });
+
+      // Completely remove session cache
+      queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY });
+
+      if (onSignOut) onSignOut();
+
+      // Force a small delay then redirect
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      window.location.href = redirectTo;
+    } catch (error) {
+      console.error("[SignOut] Error:", error);
+      // Even on error, try to clear cache
+      queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY });
+      setLoading(false);
+    }
   };
 
   const variantStyles = {

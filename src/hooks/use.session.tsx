@@ -1,37 +1,39 @@
 "use client";
 
-import { authClient } from "@/lib/auth/better-auth/auth.client";
 import type { AuthPayload } from "@/lib/auth/models/auth.model";
-import type { CrudApiError, Result } from "@/lib/shared/helpers/crud-api-error";
+import { ApiError } from "@/shared/errors/api-error";
+import { Result } from "@/shared/models/response.model";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSession } from "@/lib/auth/auth.client.service";
+
+export const SESSION_QUERY_KEY = ["session"];
+
+const fetcher = async (): Promise<Result<AuthPayload, ApiError>> => {
+  return await getSession();
+};
 
 export const useSession = () => {
-  const { data, isPending, error, refetch } = authClient.useSession();
+  const queryClient = useQueryClient();
 
-  const session: Result<AuthPayload, CrudApiError> | undefined = data
-    ? {
-        ok: true,
-        data: {
-          access_token: (data.user as any).accessToken,
-          refresh_token: (data.user as any).refreshToken,
-          expires_in: (data.user as any).expiresIn,
-          refresh_expires_in: (data.user as any).refreshExpiresIn,
-          user: {
-            id: (data.user as any).externalId ?? data.user.id,
-            email: data.user.email,
-            firstName: (data.user as any).firstName ?? "",
-            lastName: (data.user as any).lastName ?? "",
-            phoneNumber: (data.user as any).phoneNumber ?? "",
-            role: (data.user as any).role ?? "USER",
-          },
-        },
-      }
-    : undefined;
+  const { data, error, isPending } = useQuery<Result<AuthPayload, ApiError>>({
+    queryKey: SESSION_QUERY_KEY,
+    queryFn: fetcher,
+    refetchOnWindowFocus: true, // Refetch when tab regains focus
+    refetchOnMount: true, // Refetch when component mounts
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   return {
-    session,
+    session: data, // Return the full Result so caller can check session.ok
     isLoading: isPending,
     error,
-    refresh: refetch,
-    invalidate: refetch,
+    refresh: () =>
+      queryClient.invalidateQueries({
+        queryKey: SESSION_QUERY_KEY,
+      }),
+    invalidate: () => queryClient.setQueryData(SESSION_QUERY_KEY, undefined),
+    isLoggedIn: data?.ok ?? false,
+    user: data?.ok ? data.data.user : null,
   };
 };

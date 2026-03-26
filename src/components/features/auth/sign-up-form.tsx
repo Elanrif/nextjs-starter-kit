@@ -6,16 +6,16 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "l
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
-import { authClient } from "@/lib/auth/better-auth/auth.client";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { isCrudError } from "@/lib/errors/crud-api-error";
+import { useSignUp } from "@/lib/auth/hooks/use-auth";
 
 export function SignUpForm() {
   const router = useRouter();
+  const signUpMutation = useSignUp();
   const {
     register,
     handleSubmit,
@@ -54,22 +54,21 @@ export function SignUpForm() {
     setLoading(true);
     setError(null);
     try {
-      const result = await authClient.$fetch("/sign-up", {
-        method: "POST",
-        body: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phoneNumber: data.phoneNumber,
-          email: data.email,
-          password: data.password,
-          confirmPassword: data.confirmPassword,
-        },
+      const result = await signUpMutation.mutateAsync({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
       });
-      if (isCrudError(result)) {
-        setError(result.detail || "Échec de la création du compte");
+
+      if (!result.ok) {
+        setError(result.error.detail);
         setLoading(false);
         return;
       }
+
       router.push("/dashboard");
       // loading reste true pendant la navigation
     } catch (error: any) {
