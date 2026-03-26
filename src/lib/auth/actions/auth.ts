@@ -7,7 +7,7 @@ import {
   signIn as serverSignIn,
   signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
-import { CrudApiError, crudApiErrorResponse } from "@/lib/shared/helpers/crud-api-error.server";
+import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import {
   AuthPayload,
   ChangePasswordProfileFormData,
@@ -20,6 +20,7 @@ import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { auth } from "@/lib/auth/better-auth/auth";
 import { headers, cookies } from "next/headers";
+import { CrudApiError } from "@/lib/errors/crud-api-error";
 
 /**
  * Server Action: Sign In
@@ -78,9 +79,11 @@ export async function sendPasswordResetAction(
     // Check if email is valid
     if (!email || !email.includes("@")) {
       return {
-        error: "Invalid email",
+        title: "Invalid email",
         status: 400,
-        message: "Please provide a valid email address",
+        detail: "Please provide a valid email address",
+        instance: undefined,
+        errorCode: "INVALID_EMAIL",
       } as CrudApiError;
     }
 
@@ -96,9 +99,11 @@ export async function sendPasswordResetAction(
 
     if (!emailSent) {
       return {
-        error: "Email service unavailable",
+        title: "Email service unavailable",
         status: 503,
-        message: "Failed to send reset email. Please try again later.",
+        detail: "Failed to send reset email. Please try again later.",
+        instance: undefined,
+        errorCode: "EMAIL_SERVICE_UNAVAILABLE",
       } as CrudApiError;
     }
 
@@ -124,8 +129,10 @@ export async function resetPasswordTokenAction(data: ResetPassword): Promise<Use
   if (!validation.success) {
     return {
       status: 400,
-      message: validation.error.message,
-      error: "Bad Request",
+      detail: validation.error.message,
+      title: "Bad Request",
+      instance: undefined,
+      errorCode: "VALIDATION_ERROR",
     } as CrudApiError;
   }
 
@@ -156,8 +163,10 @@ export async function changePasswordProfileAction(
   if (!validation.success) {
     return {
       status: 400,
-      message: validation.error.message,
-      error: "Bad Request",
+      detail: validation.error.message,
+      title: "Bad Request",
+      instance: undefined,
+      errorCode: "VALIDATION_ERROR",
     } as CrudApiError;
   }
 

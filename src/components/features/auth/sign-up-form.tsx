@@ -12,6 +12,7 @@ import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
+import { isCrudError } from "@/lib/errors/crud-api-error";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export function SignUpForm() {
     setLoading(true);
     setError(null);
     try {
-      const { error } = await authClient.$fetch("/sign-up", {
+      const result = await authClient.$fetch("/sign-up", {
         method: "POST",
         body: {
           firstName: data.firstName,
@@ -64,8 +65,8 @@ export function SignUpForm() {
           confirmPassword: data.confirmPassword,
         },
       });
-      if (error) {
-        setError(error.message || "Échec de la création du compte");
+      if (isCrudError(result)) {
+        setError(result.detail || "Échec de la création du compte");
         setLoading(false);
         return;
       }
