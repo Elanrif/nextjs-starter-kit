@@ -4,11 +4,7 @@ import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
 import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
-import {
-  CrudApiError,
-  crudApiErrorResponse,
-  Result,
-} from "@/lib/shared/helpers/crud-api-error.server";
+import { crudApiErrorResponse } from "@/lib/errors/crud-api-error.server";
 import { getLogger } from "@/config/logger.config";
 import {
   ChangePasswordProfileFormData,
@@ -21,6 +17,7 @@ import {
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
 import { validateId, validationError } from "@/utils/utils.server";
+import { CrudApiError, Result } from "../errors/crud-api-error";
 
 /**
  * ⚠️ Never trust the client input
@@ -87,11 +84,11 @@ export async function signUp(
     logger.error(
       {
         email: registration.email,
-        message: maybeUser.error.message,
+        detail: maybeUser.error.detail,
       },
       "Error after registration during sign in",
     );
-    throw new Error(maybeUser.error.message);
+    throw new Error(maybeUser.error.detail);
   }
   return maybeUser;
 }

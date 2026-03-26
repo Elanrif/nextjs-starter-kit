@@ -13,6 +13,7 @@ import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
+import { isCrudError } from "@/lib/errors/crud-api-error";
 
 export function SignInForm() {
   const router = useRouter();
@@ -44,8 +45,8 @@ export function SignInForm() {
         email: data.email,
         password: data.password,
       });
-      if ("error" in result) {
-        setApiError(result.error?.message || "Une erreur est survenue.");
+      if (isCrudError(result)) {
+        setApiError(result.detail || "Une erreur est survenue.");
         setLoading(false);
         return;
       }
