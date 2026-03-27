@@ -28,3 +28,44 @@
 {"level":40,"time":1774543437423,"pid":19660,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
 {"level":40,"time":1774543440354,"pid":19660,"hostname":"ELTECH","msg":"No active session found during session check"}
 {"level":50,"time":1774543440354,"pid":19660,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":40,"time":1774637278421,"pid":38064,"hostname":"ELTECH","msg":"No active session found during session check"}
+{"level":50,"time":1774637278424,"pid":38064,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":30,"time":1774637287288,"pid":38064,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":50,"time":1774637287449,"pid":38064,"hostname":"ELTECH","error":"","msg":"Upstream API error"}
+{"level":50,"time":1774637287450,"pid":38064,"hostname":"ELTECH","email":"admin@gmail.com","msg":"Failed to sign in"}
+{"level":50,"time":1774637287451,"pid":38064,"hostname":"ELTECH","status":500,"detail":"Unknown Axios error","title":"Error","errorCode":"NETWORK_ERROR","msg":"[Axios Error] [signIn]"}
+{"level":30,"time":1774637288329,"pid":38064,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
+{"level":30,"time":1774637377151,"pid":38064,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1774637378584,"pid":38064,"hostname":"ELTECH","token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJJZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4ifSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0wM1QxODo0OTozOC41NjdaIiwiaWF0IjoxNzc0NjM3Mzc4LCJleHAiOjE3NzUyNDIxNzh9.zONiweyaii4nTTxLhguHYai3Bi-OsdyPzCTlAcFrvFk","msg":"token:"}
+{"level":30,"time":1774637378591,"pid":38064,"hostname":"ELTECH","email":"admin@gmail.com","msg":"User signed in successfully"}
+{"level":30,"time":1774637378593,"pid":38064,"hostname":"ELTECH","token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJJZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4ifSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0wM1QxODo0OTozOC41OTFaIiwiaWF0IjoxNzc0NjM3Mzc4LCJleHAiOjE3NzUyNDIxNzh9.K0ruZNxufqJL7AyvuKofyJ2jCRRp7psj_xDDzd0NdLI","msg":"token:"}
+{"level":30,"time":1774637382506,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":40,"time":1774637610187,"pid":38064,"hostname":"ELTECH","msg":"No active session found during session check"}
+{"level":50,"time":1774637610187,"pid":38064,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":30,"time":1774637619312,"pid":38064,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1774637620537,"pid":38064,"hostname":"ELTECH","token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJJZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4ifSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0wM1QxODo1Mzo0MC41MzJaIiwiaWF0IjoxNzc0NjM3NjIwLCJleHAiOjE3NzUyNDI0MjB9.CQ2plUNhFFk805XAtiaa1jSN6p5UXfpwZtINvqC0EcM","msg":"token:"}
+{"level":30,"time":1774637620553,"pid":38064,"hostname":"ELTECH","email":"admin@gmail.com","msg":"User signed in successfully"}
+{"level":30,"time":1774637620554,"pid":38064,"hostname":"ELTECH","token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJJZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4ifSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0wM1QxODo1Mzo0MC41NTNaIiwiaWF0IjoxNzc0NjM3NjIwLCJleHAiOjE3NzUyNDI0MjB9.K9F1L7NUvGvUWrkqAlVrtyilfM5RQi8hqfYMEzBGmqA","msg":"token:"}
+{"level":30,"time":1774637620940,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637659829,"pid":38064,"hostname":"ELTECH","id":1,"msg":"Profile updated successfully"}
+{"level":30,"time":1774637709430,"pid":38064,"hostname":"ELTECH","id":1,"msg":"Profile updated successfully"}
+{"level":30,"time":1774637710525,"pid":38064,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
+{"level":30,"time":1774637725594,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637848292,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637852210,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637858631,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637862763,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637870907,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637940594,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637951645,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774637954048,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774638087269,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774638249152,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774638279716,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774638292565,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1774638296180,"pid":38064,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":40,"time":1774638301353,"pid":38064,"hostname":"ELTECH","msg":"No active session found during session check"}
+{"level":40,"time":1774638301353,"pid":38064,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":30,"time":1774638308509,"pid":38064,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
+{"level":40,"time":1774638310417,"pid":38064,"hostname":"ELTECH","msg":"No active session found during session check"}
+{"level":50,"time":1774638310417,"pid":38064,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}

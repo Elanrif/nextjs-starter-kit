@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth/api/auth";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Mail,
   Calendar,
@@ -63,12 +64,24 @@ export default async function AccountPage() {
         <div className="relative flex items-center gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div
-              className="h-20 w-20 rounded-2xl bg-linear-to-br from-indigo-400 to-blue-600 flex
-                items-center justify-center text-white text-2xl font-bold shadow-lg ring-2
-                ring-white/10"
-            >
-              {initials}
+            <div className="h-20 w-20 rounded-2xl shadow-lg ring-2 ring-white/10 overflow-hidden">
+              {user.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={`Avatar de ${user.firstName || user.email}`}
+                  width={80}
+                  height={80}
+                  className="h-full w-full object-cover"
+                  priority
+                />
+              ) : (
+                <div
+                  className="h-full w-full bg-linear-to-br from-indigo-400 to-blue-600 flex
+                    items-center justify-center text-white text-2xl font-bold"
+                >
+                  {initials}
+                </div>
+              )}
             </div>
             {user.emailVerified && (
               <div
