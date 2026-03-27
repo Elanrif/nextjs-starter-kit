@@ -220,7 +220,7 @@ export function Header() {
                   className={cn(
                     `flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs
                       font-medium text-gray-700`,
-                    "borderborder-gray-200 hover:bg-gray-50 transition-colors",
+                    "border border-gray-200 hover:bg-gray-50 transition-colors",
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

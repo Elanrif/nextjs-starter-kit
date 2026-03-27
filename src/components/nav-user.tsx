@@ -70,7 +70,7 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
   const { isMobile } = useSidebar();
   const pathname = usePathname();
 
-  if (!user || !session?.ok) return null;
+  if (!user) return null;
 
   const initials = getInitials(user);
 

@@ -16,6 +16,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
+  console.log("[DashboardLayout] Current User:", currentUser.data.user); // Debug log
+
   return (
     <AuthUserProvider user={currentUser.data.user}>
       <SidebarProvider>
