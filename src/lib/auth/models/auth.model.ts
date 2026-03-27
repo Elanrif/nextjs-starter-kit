@@ -36,6 +36,7 @@ export type AuthPayload = Partial<Token> & {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    avatarUrl?: string;
     role: string;
   };
 };
@@ -90,6 +91,8 @@ export const parseRegister = RegisterSchema.safeParse;
 export const ProfileUserSchema = BaseSchema.omit({
   password: true,
   confirmPassword: true,
+}).extend({
+  avatarUrl: z.url("L'URL de l'avatar doit être valide").optional(),
 });
 export type ProfileUserFormData = z.infer<typeof ProfileUserSchema>;
 export const parseProfileUser = ProfileUserSchema.safeParse;

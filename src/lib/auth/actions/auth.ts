@@ -18,6 +18,7 @@ import {
 import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { auth } from "@/lib/auth/better-auth/auth";
+import { getSession } from "@/lib/auth/better-auth/better-auth.service";
 import { headers, cookies } from "next/headers";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
@@ -56,11 +57,10 @@ export async function signUpAction(userData: Registrer): Promise<AuthPayload | A
  */
 export async function editProfileAction(data: ProfileUserFormData): Promise<User | ApiError> {
   try {
-    const res = await editProfile(data);
-
-    if (!res.ok) {
-      return res.error;
-    }
+    const session = await getSession();
+    if (!session.ok) return session.error;
+    const res = await editProfile(data, { access_token: session.data.access_token });
+    if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
     const errMsg = ApiErrorResponse(error, "editProfile action");
@@ -171,13 +171,10 @@ export async function changePasswordProfileAction(
   }
 
   try {
-    const res = await changePasswordProfile(data);
-
-    if (!res.ok) {
-      return res.error;
-    }
-
-    // Go to sign in page after successful password reset
+    const session = await getSession();
+    if (!session.ok) return session.error;
+    const res = await changePasswordProfile(data, { access_token: session.data.access_token });
+    if (!res.ok) return res.error;
     return res.data;
   } catch (error) {
     const errMsg = ApiErrorResponse(error, "error changePasswordProfile action");

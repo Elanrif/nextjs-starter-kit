@@ -16,7 +16,6 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
-import { authClient } from "@/lib/auth/api/auth.client";
 import { isApiError } from "@/shared/errors/api-error";
 
 const { MY_ACCOUNT } = ROUTES;
@@ -242,18 +241,16 @@ export function ChangePasswordForm() {
               disabled={loading}
               className="text-xs text-orange-600 hover:text-orange-700 font-medium
                 underline-offset-2 hover:underline transition-colors"
-              onClick={() => {
+              onClick={async () => {
                 setLoading(true);
-                authClient
-                  .signOut()
-                  .then(() => {
-                    router.push(ROUTES.FORGOT_PASSWORD);
-                    setLoading(false);
-                  })
-                  .catch((error_) => {
-                    toast.error("Erreur lors de la déconnexion");
-                    setLoading(false);
-                  });
+                try {
+                  await fetch("/api/sign-out", { method: "POST" });
+                  router.push(ROUTES.FORGOT_PASSWORD);
+                } catch {
+                  toast.error("Erreur lors de la déconnexion");
+                } finally {
+                  setLoading(false);
+                }
               }}
             >
               Mot de passe oublié ?

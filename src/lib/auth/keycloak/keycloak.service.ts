@@ -55,7 +55,6 @@ function mapKcClaimsToUser(claims: KcTokenClaims): User {
     lastName: claims.family_name ?? "",
     phoneNumber: claims.phone_number ?? "",
     password: "",
-    avatarUrl: null,
     role,
     isActive: true,
     kcSub: claims.sub,

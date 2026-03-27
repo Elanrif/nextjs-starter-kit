@@ -3,7 +3,6 @@ import Database from "better-sqlite3";
 import { z } from "zod";
 import { getLogger } from "@/config/logger.config";
 import { createAuthEndpoint } from "better-auth/api";
-import { signIn, signUp } from "../auth.service";
 import type { Result } from "@/shared/models/response.model";
 import type { ApiError } from "@/shared/errors/api-error";
 
@@ -28,6 +27,7 @@ export const auth = betterAuth({
       firstName: { type: "string", required: false, input: false },
       lastName: { type: "string", required: false, input: false },
       phoneNumber: { type: "string", required: false, input: false },
+      avatarUrl: { type: "string", required: false, input: false },
       accessToken: { type: "string", required: false, input: false },
       refreshToken: { type: "string", required: false, input: false },
       expiresIn: { type: "number", required: false, input: false },
@@ -56,6 +56,9 @@ export const auth = betterAuth({
           async (ctx) => {
             const { email, password } = ctx.body;
 
+            // Lazy import to keep this config file CLI-safe (better-auth CLI cannot resolve
+            // `server-only` which may be pulled transitively by server utilities).
+            const { signIn } = await import("../auth.service");
             const result = await signIn({ email, password });
             if (!result.ok) {
               logger.warn({ email }, "Auth provider sign-in failed");
@@ -104,6 +107,7 @@ export const auth = betterAuth({
                 firstName: u.firstName,
                 lastName: u.lastName,
                 phoneNumber: u.phoneNumber,
+                avatarUrl: u.avatarUrl,
                 ...tokenFields,
               });
             } else {
@@ -116,6 +120,7 @@ export const auth = betterAuth({
                 firstName: u.firstName,
                 lastName: u.lastName,
                 phoneNumber: u.phoneNumber,
+                avatarUrl: u.avatarUrl,
                 ...tokenFields,
               });
               baUserId = newUser.id;
@@ -190,6 +195,7 @@ export const auth = betterAuth({
             const { email, password, firstName, lastName, phoneNumber, confirmPassword } = ctx.body;
 
             // 1. Register via active provider
+            const { signUp } = await import("../auth.service");
             const signUpResult = await signUp({
               email,
               password,

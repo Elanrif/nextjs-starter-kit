@@ -1,5 +1,3 @@
-import "server-only";
-
 import { headers, cookies } from "next/headers";
 import { cache } from "react";
 import { auth } from "./auth";
@@ -20,6 +18,7 @@ type BaUser = {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  avatarUrl?: string;
   accessToken?: string;
   refreshToken?: string;
   expiresIn?: number;
@@ -69,6 +68,7 @@ export const getSession = cache(async (): Promise<Result<AuthPayload, ApiError>>
           lastName: u.lastName ?? "",
           phoneNumber: u.phoneNumber ?? "",
           role: u.role ?? UserRole.USER,
+          avatarUrl: u.avatarUrl,
         },
       },
     };
@@ -104,7 +104,7 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, ApiErr
     lastName: s.lastName,
     phoneNumber: s.phoneNumber,
     password: "",
-    avatarUrl: null,
+    avatarUrl: s.avatarUrl,
     role: (s.role as UserRole) ?? UserRole.USER,
     isActive: true,
     externalId: s.id,
