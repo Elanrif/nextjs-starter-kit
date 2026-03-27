@@ -6,17 +6,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
-import { User } from "@/lib/users/models/user.model";
 import { User as UserIcon, Mail, Phone, Pencil, ArrowLeft, Save } from "lucide-react";
 import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.model";
 import { editProfileAction } from "@/lib/auth/actions/auth";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { isApiError } from "@/shared/errors/api-error";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
+import { User } from "@/lib/users/models/user.model";
 
 const { MY_ACCOUNT } = ROUTES;
 
-export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
+export function ProfileEditForm({ user }: { user: User }) {
   const router = useRouter();
   const {
     register,
@@ -25,30 +27,40 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
   } = useForm<ProfileUserFormData>({
     resolver: zodResolver(ProfileUserSchema) as any,
     defaultValues: {
-      firstName: loadedUser?.firstName || "",
-      lastName: loadedUser?.lastName || "",
-      email: loadedUser?.email || "",
-      phoneNumber: loadedUser?.phoneNumber || "",
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      phoneNumber: user?.phoneNumber || "",
     },
   });
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const avatar = useImageDraft({
+    storageKey: "profile:avatar",
+    initialUrl: user?.avatarUrl,
+  });
+
   const onSubmit = async (data: ProfileUserFormData) => {
-    if (!loadedUser) {
+    if (!user) {
       setError("User data is not loaded");
       toast.error("User data is not loaded");
       return;
     }
     setLoading(true);
     try {
-      const response = await editProfileAction(data);
+      const payload: ProfileUserFormData = {
+        ...data,
+        avatarUrl: avatar.url || undefined,
+      };
+      const response = await editProfileAction(payload);
       if (isApiError(response)) {
         setError(response.detail || "Erreur lors de la mise à jour");
         toast.error(response.detail || "Erreur lors de la mise à jour");
         return;
       }
+      avatar.clearDraft();
       toast.success("Profil mis à jour avec succès !");
       router.push(MY_ACCOUNT);
     } catch (error_: any) {
@@ -94,6 +106,19 @@ export function ProfileEditForm({ loadedUser }: { loadedUser: User }) {
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-7">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <FormError message={error} />
+
+          {/* Avatar */}
+          <Field variant="light" label="Photo de profil" required={false}>
+            <div className="pt-1">
+              <ImageUpload
+                value={avatar.url}
+                publicId={avatar.publicId}
+                onChange={avatar.handleChange}
+                onRemove={avatar.handleRemove}
+                variant="light"
+              />
+            </div>
+          </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Field

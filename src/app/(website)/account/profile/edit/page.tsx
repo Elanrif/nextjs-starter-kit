@@ -14,5 +14,5 @@ export default async function Page() {
   }
   const { user } = res.data;
 
-  return <ProfileEditForm loadedUser={user} />;
+  return <ProfileEditForm user={user} />;
 }

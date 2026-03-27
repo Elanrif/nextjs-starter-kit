@@ -20,7 +20,7 @@ export interface User {
   lastName: string;
   phoneNumber: string;
   password: string;
-  avatarUrl: string | null;
+  avatarUrl?: string;
   role: UserRole;
   isActive: boolean;
   [key: string]: any; // Allow additional properties

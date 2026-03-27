@@ -19,6 +19,7 @@ import { signIn, signOut } from "@/lib/auth/next-auth/auth";
 import { AuthError } from "next-auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
+import { getSession } from "@/lib/auth/next-auth/next-auth.service";
 
 /**
  * Server Action: Sign In via NextAuth Credentials provider.
@@ -80,7 +81,9 @@ export async function signOutAction() {
  */
 export async function editProfileAction(data: ProfileUserFormData): Promise<User | ApiError> {
   try {
-    const res = await editProfile(data);
+    const session = await getSession();
+    if (!session.ok) return session.error;
+    const res = await editProfile(data, { access_token: session.data.access_token });
     if (!res.ok) return res.error;
     return res.data;
   } catch (error: any) {
@@ -176,7 +179,9 @@ export async function changePasswordProfileAction(
   }
 
   try {
-    const res = await changePasswordProfile(data);
+    const session = await getSession();
+    if (!session.ok) return session.error;
+    const res = await changePasswordProfile(data, { access_token: session.data.access_token });
     if (!res.ok) return res.error;
     return res.data;
   } catch (error) {

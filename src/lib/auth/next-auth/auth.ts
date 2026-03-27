@@ -17,6 +17,7 @@ declare module "next-auth" {
       firstName: string;
       lastName: string;
       phoneNumber: string;
+      avatarUrl?: string;
       access_token?: string;
       refresh_token?: string;
     } & DefaultSession["user"];
@@ -27,6 +28,7 @@ declare module "next-auth" {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    avatarUrl?: string;
     access_token?: string;
     refresh_token?: string;
   }
@@ -64,6 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           firstName: u.firstName,
           lastName: u.lastName,
           phoneNumber: u.phoneNumber,
+          avatarUrl: u.avatarUrl,
           access_token,
           refresh_token,
         };
@@ -78,6 +81,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.phoneNumber = user.phoneNumber;
+        token.avatarUrl = user.avatarUrl;
         token.access_token = user.access_token;
         token.refresh_token = user.refresh_token;
       }
@@ -89,6 +93,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
       session.user.phoneNumber = token.phoneNumber as string;
+      session.user.avatarUrl = token.avatarUrl as string | undefined;
       session.user.access_token = token.access_token as string | undefined;
       session.user.refresh_token = token.refresh_token as string | undefined;
       return session;

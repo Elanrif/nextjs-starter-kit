@@ -43,6 +43,7 @@ export const getSession = cache(async (): Promise<Result<AuthPayload, ApiError>>
           firstName: session.user.firstName,
           lastName: session.user.lastName,
           phoneNumber: session.user.phoneNumber,
+          avatarUrl: session.user.avatarUrl,
         },
       },
     };
@@ -80,7 +81,7 @@ export const getCurrentUser = cache(async (): Promise<Result<CurrentUser, ApiErr
     lastName: s.lastName ?? "",
     phoneNumber: s.phoneNumber ?? "",
     password: "",
-    avatarUrl: null,
+    avatarUrl: s.avatarUrl,
     role: (s.role as UserRole) ?? UserRole.USER,
     isActive: true,
     externalId: s.id,
