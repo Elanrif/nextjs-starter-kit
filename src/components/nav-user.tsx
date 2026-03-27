@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -100,7 +101,23 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
                       : "rounded-lg bg-indigo-100 text-indigo-600 text-xs font-semibold"
                   }
                 >
-                  {initials}
+                  {user.avatarUrl ? (
+                    <Image
+                      src={user.avatarUrl}
+                      alt={`Avatar de ${user.firstName || user.email}`}
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                      priority
+                    />
+                  ) : (
+                    <div
+                      className="h-full w-full bg-linear-to-br from-indigo-400 to-blue-600 flex
+                        items-center justify-center text-white text-2xl font-bold"
+                    >
+                      {initials}
+                    </div>
+                  )}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
@@ -147,7 +164,23 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
                   <AvatarImage src={user.avatar} alt={user.firstName} />
                   <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm
                     font-semibold">
-                    {initials}
+                    {user.avatarUrl ? (
+                      <Image
+                        src={user.avatarUrl}
+                        alt={`Avatar de ${user.firstName || user.email}`}
+                        width={80}
+                        height={80}
+                        className="h-full w-full object-cover rounded-full"
+                        priority
+                      />
+                    ) : (
+                      <div
+                        className="h-full w-full bg-linear-to-br from-indigo-400 to-blue-600 flex
+                          items-center justify-center text-white text-2xl font-bold"
+                      >
+                        {initials}
+                      </div>
+                    )}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left leading-tight min-w-0">

@@ -4,10 +4,19 @@ import { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  // Keep pino and pino-pretty as native Node modules — never bundled by webpack.
+  // Keep pino, pino-pretty and cloudinary as native Node modules — never bundled by webpack.
   // This lets the logger.config.ts lazy-require work on the server,
   // while the browser receives only the console fallback.
-  serverExternalPackages: ["pino", "pino-pretty"],
+  serverExternalPackages: ["pino", "pino-pretty", "cloudinary"],
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
+  },
 
   async headers() {
     return [

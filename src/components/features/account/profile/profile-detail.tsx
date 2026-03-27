@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
+import Image from "next/image";
 import {
   ArrowLeft,
   Pencil,
@@ -57,7 +58,23 @@ export function ProfileDetail() {
                 items-center justify-center text-white text-2xl font-bold shadow-lg ring-2
                 ring-white/10"
             >
-              {initials}
+              {user.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={`Avatar de ${user.firstName || user.email}`}
+                  width={80}
+                  height={80}
+                  className="h-full w-full object-cover"
+                  priority
+                />
+              ) : (
+                <div
+                  className="h-full w-full bg-linear-to-br from-indigo-400 to-blue-600 flex
+                    items-center justify-center text-white text-2xl font-bold"
+                >
+                  {initials}
+                </div>
+              )}
             </div>
           </div>
 

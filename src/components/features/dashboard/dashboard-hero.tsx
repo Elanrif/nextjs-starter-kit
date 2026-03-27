@@ -2,9 +2,11 @@
 
 import { Activity } from "lucide-react";
 import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import Image from "next/image";
 
 export function DashboardHero() {
   const { user } = useAuthUser();
+  if (!user) return null;
 
   const initials =
     user?.firstName?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || "AD";
@@ -34,11 +36,27 @@ export function DashboardHero() {
         </div>
         <div className="hidden md:flex flex-col items-center gap-2">
           <div
-            className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex
+            className="h-16 w-16 rounded-full bg-linear-to-br from-blue-400 to-indigo-600 flex
               items-center justify-center text-white text-xl font-bold shadow-lg ring-2
               ring-white/10"
           >
-            {initials}
+            {user.avatarUrl ? (
+              <Image
+                src={user.avatarUrl}
+                alt={`Avatar de ${user.firstName || user.email}`}
+                width={120}
+                height={120}
+                className="h-full w-full object-cover rounded-full"
+                priority
+              />
+            ) : (
+              <div
+                className="h-full w-full bg-linear-to-br from-indigo-400 to-blue-600 flex
+                  items-center justify-center text-white text-2xl font-bold"
+              >
+                {initials}
+              </div>
+            )}
           </div>
           <span className="text-xs text-slate-400">{user?.email}</span>
         </div>
