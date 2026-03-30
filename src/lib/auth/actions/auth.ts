@@ -115,7 +115,7 @@ export async function refreshTokenAction(refresh_token?: string): Promise<AuthPa
 /**
  * Server Action: Logout from backend (optional) + always clear NextAuth session.
  */
-export async function logoutAction(): Promise<Record<string, never> | ApiError> {
+export async function signOutAction(): Promise<Record<string, never> | ApiError> {
   try {
     const session = await auth();
 
