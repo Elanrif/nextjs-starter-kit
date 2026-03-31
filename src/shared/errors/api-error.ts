@@ -32,6 +32,21 @@ export function isApiError(value: unknown): value is ApiError {
 }
 
 /**
+ *
+ * @param detail
+ * @returns
+ */
+export const unauthorizedApiError = (detail = "No active session"): ApiError => {
+  return {
+    title: "Unauthorized",
+    status: 401,
+    detail,
+    instance: undefined,
+    errorCode: "Unauthorized",
+  } as ApiError;
+};
+
+/**
  * Error class for programmatic API errors (e.g. thrown in interceptors).
  */
 export class ApiError_ extends Error {
