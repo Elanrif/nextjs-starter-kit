@@ -2,7 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { UserSidebar } from "@/components/user-sidebar";
 import { redirect } from "next/navigation";
-import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
+import { SessionProvider } from "@/lib/auth/context/auth.user.context";
 import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
 import { AccountBreadcrumb } from "@/components/features/account/account-breadcrumb";
@@ -10,14 +10,14 @@ import { AccountBreadcrumb } from "@/components/features/account/account-breadcr
 export const dynamic = "force-dynamic";
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
-  const response = await auth.api.getCurrentUser();
+  const session = await auth();
 
-  if (!response.ok || !response.data) {
+  if (!session.ok) {
     redirect("/sign-in?callbackUrl=/account");
   }
 
   return (
-    <AuthUserProvider user={response.data.user}>
+    <SessionProvider session={session.data}>
       <SidebarProvider>
         <UserSidebar />
         <SidebarInset className="bg-gray-50/50">
@@ -60,6 +60,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
           <div className="flex flex-1 flex-col gap-4 p-16 pt-0 mt-5">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-    </AuthUserProvider>
+    </SessionProvider>
   );
 }

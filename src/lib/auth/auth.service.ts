@@ -49,7 +49,16 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 
   try {
     const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
-    await createSession(data.id, data.email, data.role);
+    await createSession({
+      id: data.id,
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: data.phoneNumber,
+      role: data.role,
+      avatarUrl: data.avatarUrl ?? null,
+      isActive: data.isActive,
+    });
     logger.info({ email: data.email }, "User signed in successfully");
     return { ok: true, data };
   } catch (error) {

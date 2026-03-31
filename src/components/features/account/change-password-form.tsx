@@ -14,16 +14,17 @@ import {
   ChangePasswordProfileFormData,
   ChangePasswordProfileSchema,
 } from "@/lib/auth/models/auth.model";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
-import { authClient } from "@/lib/auth/api/auth.client";
+import { signOut } from "@/lib/auth/api/auth.client";
 import { isApiError } from "@/shared/errors/api-error";
 
 const { MY_ACCOUNT } = ROUTES;
 
 export function ChangePasswordForm() {
   const router = useRouter();
-  const { user } = useAuthUser();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const {
     register,
@@ -244,13 +245,12 @@ export function ChangePasswordForm() {
                 underline-offset-2 hover:underline transition-colors"
               onClick={() => {
                 setLoading(true);
-                authClient
-                  .signOut()
+                signOut()
                   .then(() => {
                     router.push(ROUTES.FORGOT_PASSWORD);
                     setLoading(false);
                   })
-                  .catch((error_) => {
+                  .catch(() => {
                     toast.error("Erreur lors de la déconnexion");
                     setLoading(false);
                   });

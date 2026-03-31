@@ -1,7 +1,7 @@
 import "server-only";
 
 import { SignJWT, jwtVerify } from "jose";
-import { SessionPayload } from "@lib/auth/models/auth.model";
+import { SessionPayload, SessionUser } from "@lib/auth/models/auth.model";
 import { cookies } from "next/headers";
 import { getLogger } from "@/config/logger.config";
 
@@ -51,15 +51,13 @@ export async function decrypt(session?: string): Promise<SessionPayload | undefi
 }
 
 /**
- * Creates a session cookie for a user.
- * @param userId - User ID
- * @param email - User email
- * @param role - User role
+ * Creates a session cookie with the full user data.
+ * Équivalent du jwt() callback de NextAuth — stocke tout dans le cookie chiffré.
  */
-export async function createSession(userId: number, email: string, role: string) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Expires in 7 days
+export async function createSession(user: SessionUser) {
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 jours
   const session = await encrypt({
-    user: { userId, email, role },
+    user,
     expiresAt,
   });
   const cookieStore = await cookies();

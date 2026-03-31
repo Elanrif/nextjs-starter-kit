@@ -14,11 +14,8 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { redirect } from "next/navigation";
-import { User } from "@/lib/users/models/user.model";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/api/auth.client";
-import LoadingPage from "@components/features/loading-page";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 
 const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
 
@@ -65,30 +62,9 @@ const data = {
 const sidebarBg = "bg-slate-950 text-white";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [auth, setAuth] = React.useState<User | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const { data: session } = useSession();
 
-  React.useEffect(() => {
-    const fetchAuthData = async () => {
-      try {
-        const response = await authClient.getCurrentUser();
-        if (!response.ok) {
-          redirect("/sign-in?callbackUrl=/account");
-        }
-        setAuth(response.data.user);
-      } catch {
-        redirect("/sign-in?callbackUrl=/account");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAuthData();
-  }, []);
-
-  if (loading || !auth) {
-    //<SidebarSkeleton {...props} />
-    return <LoadingPage loading={loading} text="Chargement..." />;
-  }
+  if (!session?.user) return null;
 
   return (
     <Sidebar collapsible="icon" {...props} className={sidebarBg}>
@@ -105,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarSeparator className="bg-white/5 mx-3" />
 
       <SidebarFooter className={sidebarBg}>
-        <NavUser user={auth} />
+        <NavUser user={session.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

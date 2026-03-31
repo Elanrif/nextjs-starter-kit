@@ -16,12 +16,13 @@ import {
   Hash,
 } from "lucide-react";
 import { UserRole } from "@/lib/users/models/user.model";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 
 const { MY_ACCOUNT, EDIT_PROFILE } = ROUTES;
 
 export function ProfileDetail() {
-  const user = useAuthUser();
+  const { data: session } = useSession();
+  const user = session!.user;
 
   const initials =
     user.firstName?.slice(0, 1).toUpperCase() + (user.lastName?.slice(0, 1).toUpperCase() || "");

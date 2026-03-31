@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { getSession } from "@/lib/auth/jose/jose.service";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const response = await getCurrentUser();
+    const response = await getSession();
     if (!response.ok) {
       const status = response.error?.status || 500;
       return NextResponse.json(response, {

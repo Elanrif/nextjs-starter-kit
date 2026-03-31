@@ -1,4 +1,3 @@
-import { User } from "@/lib/users/models/user.model";
 import { z } from "zod";
 
 export interface AuthSignIn {
@@ -19,32 +18,35 @@ export interface Login extends AuthSignIn {
   password: string;
 }
 
+/**
+ * User data embedded in the session cookie.
+ * Mirrors the User model without sensitive fields (no password).
+ */
+export type SessionUser = {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: string;
+  avatarUrl: string | null;
+  isActive: boolean;
+  [key: string]: any; // allows createdAt, emailVerified, etc. from backend
+};
+
 export interface SessionPayload {
-  user: {
-    userId: number;
-    email: string;
-    role: string;
-  };
+  user: SessionUser;
   expiresAt: Date;
-  [key: string]: any;
+  [key: string]: unknown; // required by jose's JWTPayload
 }
 
 /**
- * Type representing the result of session verification.
+ * Session returned by auth() — contains the full user, no extra fetch needed.
  */
 export type Session = {
-  user: {
-    userId?: number;
-    email?: string;
-    role?: string;
-  };
+  user: SessionUser;
   isAuth: boolean;
   expiresAt?: Date;
-};
-
-export type CurrentUser = {
-  user: User;
-  session: Session;
 };
 
 const BaseSchema = z.object({

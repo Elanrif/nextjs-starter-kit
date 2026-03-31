@@ -23,12 +23,12 @@ export const metadata = {
 };
 
 export default async function AccountPage() {
-  const response = await auth.api.getCurrentUser();
+  const response = await auth();
 
-  if (!response.ok || !response.data) {
+  if (!response.ok) {
     redirect("/sign-in?callbackUrl=/account");
   }
-  const { session, user } = response.data;
+  const user = response.data.user;
 
   const initials =
     user.firstName?.slice(0, 2).toUpperCase() || user.email?.slice(0, 2).toUpperCase() || "U";
@@ -41,8 +41,8 @@ export default async function AccountPage() {
       })
     : "—";
 
-  const sessionExpires = session.expiresAt
-    ? new Date(session.expiresAt).toLocaleString("fr-FR", {
+  const sessionExpires = response.data.expiresAt
+    ? new Date(response.data.expiresAt).toLocaleString("fr-FR", {
         dateStyle: "medium",
         timeStyle: "short",
       })

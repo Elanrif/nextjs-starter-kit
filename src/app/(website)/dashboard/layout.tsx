@@ -5,19 +5,19 @@ import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DashboardBreadcrumb } from "@/components/features/dashboard/dashboard-breadcrumb";
-import { AuthUserProvider } from "@/lib/auth/context/auth.user.context";
+import { SessionProvider } from "@/lib/auth/context/auth.user.context";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const currentUser = await auth.api.getCurrentUser();
+  const session = await auth();
 
-  if (!currentUser.ok) {
+  if (!session.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
 
   return (
-    <AuthUserProvider user={currentUser.data.user}>
+    <SessionProvider session={session.data}>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset
@@ -67,6 +67,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="flex flex-1 flex-col gap-4 mt-5 p-16 pt-0">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-    </AuthUserProvider>
+    </SessionProvider>
   );
 }

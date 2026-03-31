@@ -1,1 +1,1 @@
-export { AuthUserProvider, useAuthUser } from "@/lib/auth/context/auth.user.context";
+export { SessionProvider, useSession } from "@/lib/auth/context/auth.user.context";

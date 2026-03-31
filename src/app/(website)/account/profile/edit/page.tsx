@@ -1,5 +1,6 @@
 import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
-import { getCurrentUser } from "@/lib/auth/jose/jose.service";
+import { auth } from "@/lib/auth/api/auth";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Edit Profile",
@@ -7,12 +8,10 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const res = await getCurrentUser();
+  const res = await auth();
   if (!res.ok) {
-    // Handle error, e.g., redirect to sign-in
-    return <div>Error: Unauthorized</div>;
+    redirect("/sign-in?callbackUrl=/account/profile/edit");
   }
-  const { user } = res.data;
 
-  return <ProfileEditForm user={user} />;
+  return <ProfileEditForm user={res.data.user} />;
 }

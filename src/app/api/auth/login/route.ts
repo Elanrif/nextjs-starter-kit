@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
-import { auth } from "@/lib/auth/api/auth";
+import { signIn } from "@/lib/auth/api/auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
@@ -19,10 +19,7 @@ export async function POST(req: NextRequest) {
   const config = { headers: reqHeaders };
 
   try {
-    const response = await auth.api.signIn({
-      body,
-      config,
-    });
+    const response = await signIn(body, config);
 
     if (!response.ok) {
       const error = response.error;

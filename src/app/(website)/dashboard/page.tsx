@@ -26,11 +26,11 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const response = await auth.api.getCurrentUser();
-  if (!response.ok || !response.data) {
+  const response = await auth();
+  if (!response.ok) {
     redirect("/sign-in?callbackUrl=/dashboard");
   }
-  const { user } = response.data;
+  const user = response.data.user;
 
   const reqHeaders = await headers();
   const config = { headers: reqHeaders };

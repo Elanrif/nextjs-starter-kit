@@ -6,30 +6,36 @@ import { Login, Registrer } from "@lib/auth/models/auth.model";
 import { deleteSession } from "@lib/auth/jose";
 import { Config } from "@/config/api.config";
 
-export const auth = {
-  api: {
-    signIn: async ({ body, config }: { body: Login; config?: Config }) => {
-      return authService.signIn(body, config);
-    },
+/**
+ * Lit la session courante depuis le cookie (server-only).
+ * Équivalent de auth() dans NextAuth — utilisable dans RSC, Server Actions, API Routes.
+ *
+ * @example
+ * const session = await auth();
+ * if (!session.ok) redirect("/sign-in");
+ * session.data.user.userId
+ */
+export const auth = joseService.getSession;
 
-    signUp: async ({ body, config }: { body: Registrer; config?: Config }) => {
-      return authService.signUp(body, config);
-    },
+/**
+ * Appel backend sign-in (utilisé dans les Server Actions / API Routes).
+ * Équivalent de signIn("credentials", ...) dans NextAuth.
+ */
+export async function signIn(credentials: Login, config?: Config) {
+  return authService.signIn(credentials, config);
+}
 
-    signOut: async () => {
-      deleteSession();
-    },
+/**
+ * Appel backend sign-up.
+ */
+export async function signUp(body: Registrer, config?: Config) {
+  return authService.signUp(body, config);
+}
 
-    getSession: async () => {
-      return joseService.getSession();
-    },
-
-    getCurrentUser: async () => {
-      return joseService.getCurrentUser();
-    },
-
-    verifyEmail: async ({ query }: { query: { token: string } }) => {
-      // Simulate API call delay
-    },
-  },
-};
+/**
+ * Supprime le cookie de session.
+ * Équivalent de signOut() dans NextAuth.
+ */
+export async function signOut() {
+  return deleteSession();
+}

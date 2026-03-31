@@ -16,7 +16,7 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { parseResetPassword, ResetPassword, User } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
-import { createSession, deleteSession } from "@lib/auth/jose";
+import { deleteSession } from "@lib/auth/jose";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
 
@@ -31,9 +31,6 @@ export async function signInAction(credentials: Login): Promise<User | ApiError>
     if (!res.ok) {
       return res.error;
     }
-
-    // Create session with user data
-    await createSession(res.data.id, res.data.email, res.data.role);
 
     return res.data;
   } catch (error: any) {
@@ -53,9 +50,6 @@ export async function signUpAction(userData: Registrer): Promise<User | ApiError
     if (!res.ok) {
       return res.error;
     }
-
-    // Create session after successful registration
-    await createSession(res.data.id, res.data.email, res.data.role);
 
     return res.data;
   } catch (error: any) {
