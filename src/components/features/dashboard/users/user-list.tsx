@@ -5,7 +5,7 @@ import { DataTable, DataTableColumn } from "@/components/features/dashboard/data
 import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
-import type { User } from "@/lib/users/models/user.model";
+import { UserRole, type User } from "@/lib/users/models/user.model";
 import { Eye, Pencil, Trash2, Users, Plus, ShieldCheck } from "lucide-react";
 import LoadingPage from "@components/features/loading-page";
 import { useUsers, useDeleteUser } from "@/lib/users/hooks/use-users";
@@ -71,10 +71,10 @@ export function UserList() {
       render: (row) => (
         <span
           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-            row.role === "ADMIN" ? "bg-slate-900 text-white" : "bg-gray-100 text-gray-600"
+            row.role === UserRole.ADMIN ? "bg-slate-900 text-white" : "bg-gray-100 text-gray-600"
           }`}
         >
-          {row.role === "ADMIN" && <ShieldCheck className="w-3 h-3" />}
+          {row.role === UserRole.ADMIN && <ShieldCheck className="w-3 h-3" />}
           {row.role}
         </span>
       ),

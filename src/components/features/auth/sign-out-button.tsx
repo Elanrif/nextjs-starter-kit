@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { ROUTES } from "@/utils/routes";
-import { signOut } from "@/lib/auth/api/auth.client";
 import LoadingPage from "@/components/features/loading-page";
+import { signOutAction } from "@/lib/auth/actions/auth.action";
 
 interface SignOutButtonProps {
   children?: React.ReactNode;
@@ -22,13 +22,17 @@ export function SignOutButton({
 }: SignOutButtonProps) {
   const [loading, setLoading] = useState(false);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setLoading(true);
-    signOut();
-    setTimeout(() => {
-      if (onSignOut) onSignOut();
-      window.location.href = redirectTo;
-    }, 800);
+    try {
+      await signOutAction();
+    } finally {
+      // Keep the UX behavior: small delay for the loader to be visible
+      setTimeout(() => {
+        if (onSignOut) onSignOut();
+        window.location.href = redirectTo;
+      }, 800);
+    }
   };
 
   const variantStyles = {

@@ -8,11 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { signIn } from "@/lib/auth/api/auth.client";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { isApiError } from "@/shared/errors/api-error";
+import { signInAction } from "@/lib/auth/actions/auth.action";
 
 export function SignInForm() {
   const router = useRouter();
@@ -39,12 +38,12 @@ export function SignInForm() {
     setLoading(true);
     setApiError(null);
     try {
-      const result = await signIn({
+      const result = await signInAction({
         email: data.email,
         password: data.password,
       });
-      if (isApiError(result)) {
-        setApiError(result.detail || "Une erreur est survenue.");
+      if (!result.ok) {
+        setApiError(result.error.detail || "Une erreur est survenue.");
         setLoading(false);
         return;
       }

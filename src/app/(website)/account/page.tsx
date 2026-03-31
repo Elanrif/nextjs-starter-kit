@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth/api/auth";
 import { ROUTES } from "@/utils/routes";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +15,8 @@ import {
   Clock,
   Fingerprint,
 } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { UserRole } from "@/lib/users/models/user.model";
 
 export const metadata = {
   title: "Mon compte",
@@ -102,12 +103,12 @@ export default async function AccountPage() {
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs
                   font-semibold ${
-                    user.role === "ADMIN"
+                    user.role === UserRole.ADMIN
                       ? "bg-indigo-500/30 text-indigo-300 ring-1 ring-indigo-400/30"
                       : "bg-white/10 text-white/70"
                   }`}
               >
-                {user.role === "ADMIN" && <Shield className="w-3 h-3" />}
+                {user.role === UserRole.ADMIN && <Shield className="w-3 h-3" />}
                 {user.role}
               </span>
             </div>

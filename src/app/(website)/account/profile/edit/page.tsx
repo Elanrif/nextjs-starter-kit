@@ -1,5 +1,5 @@
 import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
-import { auth } from "@/lib/auth/api/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -13,5 +13,5 @@ export default async function Page() {
     redirect("/sign-in?callbackUrl=/account/profile/edit");
   }
 
-  return <ProfileEditForm user={res.data.user} />;
+  return <ProfileEditForm user={{ ...res.data.user, password: "" }} />;
 }

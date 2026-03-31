@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
-import { signUp } from "@/lib/auth/api/auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { signUp } from "@/lib/auth/auth.service";
 
 const logger = getLogger("server");
 
@@ -15,11 +15,8 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as Registrer;
 
-  const reqHeaders = new Headers(req.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const res = await signUp(body, config);
+    const res = await signUp(body);
 
     if (!res.ok) {
       const error = res.error;

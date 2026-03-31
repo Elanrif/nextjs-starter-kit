@@ -69,3 +69,9 @@
 {"level":30,"time":1774638308509,"pid":38064,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
 {"level":40,"time":1774638310417,"pid":38064,"hostname":"ELTECH","msg":"No active session found during session check"}
 {"level":50,"time":1774638310417,"pid":38064,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":40,"time":1774954968828,"pid":33164,"hostname":"ELTECH","msg":"No active session found"}
+{"level":50,"time":1774954968829,"pid":33164,"hostname":"ELTECH","status":401,"detail":"You must be logged in","msg":"Unauthorized"}
+{"level":30,"time":1774954996058,"pid":33164,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1774954996813,"pid":33164,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
+{"level":30,"time":1774954997878,"pid":33164,"hostname":"ELTECH","token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImF2YXRhclVybCI6bnVsbH0sImV4cGlyZXNBdCI6IjIwMjYtMDQtMDdUMTE6MDM6MTcuNzg4WiIsImlhdCI6MTc3NDk1NDk5NywiZXhwIjoxNzc1NTU5Nzk3fQ.KgWSK3q6ee9SdM5iEpQTlYRdIuEjjUNQtC7B-Dsw20U","msg":"token:"}
+{"level":30,"time":1774954997951,"pid":33164,"hostname":"ELTECH","msg":"User signed in successfully"}

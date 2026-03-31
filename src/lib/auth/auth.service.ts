@@ -15,11 +15,12 @@ import {
   ProfileUserFormData,
   RegisterFormData,
 } from "@lib/auth/models/auth.model";
-import { createSession } from "@lib/auth/jose";
-import { validateId, validationError } from "@/utils/utils.server";
-import { ApiError } from "@/shared/errors/api-error";
+import { createSession } from "@lib/auth/jose/session.server";
+import { validateId } from "@/utils/utils.server";
+import { ApiError, badRequestApiError, unauthorizedApiError } from "@/shared/errors/api-error";
 import { Result } from "@/shared/models/response.model";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { auth } from "../auth";
 
 /**
  * ⚠️ Never trust the client input
@@ -43,12 +44,18 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(login: Login, config?: Config): Promise<Result<User, ApiError>> {
+export async function signIn(login: Login): Promise<Result<User, ApiError>> {
   const validation = parseLogin(login);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
+  if (!validation.success) {
+    logger.warn({ context: "signIn" }, "Validation failed for sign in");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
-    const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
+    const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, login);
     await createSession({
       id: data.id,
       email: data.email,
@@ -73,16 +80,18 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 /**
  * Register a new user with email and password
  */
-export async function signUp(
-  registration: RegisterFormData,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
+export async function signUp(registration: RegisterFormData): Promise<Result<User, ApiError>> {
   const validation = parseRegister(registration);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid registration data");
+  if (!validation.success) {
+    logger.warn({ context: "signUp" }, "Validation failed for sign up");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
-    await apiClient(true, config).post<any, AxiosResponse<any>>(registerUrl, registration);
+    await apiClient(true).post<any, AxiosResponse<any>>(registerUrl, registration);
   } catch (error) {
     logger.error({ email: registration.email }, "Failed to register user");
     return {
@@ -91,7 +100,7 @@ export async function signUp(
     };
   }
 
-  const maybeUser = await signIn(registration, config);
+  const maybeUser = await signIn(registration);
   if (!maybeUser.ok) {
     logger.error(
       {
@@ -106,14 +115,26 @@ export async function signUp(
 }
 
 export async function changeUserPassword(
-  config: Config,
   userId: number,
   oldPassword: string,
   newPassword: string,
 ): Promise<Result<User, ApiError>> {
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "createUser" },
+      "Unauthorized: only authenticated users can change their password",
+    );
+    return {
+      ok: false,
+      error: unauthorizedApiError("You must be logged in to change your password"),
+    };
+  }
+
   const idError = validateId(userId);
   if (idError) return idError;
 
+  const config: Config = { access_token: session.data.access_token };
   try {
     const body = {
       old_password: oldPassword,
@@ -142,19 +163,18 @@ export async function changeUserPassword(
 /**
  * Change password for a user
  */
-export async function resetPassword(
-  data: ResetPassword,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
+export async function resetPassword(data: ResetPassword): Promise<Result<User, ApiError>> {
   const validation = parseResetPassword(data);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid reset password data");
+  if (!validation.success) {
+    logger.warn({ context: "resetPassword" }, "Validation failed for reset password");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
-    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
-      resetPasswordUrl,
-      data,
-    );
+    const res = await apiClient(true).patch<any, AxiosResponse<User>>(resetPasswordUrl, data);
     logger.info({ id: res.data.id }, "Password reset successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
@@ -169,13 +189,29 @@ export async function resetPassword(
 /**
  * Edit user profile
  */
-export async function editProfile(
-  data: ProfileUserFormData,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
-  const validation = parseProfileUser(data);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid profile data");
+export async function editProfile(data: ProfileUserFormData): Promise<Result<User, ApiError>> {
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "createUser" },
+      "Unauthorized: only authenticated users can change their password",
+    );
+    return {
+      ok: false,
+      error: unauthorizedApiError("You must be logged in to change your password"),
+    };
+  }
 
+  const validation = parseProfileUser(data);
+  if (!validation.success) {
+    logger.warn({ context: "editProfile" }, "Validation failed for profile update");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
+
+  const config: Config = { access_token: session.data.access_token };
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(editProfileUrl, data);
     logger.info({ id: res.data.id }, "Profile updated successfully");
@@ -194,11 +230,28 @@ export async function editProfile(
  */
 export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
-  config?: Config,
 ): Promise<Result<User, ApiError>> {
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "createUser" },
+      "Unauthorized: only authenticated users can change their password",
+    );
+    return {
+      ok: false,
+      error: unauthorizedApiError("You must be logged in to change your password"),
+    };
+  }
   const validation = parseChangePasswordProfile(data);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid password data");
+  if (!validation.success) {
+    logger.warn({ context: "changePasswordProfile" }, "Validation failed for password change");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
+  const config: Config = { access_token: session.data.access_token };
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
       changeProfilePasswordUrl,

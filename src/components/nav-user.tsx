@@ -33,11 +33,13 @@ import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
 import { SignOutButton } from "./features/auth/sign-out-button";
 
-function getInitials(user: User) {
+type NavUserModel = Omit<User, "password">;
+
+function getInitials(user: NavUserModel) {
   return ((user.firstName?.slice(0, 1) ?? "") + (user.lastName?.slice(0, 1) ?? "")).toUpperCase();
 }
 
-function renderAccountMenuItem(user: User, pathname?: string | null) {
+function renderAccountMenuItem(user: NavUserModel, pathname?: string | null) {
   if (!user) return null;
   if (pathname?.startsWith("/account") && user.role !== UserRole.ADMIN) return null;
 
@@ -66,7 +68,13 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
   );
 }
 
-export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dark" | "light" }) {
+export function NavUser({
+  user,
+  variant = "dark",
+}: {
+  user: NavUserModel;
+  variant?: "dark" | "light";
+}) {
   const { session, error, invalidate } = useSession();
   const { isMobile } = useSidebar();
   const pathname = usePathname();

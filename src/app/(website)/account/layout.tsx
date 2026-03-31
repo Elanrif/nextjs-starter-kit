@@ -3,9 +3,9 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { UserSidebar } from "@/components/user-sidebar";
 import { redirect } from "next/navigation";
 import { SessionProvider } from "@/lib/auth/context/auth.user.context";
-import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
 import { AccountBreadcrumb } from "@/components/features/account/account-breadcrumb";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 

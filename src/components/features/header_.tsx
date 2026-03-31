@@ -8,6 +8,7 @@ import { useSession } from "@/hooks/use.session";
 import Logo from "./logo";
 import { Mail, LayoutDashboard, LogIn, UserPlus, Menu, X, UserCheck } from "lucide-react";
 import { cn } from "@/utils/utils";
+import { UserRole } from "@/lib/users/models/user.model";
 
 const navLinks = [
   { href: "#features", label: "Fonctionnalités" },
@@ -95,7 +96,7 @@ export function Header() {
               if (session && session.ok && !error) {
                 return (
                   <>
-                    {session.data.user.role === "admin" ? (
+                    {session.data.user.role === UserRole.ADMIN ? (
                       <Link
                         href={DASHBOARD}
                         className={cn(

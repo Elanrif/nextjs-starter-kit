@@ -1,11 +1,11 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth/api/auth";
 import { Bell, Sparkles } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DashboardBreadcrumb } from "@/components/features/dashboard/dashboard-breadcrumb";
 import { SessionProvider } from "@/lib/auth/context/auth.user.context";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 

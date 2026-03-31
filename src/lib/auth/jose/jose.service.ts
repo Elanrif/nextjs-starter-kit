@@ -11,7 +11,7 @@ import { Session } from "@lib/auth/models/auth.model";
 import { decrypt } from ".";
 import { Result } from "@/shared/models/response.model";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
-import { ApiError } from "@/shared/errors/api-error";
+import { ApiError, unauthorizedApiError } from "@/shared/errors/api-error";
 
 const logger = getLogger("server");
 
@@ -20,11 +20,11 @@ const logger = getLogger("server");
  * Équivalent de auth() dans NextAuth — ~1ms, aucun appel réseau.
  *
  * @example
- * const session = await getSession();
+ * const session = await auth();
  * if (!session.ok) redirect("/sign-in");
  * session.data.user.firstName
  */
-export const getSession = cache(async (): Promise<Result<Session, ApiError>> => {
+export const auth = cache(async (): Promise<Result<Session, ApiError>> => {
   try {
     const cookie = await cookies();
     const sess = cookie.get("session")?.value;
@@ -34,13 +34,7 @@ export const getSession = cache(async (): Promise<Result<Session, ApiError>> => 
       logger.warn("No active session found");
       return {
         ok: false,
-        error: {
-          title: "Unauthorized",
-          status: 401,
-          detail: "No active session",
-          instance: undefined,
-          errorCode: "NO_ACTIVE_SESSION",
-        },
+        error: unauthorizedApiError("No active session found"),
       };
     }
 
@@ -50,13 +44,14 @@ export const getSession = cache(async (): Promise<Result<Session, ApiError>> => 
         user: payload.user,
         isAuth: true,
         expiresAt: payload.expiresAt,
+        access_token: sess,
       },
     };
   } catch (error) {
     logger.error({ err: error }, "Error retrieving session");
     return {
       ok: false,
-      error: ApiErrorResponse(error),
+      error: ApiErrorResponse(error, "auth"),
     };
   }
 });

@@ -6,13 +6,12 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "l
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
-import { signUpAction } from "@/lib/auth/actions/auth";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { isApiError } from "@/shared/errors/api-error";
+import { signUpAction } from "@/lib/auth/actions/auth.action";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -63,8 +62,8 @@ export function SignUpForm() {
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
-      if (isApiError(result)) {
-        setError(result.detail || "Échec de la création du compte");
+      if (!result.ok) {
+        setError(result.error.detail || "Échec de la création du compte");
         setLoading(false);
         return;
       }

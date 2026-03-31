@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { getSession } from "@/lib/auth/jose/jose.service";
+import { auth } from "@/lib/auth/jose/jose.service";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { unauthorizedApiError } from "@/shared/errors/api-error";
 
 const logger = getLogger("server");
 
@@ -9,14 +10,18 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const response = await getSession();
-    if (!response.ok) {
-      const status = response.error?.status || 500;
-      return NextResponse.json(response, {
-        status,
-      });
+    const session = await auth();
+    if (!session?.ok) {
+      logger.warn(
+        { context: "createUser" },
+        "Unauthorized: only authenticated users can change their password",
+      );
+      return NextResponse.json(
+        { ok: false, error: unauthorizedApiError("You must be logged in") },
+        { status: 401 },
+      );
     }
-    return NextResponse.json(response, {
+    return NextResponse.json(session, {
       status: 200,
     });
   } catch (error) {

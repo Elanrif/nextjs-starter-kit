@@ -15,9 +15,7 @@ import {
   ChangePasswordProfileSchema,
 } from "@/lib/auth/models/auth.model";
 import { useSession } from "@/lib/auth/context/auth.user.context";
-import { changePasswordProfileAction } from "@/lib/auth/actions/auth";
-import { signOut } from "@/lib/auth/api/auth.client";
-import { isApiError } from "@/shared/errors/api-error";
+import { changePasswordProfileAction, signOutAction } from "@/lib/auth/actions/auth.action";
 
 const { MY_ACCOUNT } = ROUTES;
 
@@ -55,9 +53,9 @@ export function ChangePasswordForm() {
     setLoading(true);
     try {
       const response = await changePasswordProfileAction(data);
-      if (isApiError(response)) {
-        setError(response.detail || "Erreur lors de la mise à jour");
-        toast.error(response.detail || "Erreur lors de la mise à jour");
+      if (!response.ok) {
+        setError(response.error.detail || "Erreur lors de la mise à jour");
+        toast.error(response.error.detail || "Erreur lors de la mise à jour");
         return;
       }
       toast.success("Mot de passe mis à jour avec succès !");
@@ -245,7 +243,7 @@ export function ChangePasswordForm() {
                 underline-offset-2 hover:underline transition-colors"
               onClick={() => {
                 setLoading(true);
-                signOut()
+                signOutAction()
                   .then(() => {
                     router.push(ROUTES.FORGOT_PASSWORD);
                     setLoading(false);

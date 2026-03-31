@@ -9,12 +9,11 @@ import { ROUTES } from "@/utils/routes";
 import { User } from "@/lib/users/models/user.model";
 import { User as UserIcon, Mail, Phone, Pencil, ArrowLeft, Save } from "lucide-react";
 import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.model";
-import { editProfileAction } from "@/lib/auth/actions/auth";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
-import { isApiError } from "@/shared/errors/api-error";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
+import { editProfileAction } from "@/lib/auth/actions/auth.action";
 
 const { MY_ACCOUNT } = ROUTES;
 
@@ -55,9 +54,9 @@ export function ProfileEditForm({ user }: { user: User }) {
         avatarUrl: avatar.url || undefined,
       };
       const response = await editProfileAction(payload);
-      if (isApiError(response)) {
-        setError(response.detail || "Erreur lors de la mise à jour");
-        toast.error(response.detail || "Erreur lors de la mise à jour");
+      if (!response.ok) {
+        setError(response.error.detail || "Erreur lors de la mise à jour");
+        toast.error(response.error.detail || "Erreur lors de la mise à jour");
         return;
       }
       avatar.clearDraft();

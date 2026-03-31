@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRole } from "@/lib/users/models/user.model";
 
 export interface AuthSignIn {
   action?: "SIGN_IN" | "SIGN_UP";
@@ -28,7 +29,7 @@ export type SessionUser = {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  role: string;
+  role: UserRole;
   avatarUrl: string | null;
   isActive: boolean;
   [key: string]: any; // allows createdAt, emailVerified, etc. from backend
@@ -47,6 +48,7 @@ export type Session = {
   user: SessionUser;
   isAuth: boolean;
   expiresAt?: Date;
+  access_token?: string;
 };
 
 const BaseSchema = z.object({

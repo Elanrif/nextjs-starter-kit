@@ -1,10 +1,9 @@
 import environment from "@config/environment.config";
 import { InternalAxiosRequestConfig } from "axios";
-import { isTokenExpired, Token } from "@config/auth.utils";
 import { getLogger } from "@config/logger.config";
 import { ApiError_ } from "@/shared/errors/api-error";
 
-const { api: apiConfig, auth: authConfig } = environment;
+const { api: apiConfig } = environment;
 const logger = getLogger();
 const SAFE_URLS = [apiConfig.rest.endpoints.register, apiConfig.rest.endpoints.login];
 
@@ -20,14 +19,13 @@ export const anonTokenInterceptor = async (config: InternalAxiosRequestConfig) =
   return config;
 };
 
-export const ownTokenInterceptor = async (config: InternalAxiosRequestConfig, token?: Token) => {
+export const ownTokenInterceptor = async (
+  config: InternalAxiosRequestConfig,
+  access_token?: string,
+) => {
   const { headers } = config;
-  if (token && isTokenExpired(token.expiry) && token.refresh_token) {
-    // token = await refreshOwnToken(token.refresh_token);
-    logger.info(`Token expired, not refreshing token token expired at ${token.expiry}`);
-  }
-  if (token) {
-    headers["Authorization"] = `Bearer ${token.access_token}`;
+  if (access_token) {
+    headers["Authorization"] = `Bearer ${access_token}`;
   } else {
     throw new ApiError_("Not Authenticated", 401);
   }

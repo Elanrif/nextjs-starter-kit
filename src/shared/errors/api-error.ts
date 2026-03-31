@@ -55,3 +55,40 @@ export class ApiError_ extends Error {
     this.instance = instance;
   }
 }
+
+/**
+ * Unauthorized error — typically 401 (no active session)
+ */
+export const unauthorizedApiError = (detail = "No active session"): ApiError => {
+  return {
+    title: "Unauthorized",
+    status: 401,
+    detail,
+    instance: undefined,
+    errorCode: "Unauthorized",
+  } as ApiError;
+};
+
+/**
+ * Forbidden error — typically 403 (insufficient permissions)
+ */
+export const forbiddenApiError = (detail = "Insufficient permissions"): ApiError => {
+  return {
+    status: 403,
+    title: "Forbidden",
+    detail,
+    errorCode: "INSUFFICIENT_PERMISSIONS",
+  } as ApiError;
+};
+
+/**
+ * Bad request error — typically 400 (invalid input)
+ */
+export const badRequestApiError = (detail = "Invalid request"): ApiError => {
+  return {
+    status: 400,
+    title: "Bad Request",
+    detail,
+    errorCode: "BAD_REQUEST",
+  } as ApiError;
+};

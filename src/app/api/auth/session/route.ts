@@ -1,39 +1,25 @@
 import { NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
-import { Session } from "@/lib/auth/models/auth.model";
-import { getSession } from "@/lib/auth/jose/jose.service";
-import { ApiError } from "@/shared/errors/api-error";
-import { Result } from "@/shared/models/response.model";
+import { auth } from "@/lib/auth/jose/jose.service";
+import { unauthorizedApiError } from "@/shared/errors/api-error";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse<Result<Session, ApiError>>> {
+export async function GET() {
   try {
-    // Use getSession instead of getSession to avoid redirects
-    const session = await getSession();
-
-    if (!session.ok) {
-      const err = {
-        title: "Unauthorized",
-        status: 401,
-        detail: "You must be logged in",
-        instance: undefined,
-        errorCode: "UNAUTHORIZED_ACCESS",
-      };
-      logger.error(
-        {
-          status: err.status,
-          detail: err.detail,
-        },
-        "Unauthorized",
+    const session = await auth();
+    if (!session?.ok) {
+      logger.warn(
+        { context: "createUser" },
+        "Unauthorized: only authenticated users can change their password",
       );
-      return NextResponse.json({
-        ok: false,
-        error: err,
-      });
+      return NextResponse.json(
+        { ok: false, error: unauthorizedApiError("You must be logged in") },
+        { status: 401 },
+      );
     }
 
     return NextResponse.json(session, {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth/jose";
+import { UserRole } from "@/lib/users/models/user.model";
 
 const protectedRoutes = ["/dashboard", "/account"];
 const publicRoutePrefixes = ["/sign-in", "/sign-up"];
@@ -30,7 +31,7 @@ export default async function proxy(req: NextRequest) {
   if (
     isProtectedRoute &&
     session?.user?.userId &&
-    session?.user?.role === "ADMIN" &&
+    session?.user?.role === UserRole.ADMIN &&
     !normalized.startsWith("/dashboard") &&
     !normalized.startsWith("/account")
   ) {
@@ -41,7 +42,7 @@ export default async function proxy(req: NextRequest) {
   if (
     isProtectedRoute &&
     session?.user?.userId &&
-    session?.user?.role !== "ADMIN" &&
+    session?.user?.role !== UserRole.ADMIN &&
     !normalized.startsWith("/account")
   ) {
     return NextResponse.redirect(new URL("/account", req.nextUrl));
