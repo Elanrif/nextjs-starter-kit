@@ -86,6 +86,22 @@ export async function fetchCommentById(id: number): Promise<Result<Comment, ApiE
  * Create a new comment
  */
 export async function createComment(comment: CommentCreate): Promise<Result<Comment, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "createComment" },
+      "Not logged in: only authenticated users can create comments",
+    );
+    return { ok: false, error: unauthorizedApiError() };
+  }
+  const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input data
+   */
   const parse = parseCommentCreate(comment);
   if (!parse.success) {
     logger.warn({ context: "createComment" }, "Validation failed for comment creation");
@@ -95,16 +111,9 @@ export async function createComment(comment: CommentCreate): Promise<Result<Comm
     };
   }
 
-  const session = await auth();
-  if (!session?.ok) {
-    logger.warn(
-      { context: "createComment" },
-      "Not logged in: only authenticated users can create comments",
-    );
-    return { ok: false, error: unauthorizedApiError() };
-  }
-
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to create via API
+   */
   try {
     const res = await apiClient(false, config).post<unknown, AxiosResponse<Comment>>(
       COMMENTS_URL,
@@ -128,6 +137,22 @@ export async function updateComment(
   id: number,
   comment: CommentUpdate,
 ): Promise<Result<Comment, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "updateComment" },
+      "Not logged in: only authenticated users can update comments",
+    );
+    return { ok: false, error: unauthorizedApiError() };
+  }
+  const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input parameters
+   */
   const idError = validateId(id);
   if (idError) return idError;
 
@@ -140,16 +165,9 @@ export async function updateComment(
     };
   }
 
-  const session = await auth();
-  if (!session?.ok) {
-    logger.warn(
-      { context: "updateComment" },
-      "Not logged in: only authenticated users can update comments",
-    );
-    return { ok: false, error: unauthorizedApiError() };
-  }
-
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to update via API
+   */
   try {
     const res = await apiClient(false, config).patch<unknown, AxiosResponse<Comment>>(
       `${COMMENTS_URL}/${id}`,
@@ -170,9 +188,9 @@ export async function updateComment(
  * Delete a comment
  */
 export async function deleteComment(id: number): Promise<Result<{ success: boolean }, ApiError>> {
-  const idError = validateId(id);
-  if (idError) return idError;
-
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok) {
     logger.warn(
@@ -181,8 +199,17 @@ export async function deleteComment(id: number): Promise<Result<{ success: boole
     );
     return { ok: false, error: unauthorizedApiError() };
   }
-
   const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input parameters
+   */
+  const idError = validateId(id);
+  if (idError) return idError;
+
+  /**
+   * Attempt to delete via API
+   */
   try {
     await apiClient(false, config).delete(`${COMMENTS_URL}/${id}`);
     logger.info({ id }, "Comment deleted successfully");

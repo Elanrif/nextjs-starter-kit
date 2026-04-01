@@ -80,6 +80,22 @@ export async function fetchPostById(id: number): Promise<Result<Post, ApiError>>
  * Create a new post
  */
 export async function createPost(post: PostCreate): Promise<Result<Post, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "createPost" },
+      "Not logged in: only authenticated users can create posts",
+    );
+    return { ok: false, error: unauthorizedApiError() };
+  }
+  const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input data
+   */
   const parse = parsePostCreate(post);
   if (!parse.success) {
     logger.warn({ context: "createPost" }, "Validation failed for post creation");
@@ -89,16 +105,9 @@ export async function createPost(post: PostCreate): Promise<Result<Post, ApiErro
     };
   }
 
-  const session = await auth();
-  if (!session?.ok) {
-    logger.warn(
-      { context: "createPost" },
-      "Not logged in: only authenticated users can create posts",
-    );
-    return { ok: false, error: unauthorizedApiError() };
-  }
-
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to create via API
+   */
   try {
     const res = await apiClient(false, config).post<unknown, AxiosResponse<Post>>(
       POSTS_URL,
@@ -119,6 +128,22 @@ export async function createPost(post: PostCreate): Promise<Result<Post, ApiErro
  * Update an existing post
  */
 export async function updatePost(id: number, post: PostUpdate): Promise<Result<Post, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
+  const session = await auth();
+  if (!session?.ok) {
+    logger.warn(
+      { context: "updatePost" },
+      "Not logged in: only authenticated users can update posts",
+    );
+    return { ok: false, error: unauthorizedApiError() };
+  }
+  const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input parameters
+   */
   const idError = validateId(id);
   if (idError) return idError;
 
@@ -131,16 +156,9 @@ export async function updatePost(id: number, post: PostUpdate): Promise<Result<P
     };
   }
 
-  const session = await auth();
-  if (!session?.ok) {
-    logger.warn(
-      { context: "updatePost" },
-      "Not logged in: only authenticated users can update posts",
-    );
-    return { ok: false, error: unauthorizedApiError() };
-  }
-
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to update via API
+   */
   try {
     const res = await apiClient(false, config).patch<unknown, AxiosResponse<Post>>(
       `${POSTS_URL}/${id}`,
@@ -161,9 +179,9 @@ export async function updatePost(id: number, post: PostUpdate): Promise<Result<P
  * Delete a post
  */
 export async function deletePost(id: number): Promise<Result<{ success: boolean }, ApiError>> {
-  const idError = validateId(id);
-  if (idError) return idError;
-
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok) {
     logger.warn(
@@ -172,8 +190,17 @@ export async function deletePost(id: number): Promise<Result<{ success: boolean 
     );
     return { ok: false, error: unauthorizedApiError() };
   }
-
   const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input parameters
+   */
+  const idError = validateId(id);
+  if (idError) return idError;
+
+  /**
+   * Attempt to delete via API
+   */
   try {
     await apiClient(false, config).delete(`${POSTS_URL}/${id}`);
     logger.info({ id }, "Post deleted successfully");

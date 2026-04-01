@@ -45,6 +45,9 @@ const logger = getLogger("server");
  * Sign in a user with email and password
  */
 export async function signIn(login: Login): Promise<Result<User, ApiError>> {
+  /**
+   * Validate input data
+   */
   const validation = parseLogin(login);
   if (!validation.success) {
     logger.warn({ context: "signIn" }, "Validation failed for sign in");
@@ -54,6 +57,9 @@ export async function signIn(login: Login): Promise<Result<User, ApiError>> {
     };
   }
 
+  /**
+   * Attempt to sign in via API
+   */
   try {
     const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, login);
     await createSession({
@@ -83,6 +89,9 @@ export async function signIn(login: Login): Promise<Result<User, ApiError>> {
  * Register a new user with email and password
  */
 export async function signUp(registration: RegisterFormData): Promise<Result<User, ApiError>> {
+  /**
+   * Validate input data
+   */
   const validation = parseRegister(registration);
   if (!validation.success) {
     logger.warn({ context: "signUp" }, "Validation failed for sign up");
@@ -92,6 +101,9 @@ export async function signUp(registration: RegisterFormData): Promise<Result<Use
     };
   }
 
+  /**
+   * Attempt to register via API
+   */
   try {
     await apiClient(true).post<any, AxiosResponse<any>>(registerUrl, registration);
   } catch (error) {
@@ -121,10 +133,13 @@ export async function changeUserPassword(
   oldPassword: string,
   newPassword: string,
 ): Promise<Result<User, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok) {
     logger.warn(
-      { context: "createUser" },
+      { context: "changeUserPassword" },
       "Unauthorized: only authenticated users can change their password",
     );
     return {
@@ -132,11 +147,17 @@ export async function changeUserPassword(
       error: unauthorizedApiError("You must be logged in to change your password"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
 
+  /**
+   * Validate input parameters
+   */
   const idError = validateId(userId);
   if (idError) return idError;
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to change password via API
+   */
   try {
     const body = {
       old_password: oldPassword,
@@ -166,6 +187,9 @@ export async function changeUserPassword(
  * Change password for a user
  */
 export async function resetPassword(data: ResetPassword): Promise<Result<User, ApiError>> {
+  /**
+   * Validate input data
+   */
   const validation = parseResetPassword(data);
   if (!validation.success) {
     logger.warn({ context: "resetPassword" }, "Validation failed for reset password");
@@ -175,6 +199,9 @@ export async function resetPassword(data: ResetPassword): Promise<Result<User, A
     };
   }
 
+  /**
+   * Attempt to reset password via API
+   */
   try {
     const res = await apiClient(true).patch<any, AxiosResponse<User>>(resetPasswordUrl, data);
     logger.info({ id: res.data.id }, "Password reset successfully");
@@ -192,10 +219,13 @@ export async function resetPassword(data: ResetPassword): Promise<Result<User, A
  * Edit user profile
  */
 export async function editProfile(data: ProfileUserFormData): Promise<Result<User, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok) {
     logger.warn(
-      { context: "createUser" },
+      { context: "editProfile" },
       "Unauthorized: only authenticated users can edit their profile",
     );
     return {
@@ -203,7 +233,11 @@ export async function editProfile(data: ProfileUserFormData): Promise<Result<Use
       error: unauthorizedApiError("You must be logged in to edit your profile"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
 
+  /**
+   * Validate input data
+   */
   const validation = parseProfileUser(data);
   if (!validation.success) {
     logger.warn({ context: "editProfile" }, "Validation failed for profile update");
@@ -213,7 +247,9 @@ export async function editProfile(data: ProfileUserFormData): Promise<Result<Use
     };
   }
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to update profile via API
+   */
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(editProfileUrl, data);
     logger.info({ id: res.data.id }, "Profile updated successfully");
@@ -233,10 +269,13 @@ export async function editProfile(data: ProfileUserFormData): Promise<Result<Use
 export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
 ): Promise<Result<User, ApiError>> {
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok) {
     logger.warn(
-      { context: "createUser" },
+      { context: "changePasswordProfile" },
       "Unauthorized: only authenticated users can change their password",
     );
     return {
@@ -244,6 +283,11 @@ export async function changePasswordProfile(
       error: unauthorizedApiError("You must be logged in to change your password"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
+
+  /**
+   * Validate input data
+   */
   const validation = parseChangePasswordProfile(data);
   if (!validation.success) {
     logger.warn({ context: "changePasswordProfile" }, "Validation failed for password change");
@@ -253,7 +297,9 @@ export async function changePasswordProfile(
     };
   }
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to change password via API
+   */
   try {
     const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
       changeProfilePasswordUrl,

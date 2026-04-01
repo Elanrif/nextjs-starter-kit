@@ -50,7 +50,9 @@ export async function fetchAllUsers(): Promise<Result<User[], ApiError>> {
  * Create a new user
  */
 export async function createUser(user: Omit<User, "id">): Promise<Result<User, ApiError>> {
-  // Check user role (RBAC)
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok || session.data?.user?.role !== UserRole.ADMIN) {
     logger.warn({ context: "createUser" }, "Unauthorized: only ADMIN can create users");
@@ -59,7 +61,11 @@ export async function createUser(user: Omit<User, "id">): Promise<Result<User, A
       error: forbiddenApiError("Only ADMIN users can create new users"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
 
+  /**
+   * Validate input data
+   */
   const parse = parseUserCreate(user);
   if (!parse.success) {
     logger.warn({ context: "createUser" }, "Validation failed for user creation");
@@ -69,7 +75,9 @@ export async function createUser(user: Omit<User, "id">): Promise<Result<User, A
     };
   }
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to create via API
+   */
   try {
     const res = await apiClient(false, config).post<User>(usersUrl, parse.data);
     logger.info({ id: res.data.id }, "User created successfully");
@@ -126,7 +134,9 @@ export async function updateUser(
   id: number,
   user: UserUpdateFormData,
 ): Promise<Result<User, ApiError>> {
-  // Check user role (RBAC)
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok || session.data?.user?.role !== UserRole.ADMIN) {
     logger.warn({ context: "updateUser" }, "Unauthorized: only ADMIN can update users");
@@ -135,7 +145,11 @@ export async function updateUser(
       error: forbiddenApiError("Only ADMIN users can update users"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
 
+  /**
+   * Validate input parameters
+   */
   const idError = validateId(id);
   if (idError) return idError;
 
@@ -148,7 +162,9 @@ export async function updateUser(
     };
   }
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to update via API
+   */
   try {
     const res = await apiClient(false, config).patch<User>(`${usersUrl}/${id}`, parse.data);
     logger.info({ id }, "User updated successfully");
@@ -166,7 +182,9 @@ export async function updateUser(
  * Delete a user
  */
 export async function deleteUser(id: number): Promise<Result<{ success: boolean }, ApiError>> {
-  // Check user role (RBAC)
+  /**
+   * Check user authentication (RBAC)
+   */
   const session = await auth();
   if (!session?.ok || session.data?.user?.role !== UserRole.ADMIN) {
     logger.warn({ context: "deleteUser" }, "Unauthorized: only ADMIN can delete users");
@@ -175,11 +193,17 @@ export async function deleteUser(id: number): Promise<Result<{ success: boolean 
       error: forbiddenApiError("Only ADMIN users can delete users"),
     };
   }
+  const config: Config = { access_token: session.data.access_token };
 
+  /**
+   * Validate input parameters
+   */
   const idError = validateId(id);
   if (idError) return idError;
 
-  const config: Config = { access_token: session.data.access_token };
+  /**
+   * Attempt to delete via API
+   */
   try {
     await apiClient(false, config).delete(`${usersUrl}/${id}`);
     logger.info({ id }, "User deleted successfully");
