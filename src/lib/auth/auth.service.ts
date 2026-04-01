@@ -1,6 +1,6 @@
 "server-only";
 
-import apiClient, { Config } from "@config/api.config";
+import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
 import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
@@ -42,12 +42,12 @@ const logger = getLogger("server");
 /**
  * Sign in a user with email and password
  */
-export async function signIn(login: Login, config?: Config): Promise<Result<User, ApiError>> {
+export async function signIn(login: Login): Promise<Result<User, ApiError>> {
   const validation = parseLogin(login);
   if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
 
   try {
-    const { data } = await apiClient(true, config).post<any, AxiosResponse<User>>(loginUrl, login);
+    const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, login);
     logger.info({ email: data.email }, "User signed in successfully");
     return { ok: true, data };
   } catch (error) {
@@ -62,16 +62,13 @@ export async function signIn(login: Login, config?: Config): Promise<Result<User
 /**
  * Register a new user with email and password
  */
-export async function signUp(
-  registration: RegisterFormData,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
+export async function signUp(registration: RegisterFormData): Promise<Result<User, ApiError>> {
   const validation = parseRegister(registration);
   if (!validation.success)
     return validationError(validation.error.issues, "Invalid registration data");
 
   try {
-    await apiClient(true, config).post<any, AxiosResponse<any>>(registerUrl, registration);
+    await apiClient(true).post<any, AxiosResponse<any>>(registerUrl, registration);
   } catch (error) {
     logger.error({ email: registration.email }, "Failed to register user");
     return {
@@ -80,7 +77,7 @@ export async function signUp(
     };
   }
 
-  const maybeUser = await signIn(registration, config);
+  const maybeUser = await signIn(registration);
   if (!maybeUser.ok) {
     logger.error(
       {
@@ -95,7 +92,6 @@ export async function signUp(
 }
 
 export async function changeUserPassword(
-  config: Config,
   userId: number,
   oldPassword: string,
   newPassword: string,
@@ -109,7 +105,7 @@ export async function changeUserPassword(
       new_password: newPassword,
     };
     const url = `/${userId}`;
-    const result = await apiClient(true, config) //
+    const result = await apiClient(true) //
       .patch<any, AxiosResponse<User>>(url, body);
     logger.info({ userId }, "changeUserPassword");
     return { ok: true, data: result.data };
@@ -131,19 +127,13 @@ export async function changeUserPassword(
 /**
  * Change password for a user
  */
-export async function resetPassword(
-  data: ResetPassword,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
+export async function resetPassword(data: ResetPassword): Promise<Result<User, ApiError>> {
   const validation = parseResetPassword(data);
   if (!validation.success)
     return validationError(validation.error.issues, "Invalid reset password data");
 
   try {
-    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
-      resetPasswordUrl,
-      data,
-    );
+    const res = await apiClient(true).patch<any, AxiosResponse<User>>(resetPasswordUrl, data);
     logger.info({ id: res.data.id }, "Password reset successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
@@ -158,15 +148,12 @@ export async function resetPassword(
 /**
  * Edit user profile
  */
-export async function editProfile(
-  data: ProfileUserFormData,
-  config?: Config,
-): Promise<Result<User, ApiError>> {
+export async function editProfile(data: ProfileUserFormData): Promise<Result<User, ApiError>> {
   const validation = parseProfileUser(data);
   if (!validation.success) return validationError(validation.error.issues, "Invalid profile data");
 
   try {
-    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(editProfileUrl, data);
+    const res = await apiClient(true).patch<any, AxiosResponse<User>>(editProfileUrl, data);
     logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {
@@ -183,13 +170,12 @@ export async function editProfile(
  */
 export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
-  config?: Config,
 ): Promise<Result<User, ApiError>> {
   const validation = parseChangePasswordProfile(data);
   if (!validation.success) return validationError(validation.error.issues, "Invalid password data");
 
   try {
-    const res = await apiClient(true, config).patch<any, AxiosResponse<User>>(
+    const res = await apiClient(true).patch<any, AxiosResponse<User>>(
       changeProfilePasswordUrl,
       data,
     );

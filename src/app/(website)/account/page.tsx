@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { ROUTES } from "@/utils/routes";
 import Link from "next/link";
 import Image from "next/image";
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 export default function AccountPage() {
-  const { user } = useAuthUser();
+  const { user } = useSession();
   if (!user) return null;
 
   const initials =

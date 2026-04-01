@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@/utils/routes";
 import { NavMainUser } from "./nav-main-user";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { AccountBrand } from "./features/account-brand";
 
 const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
@@ -53,7 +53,7 @@ const data = {
 };
 
 export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuthUser();
+  const { user } = useSession();
   if (!user) return null;
 
   return (

@@ -8,18 +8,18 @@ import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { User as UserIcon, Mail, Phone, Pencil, ArrowLeft, Save } from "lucide-react";
 import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.model";
-import { editProfileAction } from "@/lib/auth/actions/auth";
+import { editProfileAction } from "@/lib/auth/actions/auth.action";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { isApiError } from "@/shared/errors/api-error";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 
 const { MY_ACCOUNT } = ROUTES;
 
 export function ProfileEditForm() {
-  const { user, setUser } = useAuthUser();
+  const { user, setUser } = useSession();
   const router = useRouter();
   const {
     register,
@@ -63,8 +63,8 @@ export function ProfileEditForm() {
       }
       setUser(response);
       avatar.clearDraft();
-      toast.success("Profil mis à jour avec succès !");
       router.push(MY_ACCOUNT);
+      toast.success("Profil mis à jour avec succès !");
     } catch (error_: any) {
       setError(error_.message || "Erreur inattendue");
       toast.error("Erreur inattendue lors de la mise à jour");

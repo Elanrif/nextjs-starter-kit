@@ -21,11 +21,8 @@ export async function GET(request: NextRequest) {
     isActive: searchParams.has("isActive") ? searchParams.get("isActive") === "true" : undefined,
   };
 
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await searchUsersFilter(filters, config);
+    const response = await searchUsersFilter(filters);
 
     if (!response.ok) {
       return NextResponse.json(response, {

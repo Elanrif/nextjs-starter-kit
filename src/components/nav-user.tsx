@@ -27,7 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { User, UserRole } from "@/lib/users/models/user.model";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
@@ -67,7 +67,7 @@ function renderAccountMenuItem(user: User, pathname?: string | null) {
 }
 
 export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dark" | "light" }) {
-  const { signOut } = useAuthUser();
+  const { signOut } = useSession();
   const { isMobile } = useSidebar();
   const pathname = usePathname();
 

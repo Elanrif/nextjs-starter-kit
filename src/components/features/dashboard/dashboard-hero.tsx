@@ -1,11 +1,11 @@
 "use client";
 
 import { Activity } from "lucide-react";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import Image from "next/image";
 
 export function DashboardHero() {
-  const { user } = useAuthUser();
+  const { user } = useSession();
   if (!user) return null;
 
   const initials =

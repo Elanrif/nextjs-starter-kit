@@ -1,6 +1,6 @@
 "server-only";
 
-import apiClient, { Config } from "@config/api.config";
+import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import {
   parseUserCreate,
@@ -30,9 +30,9 @@ const {
 
 const logger = getLogger("server");
 
-export async function fetchAllUsers(config: Config): Promise<Result<User[], ApiError>> {
+export async function fetchAllUsers(): Promise<Result<User[], ApiError>> {
   try {
-    const res = await apiClient(true, config).get<User[]>(usersUrl);
+    const res = await apiClient(true).get<User[]>(usersUrl);
     logger.info({ count: res.data.length }, "Fetched users");
     return { ok: true, data: res.data };
   } catch (error) {
@@ -47,15 +47,12 @@ export async function fetchAllUsers(config: Config): Promise<Result<User[], ApiE
 /**
  * Create a new user
  */
-export async function createUser(
-  config: Config,
-  user: Omit<User, "id">,
-): Promise<Result<User, ApiError>> {
+export async function createUser(user: Omit<User, "id">): Promise<Result<User, ApiError>> {
   const parse = parseUserCreate(user);
   if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
 
   try {
-    const res = await apiClient(true, config).post<User>(usersUrl, parse.data);
+    const res = await apiClient(true).post<User>(usersUrl, parse.data);
     logger.info({ id: res.data.id }, "User created successfully");
     return { ok: true, data: res.data };
   } catch (error) {
@@ -68,12 +65,12 @@ export async function createUser(
   }
 }
 
-export async function fetchUserById(id: number, config: Config): Promise<Result<User, ApiError>> {
+export async function fetchUserById(id: number): Promise<Result<User, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;
 
   try {
-    const res = await apiClient(true, config).get<User>(`${usersUrl}/${id}`);
+    const res = await apiClient(true).get<User>(`${usersUrl}/${id}`);
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ id }, "Failed to fetch user");
@@ -86,7 +83,6 @@ export async function fetchUserById(id: number, config: Config): Promise<Result<
 
 export async function searchUsersFilter(
   filters: UserSearchFilter,
-  config: Config,
 ): Promise<Result<User[], ApiError>> {
   const params = new URLSearchParams();
   if (filters.email) params.set("email", filters.email);
@@ -95,9 +91,7 @@ export async function searchUsersFilter(
   if (filters.isActive !== undefined) params.set("isActive", String(filters.isActive));
 
   try {
-    const res = await apiClient(true, config).get<User[]>(
-      `${usersUrl}/search?${params.toString()}`,
-    );
+    const res = await apiClient(true).get<User[]>(`${usersUrl}/search?${params.toString()}`);
     logger.info({ count: res.data.length, filters }, "Users search completed");
     return { ok: true, data: res.data };
   } catch (error) {
@@ -112,7 +106,6 @@ export async function searchUsersFilter(
 export async function updateUser(
   id: number,
   user: UserUpdateFormData,
-  config: Config,
 ): Promise<Result<User, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;
@@ -121,7 +114,7 @@ export async function updateUser(
   if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
 
   try {
-    const res = await apiClient(true, config).patch<User>(`${usersUrl}/${id}`, parse.data);
+    const res = await apiClient(true).patch<User>(`${usersUrl}/${id}`, parse.data);
     logger.info({ id }, "User updated successfully");
     return { ok: true, data: res.data };
   } catch (error) {
@@ -136,15 +129,12 @@ export async function updateUser(
 /**
  * Delete a user
  */
-export async function deleteUser(
-  id: number,
-  config: Config,
-): Promise<Result<{ success: boolean }, ApiError>> {
+export async function deleteUser(id: number): Promise<Result<{ success: boolean }, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;
 
   try {
-    await apiClient(true, config).delete(`${usersUrl}/${id}`);
+    await apiClient(true).delete(`${usersUrl}/${id}`);
     logger.info({ id }, "User deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {

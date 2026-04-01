@@ -6,18 +6,19 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "l
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
-import { signUpAction } from "@/lib/auth/actions/auth";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { signUpAction } from "@/lib/auth/actions/auth.action";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import { isApiError } from "@/shared/errors/api-error";
+import { toast } from "react-toastify";
 
 export function SignUpForm() {
   const router = useRouter();
-  const { setUser } = useAuthUser();
+  const { setUser } = useSession();
   const {
     register,
     handleSubmit,
@@ -68,14 +69,16 @@ export function SignUpForm() {
       if (isApiError(result)) {
         setError(result.detail || "Échec de la création du compte");
         setLoading(false);
+        toast.error("Erreur de création de compte !");
         return;
       }
       setUser(result);
       router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
-      // loading reste true pendant la navigation
+      toast.success("Compte créé avec succès !");
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");
       setLoading(false);
+      toast.error("Erreur de création de compte !");
     }
   };
 

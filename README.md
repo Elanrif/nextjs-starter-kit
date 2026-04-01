@@ -648,7 +648,6 @@ Your project uses a clean separation between server and client services:
 // Server-side service (for API routes, server components)
 // src/lib/products/services/product.service.ts
 export async function fetchProducts(
-  config: Config,
   filters?: ProductFiltersParams,
 ): Promise<PageProduct<Product[]> | CrudApiError> {
   const res = await apiClient(true, config).get(PRODUCTS_URL);
@@ -822,10 +821,7 @@ export async function signIn(login: Login, config?: Config): Promise<User | Crud
   }
 }
 
-export async function signUp(
-  registration: Register,
-  config?: Config,
-): Promise<User | CrudApiError> {
+export async function signUp(registration: Register): Promise<User | CrudApiError> {
   try {
     await apiClient(true, config).post(registerUrl, registration);
     // Auto sign-in after registration

@@ -17,11 +17,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
 
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await fetchUserById(userId, config);
+    const response = await fetchUserById(userId);
     if (!response.ok) {
       return NextResponse.json(response, {
         status: response.error?.status || 500,
@@ -55,11 +52,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     });
   }
 
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await updateUser(userId, parsed.data, config);
+    const response = await updateUser(userId, parsed.data);
     if (!response.ok) {
       const error = response.error;
       return NextResponse.json(response, {
@@ -86,11 +80,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
 
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await deleteUser(userId, config);
+    const response = await deleteUser(userId);
 
     if (!response.ok) {
       const error = response.error;

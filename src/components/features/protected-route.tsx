@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { UserRole } from "@/lib/users/models/user.model";
 
 interface ProtectedRouteProps {
@@ -16,7 +16,7 @@ export function ProtectedRoute({
   adminOnly = false,
   redirectTo = "/sign-in",
 }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuthUser();
+  const { user, isLoading } = useSession();
   const router = useRouter();
 
   useEffect(() => {

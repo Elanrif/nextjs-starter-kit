@@ -8,8 +8,8 @@ export const proxyEnvironment = {
   apiProxyBase,
   api: {
     endpoints: {
-      categories: `/categories`,
-      products: `/products`,
+      comments: `/comments`,
+      posts: `/posts`,
       login: `/auth/login`,
       signOut: `/auth/logout`,
       session: `/auth/session`,

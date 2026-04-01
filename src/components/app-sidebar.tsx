@@ -15,9 +15,9 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@/utils/routes";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 
-const { DASHBOARD, PRODUCTS, CATEGORIES, USERS } = ROUTES;
+const { DASHBOARD, COMMENTS, POSTS, USERS } = ROUTES;
 
 const data = {
   teams: [
@@ -40,19 +40,19 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Utilisateurs",
+          url: `${DASHBOARD}${USERS}`,
+          icon: Users,
+        },
+        {
           title: "Catégories",
-          url: `${DASHBOARD}${CATEGORIES}`,
+          url: `${DASHBOARD}${COMMENTS}`,
           icon: Tag,
         },
         {
           title: "Produits",
-          url: `${DASHBOARD}${PRODUCTS}`,
+          url: `${DASHBOARD}${POSTS}`,
           icon: Package,
-        },
-        {
-          title: "Utilisateurs",
-          url: `${DASHBOARD}${USERS}`,
-          icon: Users,
         },
       ],
     },
@@ -62,7 +62,7 @@ const data = {
 const sidebarBg = "bg-slate-950 text-white";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuthUser();
+  const { user } = useSession();
   if (!user) return null;
 
   return (

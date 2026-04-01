@@ -184,7 +184,7 @@ src/lib/auth/
 │   ├── auth.ts           # Façade serveur (import dans Server Components/Actions)
 │   └── auth.client.ts    # Façade client (import dans Client Components)
 ├── actions/auth.ts        # Server Actions (changePassword, etc.)
-├── context/auth.user.context.tsx   # AuthUserProvider + useAuthUser()
+├── context/auth.user.context.tsx   # AuthUserProvider + useSession()
 ├── jose/jose.service.ts   # JWT encode/decode (serveur)
 └── models/auth.model.ts   # Types + Zod schemas auth
 ```

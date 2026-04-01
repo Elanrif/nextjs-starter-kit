@@ -14,11 +14,8 @@ export const dynamic = "force-dynamic";
  * Fetch all users
  */
 export async function GET(request: NextRequest) {
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await fetchAllUsers(config);
+    const response = await fetchAllUsers();
 
     if (!response.ok) {
       return NextResponse.json(response, {
@@ -51,13 +48,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const reqHeaders = new Headers(request.headers);
-  const config = { headers: reqHeaders };
-
   try {
     // UserFormData includes confirmPassword which the backend ignores
 
-    const response = await createUser(config, parsed.data as any);
+    const response = await createUser(parsed.data as any);
 
     if (!response.ok) {
       return NextResponse.json(response, {

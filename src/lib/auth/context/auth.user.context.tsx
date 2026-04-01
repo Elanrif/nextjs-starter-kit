@@ -5,14 +5,14 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AUTH_KEY = "auth_user";
 
-interface AuthUserContextType {
+interface SessionContextType {
   user: User | null;
   isLoading: boolean;
   setUser: (user: User) => void;
   signOut: () => void;
 }
 
-const AuthUserContext = createContext<AuthUserContextType | null>(null);
+const SessionContext = createContext<SessionContextType | null>(null);
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUserState] = useState<User | null>(null);
@@ -40,14 +40,14 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthUserContext.Provider value={{ user, isLoading, setUser, signOut }}>
+    <SessionContext.Provider value={{ user, isLoading, setUser, signOut }}>
       {children}
-    </AuthUserContext.Provider>
+    </SessionContext.Provider>
   );
 }
 
-export function useAuthUser(): AuthUserContextType {
-  const ctx = useContext(AuthUserContext);
-  if (!ctx) throw new Error("useAuthUser must be used inside AuthUserProvider");
+export function useSession(): SessionContextType {
+  const ctx = useContext(SessionContext);
+  if (!ctx) throw new Error("useSession must be used inside AuthUserProvider");
   return ctx;
 }

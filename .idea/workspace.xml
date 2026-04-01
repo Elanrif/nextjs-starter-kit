@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="58e006ad-1914-4e1e-9305-5da2958685c6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/docs/jose.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/comments/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/comments/create/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/comments/edit/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/comments/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/posts/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/posts/create/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/posts/edit/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(website)/dashboard/posts/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/cloudinary/hooks/use-image-draft copy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/server.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/server.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/auth/session/me/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/auth/session/me/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/auth/session/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/auth/session/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/account/change-password-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/account/change-password-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/account/profile/profile-edit-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/account/profile/profile-edit-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/auth/sign-in-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/auth/sign-in-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/auth/sign-out-button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/auth/sign-out-button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/auth/sign-up-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/auth/sign-up-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/comments/comment-create-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/comments/comment-create-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/comments/comment-edit-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/comments/comment-edit-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/posts/post-create-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/posts/post-create-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/posts/post-edit-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/posts/post-edit-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/users/user-create-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/users/user-create-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/dashboard/users/user-edit-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/dashboard/users/user-edit-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/features/header_.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/features/header_.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/image-upload.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/image-upload.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/proxy.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/use.session.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/use.session.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/auth/actions/auth.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/auth/actions/auth.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/auth/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/auth/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/cloudinary/hooks/use-image-draft.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/cloudinary/hooks/use-image-draft.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/comments/actions/comment.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/comments/actions/comment.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/comments/models/comment.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/comments/models/comment.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/posts/actions/post.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/posts/actions/post.action.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/posts/models/post.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/posts/models/post.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/actions/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/actions/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/proxy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/proxy.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_D:/developer/Projects/nextjs-starter-kit" value="3Bl5P5cUJm4GEIbXoa1o69dijiW" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Elanrif"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Elanrif/nextjs-starter-kit.git",
+    "accountId": "8367dcb8-ed3a-4b4e-b87a-8fe8dbdbe0d3"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3Bl5P5cUJm4GEIbXoa1o69dijiW" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "kit/jose",
+    "ignore.virus.scanning.warn.message": "true",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/developer/Projects/nextjs-starter-kit",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="npm.Next.js: server-side">
+    <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
+      <method v="2" />
+    </configuration>
+    <configuration name="Next.js: server-side" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-WS-261.22158.274" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="58e006ad-1914-4e1e-9305-5da2958685c6" name="Changes" comment="" />
+      <created>1775050789136</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775050789136</updated>
+      <workItem from="1775050792307" duration="135000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

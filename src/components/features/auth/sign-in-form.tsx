@@ -8,16 +8,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "@/lib/auth/models/auth.model";
 import Link from "next/link";
 import { ROUTES } from "@/utils/routes";
-import { authClient } from "@/lib/auth/api/auth.client";
-import { useAuthUser } from "@/lib/auth/context/auth.user.context";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import { isApiError } from "@/shared/errors/api-error";
+import { signInAction } from "@/lib/auth/actions/auth.action";
+import { toast } from "react-toastify";
 
 export function SignInForm() {
   const router = useRouter();
-  const { setUser } = useAuthUser();
+  const { setUser } = useSession();
   const {
     register,
     handleSubmit,
@@ -41,21 +42,23 @@ export function SignInForm() {
     setLoading(true);
     setApiError(null);
     try {
-      const result = await authClient.signIn.email({
+      const result = await signInAction({
         email: data.email,
         password: data.password,
       });
       if (isApiError(result)) {
         setApiError(result.detail || "Une erreur est survenue.");
         setLoading(false);
+        toast.error("Erreur de connexion !");
         return;
       }
       setUser(result);
       router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
-      // isLoading reste true pendant la navigation
+      toast.success("Connexion réussie !");
     } catch (error: any) {
       setApiError(error?.message || "Une erreur est survenue.");
       setLoading(false);
+      toast.error("Erreur de connexion !");
     }
   };
 

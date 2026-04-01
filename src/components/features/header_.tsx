@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { SignOutButton } from "@/components/features/auth/sign-out-button";
 import { ROUTES } from "@/utils/routes";
-import { useSession } from "@/hooks/use.session";
 import Logo from "./logo";
 import { Mail, LayoutDashboard, LogIn, UserPlus, Menu, X, UserCheck } from "lucide-react";
 import { cn } from "@/utils/utils";
+import { useSession } from "@/context/auth.user.context";
 
 const navLinks = [
   { href: "#features", label: "Fonctionnalités" },

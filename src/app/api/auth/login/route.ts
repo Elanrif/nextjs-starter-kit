@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Login } from "@/lib/auth/models/auth.model";
 import { getLogger } from "@/config/logger.config";
-import { auth } from "@/lib/auth/api/auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { signIn } from "@/lib/auth/auth.client.service";
 
 const logger = getLogger("server");
 
@@ -15,14 +15,8 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as Login;
 
-  const reqHeaders = new Headers(req.headers);
-  const config = { headers: reqHeaders };
-
   try {
-    const response = await auth.api.signIn({
-      body,
-      config,
-    });
+    const response = await signIn(body);
 
     if (!response.ok) {
       const error = response.error;
