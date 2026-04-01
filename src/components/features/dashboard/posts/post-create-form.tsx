@@ -66,7 +66,6 @@ export function PostCreateForm() {
           toast.success("Post créé avec succès");
         },
         onError: (err) => {
-          console.error("❌ Erreur:", err);
           const message = err instanceof Error ? err.message : "Erreur lors de la création";
           setApiError(message);
         },
