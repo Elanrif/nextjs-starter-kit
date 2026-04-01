@@ -11,13 +11,13 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await auth();
-    if (!session?.ok) {
+    if (!session.ok) {
       logger.warn(
-        { context: "createUser" },
-        "Unauthorized: only authenticated users can change their password",
+        { context: "Session" },
+        "Unauthorized: no valid session found during session verification",
       );
       return NextResponse.json(
-        { ok: false, error: unauthorizedApiError("You must be logged in") },
+        { ok: false, error: unauthorizedApiError("No valid session found") },
         { status: 401 },
       );
     }

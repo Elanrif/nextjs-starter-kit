@@ -14,7 +14,7 @@ export async function GET() {
     if (!session?.ok) {
       logger.warn(
         { context: "createUser" },
-        "Unauthorized: only authenticated users can change their password",
+        "Unauthorized: only authenticated users can access their session",
       );
       return NextResponse.json(
         { ok: false, error: unauthorizedApiError("You must be logged in") },

@@ -11,7 +11,6 @@ const fetcher = async (): Promise<Result<Session, ApiError>> => {
   const res = await fetch("/api/auth/session", {
     credentials: "include",
   });
-
   // 401 / 403 is expected when not authenticated — not an error, just unauthenticated state
   if (res.status === 401 || res.status === 403) {
     return {
@@ -41,7 +40,7 @@ const fetcher = async (): Promise<Result<Session, ApiError>> => {
 
   const session: Result<Session, ApiError> = await res.json();
 
-  if (!session.ok || !session.data?.user?.userId) {
+  if (!session.ok || !session.data?.user?.id) {
     return {
       ok: false,
       error: {

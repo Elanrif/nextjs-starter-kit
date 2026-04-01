@@ -12,6 +12,7 @@ import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import { signInAction } from "@/lib/auth/actions/auth.action";
+import { toast } from "react-toastify";
 
 export function SignInForm() {
   const router = useRouter();
@@ -48,6 +49,7 @@ export function SignInForm() {
         return;
       }
       router.push("/dashboard");
+      toast.success("Connexion réussie !");
       // isLoading reste true pendant la navigation
     } catch (error: any) {
       setApiError(error?.message || "Une erreur est survenue.");

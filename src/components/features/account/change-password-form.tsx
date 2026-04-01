@@ -58,8 +58,8 @@ export function ChangePasswordForm() {
         toast.error(response.error.detail || "Erreur lors de la mise à jour");
         return;
       }
-      toast.success("Mot de passe mis à jour avec succès !");
       router.push(MY_ACCOUNT);
+      toast.success("Mot de passe mis à jour avec succès !");
     } catch (error_: any) {
       setError(error_.message || "Erreur inattendue");
       toast.error("Erreur inattendue lors de la mise à jour");

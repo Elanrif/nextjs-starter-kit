@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSession } from "@/lib/auth/context/auth.user.context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,7 @@ import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
 const { DASHBOARD, POSTS } = ROUTES;
 
 export function PostEditForm({ loadedPost }: { loadedPost: Post }) {
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -29,6 +31,7 @@ export function PostEditForm({ loadedPost }: { loadedPost: Post }) {
       imageUrl: loadedPost?.imageUrl || "",
       description: loadedPost?.description || "",
       likes: loadedPost?.likes ?? 0,
+      authorId: session?.user.id ?? 0,
     },
   });
 
@@ -50,9 +53,9 @@ export function PostEditForm({ loadedPost }: { loadedPost: Post }) {
       },
       {
         onSuccess: (post) => {
-          toast.success("Post modifié avec succès");
           image.clearDraft();
           router.push(`${DASHBOARD}${POSTS}/${post?.id}`);
+          toast.success("Post modifié avec succès");
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "Erreur lors de la modification";

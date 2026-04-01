@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth/jose";
 import { UserRole } from "@/lib/users/models/user.model";
+import { ROUTES } from "./utils/routes";
 
-const protectedRoutes = ["/dashboard", "/account"];
-const publicRoutePrefixes = ["/sign-in", "/sign-up"];
+const { MY_ACCOUNT, DASHBOARD, SIGN_IN, SIGN_UP } = ROUTES;
+const protectedRoutes = [MY_ACCOUNT, DASHBOARD];
+const publicRoutePrefixes = [SIGN_IN, SIGN_UP];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -23,34 +25,34 @@ export default async function proxy(req: NextRequest) {
   const session = await decrypt(cookieStore);
 
   // If route is protected and user is not authenticated => redirect to sign-in
-  if (isProtectedRoute && !session?.user?.userId) {
-    return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
+  if (isProtectedRoute && !session?.user?.id) {
+    return NextResponse.redirect(new URL(SIGN_IN, req.nextUrl));
   }
 
   // If user is admin => redirect to admin (but not if already on /admin)
   if (
     isProtectedRoute &&
-    session?.user?.userId &&
+    session?.user?.id &&
     session?.user?.role === UserRole.ADMIN &&
-    !normalized.startsWith("/dashboard") &&
-    !normalized.startsWith("/account")
+    !normalized.startsWith(DASHBOARD) &&
+    !normalized.startsWith(MY_ACCOUNT)
   ) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    return NextResponse.redirect(new URL(DASHBOARD, req.nextUrl));
   }
 
   // If user is not admin => redirect to account (but not if already on /account)
   if (
     isProtectedRoute &&
-    session?.user?.userId &&
+    session?.user?.id &&
     session?.user?.role !== UserRole.ADMIN &&
-    !normalized.startsWith("/account")
+    !normalized.startsWith(MY_ACCOUNT)
   ) {
-    return NextResponse.redirect(new URL("/account", req.nextUrl));
+    return NextResponse.redirect(new URL(MY_ACCOUNT, req.nextUrl));
   }
 
   // If route is public and user is authenticated => redirect to account/dashboard
-  if (isPublicRoute && session?.user?.userId) {
-    return NextResponse.redirect(new URL("/account", req.nextUrl));
+  if (isPublicRoute && session?.user?.id) {
+    return NextResponse.redirect(new URL(MY_ACCOUNT, req.nextUrl));
   }
 
   return NextResponse.next();

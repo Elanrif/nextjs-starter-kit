@@ -61,8 +61,8 @@ export function UserEditForm({ loadedUser }: { loadedUser: User }) {
       { id: Number(loadedUser.id), data },
       {
         onSuccess: () => {
-          toast.success("Utilisateur mis à jour avec succès !");
           router.push(`${DASHBOARD}${USERS}`);
+          toast.success("Utilisateur mis à jour avec succès !");
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "Erreur lors de la mise à jour";

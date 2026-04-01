@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import {
   createComment,
   updateComment,
@@ -7,16 +8,26 @@ import {
 } from "@/lib/comments/services/comment.service";
 import { CommentCreate, CommentUpdate } from "@/lib/comments/models/comment.model";
 
-/*⚠️ We dont use await function, because we are not waiting for the result */
-
 export async function createCommentAction(data: CommentCreate) {
-  return createComment(data);
+  const result = await createComment(data);
+  if (result.ok) {
+    revalidatePath("/comments");
+  }
+  return result;
 }
 
 export async function updateCommentAction(id: number, data: CommentUpdate) {
-  return updateComment(id, data);
+  const result = await updateComment(id, data);
+  if (result.ok) {
+    revalidatePath("/comments");
+  }
+  return result;
 }
 
 export async function deleteCommentAction(id: number) {
-  return deleteComment(id);
+  const result = await deleteComment(id);
+  if (result.ok) {
+    revalidatePath("/comments");
+  }
+  return result;
 }

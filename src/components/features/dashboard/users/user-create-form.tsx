@@ -61,8 +61,8 @@ export function UserCreateForm() {
       { ...data, password: data.password || "tempPassword123" },
       {
         onSuccess: () => {
-          toast.success("Utilisateur créé avec succès !");
           router.push(`${DASHBOARD}${USERS}`);
+          toast.success("Utilisateur créé avec succès !");
         },
         onError: (err) => {
           const message = err instanceof Error ? err.message : "Erreur lors de la création";

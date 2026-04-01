@@ -15,9 +15,10 @@ import {
 } from "@/lib/auth/models/auth.model";
 import { ResetPassword } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
-import { deleteSession } from "@lib/auth/jose/session.server";
+import { createSession, deleteSession } from "@lib/auth/jose/session.server";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
+import { revalidatePath } from "next/cache";
 
 /*⚠️ We dont use await function, because we are not waiting for the result */
 
@@ -30,7 +31,13 @@ export async function signUpAction(userData: Registrer) {
 }
 
 export async function editProfileAction(data: ProfileUserFormData) {
-  return editProfile(data);
+  const result = await editProfile(data);
+  if (result.ok) {
+    await createSession(result.data);
+    revalidatePath("/account");
+    revalidatePath("/dashboard");
+  }
+  return result;
 }
 
 export async function sendPasswordResetAction(email: string) {

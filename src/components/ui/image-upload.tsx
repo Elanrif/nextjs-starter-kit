@@ -93,7 +93,14 @@ export function ImageUpload(props: ImageUploadProps) {
                 shadow-sm"
             >
               {publicId ? (
-                <CldImage src={publicId} alt="Image" fill className="object-cover" sizes="160px" />
+                <CldImage
+                  src={publicId}
+                  alt="Image"
+                  fill
+                  className="object-cover"
+                  sizes="160px"
+                  loading="eager"
+                />
               ) : (
                 // Fallback pour les URLs existantes sans publicId Cloudinary connu
                 // eslint-disable-next-line @next/next/no-img-element
@@ -115,6 +122,9 @@ export function ImageUpload(props: ImageUploadProps) {
               uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
               options={{ folder: uploadFolder, maxFiles: 1, resourceType: "image" }}
               onSuccess={handleUploadSuccess}
+              onClose={() => {
+                document.body.style.overflow = "";
+              }}
             >
               {({ open }) => (
                 <button
@@ -212,6 +222,9 @@ export function ImageUpload(props: ImageUploadProps) {
         uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
         options={{ folder: uploadFolder, multiple: true, resourceType: "image" }}
         onSuccess={handleUploadSuccessMultiple}
+        onClose={() => {
+          document.body.style.overflow = "";
+        }}
       >
         {({ open }) => (
           <button

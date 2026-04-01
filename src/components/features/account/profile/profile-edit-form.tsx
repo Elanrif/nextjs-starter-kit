@@ -60,8 +60,8 @@ export function ProfileEditForm({ user }: { user: User }) {
         return;
       }
       avatar.clearDraft();
-      toast.success("Profil mis à jour avec succès !");
       router.push(MY_ACCOUNT);
+      toast.success("Profil mis à jour avec succès !");
     } catch (error_: any) {
       setError(error_.message || "Erreur inattendue");
       toast.error("Erreur inattendue lors de la mise à jour");

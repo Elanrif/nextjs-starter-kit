@@ -12,6 +12,7 @@ import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
 import { signUpAction } from "@/lib/auth/actions/auth.action";
+import { toast } from "react-toastify";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -68,8 +69,7 @@ export function SignUpForm() {
         return;
       }
       router.push("/dashboard");
-      router.refresh();
-      // loading reste true pendant la navigation
+      toast.success("Inscription réussie !");
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");
       setLoading(false);

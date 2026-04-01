@@ -93,7 +93,7 @@ export function Header() {
                   </>
                 );
               }
-              if (session && session.ok && !error) {
+              if (session?.ok && session.data.user) {
                 return (
                   <>
                     {session.data.user.role === UserRole.ADMIN ? (

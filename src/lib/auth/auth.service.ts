@@ -66,7 +66,9 @@ export async function signIn(login: Login): Promise<Result<User, ApiError>> {
       avatarUrl: data.avatarUrl ?? null,
       isActive: data.isActive,
     });
-    logger.info({ email: data.email }, "User signed in successfully");
+
+    const session = await auth();
+    logger.info({ session }, "Session created successfully");
     return { ok: true, data };
   } catch (error) {
     logger.error({ email: login.email }, "Failed to sign in");
@@ -194,11 +196,11 @@ export async function editProfile(data: ProfileUserFormData): Promise<Result<Use
   if (!session?.ok) {
     logger.warn(
       { context: "createUser" },
-      "Unauthorized: only authenticated users can change their password",
+      "Unauthorized: only authenticated users can edit their profile",
     );
     return {
       ok: false,
-      error: unauthorizedApiError("You must be logged in to change your password"),
+      error: unauthorizedApiError("You must be logged in to edit your profile"),
     };
   }
 
