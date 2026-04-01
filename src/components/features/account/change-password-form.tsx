@@ -15,7 +15,6 @@ import {
   ChangePasswordProfileSchema,
 } from "@/lib/auth/models/auth.model";
 import { useSession } from "@/lib/auth/context/auth.user.context";
-import { isApiError } from "@/shared/errors/api-error";
 import { changePasswordProfileAction } from "@/lib/auth/actions/auth.action";
 
 const { MY_ACCOUNT } = ROUTES;
@@ -53,9 +52,9 @@ export function ChangePasswordForm() {
     setLoading(true);
     try {
       const response = await changePasswordProfileAction(data);
-      if (isApiError(response)) {
-        setError(response.detail || "Erreur lors de la mise à jour");
-        toast.error(response.detail || "Erreur lors de la mise à jour");
+      if (!response.ok) {
+        setError(response.error.detail || "Erreur lors de la mise à jour");
+        toast.error(response.error.detail || "Erreur lors de la mise à jour");
         return;
       }
       router.push(MY_ACCOUNT);

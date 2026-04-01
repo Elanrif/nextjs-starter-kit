@@ -21,7 +21,6 @@ import { ROUTES } from "@/utils/routes";
 import { Field } from "@/components/ui/form/field";
 import { icDarkPwd } from "@/components/ui/form/input-class";
 import { cn } from "@/utils/utils";
-import { isApiError } from "@/shared/errors/api-error";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
@@ -73,8 +72,8 @@ function ResetPasswordContent() {
         email,
         newPassword: password,
       });
-      if (isApiError(res)) {
-        setError(res.detail || "Échec de la réinitialisation");
+      if (!res.ok) {
+        setError(res.error.detail || "Échec de la réinitialisation");
         return;
       }
       setSuccess(true);

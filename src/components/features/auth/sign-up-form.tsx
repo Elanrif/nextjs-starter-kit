@@ -13,7 +13,6 @@ import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { isApiError } from "@/shared/errors/api-error";
 import { toast } from "react-toastify";
 
 export function SignUpForm() {
@@ -66,14 +65,14 @@ export function SignUpForm() {
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
-      if (isApiError(result)) {
-        setError(result.detail || "Échec de la création du compte");
+      if (!result.ok) {
+        setError(result.error.detail || "Échec de la création du compte");
         setLoading(false);
         toast.error("Erreur de création de compte !");
         return;
       }
-      setUser(result);
-      router.push(result.role === "ADMIN" ? "/dashboard" : "/account");
+      setUser(result.data);
+      router.push(result.data.role === "ADMIN" ? "/dashboard" : "/account");
       toast.success("Compte créé avec succès !");
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");

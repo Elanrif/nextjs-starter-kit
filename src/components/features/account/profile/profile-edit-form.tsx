@@ -11,7 +11,6 @@ import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.m
 import { editProfileAction } from "@/lib/auth/actions/auth.action";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
-import { isApiError } from "@/shared/errors/api-error";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
 import { useSession } from "@/lib/auth/context/auth.user.context";
@@ -56,12 +55,12 @@ export function ProfileEditForm() {
         avatarUrl: avatar.url || undefined,
       };
       const response = await editProfileAction(payload);
-      if (isApiError(response)) {
-        setError(response.detail || "Erreur lors de la mise à jour");
-        toast.error(response.detail || "Erreur lors de la mise à jour");
+      if (!response.ok) {
+        setError(response.error.detail || "Erreur lors de la mise à jour");
+        toast.error(response.error.detail || "Erreur lors de la mise à jour");
         return;
       }
-      setUser(response);
+      setUser(response.data);
       avatar.clearDraft();
       router.push(MY_ACCOUNT);
       toast.success("Profil mis à jour avec succès !");
