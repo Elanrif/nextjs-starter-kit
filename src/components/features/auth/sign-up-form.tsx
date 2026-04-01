@@ -66,6 +66,7 @@ export function SignUpForm() {
       if (!result.ok) {
         setError(result.error.detail || "Échec de la création du compte");
         setLoading(false);
+        toast.error(result.error.detail || "Échec de la création du compte");
         return;
       }
       router.push("/dashboard");
@@ -73,6 +74,7 @@ export function SignUpForm() {
     } catch (error: any) {
       setError(error?.message || "Une erreur inattendue est survenue");
       setLoading(false);
+      toast.error(error?.message || "Une erreur inattendue est survenue");
     }
   };
 

@@ -46,6 +46,7 @@ export function SignInForm() {
       if (!result.ok) {
         setApiError(result.error.detail || "Une erreur est survenue.");
         setLoading(false);
+        toast.error(result.error.detail || "Une erreur est survenue.");
         return;
       }
       router.push("/dashboard");
@@ -54,6 +55,7 @@ export function SignInForm() {
     } catch (error: any) {
       setApiError(error?.message || "Une erreur est survenue.");
       setLoading(false);
+      toast.error(error?.message || "Une erreur est survenue.");
     }
   };
 
