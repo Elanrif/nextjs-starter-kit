@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreatePost } from "@/lib/posts/hooks/use-posts";
 import { toast } from "react-toastify";
-import { PostFormData, postSchema } from "@/lib/posts/models/post.model";
+import { PostFormData, postSchema } from "@/lib/posts/schemas/post.schema";
 import { X, FileText, Save, Heart, AlignLeft } from "lucide-react";
 import { icLight } from "@/components/ui/form/input-class";
 import { SectionTitle } from "@/components/ui/form/section-title";
