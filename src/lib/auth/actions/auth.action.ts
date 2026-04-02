@@ -7,12 +7,8 @@ import {
   signIn as serverSignIn,
   signUp as serverSignUp,
 } from "@/lib/auth/auth.service";
-import {
-  ChangePasswordProfileFormData,
-  Login,
-  ProfileUserFormData,
-  Registrer,
-} from "@/lib/auth/models/auth.model";
+import { Login, Registrer } from "@/lib/auth/models/auth.model";
+import { ChangePasswordProfileFormData, ProfileUserFormData } from "@/lib/auth/schemas/auth.schema";
 import { ResetPassword } from "@/lib/users/models/user.model";
 import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";

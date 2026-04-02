@@ -70,7 +70,7 @@ export default function AccountPage() {
                 </div>
               )}
             </div>
-            {user.emailVerified && (
+            {user.isActive && (
               <div
                 className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 flex
                   items-center justify-center ring-2 ring-slate-900"
@@ -164,7 +164,7 @@ export default function AccountPage() {
                 {user.email}
               </p>
             </div>
-            {user.emailVerified ? (
+            {user.isActive ? (
               <div
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50
                   text-emerald-700 text-xs font-semibold"

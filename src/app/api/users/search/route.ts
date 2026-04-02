@@ -23,13 +23,6 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await searchUsersFilter(filters);
-
-    if (!response.ok) {
-      return NextResponse.json(response, {
-        status: response.error?.status || 500,
-      });
-    }
-
     return NextResponse.json(response, {
       status: 200,
     });

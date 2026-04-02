@@ -3,20 +3,21 @@
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
+import { ResetPassword, User } from "@lib/users/models/user.model";
+import { parseResetPassword } from "@lib/users/schemas/user.schema";
 import { getLogger } from "@/config/logger.config";
+import { Login } from "@lib/auth/models/auth.model";
 import {
   ChangePasswordProfileFormData,
-  Login,
   parseChangePasswordProfile,
   parseLogin,
   parseProfileUser,
   parseRegister,
   ProfileUserFormData,
   RegisterFormData,
-} from "@lib/auth/models/auth.model";
-import { validateId, validationError } from "@/utils/utils.server";
-import { ApiError } from "@/shared/errors/api-error";
+} from "@lib/auth/schemas/auth.schema";
+import { validateId } from "@/utils/utils.server";
+import { ApiError, badRequestApiError } from "@/shared/errors/api-error";
 import { Result } from "@/shared/models/response.model";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
@@ -44,7 +45,13 @@ const logger = getLogger("server");
  */
 export async function signIn(login: Login): Promise<Result<User, ApiError>> {
   const validation = parseLogin(login);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid login data");
+  if (!validation.success) {
+    logger.warn({ email: login.email }, "Invalid login attempt");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
     const { data } = await apiClient(true).post<any, AxiosResponse<User>>(loginUrl, login);
@@ -64,8 +71,13 @@ export async function signIn(login: Login): Promise<Result<User, ApiError>> {
  */
 export async function signUp(registration: RegisterFormData): Promise<Result<User, ApiError>> {
   const validation = parseRegister(registration);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid registration data");
+  if (!validation.success) {
+    logger.warn({ email: registration.email }, "Invalid registration attempt");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
     await apiClient(true).post<any, AxiosResponse<any>>(registerUrl, registration);
@@ -129,8 +141,13 @@ export async function changeUserPassword(
  */
 export async function resetPassword(data: ResetPassword): Promise<Result<User, ApiError>> {
   const validation = parseResetPassword(data);
-  if (!validation.success)
-    return validationError(validation.error.issues, "Invalid reset password data");
+  if (!validation.success) {
+    logger.warn({ email: data.email }, "Invalid reset password attempt");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
     const res = await apiClient(true).patch<any, AxiosResponse<User>>(resetPasswordUrl, data);
@@ -150,7 +167,13 @@ export async function resetPassword(data: ResetPassword): Promise<Result<User, A
  */
 export async function editProfile(data: ProfileUserFormData): Promise<Result<User, ApiError>> {
   const validation = parseProfileUser(data);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid profile data");
+  if (!validation.success) {
+    logger.warn({ id: data.email }, "Invalid profile update attempt");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
     const res = await apiClient(true).patch<any, AxiosResponse<User>>(editProfileUrl, data);
@@ -172,7 +195,13 @@ export async function changePasswordProfile(
   data: ChangePasswordProfileFormData,
 ): Promise<Result<User, ApiError>> {
   const validation = parseChangePasswordProfile(data);
-  if (!validation.success) return validationError(validation.error.issues, "Invalid password data");
+  if (!validation.success) {
+    logger.warn({ id: data.email }, "Invalid password change attempt");
+    return {
+      ok: false,
+      error: badRequestApiError(validation.error.message),
+    };
+  }
 
   try {
     const res = await apiClient(true).patch<any, AxiosResponse<User>>(

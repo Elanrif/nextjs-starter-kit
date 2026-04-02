@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
 import { fetchUserById, updateUser, deleteUser } from "@/lib/users/services/user.service";
-import { parseUserUpdate } from "@/lib/users/models/user.model";
-import { validationError } from "@/utils/utils.server";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
@@ -16,14 +14,8 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
-
   try {
     const response = await fetchUserById(userId);
-    if (!response.ok) {
-      return NextResponse.json(response, {
-        status: response.error?.status || 500,
-      });
-    }
     return NextResponse.json(response, {
       status: 200,
     });
@@ -42,18 +34,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
-
   const body = await request.json().catch(() => null);
-  const parsed = parseUserUpdate(body);
-  if (!parsed.success) {
-    const err = validationError(parsed.error.issues, "Invalid user data");
-    return NextResponse.json(err, {
-      status: 400,
-    });
-  }
-
   try {
-    const response = await updateUser(userId, parsed.data);
+    const response = await updateUser(userId, body);
     if (!response.ok) {
       const error = response.error;
       return NextResponse.json(response, {
@@ -79,18 +62,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params;
   const userId = Number.parseInt(id, 10);
-
   try {
     const response = await deleteUser(userId);
-
-    if (!response.ok) {
-      const error = response.error;
-      return NextResponse.json(response, {
-        status: error.status,
-      });
-    }
-
-    logger.info({ userId }, "User deleted");
     return NextResponse.json(response, {
       status: 200,
     });

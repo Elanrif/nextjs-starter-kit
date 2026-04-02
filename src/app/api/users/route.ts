@@ -1,8 +1,6 @@
 import { fetchAllUsers, createUser } from "@lib/users/services/user.service";
 import { NextRequest, NextResponse } from "next/server";
-import { parseUserCreate } from "@/lib/users/models/user.model";
 import { getLogger } from "@config/logger.config";
-import { validationError } from "@/utils/utils.server";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");
@@ -16,13 +14,6 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const response = await fetchAllUsers();
-
-    if (!response.ok) {
-      return NextResponse.json(response, {
-        status: response.error?.status || 500,
-      });
-    }
-
     return NextResponse.json(response, {
       status: 200,
     });
@@ -39,26 +30,9 @@ export async function GET(request: NextRequest) {
  * Create a new user
  */
 export async function POST(request: NextRequest) {
-  const body = await request.json().catch(() => null);
-  const parsed = parseUserCreate(body);
-  if (!parsed.success) {
-    const err = validationError(parsed.error.issues, "Invalid user data");
-    return NextResponse.json(err, {
-      status: 400,
-    });
-  }
-
   try {
-    // UserFormData includes confirmPassword which the backend ignores
-
-    const response = await createUser(parsed.data as any);
-
-    if (!response.ok) {
-      return NextResponse.json(response, {
-        status: response.error.status,
-      });
-    }
-
+    const body = await request.json().catch(() => null);
+    const response = await createUser(body);
     return NextResponse.json(response, {
       status: 201,
     });

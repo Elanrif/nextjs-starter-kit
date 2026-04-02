@@ -14,21 +14,8 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as Registrer;
-
-  // const reqHeaders = new Headers(req.headers);
-  // const config = { headers: reqHeaders };
-
   try {
     const res = await signUp(body);
-
-    if (!res.ok) {
-      const error = res.error;
-      return NextResponse.json(res, {
-        status: error.status,
-      });
-    }
-
-    logger.info({ userId: res.data.id }, "User registered");
     return NextResponse.json(res, {
       status: 201,
     });

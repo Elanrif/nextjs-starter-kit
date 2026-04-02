@@ -93,7 +93,7 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
               }
             >
               <Avatar className="h-7 w-7 rounded-lg shrink-0">
-                <AvatarImage src={user.avatar} alt={user.firstName} />
+                <AvatarImage src={user.avatarUrl} alt={user.firstName} />
                 <AvatarFallback
                   className={
                     isDark
@@ -161,7 +161,7 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-3 px-3 py-3">
                 <Avatar className="h-9 w-9 rounded-xl">
-                  <AvatarImage src={user.avatar} alt={user.firstName} />
+                  <AvatarImage src={user.avatarUrl} alt={user.firstName} />
                   <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm
                     font-semibold">
                     {user.avatarUrl ? (

@@ -2,17 +2,16 @@
 
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
+import { User, UserCreatePayload, UserSearchFilter } from "@/lib/users/models/user.model";
 import {
   parseUserCreate,
   parseUserUpdate,
-  User,
   UserUpdateFormData,
-  UserSearchFilter,
-} from "@lib/users/models/user.model";
+} from "@lib/users/schemas/user.schema";
 import { getLogger } from "@config/logger.config";
-import { validateId, validationError } from "@/utils/utils.server";
+import { validateId } from "@/utils/utils.server";
 import { Result } from "@/shared/models/response.model";
-import { ApiError } from "@/shared/errors/api-error";
+import { ApiError, badRequestApiError } from "@/shared/errors/api-error";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 /**
@@ -47,9 +46,17 @@ export async function fetchAllUsers(): Promise<Result<User[], ApiError>> {
 /**
  * Create a new user
  */
-export async function createUser(user: Omit<User, "id">): Promise<Result<User, ApiError>> {
+export async function createUser(user: UserCreatePayload): Promise<Result<User, ApiError>> {
+  /**
+   * Validate input data
+   */
   const parse = parseUserCreate(user);
-  if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
+  if (!parse.success) {
+    return {
+      ok: false,
+      error: badRequestApiError(parse.error.message),
+    };
+  }
 
   try {
     const res = await apiClient(true).post<User>(usersUrl, parse.data);
@@ -111,7 +118,12 @@ export async function updateUser(
   if (idError) return idError;
 
   const parse = parseUserUpdate(user);
-  if (!parse.success) return validationError(parse.error.issues, "Invalid user data");
+  if (!parse.success) {
+    return {
+      ok: false,
+      error: badRequestApiError(parse.error.message),
+    };
+  }
 
   try {
     const res = await apiClient(true).patch<User>(`${usersUrl}/${id}`, parse.data);

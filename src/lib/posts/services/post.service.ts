@@ -4,13 +4,8 @@ import { AxiosResponse } from "axios";
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import {
-  Post,
-  PostCreate,
-  PostUpdate,
-  parsePostCreate,
-  parsePostUpdate,
-} from "@/lib/posts/models/post.model";
+import { Post, PostCreate, PostUpdate } from "@/lib/posts/models/post.model";
+import { parsePostCreate, parsePostUpdate } from "@/lib/posts/schemas/post.schema";
 import { validateId } from "@/utils/utils.server";
 import { Page, Result } from "@/shared/models/response.model";
 import { ApiError, badRequestApiError } from "@/shared/errors/api-error";

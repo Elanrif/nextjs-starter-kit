@@ -10,12 +10,12 @@ import { usePasswordValidation } from "@/hooks/use-password-validation";
 import { Lock, Eye, EyeOff, ArrowLeft, ShieldCheck, KeyRound, Save } from "lucide-react";
 import { FormError } from "@/components/ui/form/form-error";
 import ValidationItem from "@/components/ui/validation-item";
+import { useSession } from "@/lib/auth/context/auth.user.context";
+import { changePasswordProfileAction } from "@/lib/auth/actions/auth.action";
 import {
   ChangePasswordProfileFormData,
   ChangePasswordProfileSchema,
-} from "@/lib/auth/models/auth.model";
-import { useSession } from "@/lib/auth/context/auth.user.context";
-import { changePasswordProfileAction } from "@/lib/auth/actions/auth.action";
+} from "@/lib/auth/schemas/auth.schema";
 
 const { MY_ACCOUNT } = ROUTES;
 

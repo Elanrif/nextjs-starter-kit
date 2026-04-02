@@ -17,15 +17,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await signIn(body);
-
-    if (!response.ok) {
-      const error = response.error;
-      return NextResponse.json(response, {
-        status: error.status,
-      });
-    }
-
-    logger.info({ userId: response.data.id }, "User signed in");
     return NextResponse.json(response, {
       status: 200,
     });
