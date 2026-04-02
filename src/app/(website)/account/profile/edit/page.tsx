@@ -13,5 +13,5 @@ export default async function Page() {
     redirect("/sign-in?callbackUrl=/account/profile/edit");
   }
 
-  return <ProfileEditForm user={{ ...res.data.user, password: "" }} />;
+  return <ProfileEditForm user={res.data.user} />;
 }

@@ -8,12 +8,12 @@ import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { User } from "@/lib/users/models/user.model";
 import { User as UserIcon, Mail, Phone, Pencil, ArrowLeft, Save } from "lucide-react";
-import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/models/auth.model";
+import { ProfileUserFormData, ProfileUserSchema } from "@/lib/auth/schemas/auth.schema";
+import { editProfileAction } from "@/lib/auth/actions/auth.action";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useImageDraft } from "@/lib/cloudinary/hooks/use-image-draft";
-import { editProfileAction } from "@/lib/auth/actions/auth.action";
 
 const { MY_ACCOUNT } = ROUTES;
 

@@ -58,7 +58,7 @@ export default async function DashboardPage() {
           className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full
             bg-indigo-500/20 blur-3xl"
         />
-        <DashboardHero user={{ ...user, password: "", role: user.role as UserRole }} />
+        <DashboardHero user={user} />
       </div>
 
       {/* Stat Cards */}

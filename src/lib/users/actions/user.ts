@@ -1,14 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { deleteUser, updateUser, createUser } from "../services/user.client.service";
+import { createUser, deleteUser, updateUser } from "../services/user.service";
+import type { User, UserCreatePayload } from "../models/user.model";
+import { ApiError } from "@/shared/errors/api-error";
+import { Result } from "@/shared/models/response.model";
 
-/*⚠️ We dont use await function, because we are not waiting for the result */
-
-export async function createUserAction(data: Record<string, unknown>) {
-  const result = await createUser(data as Omit<any, "id">);
+export async function createUserAction(data: UserCreatePayload): Promise<Result<User, ApiError>> {
+  const result = await createUser(data);
   if (result.ok) {
-    revalidatePath("/users");
+    revalidatePath("/dashboard/users");
   }
   return result;
 }

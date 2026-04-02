@@ -1,4 +1,8 @@
-import { z } from "zod";
+/**
+ * Auth types — API contracts and session shapes (no validation)
+ * See: src/lib/auth/schemas/auth.schema.ts for form validation
+ */
+
 import { UserRole } from "@/lib/users/models/user.model";
 
 export interface AuthSignIn {
@@ -30,8 +34,10 @@ export type SessionUser = {
   lastName: string;
   phoneNumber: string;
   role: UserRole;
-  avatarUrl: string | null;
+  avatarUrl?: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
   [key: string]: any; // allows createdAt, emailVerified, etc. from backend
 };
 
@@ -50,77 +56,3 @@ export type Session = {
   expiresAt?: Date;
   access_token?: string;
 };
-
-const BaseSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  phoneNumber: z
-    .string()
-    .min(10, "Phone number must be at least 10 digits")
-    .max(15, "Phone number must be at most 15 digits"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
-});
-
-/**
- * Login and Register schema with validation
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- * ✅ Protection against malicious bugs
- */
-
-export const LoginSchema = BaseSchema.pick({
-  email: true,
-  password: true,
-}).extend({
-  action: z.enum(["SIGN_IN", "SIGN_UP"]).optional(),
-});
-export type LoginFormData = z.infer<typeof LoginSchema>;
-export const parseLogin = LoginSchema.safeParse;
-
-export const RegisterSchema = BaseSchema.extend({
-  action: z.enum(["SIGN_IN", "SIGN_UP"]).optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
-export type RegisterFormData = z.infer<typeof RegisterSchema>;
-export const parseRegister = RegisterSchema.safeParse;
-
-/**
- * Profile schema with validation
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- * ✅ Protection against malicious bugs
- */
-export const ProfileUserSchema = BaseSchema.omit({
-  password: true,
-  confirmPassword: true,
-}).extend({
-  avatarUrl: z.url("L'URL de l'avatar doit être valide").optional(),
-});
-export type ProfileUserFormData = z.infer<typeof ProfileUserSchema>;
-export const parseProfileUser = ProfileUserSchema.safeParse;
-
-/**
- * Change password schema with validation
- * ⚠️ Never trust the client input
- * ❌ Someone can bypass the form
- * ✅ Protection against malicious bugs
- */
-export const ChangePasswordProfileSchema = BaseSchema.pick({
-  email: true,
-  confirmPassword: true,
-})
-  .extend({
-    oldPassword: BaseSchema.shape.password,
-    newPassword: BaseSchema.shape.password,
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-export type ChangePasswordProfileFormData = z.infer<typeof ChangePasswordProfileSchema>;
-export const parseChangePasswordProfile = ChangePasswordProfileSchema.safeParse;

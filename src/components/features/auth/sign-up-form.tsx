@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Phone, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterFormData, RegisterSchema } from "@/lib/auth/models/auth.model";
+import { RegisterFormData, RegisterSchema } from "@/lib/auth/schemas/auth.schema";
+import { signUpAction } from "@/lib/auth/actions/auth.action";
 import { usePasswordValidation } from "@/hooks/use-password-validation";
 import ValidationItem from "@/components/ui/validation-item";
 import { Field } from "@/components/ui/form/field";
 import { FormError } from "@/components/ui/form/form-error";
 import { icDark, icDarkPwd } from "@/components/ui/form/input-class";
-import { signUpAction } from "@/lib/auth/actions/auth.action";
 import { toast } from "react-toastify";
 
 export function SignUpForm() {

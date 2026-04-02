@@ -3,18 +3,19 @@
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { parseResetPassword, ResetPassword, User } from "@lib/users/models/user.model";
+import { ResetPassword, User } from "@lib/users/models/user.model";
+import { parseResetPassword } from "@lib/users/schemas/user.schema";
 import { getLogger } from "@/config/logger.config";
+import { Login } from "@lib/auth/models/auth.model";
 import {
   ChangePasswordProfileFormData,
-  Login,
   parseChangePasswordProfile,
   parseLogin,
   parseProfileUser,
   parseRegister,
   ProfileUserFormData,
   RegisterFormData,
-} from "@lib/auth/models/auth.model";
+} from "@lib/auth/schemas/auth.schema";
 import { createSession } from "@lib/auth/jose/session.server";
 import { validateId } from "@/utils/utils.server";
 import { ApiError, badRequestApiError, unauthorizedApiError } from "@/shared/errors/api-error";
@@ -69,8 +70,10 @@ export async function signIn(login: Login): Promise<Result<User, ApiError>> {
       lastName: data.lastName,
       phoneNumber: data.phoneNumber,
       role: data.role,
-      avatarUrl: data.avatarUrl ?? null,
+      avatarUrl: data.avatarUrl,
       isActive: data.isActive,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     });
 
     const session = await auth();
