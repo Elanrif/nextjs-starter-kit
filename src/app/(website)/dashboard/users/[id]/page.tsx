@@ -3,8 +3,8 @@ import { UserDetail } from "@/components/features/dashboard/users/user-detail";
 import { fetchUserById } from "@/lib/users/services/user.service";
 
 export const metadata = {
-  title: "Détail utilisateur",
-  description: "Voir les détails d'un utilisateur",
+  title: "User Details",
+  description: "View details of a user",
 };
 
 // ✅ loading.tsx est nécessaire à cause du fetch côté serveur (SSR)
@@ -12,8 +12,10 @@ export const metadata = {
 // notFound() on the server gives a clean 404 without a client-side loading state.
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   if (process.env.NODE_ENV === "development") {
+    // Simulate a slow network for demo purposes
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
+
   const { id } = await params;
 
   const res = await fetchUserById(Number(id));
