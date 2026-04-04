@@ -5,6 +5,8 @@ export const metadata = {
   description: "Create a new user",
 };
 
+// Pas de loading.tsx : formulaire simple, pas besoin de skeleton
+// Y'a rien à cacher derrière un loader, autant afficher le formulaire directement
 export default function Page() {
   return <UserCreateForm />;
 }

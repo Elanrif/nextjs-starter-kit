@@ -23,7 +23,13 @@ export const metadata = {
   description: "My modern dashboard with stats and recent activity",
 };
 
+// ✅ loading.tsx est nécessaire à cause du fetch côté serveur (SSR)
 export default async function DashboardPage() {
+  if (process.env.NODE_ENV === "development") {
+    // Simulate a slow network for demo purposes
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
+
   const session = await auth();
   if (!session?.user) redirect("/sign-in?callbackUrl=/dashboard");
   const user = session.user;

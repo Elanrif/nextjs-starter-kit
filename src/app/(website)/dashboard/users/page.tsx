@@ -5,9 +5,8 @@ export const metadata = {
   description: "Manage your users",
 };
 
-// No SSR here: this is a protected admin page (no SEO benefit), and the list
-// works well with a skeleton loader. React Query handles fetching, caching,
-// and automatic refetch after mutations (create/delete) without extra complexity.
+// ✅Best practices : Pas de loading.tsx, le composant PostList gère lui-même son état
+// de chargement avec React Query, pas besoin d'un skeleton global pour toute la page.
 export default function Page() {
   return <UserList />;
 }

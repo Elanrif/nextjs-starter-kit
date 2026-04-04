@@ -7,8 +7,14 @@ export const metadata = {
   description: "Voir les détails d'un post",
 };
 
-// SSR intentional: detail page either has data or returns 404.
+// ✅ loading.tsx est nécessaire à cause du fetch côté serveur (SSR)
+// SSR is intentional here: a detail page either has data or doesn't exist.
+// notFound() on the server gives a clean 404 without a client-side loading state.
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  if (process.env.NODE_ENV === "development") {
+    // Simulate a slow network for demo purposes
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
   const { id } = await params;
 
   const res = await fetchPostById(Number(id));

@@ -5,7 +5,8 @@ export const metadata = {
   description: "Gérer les posts",
 };
 
-// No SSR here: protected admin page, React Query handles fetching and cache invalidation.
+// ✅Best practices : Pas de loading.tsx, le composant PostList gère lui-même son état
+// de chargement avec React Query, pas besoin d'un skeleton global pour toute la page.
 export default function Page() {
   return <PostList />;
 }
