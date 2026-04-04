@@ -1,14 +1,12 @@
 import { UserList } from "@/components/features/dashboard/users/user-list";
 
 export const metadata = {
-  title: "Utilisateurs",
-  description: "Gérer les utilisateurs",
+  title: "Users",
+  description: "Manage your users",
 };
 
-// ⚠️ Pas de loading.tsx : page.tsx n'est pas async et ne fait pas de fetch (await fetch)
-// ✓ Pas de loading.tsx : React Query gère le chargement client
-// ✓ DataTable affiche les skeletons inline via loading={isLoading}
-// ✓ Cache automatique et invalidation après mutations
+// ✅Best practices : Pas de loading.tsx, le composant UserList gère lui-même son état
+// de chargement avec React Query, pas besoin d'un skeleton global pour toute la page.
 export default function Page() {
   return <UserList />;
 }
