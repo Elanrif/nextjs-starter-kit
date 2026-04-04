@@ -6,6 +6,10 @@ Ce document explique le rôle de chaque fichier spécial du App Router Next.js e
 
 ### Vue d'ensemble — Hiérarchie des fichiers
 
+![Nextjs Project Structure](images/nextjs-project-structure.png)
+
+_Voir la [documentation officielle Next.js](https://nextjs.org/docs/app/getting-started/project-structure) pour plus de détails._
+
 Next.js wrap automatiquement chaque page dans cet ordre :
 
 ```
