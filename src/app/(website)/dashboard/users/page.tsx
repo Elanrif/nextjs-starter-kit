@@ -1,13 +1,14 @@
 import { UserList } from "@/components/features/dashboard/users/user-list";
 
 export const metadata = {
-  title: "Users",
-  description: "Manage your users",
+  title: "Utilisateurs",
+  description: "Gérer les utilisateurs",
 };
 
-// No SSR here: this is a protected admin page (no SEO benefit), and the list
-// works well with a skeleton loader. React Query handles fetching, caching,
-// and automatic refetch after mutations (create/delete) without extra complexity.
+// ⚠️ Pas de loading.tsx : page.tsx n'est pas async et ne fait pas de fetch (await fetch)
+// ✓ Pas de loading.tsx : React Query gère le chargement client
+// ✓ DataTable affiche les skeletons inline via loading={isLoading}
+// ✓ Cache automatique et invalidation après mutations
 export default function Page() {
   return <UserList />;
 }

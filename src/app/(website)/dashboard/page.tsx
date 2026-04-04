@@ -17,11 +17,16 @@ import { DashboardHero } from "@/components/features/dashboard/dashboard-hero";
 import { UserRole } from "@/lib/users/models/user.model";
 
 export const metadata = {
-  title: "Dashboard",
-  description: "My modern dashboard with stats and recent activity",
+  title: "Tableau de bord",
+  description: "Tableau de bord moderne avec statistiques et activité récente",
 };
 
+// ✅ loading.tsx est nécessaire à cause du fetch côté serveur (SSR)
 export default async function DashboardPage() {
+  if (process.env.NODE_ENV === "development") {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
+
   const [usersRes, postsRes, commentsRes] = await Promise.all([
     fetchAllUsers(),
     fetchPosts({ size: 100 }),

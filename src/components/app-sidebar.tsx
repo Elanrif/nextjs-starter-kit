@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { HomeIcon, LayoutGrid, Tag, Package, Users } from "lucide-react";
+import { HomeIcon, LayoutGrid, Users, MessageSquare, FileText } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -45,14 +45,14 @@ const data = {
           icon: Users,
         },
         {
-          title: "Catégories",
-          url: `${DASHBOARD}${COMMENTS}`,
-          icon: Tag,
+          title: "Posts",
+          url: `${DASHBOARD}${POSTS}`,
+          icon: FileText,
         },
         {
-          title: "Produits",
-          url: `${DASHBOARD}${POSTS}`,
-          icon: Package,
+          title: "Commentaires",
+          url: `${DASHBOARD}${COMMENTS}`,
+          icon: MessageSquare,
         },
       ],
     },

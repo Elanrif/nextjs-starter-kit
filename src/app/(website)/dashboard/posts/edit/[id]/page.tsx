@@ -7,7 +7,11 @@ export const metadata = {
   description: "Modifier un post existant",
 };
 
+// ✅ loading.tsx est nécessaire à cause du fetch côté serveur (SSR)
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  if (process.env.NODE_ENV === "development") {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
   const { id } = await params;
 
   const res = await fetchPostById(Number(id));
