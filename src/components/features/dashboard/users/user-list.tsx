@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { UserRole, type User } from "@/lib/users/models/user.model";
 import { Eye, Pencil, Trash2, Users, Plus, ShieldCheck } from "lucide-react";
-import LoadingPage from "@components/features/loading-page";
 import { useUsers, useDeleteUser } from "@/lib/users/hooks/use-users";
 import { useSession } from "@/lib/auth/context/auth.user.context";
 
@@ -140,57 +139,54 @@ export function UserList() {
   ];
 
   return (
-    <>
-      <LoadingPage loading={isLoading} text="Chargement des utilisateurs..." />
-      <div className="space-y-5">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-50">
-              <Users className="w-5 h-5 text-secondary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
-              {!isLoading && (
-                <p className="text-xs text-gray-400">
-                  {filteredUsers.length} utilisateur
-                  {filteredUsers.length === 1 ? "" : "s"}
-                </p>
-              )}
-            </div>
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-emerald-50">
+            <Users className="w-5 h-5 text-secondary" />
           </div>
-          <Link href={`${DASHBOARD}${USERS}/create`}>
-            <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
-                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Ajouter
-            </button>
-          </Link>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Utilisateurs</h1>
+            {!isLoading && (
+              <p className="text-xs text-gray-400">
+                {filteredUsers.length} utilisateur
+                {filteredUsers.length === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
         </div>
-
-        <DataTable
-          columns={columns}
-          data={filteredUsers}
-          loading={isLoading}
-          emptyText="Aucun utilisateur."
-        />
-
-        <ConfirmModal
-          open={modalOpen}
-          onCancel={() => {
-            setModalOpen(false);
-            setDeleteError(null);
-            setDeleteId(null);
-          }}
-          onConfirm={handleDelete}
-          loading={deleteLoading}
-          error={deleteError ?? undefined}
-          title="Supprimer cet utilisateur ?"
-          description="Cette action est irréversible. L'utilisateur sera définitivement supprimé."
-        />
+        <Link href={`${DASHBOARD}${USERS}/create`}>
+          <button
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
+              font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </Link>
       </div>
-    </>
+
+      <DataTable
+        columns={columns}
+        data={filteredUsers}
+        loading={isLoading}
+        emptyText="Aucun utilisateur."
+      />
+
+      <ConfirmModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setDeleteError(null);
+          setDeleteId(null);
+        }}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        error={deleteError ?? undefined}
+        title="Supprimer cet utilisateur ?"
+        description="Cette action est irréversible. L'utilisateur sera définitivement supprimé."
+      />
+    </div>
   );
 }

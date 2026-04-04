@@ -5,10 +5,9 @@ import { Header } from "@/components/features/header_";
 import Hero from "@/components/features/Hero";
 
 export const metadata = {
-  title: "Kickstart Next.js - Modern Boilerplate",
+  title: "Accueil - Nextjs Starter Kit",
   description:
-    "Kickstart your Next.js project with a modern boilerplate" +
-    "featuring authentication, dashboard, and more.",
+    "Démarrez votre projet Next.js avec une pile technologique moderne incluant l'authentification, un tableau de bord et bien plus.",
 };
 
 export default function Home() {

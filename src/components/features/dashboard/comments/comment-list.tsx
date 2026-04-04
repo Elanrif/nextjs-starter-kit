@@ -7,7 +7,6 @@ import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { Eye, Pencil, Trash2, MessageSquare, Plus } from "lucide-react";
-import LoadingPage from "@components/features/loading-page";
 import { useComments, useDeleteComment } from "@/lib/comments/hooks/use-comments";
 
 const { DASHBOARD, COMMENTS } = ROUTES;
@@ -117,55 +116,52 @@ export function CommentList() {
   ];
 
   return (
-    <>
-      <LoadingPage loading={isLoading} text="Chargement des commentaires..." />
-      <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-50">
-              <MessageSquare className="w-5 h-5 text-amber-600" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Commentaires</h1>
-              {!isLoading && (
-                <p className="text-xs text-gray-400">
-                  {comments.length} commentaire{comments.length === 1 ? "" : "s"}
-                </p>
-              )}
-            </div>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-amber-50">
+            <MessageSquare className="w-5 h-5 text-amber-600" />
           </div>
-          <Link href={`${DASHBOARD}${COMMENTS}/create`}>
-            <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
-                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Ajouter
-            </button>
-          </Link>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Commentaires</h1>
+            {!isLoading && (
+              <p className="text-xs text-gray-400">
+                {comments.length} commentaire{comments.length === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
         </div>
-
-        <DataTable
-          columns={columns}
-          data={comments}
-          loading={isLoading}
-          emptyText="Aucun commentaire."
-        />
-
-        <ConfirmModal
-          open={modalOpen}
-          onCancel={() => {
-            setModalOpen(false);
-            setDeleteError(null);
-            setDeleteId(null);
-          }}
-          onConfirm={handleDelete}
-          loading={deleteLoading}
-          error={deleteError ?? undefined}
-          title="Supprimer ce commentaire ?"
-          description="Cette action est irréversible. Le commentaire sera définitivement supprimé."
-        />
+        <Link href={`${DASHBOARD}${COMMENTS}/create`}>
+          <button
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
+              font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </Link>
       </div>
-    </>
+
+      <DataTable
+        columns={columns}
+        data={comments}
+        loading={isLoading}
+        emptyText="Aucun commentaire."
+      />
+
+      <ConfirmModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setDeleteError(null);
+          setDeleteId(null);
+        }}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        error={deleteError ?? undefined}
+        title="Supprimer ce commentaire ?"
+        description="Cette action est irréversible. Le commentaire sera définitivement supprimé."
+      />
+    </div>
   );
 }
