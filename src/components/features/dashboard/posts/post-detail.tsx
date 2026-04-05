@@ -2,8 +2,10 @@
 
 import { Post } from "@/lib/posts/models/post.model";
 import Link from "next/link";
+import Image from "next/image";
 import { ROUTES } from "@/utils/routes";
 import { ArrowLeft, Pencil, FileText, User, Calendar, Hash, Heart, ImageIcon } from "lucide-react";
+import { isValidImgUrl } from "@/utils/utils";
 
 const { DASHBOARD, POSTS } = ROUTES;
 
@@ -32,10 +34,12 @@ export function PostDetail({ post }: { post: Post }) {
           <div className="flex items-start gap-6">
             {/* Image ou icône */}
             <div className="shrink-0">
-              {post.imageUrl ? (
-                <img
+              {isValidImgUrl(post.imageUrl) ? (
+                <Image
                   src={post.imageUrl}
                   alt={post.title}
+                  width={80}
+                  height={80}
                   className="h-20 w-20 rounded-2xl object-cover ring-2 ring-teal-400/30 shadow-lg"
                 />
               ) : (

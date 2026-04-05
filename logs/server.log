@@ -243,3 +243,13 @@
 {"level":30,"time":1775050377757,"pid":22576,"hostname":"ELTECH","msg":"Nodemailer transporter ready"}
 {"level":40,"time":1775050381492,"pid":22576,"hostname":"ELTECH","msg":"No active session found"}
 {"level":40,"time":1775050381493,"pid":22576,"hostname":"ELTECH","context":"Session","msg":"Unauthorized: no valid session found during session verification"}
+{"level":40,"time":1775422474295,"pid":42944,"hostname":"ELTECH","msg":"No active session found"}
+{"level":40,"time":1775422474299,"pid":42944,"hostname":"ELTECH","context":"Session","msg":"Unauthorized: no valid session found during session verification"}
+{"level":30,"time":1775422559004,"pid":42944,"hostname":"ELTECH","msg":"Request to safe URL http://localhost:8081/api/v1/auth/login, skipping token interceptor"}
+{"level":30,"time":1775422562525,"pid":42944,"hostname":"ELTECH","session":{"ok":true,"data":{"user":{"id":1,"email":"admin@gmail.com","firstName":"Admin","lastName":"User","phoneNumber":"+1234567890","role":"ADMIN","avatarUrl":null,"isActive":true,"createdAt":"2026-04-05T21:52:10.267843","updatedAt":"2026-04-05T21:52:10.267843"},"isAuth":true,"expiresAt":"2026-04-12T20:56:02.459Z","access_token":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwicGhvbmVOdW1iZXIiOiIrMTIzNDU2Nzg5MCIsInJvbGUiOiJBRE1JTiIsImF2YXRhclVybCI6bnVsbCwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjYtMDQtMDVUMjE6NTI6MTAuMjY3ODQzIiwidXBkYXRlZEF0IjoiMjAyNi0wNC0wNVQyMTo1MjoxMC4yNjc4NDMifSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0xMlQyMDo1NjowMi40NTlaIiwiaWF0IjoxNzc1NDIyNTYyLCJleHAiOjE3NzYwMjczNjJ9.HvEt-TQsxlM7K2ZKBxPxHo681E94u0rSVW1c5VOVRw4"}},"msg":"Session created successfully"}
+{"level":30,"time":1775422571616,"pid":42944,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":30,"time":1775422604853,"pid":42944,"hostname":"ELTECH","id":3,"title":"Community Guidelines 2","msg":"Post updated successfully"}
+{"level":30,"time":1775422885721,"pid":42944,"hostname":"ELTECH","count":4,"msg":"Fetched users"}
+{"level":40,"time":1775423522620,"pid":42944,"hostname":"ELTECH","msg":"No active session found"}
+{"level":40,"time":1775423527175,"pid":42944,"hostname":"ELTECH","msg":"No active session found"}
+{"level":40,"time":1775423527175,"pid":42944,"hostname":"ELTECH","context":"Session","msg":"Unauthorized: no valid session found during session verification"}

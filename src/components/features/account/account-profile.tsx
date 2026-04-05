@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { UserRole } from "@/lib/users/models/user.model";
+import { isValidImgUrl } from "@/utils/utils";
 
 export const metadata = {
   title: "Mon compte",
@@ -66,7 +67,7 @@ export default async function AccountPage() {
           {/* Avatar */}
           <div className="relative shrink-0">
             <div className="h-20 w-20 rounded-2xl shadow-lg ring-2 ring-white/10 overflow-hidden">
-              {user.avatarUrl ? (
+              {isValidImgUrl(user.avatarUrl) ? (
                 <Image
                   src={user.avatarUrl}
                   alt={`Avatar de ${user.firstName || user.email}`}

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { UserRole } from "@/lib/users/models/user.model";
 import { useSession } from "@/lib/auth/context/auth.user.context";
+import { isValidImgUrl } from "@/utils/utils";
 
 const { MY_ACCOUNT, EDIT_PROFILE } = ROUTES;
 
@@ -58,7 +59,7 @@ export function ProfileDetail() {
                 items-center justify-center text-white text-2xl font-bold shadow-lg ring-2
                 ring-white/10"
             >
-              {user.avatarUrl ? (
+              {isValidImgUrl(user.avatarUrl) ? (
                 <Image
                   src={user.avatarUrl}
                   alt={`Avatar de ${user.firstName || user.email}`}
