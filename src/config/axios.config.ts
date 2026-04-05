@@ -17,7 +17,7 @@ export default function httpClient({ logger }: { logger: Logger }) {
   });
   instance.interceptors.response.use(responseLoggerInterceptor(logger), (error: AxiosError) => {
     const { trace: _, ...data } = (error.response?.data ?? {}) as Record<string, unknown>;
-    logger.error({ error: error.message, ...data }, "Upstream API error");
+    logger.error({ error: error.message, ...data }, "API error");
     return Promise.reject(error);
   });
   return instance;

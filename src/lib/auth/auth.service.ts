@@ -28,11 +28,12 @@ import { ApiErrorResponse } from "@/shared/errors/api-error.server";
  */
 const {
   api: {
-    rest: {
-      endpoints: {
-        auth: { editProfile: editProfileUrl, changeProfilePasswordUrl: changeProfilePasswordUrl },
-        register: registerUrl,
+    endpoints: {
+      auth: {
         login: loginUrl,
+        register: registerUrl,
+        editProfile: editProfileUrl,
+        updatePassword: updatePwdUrl,
         resetPassword: resetPasswordUrl,
       },
     },
@@ -204,10 +205,7 @@ export async function changePasswordProfile(
   }
 
   try {
-    const res = await apiClient(true).patch<any, AxiosResponse<User>>(
-      changeProfilePasswordUrl,
-      data,
-    );
+    const res = await apiClient(true).patch<any, AxiosResponse<User>>(updatePwdUrl, data);
     logger.info({ id: res.data.id }, "Profile updated successfully");
     return { ok: true, data: res.data };
   } catch (error: any) {

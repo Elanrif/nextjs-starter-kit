@@ -194,14 +194,6 @@ export default function AccountProfilePage() {
         <div className="divide-y divide-gray-50">
           {[
             {
-              href: ROUTES.VIEW_PROFILE,
-              icon: User,
-              label: "Voir mon profil",
-              desc: "Informations personnelles",
-              color: "text-blue-600",
-              bg: "bg-blue-50",
-            },
-            {
               href: ROUTES.EDIT_PROFILE,
               icon: Pencil,
               label: "Modifier le profil",

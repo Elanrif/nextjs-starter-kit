@@ -4,9 +4,9 @@ import { isTokenExpired, Token } from "@config/auth.utils";
 import { getLogger } from "@config/logger.config";
 import { ApiError_ } from "@/shared/errors/api-error";
 
-const { api: apiConfig, auth: authConfig } = environment;
+const { api: apiConfig } = environment;
 const logger = getLogger();
-const SAFE_URLS = [apiConfig.rest.endpoints.register, apiConfig.rest.endpoints.login];
+const SAFE_URLS = [apiConfig.endpoints.auth.register, apiConfig.endpoints.auth.login];
 
 const isSafeUrl = (candidate: string): boolean => {
   return SAFE_URLS.some((url: string) => candidate.startsWith(url));
@@ -15,7 +15,7 @@ const isSafeUrl = (candidate: string): boolean => {
 export const anonTokenInterceptor = async (config: InternalAxiosRequestConfig) => {
   const { url } = config;
   if (url && isSafeUrl(url)) {
-    logger.info(`Request to safe URL ${url}, skipping token interceptor`);
+    logger.info({ url }, "Request to safe URL, skipping token interceptor");
   }
   return config;
 };
@@ -24,7 +24,7 @@ export const ownTokenInterceptor = async (config: InternalAxiosRequestConfig, to
   const { headers } = config;
   if (token && isTokenExpired(token.expiry) && token.refresh_token) {
     // token = await refreshOwnToken(token.refresh_token);
-    logger.info(`Token expired, not refreshing token token expired at ${token.expiry}`);
+    logger.info({ expiry: token.expiry }, "Token expired, skipping refresh");
   }
   if (token) {
     headers["Authorization"] = `Bearer ${token.access_token}`;

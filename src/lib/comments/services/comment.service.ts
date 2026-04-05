@@ -18,9 +18,7 @@ import { ApiErrorResponse } from "@/shared/errors/api-error.server";
  */
 const {
   api: {
-    rest: {
-      endpoints: { comments: COMMENTS_URL },
-    },
+    endpoints: { comments: COMMENTS_URL },
   },
 } = environment;
 

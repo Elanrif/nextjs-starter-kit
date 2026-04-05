@@ -1,4 +1,4 @@
-import { ProfileEditForm } from "@/components/features/account/profile/profile-edit-form";
+import { ProfileEditForm } from "@/components/features/account/profile-edit-form";
 
 export const metadata = {
   title: "Modifier mon profil",

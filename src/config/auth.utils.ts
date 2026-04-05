@@ -1,8 +1,3 @@
-import moment from "moment/moment";
-import environment from "@config/environment.config";
-
-const { format: formatConfig } = environment;
-
 export interface Token {
   access_token: string;
   expires_in: number;
@@ -15,10 +10,6 @@ export interface Token {
 
 export const isTokenExpired = (expiryOrToken: string | Token): boolean => {
   const expiry = typeof expiryOrToken === "string" ? expiryOrToken : expiryOrToken.expiry;
-  if (!expiry) {
-    return true;
-  }
-  const date = moment(expiry, formatConfig.dateTime);
-  const now = moment();
-  return date.isSameOrBefore(now);
+  if (!expiry) return true;
+  return new Date(expiry) <= new Date();
 };
