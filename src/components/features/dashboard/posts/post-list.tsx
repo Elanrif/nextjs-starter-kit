@@ -7,8 +7,9 @@ import { ConfirmModal } from "@/components/features/dashboard/confirm-modal";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/utils/routes";
 import { Eye, Pencil, Trash2, FileText, Plus, Heart, User } from "lucide-react";
-import LoadingPage from "@components/features/loading-page";
 import { usePosts, useDeletePost } from "@/lib/posts/hooks/use-posts";
+import Image from "next/image";
+import { isValidImgUrl } from "@/utils/utils";
 
 const { DASHBOARD, POSTS } = ROUTES;
 
@@ -47,11 +48,13 @@ export function PostList() {
       label: "Post",
       render: (row) => (
         <div className="flex items-center gap-3">
-          {row.imageUrl && (
-            <img
+          {isValidImgUrl(row.imageUrl) && (
+            <Image
               src={row.imageUrl}
               alt={row.title}
               className="w-9 h-9 rounded-lg object-cover shrink-0"
+              width={36}
+              height={36}
             />
           )}
           <div>
@@ -132,50 +135,47 @@ export function PostList() {
   ];
 
   return (
-    <>
-      <LoadingPage loading={isLoading} text="Chargement des posts..." />
-      <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-teal-50">
-              <FileText className="w-5 h-5 text-teal-600" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Posts</h1>
-              {!isLoading && (
-                <p className="text-xs text-gray-400">
-                  {posts.length} post{posts.length === 1 ? "" : "s"}
-                </p>
-              )}
-            </div>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-teal-50">
+            <FileText className="w-5 h-5 text-teal-600" />
           </div>
-          <Link href={`${DASHBOARD}${POSTS}/create`}>
-            <button
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
-                font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Ajouter
-            </button>
-          </Link>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Posts</h1>
+            {!isLoading && (
+              <p className="text-xs text-gray-400">
+                {posts.length} post{posts.length === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
         </div>
-
-        <DataTable columns={columns} data={posts} loading={isLoading} emptyText="Aucun post." />
-
-        <ConfirmModal
-          open={modalOpen}
-          onCancel={() => {
-            setModalOpen(false);
-            setDeleteError(null);
-            setDeleteId(null);
-          }}
-          onConfirm={handleDelete}
-          loading={deleteLoading}
-          error={deleteError ?? undefined}
-          title="Supprimer ce post ?"
-          description="Cette action est irréversible. Le post sera définitivement supprimé."
-        />
+        <Link href={`${DASHBOARD}${POSTS}/create`}>
+          <button
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-sm
+              font-semibold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </Link>
       </div>
-    </>
+
+      <DataTable columns={columns} data={posts} loading={isLoading} emptyText="Aucun post." />
+
+      <ConfirmModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setDeleteError(null);
+          setDeleteId(null);
+        }}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        error={deleteError ?? undefined}
+        title="Supprimer ce post ?"
+        description="Cette action est irréversible. Le post sera définitivement supprimé."
+      />
+    </div>
   );
 }

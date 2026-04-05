@@ -10,7 +10,9 @@ import type { PostFilters } from "./post.service";
 
 const {
   api: {
-    endpoints: { posts: POSTS_URL },
+    rest: {
+      endpoints: { posts: POSTS_URL },
+    },
   },
 } = proxyEnvironment;
 

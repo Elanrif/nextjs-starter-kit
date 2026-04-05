@@ -25,7 +25,7 @@ export const responseLoggerInterceptor =
         url: response.config.url,
         status: response.status,
       },
-      "Response from xxx",
+      "Response received",
     );
     // logger.debug({ headers: response.headers }, "Response headers");
     // logger.debug({ data: response.data }, "Response data");

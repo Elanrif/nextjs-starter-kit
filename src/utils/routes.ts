@@ -1,10 +1,8 @@
 export const ROUTES = {
   HOME: "/",
   MY_ACCOUNT: "/account",
-  VIEW_PROFILE: "/account/profile",
-  EDIT_PROFILE: "/account/profile/edit",
-  CHANGE_PASSWORD: "/account/settings/change-password",
-  SETTINGS: "/account/settings",
+  EDIT_PROFILE: "/account/edit",
+  CHANGE_PASSWORD: "/account/password",
   DASHBOARD: "/dashboard",
   USERS: "/users",
   COMMENTS: "/comments",

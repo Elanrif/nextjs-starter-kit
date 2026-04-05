@@ -32,14 +32,14 @@ const {
     rest: {
       endpoints: {
         auth: {
+          login: loginUrl,
+          register: registerUrl,
           editProfile: editProfileUrl,
-          changeProfilePasswordUrl: changeProfilePasswordUrl,
-          refreshTokenUrl,
-          logoutUrl,
+          updatePassword: updatePwdUrl,
+          resetPassword: resetPasswordUrl,
+          refreshToken: refreshTokenUrl,
+          logout: logoutUrl,
         },
-        register: registerUrl,
-        login: loginUrl,
-        resetPassword: resetPasswordUrl,
       },
     },
   },
@@ -328,7 +328,7 @@ export async function changePasswordProfile(
    */
   try {
     const res = await apiClient(false, config).patch<any, AxiosResponse<User>>(
-      changeProfilePasswordUrl,
+      updatePwdUrl,
       parse.data,
     );
     logger.info({ id: res.data.id }, "Profile password updated successfully");

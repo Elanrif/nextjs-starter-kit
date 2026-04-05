@@ -33,6 +33,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
 import { SignOutButton } from "./features/auth/sign-out-button";
+import { isValidImgUrl } from "@/utils/utils";
 
 function NavUserLoadingSkeleton({ variant }: { variant: "dark" | "light" }) {
   const isDark = variant === "dark";
@@ -196,7 +197,7 @@ export function NavUser({ variant = "dark" }: { variant?: "dark" | "light" }) {
                   <AvatarImage src={u.avatarUrl} alt={u.firstName} />
                   <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm
                     font-semibold">
-                    {u.avatarUrl ? (
+                    {isValidImgUrl(u.avatarUrl) ? (
                       <Image
                         src={u.avatarUrl}
                         alt={`Avatar de ${u.firstName || u.email}`}

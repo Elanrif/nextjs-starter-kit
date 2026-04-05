@@ -18,7 +18,9 @@ import { Result } from "@/shared/models/response.model";
 
 const {
   api: {
-    endpoints: { users: usersUrl },
+    rest: {
+      endpoints: { users: usersUrl },
+    },
   },
 } = proxyEnvironment;
 

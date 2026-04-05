@@ -1,5 +1,6 @@
 "use client";
 
+import { isValidImgUrl } from "@/utils/utils";
 import { Activity } from "lucide-react";
 import Image from "next/image";
 
@@ -38,7 +39,7 @@ export function DashboardHero({ user }: { user: HeroUser }) {
               items-center justify-center text-white text-xl font-bold shadow-lg ring-2
               ring-white/10"
           >
-            {user.avatarUrl ? (
+            {isValidImgUrl(user.avatarUrl) ? (
               <Image
                 src={user.avatarUrl}
                 alt={`Avatar de ${user.firstName || user.email}`}

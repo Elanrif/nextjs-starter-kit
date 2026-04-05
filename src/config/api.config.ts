@@ -9,6 +9,8 @@ export type Config = {
   headers?: Headers;
 };
 
+// Creates a child logger that automatically includes reqId in every log entry.
+// Replaces the old RequestLogger class — Pino's child() is the idiomatic approach.
 const apiLogger = (config?: Config) => {
   if (config?.headers) {
     const headers = new Headers(config.headers);
