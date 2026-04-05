@@ -3,9 +3,17 @@ import { InternalAxiosRequestConfig } from "axios";
 import { getLogger } from "@config/logger.config";
 import { ApiError_ } from "@/shared/errors/api-error";
 
-const { api: apiConfig } = environment;
+const {
+  api: {
+    rest: {
+      endpoints: {
+        auth: { register, login },
+      },
+    },
+  },
+} = environment;
 const logger = getLogger();
-const SAFE_URLS = [apiConfig.rest.endpoints.register, apiConfig.rest.endpoints.login];
+const SAFE_URLS = [register, login];
 
 const isSafeUrl = (candidate: string): boolean => {
   return SAFE_URLS.some((url: string) => candidate.startsWith(url));

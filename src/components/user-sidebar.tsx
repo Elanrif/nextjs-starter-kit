@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { HomeIcon, Settings, User, Pencil, Lock } from "lucide-react";
+import { HomeIcon, Settings, Pencil, Lock } from "lucide-react";
 
 import { NavUser } from "@/components/nav-user";
 import {
@@ -17,7 +17,7 @@ import { NavMainUser } from "./nav-main-user";
 import { AccountBrand } from "./features/account-brand";
 import { useSession } from "@/lib/auth/context/auth.user.context";
 
-const { MY_ACCOUNT, VIEW_PROFILE, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
+const { MY_ACCOUNT, EDIT_PROFILE, CHANGE_PASSWORD } = ROUTES;
 
 const data = {
   navMain: [
@@ -32,11 +32,6 @@ const data = {
       icon: Settings,
       isActive: true,
       items: [
-        {
-          title: "Voir le profil",
-          url: VIEW_PROFILE,
-          icon: User,
-        },
         {
           title: "Modifier le profil",
           url: EDIT_PROFILE,

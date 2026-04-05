@@ -1,59 +1,44 @@
 import nodemailer from "nodemailer";
 import { getLogger } from "./logger.config";
-import { randomBytes, createHmac } from "node:crypto"; // native crypto module for secure token generation
+import { randomBytes, createHmac } from "node:crypto";
 
 const logger = getLogger("server");
 
-/**
- * Nodemailer transporter configuration
- * Reads from environment variables
- */
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "localhost",
   port: Number.parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+  secure: process.env.SMTP_SECURE === "true",
   auth: {
-    user: process.env.SMTP_USER || "your-email@example.com",
-    pass: process.env.SMTP_PASS || "your-password",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
-/**
- * Verify transporter connection
- */
-transporter.verify((error, success) => {
-  if (error) {
-    logger.error({ err: error }, "Nodemailer transporter error");
-  } else {
+export async function verifyTransporter(): Promise<void> {
+  try {
+    await transporter.verify();
     logger.info("Nodemailer transporter ready");
+  } catch (error) {
+    logger.error({ err: error }, "Nodemailer transporter error");
   }
-});
+}
 
-/**
- * Generate password reset token using a secret key
- * The token is a HMAC-SHA256 hash of a random string and the secret key
- */
-export function generateResetToken(): {
-  resetToken: string;
-  code: string;
-} {
-  const secret = process.env.SMTP_RESET_TOKEN_SECRET!;
-  const code = randomBytes(16).toString("hex"); // Generate random string
-  const resetToken = createHmac("sha256", secret).update(code).digest("hex"); // HMAC-SHA256
+export function generateResetToken(): { resetToken: string; code: string } {
+  const secret = process.env.SMTP_RESET_TOKEN_SECRET;
+  if (!secret) throw new Error("SMTP_RESET_TOKEN_SECRET is not set");
+  const code = randomBytes(16).toString("hex");
+  const resetToken = createHmac("sha256", secret).update(code).digest("hex");
   return { resetToken, code };
 }
 
-/**
- * Send password reset email
- */
 export async function sendPasswordResetEmail(
   email: string,
   resetToken: string,
   resetUrl: string,
 ): Promise<boolean> {
   try {
-    const mailOptions = {
-      from: process.env.SMTP_FROM || "noreply@google.com",
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || "noreply@example.com",
       to: email,
       subject: "Password Reset Request",
       html: `
@@ -69,7 +54,6 @@ export async function sendPasswordResetEmail(
               .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
               .message { background: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
               .button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: 600; }
-              .button:hover { opacity: 0.9; }
               .warning { background: #fff3cd; color: #856404; padding: 12px; border-radius: 5px; margin-bottom: 20px; font-size: 14px; }
               .footer { text-align: center; font-size: 12px; color: #999; margin-top: 20px; }
               .token { background: #e9ecef; padding: 10px; border-radius: 3px; word-break: break-all; font-family: monospace; font-size: 12px; margin: 10px 0; }
@@ -84,41 +68,31 @@ export async function sendPasswordResetEmail(
                 <div class="message">
                   <p>Hi there,</p>
                   <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
-                  
                   <p>Click the button below to reset your password. This link will expire in <strong>1 hour</strong>.</p>
-                  
                   <center>
                     <a href="${resetUrl}" class="button" style="color: white;">Reset Password</a>
                   </center>
-                  
                   <div class="warning">
                     ⚠️ <strong>Secure Link:</strong> Never share this email or link with anyone. We will never ask for your password via email.
                   </div>
-                  
                   <p>Or copy and paste this link in your browser:</p>
                   <div class="token">${resetUrl}</div>
-                  
-                  <p><strong>Reset Token:</strong></p>
-                  <div class="token">${resetToken}</div>
                 </div>
-                
                 <p style="font-size: 14px; color: #666;">
                   <strong>Didn't request this?</strong><br/>
-                  If you didn't request a password reset, please contact us immediately at elanrif.tech@gmail.com or reply to this email.
+                  If you didn't request a password reset, please contact support immediately.
                 </p>
               </div>
               <div class="footer">
-                <p>&copy; 2026 Your Company. All rights reserved.</p>
+                <p>&copy; ${new Date().getFullYear()} ${process.env.APP_NAME ?? "Your Company"}. All rights reserved.</p>
                 <p>This is an automated message, please do not reply directly.</p>
               </div>
             </div>
           </body>
         </html>
       `,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    logger.info({ messageId: info.messageId, to: email }, "Password reset email sent");
+    });
+    logger.info({ to: email }, "Password reset email sent");
     return true;
   } catch (error) {
     logger.error({ email, err: error }, "Failed to send password reset email");
@@ -126,15 +100,12 @@ export async function sendPasswordResetEmail(
   }
 }
 
-/**
- * Send welcome email
- */
 export async function sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
   try {
-    const mailOptions = {
+    await transporter.sendMail({
       from: process.env.SMTP_FROM || "noreply@example.com",
       to: email,
-      subject: "Welcome to Our App!",
+      subject: `Welcome to ${process.env.APP_NAME ?? "Our App"}!`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -159,9 +130,7 @@ export async function sendWelcomeEmail(email: string, firstName: string): Promis
           </body>
         </html>
       `,
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
     logger.info({ to: email }, "Welcome email sent");
     return true;
   } catch (error) {

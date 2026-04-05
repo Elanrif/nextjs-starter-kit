@@ -1,42 +1,25 @@
-const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL ?? "http://localhost:8081";
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000";
-const HOST_NAME = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost";
-const BACKEND_BASE_V1 = `${BACKEND_BASE_URL}/api/v1`;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const API_URL = `${process.env.API_URL ?? "http://localhost:8081"}/api/v1`;
 
 const environment = {
-  name: process.env.ENV,
-  baseUrl: BASE_URL,
-  rootDomain: HOST_NAME,
-  apiBaseUrl: `${BASE_URL}/api`,
+  baseUrl: APP_URL,
+  apiBaseUrl: `${APP_URL}/api`,
   apiProxyBase: `/api`,
-  baApiBaseUrl: BACKEND_BASE_URL,
   api: {
     rest: {
       endpoints: {
-        comments: `${BACKEND_BASE_V1}/comments`,
-        posts: `${BACKEND_BASE_V1}/posts`,
-        users: `${BACKEND_BASE_V1}/users`,
-        login: `${BACKEND_BASE_V1}/auth/login`,
-        register: `${BACKEND_BASE_V1}/auth/register`,
-        resetPassword: `${BACKEND_BASE_V1}/auth/reset-password`,
-        // auth endpoints
+        comments: `${API_URL}/comments`,
+        posts: `${API_URL}/posts`,
+        users: `${API_URL}/users`,
         auth: {
-          baseUrl: `${BACKEND_BASE_V1}/auth`,
-          editProfile: `${BACKEND_BASE_V1}/auth/edit-profile`,
-          changeProfilePasswordUrl: `${BACKEND_BASE_V1}/auth/change-password-profile`,
+          login: `${API_URL}/auth/login`,
+          register: `${API_URL}/auth/register`,
+          editProfile: `${API_URL}/auth/edit-profile`,
+          updatePassword: `${API_URL}/auth/change-password-profile`,
+          resetPassword: `${API_URL}/auth/reset-password`,
         },
       },
     },
-  },
-
-  auth: {
-    endpoints: {
-      token: `${BACKEND_BASE_URL}/auth/v1/token`,
-      introspect: `${BACKEND_BASE_URL}/auth/v1/introspect`,
-    },
-  },
-  format: {
-    dateTime: process.env.FORMAT_DATETIME_ISO || "YYYY-MM-DDThh:mm:ss",
   },
   log: {
     client: {
