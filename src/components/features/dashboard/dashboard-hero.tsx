@@ -3,6 +3,7 @@
 import { Activity } from "lucide-react";
 import { useSession } from "@/lib/auth/context/auth.user.context";
 import Image from "next/image";
+import { isValidImgUrl } from "@/utils/utils";
 
 export function DashboardHero() {
   const { user } = useSession();
@@ -40,7 +41,7 @@ export function DashboardHero() {
               items-center justify-center text-white text-xl font-bold shadow-lg ring-2
               ring-white/10"
           >
-            {user.avatarUrl ? (
+            {isValidImgUrl(user.avatarUrl) ? (
               <Image
                 src={user.avatarUrl}
                 alt={`Avatar de ${user.firstName || user.email}`}

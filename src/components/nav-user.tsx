@@ -32,6 +32,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/utils/routes";
 import { SignOutButton } from "./features/auth/sign-out-button";
+import { isValidImgUrl } from "@/utils/utils";
 
 function getInitials(user: User) {
   return ((user.firstName?.slice(0, 1) ?? "") + (user.lastName?.slice(0, 1) ?? "")).toUpperCase();
@@ -101,7 +102,7 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
                       : "rounded-lg bg-indigo-100 text-indigo-600 text-xs font-semibold"
                   }
                 >
-                  {user.avatarUrl ? (
+                  {isValidImgUrl(user.avatarUrl) ? (
                     <Image
                       src={user.avatarUrl}
                       alt={`Avatar de ${user.firstName || user.email}`}
@@ -164,7 +165,7 @@ export function NavUser({ user, variant = "dark" }: { user: User; variant?: "dar
                   <AvatarImage src={user.avatarUrl} alt={user.firstName} />
                   <AvatarFallback className="rounded-xl bg-emerald-100 text-emerald-700 text-sm
                     font-semibold">
-                    {user.avatarUrl ? (
+                    {isValidImgUrl(user.avatarUrl) ? (
                       <Image
                         src={user.avatarUrl}
                         alt={`Avatar de ${user.firstName || user.email}`}

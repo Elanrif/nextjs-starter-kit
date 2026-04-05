@@ -17,6 +17,7 @@ import {
   Clock,
   Fingerprint,
 } from "lucide-react";
+import { isValidImgUrl } from "@/utils/utils";
 
 export default function AccountProfilePage() {
   const { user } = useSession();
@@ -53,7 +54,7 @@ export default function AccountProfilePage() {
           {/* Avatar */}
           <div className="relative shrink-0">
             <div className="h-20 w-20 rounded-2xl shadow-lg ring-2 ring-white/10 overflow-hidden">
-              {user.avatarUrl ? (
+              {isValidImgUrl(user.avatarUrl) ? (
                 <Image
                   src={user.avatarUrl}
                   alt={`Avatar de ${user.firstName || user.email}`}
