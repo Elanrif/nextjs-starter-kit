@@ -6,16 +6,18 @@ const environment = {
   apiBaseUrl: `${APP_URL}/api`,
   apiProxyBase: `/api`,
   api: {
-    endpoints: {
-      comments: `${API_URL}/comments`,
-      posts: `${API_URL}/posts`,
-      users: `${API_URL}/users`,
-      auth: {
-        login: `${API_URL}/auth/login`,
-        register: `${API_URL}/auth/register`,
-        editProfile: `${API_URL}/auth/edit-profile`,
-        updatePassword: `${API_URL}/auth/change-password-profile`,
-        resetPassword: `${API_URL}/auth/reset-password`,
+    rest: {
+      endpoints: {
+        comments: `${API_URL}/comments`,
+        posts: `${API_URL}/posts`,
+        users: `${API_URL}/users`,
+        auth: {
+          login: `${API_URL}/auth/login`,
+          register: `${API_URL}/auth/register`,
+          editProfile: `${API_URL}/auth/edit-profile`,
+          updatePassword: `${API_URL}/auth/change-password-profile`,
+          resetPassword: `${API_URL}/auth/reset-password`,
+        },
       },
     },
   },

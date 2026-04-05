@@ -10,7 +10,9 @@ import { Page, Result } from "@/shared/models/response.model";
 
 const {
   api: {
-    endpoints: { comments: COMMENTS_URL },
+    rest: {
+      endpoints: { comments: COMMENTS_URL },
+    },
   },
 } = proxyEnvironment;
 

@@ -28,13 +28,15 @@ import { ApiErrorResponse } from "@/shared/errors/api-error.server";
  */
 const {
   api: {
-    endpoints: {
-      auth: {
-        login: loginUrl,
-        register: registerUrl,
-        editProfile: editProfileUrl,
-        updatePassword: updatePwdUrl,
-        resetPassword: resetPasswordUrl,
+    rest: {
+      endpoints: {
+        auth: {
+          login: loginUrl,
+          register: registerUrl,
+          editProfile: editProfileUrl,
+          updatePassword: updatePwdUrl,
+          resetPassword: resetPasswordUrl,
+        },
       },
     },
   },

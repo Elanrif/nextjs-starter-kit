@@ -7,14 +7,16 @@ export const proxyEnvironment = {
   apiBaseUrl,
   apiProxyBase,
   api: {
-    endpoints: {
-      comments: `/comments`,
-      posts: `/posts`,
-      login: `/auth/login`,
-      signOut: `/auth/logout`,
-      register: `/auth/register`,
-      passwordChange: `/auth/password-change`,
-      users: `/users`,
+    rest: {
+      endpoints: {
+        comments: `/comments`,
+        posts: `/posts`,
+        login: `/auth/login`,
+        signOut: `/auth/logout`,
+        register: `/auth/register`,
+        passwordChange: `/auth/password-change`,
+        users: `/users`,
+      },
     },
   },
 };

@@ -21,7 +21,9 @@ import { ApiErrorResponse } from "@/shared/errors/api-error.server";
  */
 const {
   api: {
-    endpoints: { users: usersUrl },
+    rest: {
+      endpoints: { users: usersUrl },
+    },
   },
 } = environment;
 

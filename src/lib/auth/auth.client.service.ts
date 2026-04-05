@@ -13,11 +13,13 @@ import { ApiError } from "@/shared/errors/api-error";
  */
 const {
   api: {
-    endpoints: {
-      passwordChange: passwordChangeUrl,
-      register: registerUrl,
-      login: loginUrl,
-      signOut: _signOutUrl,
+    rest: {
+      endpoints: {
+        passwordChange: passwordChangeUrl,
+        register: registerUrl,
+        login: loginUrl,
+        signOut: _signOutUrl,
+      },
     },
   },
 } = proxyEnvironment;
