@@ -1,6 +1,6 @@
 "use server";
 
-import { createPost, updatePost, deletePost } from "@/lib/posts/services/post.service";
+import { createPost, updatePost, deletePost } from "@/lib/posts/services/post.server";
 import { PostCreate, PostUpdate } from "@/lib/posts/models/post.model";
 import { revalidatePath } from "next/cache";
 

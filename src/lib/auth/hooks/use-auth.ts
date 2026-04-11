@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { signIn, signUp, changeUserPassword } from "@/lib/auth/auth.client.service";
+import { signIn, signUp, changeUserPassword } from "@/lib/auth/services/auth.client";
 import type { Login, Registrer } from "@/lib/auth/models/auth.model";
 
 // ─── Mutations ────────────────────────────────────────────────────────────────

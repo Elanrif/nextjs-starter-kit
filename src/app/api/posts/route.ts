@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchPosts, type PostFilters } from "@/lib/posts/services/post.service";
+import { fetchPosts } from "@/lib/posts/services/post.server";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { PostFilters } from "@/lib/posts/models/post.model";
 
 const logger = getLogger("server");
-
 export const dynamic = "force-dynamic";
 
 /**

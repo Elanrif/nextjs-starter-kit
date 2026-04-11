@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { UserEditForm } from "@/components/features/dashboard/users/user-edit-form";
-import { fetchUserById } from "@/lib/users/services/user.service";
+import { fetchUserById } from "@/lib/users/services/user.server";
 
 export const metadata = {
   title: "Edit User",

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PostEditForm } from "@/components/features/dashboard/posts/post-edit-form";
-import { fetchPostById } from "@/lib/posts/services/post.service";
+import { fetchPostById } from "@/lib/posts/services/post.server";
 
 export const metadata = {
   title: "Modifier post",

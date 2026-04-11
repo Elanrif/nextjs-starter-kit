@@ -6,9 +6,8 @@ import {
   updatePostAction,
   deletePostAction,
 } from "@/lib/posts/actions/post.action";
-import type { PostCreate, PostUpdate } from "@/lib/posts/models/post.model";
-import { fetchPostById, fetchPosts } from "../services/post.client.service";
-import type { PostFilters } from "../services/post.service";
+import type { PostCreate, PostFilters, PostUpdate } from "@/lib/posts/models/post.model";
+import { fetchPostById, fetchPosts } from "@lib/posts/services/post.client";
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 

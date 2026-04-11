@@ -3,9 +3,8 @@
 import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { Comment } from "@/lib/comments/models/comment.model";
+import { Comment, CommentFilters } from "@/lib/comments/models/comment.model";
 import { ApiError } from "@/shared/errors/api-error";
-import { CommentFilters } from "./comment.service";
 import { Page, Result } from "@/shared/models/response.model";
 
 const {

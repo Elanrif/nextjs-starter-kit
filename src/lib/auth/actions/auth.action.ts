@@ -6,13 +6,13 @@ import {
   resetPassword,
   signIn as serverSignIn,
   signUp as serverSignUp,
-} from "@/lib/auth/auth.service";
+} from "@/lib/auth/services/auth.server";
 import { Login, Registrer } from "@/lib/auth/models/auth.model";
 import { ChangePasswordProfileFormData, ProfileUserFormData } from "@/lib/auth/schemas/auth.schema";
 import { ResetPassword } from "@/lib/users/models/user.model";
-import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
+import { generateResetToken, sendPasswordResetEmail } from "@/lib/mail";
 
 export async function signInAction(credentials: Login) {
   return serverSignIn(credentials);

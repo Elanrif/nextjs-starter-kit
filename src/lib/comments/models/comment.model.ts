@@ -21,3 +21,11 @@ export interface CommentCreate {
 }
 
 export type CommentUpdate = Partial<CommentCreate>;
+
+export type CommentFilters = {
+  postId?: number;
+  authorId?: number;
+  page?: number;
+  size?: number;
+  sort?: string;
+};

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { deleteUser, updateUser } from "../services/user.client.service";
+import { deleteUser, updateUser } from "@lib/users/services/user.client";
 
 export async function deleteUserAction(id: number) {
   try {

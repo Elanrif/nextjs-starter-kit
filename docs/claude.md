@@ -262,7 +262,7 @@ import { useSession } from "next-auth/react";
 import { useSignIn, useSignUp } from "@/lib/auth/hooks/use-auth";
 
 // ✅ Client Component — appel direct service client
-import { signIn, signUp } from "@/lib/auth/auth.client.service";
+import { signIn, signUp } from "@/lib/auth/services/auth.client";
 ```
 
 ---

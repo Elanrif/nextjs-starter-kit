@@ -4,7 +4,12 @@ import { AxiosResponse } from "axios";
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import { Comment, CommentCreate, CommentUpdate } from "@/lib/comments/models/comment.model";
+import {
+  Comment,
+  CommentCreate,
+  CommentFilters,
+  CommentUpdate,
+} from "@/lib/comments/models/comment.model";
 import { parseCommentCreate, parseCommentUpdate } from "@/lib/comments/schemas/comment.schema";
 import { validateId } from "@/utils/utils.server";
 import { Page, Result } from "@/shared/models/response.model";
@@ -25,14 +30,6 @@ const {
 } = environment;
 
 const logger = getLogger("server");
-
-export type CommentFilters = {
-  postId?: number;
-  authorId?: number;
-  page?: number;
-  size?: number;
-  sort?: string;
-};
 
 /**
  * Fetch all comments

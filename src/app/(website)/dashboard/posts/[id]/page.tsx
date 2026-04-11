@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PostDetail } from "@/components/features/dashboard/posts/post-detail";
-import { fetchPostById } from "@/lib/posts/services/post.service";
+import { fetchPostById } from "@/lib/posts/services/post.server";
 
 export const metadata = {
   title: "Détail post",

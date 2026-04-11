@@ -4,7 +4,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { sendPasswordResetAction } from "@/lib/auth/actions/auth.action";
-import { searchUsersFilter } from "@/lib/users/services/user.client.service";
 import {
   Mail,
   ArrowLeft,
@@ -21,6 +20,7 @@ import { Field } from "@/components/ui/form/field";
 import { icDark } from "@/components/ui/form/input-class";
 import { cn } from "@/utils/utils";
 import { isApiError } from "@/shared/errors/api-error";
+import { searchUsersFilter } from "@/lib/users/services/user.client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

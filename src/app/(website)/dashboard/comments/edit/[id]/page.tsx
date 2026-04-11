@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { CommentEditForm } from "@/components/features/dashboard/comments/comment-edit-form";
-import { fetchCommentById } from "@/lib/comments/services/comment.service";
+import { fetchCommentById } from "@/lib/comments/services/comment.server";
 
 export const metadata = {
   title: "Modifier commentaire",

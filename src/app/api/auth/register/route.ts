@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/config/logger.config";
 import { Registrer } from "@/lib/auth/models/auth.model";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
-import { signUp } from "@/lib/auth";
+import { signUp } from "@/lib/auth/services/auth.server";
 
 const logger = getLogger("server");
 
