@@ -13,6 +13,7 @@ import { ResetPassword } from "@/lib/users/models/user.model";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError } from "@/shared/errors/api-error";
 import { generateResetToken, sendPasswordResetEmail } from "@/lib/mail";
+import environment from "@/config/environment.config";
 
 export async function signInAction(credentials: Login) {
   return serverSignIn(credentials);
@@ -43,9 +44,7 @@ export async function sendPasswordResetAction(
 
     // Generate reset token
     const { resetToken, code } = generateResetToken();
-
-    // Build reset URL (adjust based on your domain)
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = environment.app.url;
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&code=${code}&email=${encodeURIComponent(email)}`;
 
     // Send email

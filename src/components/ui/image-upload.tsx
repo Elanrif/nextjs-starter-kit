@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CldImage, CldUploadWidget, CloudinaryUploadWidgetResults } from "next-cloudinary";
 import { Upload, X, Loader2, Images } from "lucide-react";
 import { deleteImageAction } from "@/lib/cloudinary/cloudinary.actions";
+import environment from "@/config/environment.config";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -52,13 +53,14 @@ const styles = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+const { cloudinary } = environment;
+
 export function ImageUpload(props: ImageUploadProps) {
   const { folder, variant = "light" } = props;
   const [deleting, setDeleting] = useState<string | null>(null);
   const s = styles[variant];
 
-  const uploadFolder =
-    folder ?? process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_FOLDER ?? "nextjs-starter";
+  const uploadFolder = folder ?? cloudinary.uploadFolder;
 
   // ── Single mode ──────────────────────────────────────────────────────────
 
@@ -121,7 +123,7 @@ export function ImageUpload(props: ImageUploadProps) {
             </button>
             {/* Replace */}
             <CldUploadWidget
-              uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+              uploadPreset={cloudinary.uploadPreset}
               options={{ folder: uploadFolder, maxFiles: 1, resourceType: "image" }}
               onSuccess={handleUploadSuccess}
             >
@@ -140,7 +142,7 @@ export function ImageUpload(props: ImageUploadProps) {
           </div>
         ) : (
           <CldUploadWidget
-            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+            uploadPreset={cloudinary.uploadPreset}
             options={{ folder: uploadFolder, maxFiles: 1, resourceType: "image" }}
             onSuccess={handleUploadSuccess}
           >
@@ -218,7 +220,7 @@ export function ImageUpload(props: ImageUploadProps) {
 
       {/* Upload button */}
       <CldUploadWidget
-        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+        uploadPreset={cloudinary.uploadPreset}
         options={{ folder: uploadFolder, multiple: true, resourceType: "image" }}
         onSuccess={handleUploadSuccessMultiple}
       >

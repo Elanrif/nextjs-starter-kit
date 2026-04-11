@@ -1,16 +1,19 @@
 import nodemailer from "nodemailer";
 import { randomBytes, createHmac } from "node:crypto";
 import { getLogger } from "@/config/logger.config";
+import environment from "@/config/environment.config";
 
 const logger = getLogger("server");
 
+const { app, smtp } = environment;
+
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "localhost",
-  port: Number.parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true",
+  host: smtp.host,
+  port: smtp.port,
+  secure: smtp.secure,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: smtp.user,
+    pass: smtp.pass,
   },
 });
 
@@ -24,7 +27,7 @@ export async function verifyTransporter(): Promise<void> {
 }
 
 export function generateResetToken(): { resetToken: string; code: string } {
-  const secret = process.env.SMTP_RESET_TOKEN_SECRET;
+  const secret = smtp.resetTokenSecret;
   if (!secret) throw new Error("SMTP_RESET_TOKEN_SECRET is not set");
   const code = randomBytes(16).toString("hex");
   const resetToken = createHmac("sha256", secret).update(code).digest("hex");
@@ -38,7 +41,7 @@ export async function sendPasswordResetEmail(
 ): Promise<boolean> {
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || "noreply@example.com",
+      from: smtp.from,
       to: email,
       subject: "Password Reset Request",
       html: `
@@ -84,7 +87,7 @@ export async function sendPasswordResetEmail(
                 </p>
               </div>
               <div class="footer">
-                <p>&copy; ${new Date().getFullYear()} ${process.env.APP_NAME ?? "Your Company"}. All rights reserved.</p>
+                <p>&copy; ${new Date().getFullYear()} ${app.name}. All rights reserved.</p>
                 <p>This is an automated message, please do not reply directly.</p>
               </div>
             </div>
@@ -103,9 +106,9 @@ export async function sendPasswordResetEmail(
 export async function sendWelcomeEmail(email: string, firstName: string): Promise<boolean> {
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || "noreply@example.com",
+      from: smtp.from,
       to: email,
-      subject: `Welcome to ${process.env.APP_NAME ?? "Our App"}!`,
+      subject: `Welcome to ${app.name}!`,
       html: `
         <!DOCTYPE html>
         <html>
