@@ -372,11 +372,11 @@ export function TokenRefreshGuard() {
 
 ### Fichiers concernés
 
-| Fichier                        | Rôle                                                   |
-| ------------------------------ | ------------------------------------------------------ |
-| `src/lib/auth.ts`              | `jwt` callback — logique de check + refresh            |
-| `src/lib/auth/auth.service.ts` | `refreshToken()` — appel REST vers le backend          |
-| `src/config/auth.utils.ts`     | `isTokenExpired()` — calcul d'expiration via moment.js |
+| Fichier                       | Rôle                                                   |
+| ----------------------------- | ------------------------------------------------------ |
+| `src/lib/auth.ts`             | `jwt` callback — logique de check + refresh            |
+| `src/lib/auth/auth.server.ts` | `refreshToken()` — appel REST vers le backend          |
+| `src/config/auth.utils.ts`    | `isTokenExpired()` — calcul d'expiration via moment.js |
 
 ---
 

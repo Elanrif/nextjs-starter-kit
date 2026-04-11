@@ -25,3 +25,9 @@ export interface PostCreate {
 }
 
 export type PostUpdate = Partial<PostCreate>;
+
+export type PostFilters = {
+  page?: number;
+  size?: number;
+  sort?: string;
+};

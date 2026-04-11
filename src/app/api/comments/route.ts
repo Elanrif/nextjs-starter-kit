@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CommentFilters, fetchComments } from "@/lib/comments/services/comment.service";
+import { fetchComments } from "@/lib/comments/services/comment.server";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
+import { CommentFilters } from "@/lib/comments/models/comment.model";
 
 const logger = getLogger("server");
 

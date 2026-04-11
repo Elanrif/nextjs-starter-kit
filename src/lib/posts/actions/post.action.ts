@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createPost, updatePost, deletePost } from "@/lib/posts/services/post.service";
+import { createPost, updatePost, deletePost } from "@/lib/posts/services/post.server";
 import { Post, PostCreate, PostUpdate } from "@/lib/posts/models/post.model";
 import { ApiError } from "@/shared/errors/api-error";
 import { Result } from "@/shared/models/response.model";

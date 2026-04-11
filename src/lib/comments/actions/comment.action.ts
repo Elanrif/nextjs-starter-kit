@@ -5,7 +5,7 @@ import {
   createComment,
   updateComment,
   deleteComment,
-} from "@/lib/comments/services/comment.service";
+} from "@/lib/comments/services/comment.server";
 import { CommentCreate, CommentUpdate } from "@/lib/comments/models/comment.model";
 
 export async function createCommentAction(data: CommentCreate) {

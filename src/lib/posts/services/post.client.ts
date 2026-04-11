@@ -3,10 +3,9 @@
 import { AxiosResponse } from "axios";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import { Post } from "@/lib/posts/models/post.model";
+import { Post, PostFilters } from "@/lib/posts/models/post.model";
 import { ApiError } from "@/shared/errors/api-error";
 import { Page, Result } from "@/shared/models/response.model";
-import type { PostFilters } from "./post.service";
 
 const {
   api: {

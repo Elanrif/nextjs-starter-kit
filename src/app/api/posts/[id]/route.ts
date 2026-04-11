@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchPostById } from "@/lib/posts/services/post.service";
+import { fetchPostById } from "@/lib/posts/services/post.server";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 

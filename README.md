@@ -809,7 +809,7 @@ src/lib/
 #### Server Service Example (for API routes, server components)
 
 ```typescript
-// src/lib/auth/auth.service.ts
+// src/lib/auth/auth.server.ts
 import apiClient, { Config } from "@config/api.config";
 
 export async function signIn(login: Login, config?: Config): Promise<User | CrudApiError> {

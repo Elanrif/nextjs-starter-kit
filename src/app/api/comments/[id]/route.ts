@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchCommentById } from "@/lib/comments/services/comment.service";
+import { fetchCommentById } from "@/lib/comments/services/comment.server";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 

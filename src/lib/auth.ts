@@ -5,8 +5,8 @@ import Credentials from "next-auth/providers/credentials";
 import moment from "moment";
 import { getLogger } from "@/config/logger.config";
 import { LoginSchema } from "@/lib/auth/schemas/auth.schema";
-import { signIn as restSignIn, refreshToken as restRefreshToken } from "@/lib/auth/auth.service";
-import { isTokenExpired } from "@/config/auth.utils";
+import { signIn as restSignIn, refreshToken as restRefreshToken } from "@/lib/auth/auth.server";
+import { isTokenExpired } from "@lib/auth.utils";
 
 const logger = getLogger("server");
 

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { fetchAllUsers } from "@/lib/users/services/user.service";
-import { fetchPosts } from "@/lib/posts/services/post.service";
-import { fetchComments } from "@/lib/comments/services/comment.service";
+import { fetchAllUsers } from "@/lib/users/services/user.server";
+import { fetchPosts } from "@/lib/posts/services/post.server";
+import { fetchComments } from "@/lib/comments/services/comment.server";
 import Link from "next/link";
 import {
   MessageSquare,

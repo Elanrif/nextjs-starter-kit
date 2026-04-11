@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
-import { getLogger } from "./logger.config";
 import { randomBytes, createHmac } from "node:crypto";
+import { getLogger } from "@/config/logger.config";
 
 const logger = getLogger("server");
 

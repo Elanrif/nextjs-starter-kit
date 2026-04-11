@@ -8,14 +8,14 @@ import {
   changePasswordProfile,
   editProfile,
   resetPassword,
-} from "@/lib/auth/auth.service";
+} from "@/lib/auth/auth.server";
 import { AuthPayload, Login, Registrer } from "@/lib/auth/models/auth.model";
 import { ChangePasswordProfileFormData, ProfileUserFormData } from "@/lib/auth/schemas/auth.schema";
 import { ResetPassword } from "@/lib/users/models/user.model";
-import { sendPasswordResetEmail, generateResetToken } from "@/config/mail.config";
 import { signIn, signOut, auth } from "@/lib/auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError, unauthorizedApiError } from "@/shared/errors/api-error";
+import { generateResetToken, sendPasswordResetEmail } from "@/lib/mail";
 
 export async function signInAction(credentials: Login) {
   return await signIn("credentials", {

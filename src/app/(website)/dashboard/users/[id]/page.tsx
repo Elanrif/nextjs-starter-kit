@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { UserDetail } from "@/components/features/dashboard/users/user-detail";
-import { fetchUserById } from "@/lib/users/services/user.service";
+import { fetchUserById } from "@/lib/users/services/user.server";
 
 export const metadata = {
   title: "User Details",

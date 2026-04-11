@@ -15,8 +15,61 @@ Ce fichier est lu automatiquement par Claude à chaque conversation. Il document
 | react-hook-form + zod   | Formulaires et validation                            |
 | react-toastify          | Notifications toast                                  |
 | lucide-react            | Icônes                                               |
-| Better Auth             | Authentification (JWT via Jose)                      |
+| NextAuth v5             | Authentification (stratégie JWT, Credentials)        |
 | axios                   | HTTP client                                          |
+
+---
+
+## Dépendances externes complètes
+
+### Dépendances Main (Production)
+
+| Package                    | Version  | Usage                                           |
+| -------------------------- | -------- | ----------------------------------------------- |
+| `@hookform/resolvers`      | ^5.2.2   | Validation avec react-hook-form + zod           |
+| `@tanstack/react-query`    | ^5.90.21 | Gestion du cache et fetching côté client        |
+| `@types/nodemailer`        | ^7.0.11  | Types TypeScript pour nodemailer                |
+| `axios`                    | ^1.13.5  | HTTP client avec intercepteurs                  |
+| `class-variance-authority` | ^0.7.1   | Gestion variantes CSS pour composants           |
+| `cloudinary`               | ^2.9.0   | CDN images (upload, manipulation, stockage)     |
+| `clsx`                     | ^2.1.1   | Utilitaire jointure classes CSS                 |
+| `lucide-react`             | ^0.575.0 | 500+ icônes SVG réactives                       |
+| `next-cloudinary`          | ^6.17.5  | Composant `<CldImage>` optimisé Cloudinary      |
+| `nodemailer`               | ^8.0.2   | Envoi emails (SMTP, OAuth2)                     |
+| `pino`                     | ^10.3.1  | Logger haute performance JSON                   |
+| `radix-ui`                 | ^1.4.3   | Primitives UI accessibles (Dialog, Alert, etc.) |
+| `react-toastify`           | ^11.0.5  | Notifications toast (success, error, info)      |
+| `rimraf`                   | ^6.1.3   | Suppression récursive fichiers/dossiers         |
+| `server-only`              | ^0.0.1   | Prévention accès Server Components du client    |
+| `tailwind-merge`           | ^3.5.0   | Fusion résolute classes Tailwind                |
+
+### Dépendances Dev
+
+| Package                           | Version | Usage                                     |
+| --------------------------------- | ------- | ----------------------------------------- |
+| `@commitlint/cli`                 | ^20.4.2 | Validation messages commit conventionnels |
+| `@commitlint/config-conventional` | ^20.4.2 | Config Commitlint standard                |
+| `@eslint/css`                     | ^0.7.0  | Linting CSS avec ESLint                   |
+| `@eslint/eslintrc`                | ^3.3.3  | Config ESLint                             |
+| `@eslint/js`                      | ^9.39.3 | Règles ESLint JavaScript                  |
+| `@tailwindcss/postcss`            | ^4      | PostCSS plugin Tailwind v4                |
+| `@tanstack/eslint-plugin-query`   | ^5.91.4 | Règles ESLint pour React Query            |
+| `@types/js-cookie`                | ^3.0.6  | Types TypeScript js-cookie                |
+| `eslint-config-prettier`          | ^10.1.8 | Config ESLint + Prettier compatible       |
+| `eslint-plugin-import`            | ^2.32.0 | Règles imports ES6+                       |
+| `eslint-plugin-prettier`          | ^5.5.5  | ESLint intégré Prettier                   |
+| `eslint-plugin-unicorn`           | ^63.0.0 | Règles ESLint supplémentaires             |
+| `eslint-plugin-unused-imports`    | ^4.4.1  | Détect/supprime imports inutiles          |
+| `globals`                         | ^17.3.0 | Liste globals navigateur/Node.js          |
+| `husky`                           | ^9.1.7  | Git hooks (pre-commit, pre-push)          |
+| `lint-staged`                     | ^16.2.7 | Lint fichiers stagés uniquement           |
+| `pino-pretty`                     | ^13.1.3 | Formatter output Pino                     |
+| `prettier-plugin-classnames`      | ^0.9.0  | Plugin Prettier pour classNames           |
+| `prettier-plugin-merge`           | ^0.10.0 | Plugin fusion propriétés CSS              |
+| `shadcn`                          | ^3.8.5  | CLI shadcn/ui (add components)            |
+| `shx`                             | ^0.4.0  | Unix commands cross-platform              |
+| `tailwind-csstree`                | ^0.1.4  | Analyse/optimise CSS Tailwind             |
+| `tw-animate-css`                  | ^1.4.0  | Animations Tailwind CSS                   |
 
 ---
 
@@ -35,13 +88,13 @@ src/app/
 │   ├── layout.tsx                  # Layout avec AppSidebar (sidebar noire)
 │   ├── page.tsx                    # Accueil dashboard
 │   ├── users/                      # CRUD utilisateurs
-│   ├── categories/                 # CRUD catégories
-│   └── products/                   # CRUD produits
+│   ├── posts/                      # CRUD posts
+│   └── comments/                   # CRUD commentaires
 └── api/                            # API Routes Next.js
     ├── auth/                       # login, register, session
     ├── users/[id]/
-    ├── categories/[id]/
-    └── products/[id]/
+    ├── posts/[id]/
+    └── comments/[id]/
 ```
 
 ---
@@ -59,32 +112,32 @@ src/lib/{entity}/
     └── {entity}.client.service.ts  # Service client (fetch depuis le browser)
 ```
 
-### Exemple : entité `product`
+### Exemple : entité `post`
 
-**`product.model.ts`**
+**`post.model.ts`**
 
 ```ts
-export type Product = { id: number; name: string; price: number; stock: number; isActive: boolean; createdAt: string; category?: Category }
-export type ProductFormData = { name: string; price: number; ... }
-export const ProductSchema = z.object({ name: z.string().min(1), ... })
+export type Post = { id: number; title: string; content: string; isActive: boolean; createdAt: string; author?: User }
+export type PostFormData = { title: string; content: string; ... }
+export const PostSchema = z.object({ title: z.string().min(1), ... })
 ```
 
-**`product.service.ts`** (serveur)
+**`post.service.ts`** (serveur)
 
 ```ts
-export async function getProducts(): Promise<ApiResponse<Product[]>>;
-export async function getProductById(id: number): Promise<ApiResponse<Product>>;
-export async function createProduct(data): Promise<ApiResponse<Product>>;
-export async function updateProduct(id, data): Promise<ApiResponse<Product>>;
-export async function deleteProduct(id): Promise<ApiResponse<void>>;
+export async function getPosts(): Promise<ApiResponse<Post[]>>;
+export async function getPostById(id: number): Promise<ApiResponse<Post>>;
+export async function createPost(data): Promise<ApiResponse<Post>>;
+export async function updatePost(id, data): Promise<ApiResponse<Post>>;
+export async function deletePost(id): Promise<ApiResponse<void>>;
 ```
 
-**`product.client.service.ts`** (client — appelle les API routes Next.js)
+**`post.client.service.ts`** (client — appelle les API routes Next.js)
 
 ```ts
-export async function createProduct(data): Promise<{ ok: true } | { ok: false; error }>;
-export async function updateProduct(id, data);
-export async function deleteProduct(id);
+export async function createPost(data): Promise<{ ok: true } | { ok: false; error }>;
+export async function updatePost(id, data);
+export async function deletePost(id);
 ```
 
 ---
@@ -102,11 +155,11 @@ src/components/features/dashboard/{entity}/
 ### Pages (App Router) — 1 page = 1 composant
 
 ```
-src/app/(dashboard)/dashboard/{entity}/
-├── page.tsx                        # → <EntityList initialEntities={data} />
-├── [id]/page.tsx                   # → <EntityDetail entity={data} />
-├── create/page.tsx                 # → <EntityCreateForm />
-└── edit/[id]/page.tsx              # → <EntityEditForm loadedEntity={data} />
+src/app/(website)/dashboard/{entity}/
+├── page.tsx                        # → <EntityList />  (React Query, pas de SSR)
+├── [id]/page.tsx                   # → <EntityDetail entity={data} />  (SSR fetch)
+├── create/page.tsx                 # → <EntityCreateForm />  (formulaire vide)
+└── edit/[id]/page.tsx              # → <EntityEditForm loadedEntity={data} />  (SSR fetch)
 ```
 
 ---
@@ -129,8 +182,8 @@ src/app/(dashboard)/dashboard/{entity}/
 | Entité            | Couleur principale | Usage                                  |
 | ----------------- | ------------------ | -------------------------------------- |
 | **Users**         | `emerald`          | Hero `via-emerald-950`, badge, boutons |
-| **Categories**    | `violet`           | Hero `via-violet-950`, badge, boutons  |
-| **Products**      | `blue`             | Hero `via-blue-950`, badge, boutons    |
+| **Posts**         | `blue`             | Hero `via-blue-950`, badge, boutons    |
+| **Comments**      | `amber`            | Hero `via-amber-950`, badge, boutons   |
 | **Auth/Account**  | `indigo`           | Layout account, formulaires auth       |
 | **Password**      | `orange/red`       | Change password                        |
 | **Danger/Delete** | `red/rose`         | ConfirmModal                           |
@@ -181,32 +234,35 @@ src/app/(dashboard)/dashboard/{entity}/
 NextAuth v5 (Credentials provider, stratégie JWT).
 
 ```
-src/lib/auth.ts                        # NextAuth config — handlers, auth, signIn, signOut (server-only)
+src/lib/auth.ts                          # Re-export server-only (signIn, signUp depuis auth.service)
 src/lib/auth/
-├── models/
-│   └── auth.model.ts                  # Types + Zod schemas auth
-├── actions/auth.ts                    # Server Actions (signInAction, signUpAction, signOutAction, refreshTokenAction, editProfileAction, etc.)
-├── auth.service.ts                    # Service serveur (appels REST backend — signIn, signUp, refreshToken, logout, editProfile, etc.)
-├── auth.client.service.ts             # Service client (appels proxy API routes — signIn, signUp, changeUserPassword)
-└── hooks/use-auth.ts                  # React Query hooks (useSignIn, useSignUp, useChangePassword)
+├── models/auth.model.ts                 # Types + Zod schemas auth (Login, Registrer, etc.)
+├── schemas/auth.schema.ts               # Schémas formulaires (LoginSchema, RegisterSchema, etc.)
+├── actions/auth.action.ts               # Server Actions ("use server") — signInAction, signUpAction, etc.
+├── auth.service.ts                      # Service serveur ("server-only") — appels REST backend
+├── auth.client.service.ts               # Service client — appels proxy API routes (browser)
+├── hooks/use-auth.ts                    # React Query hooks — useSignIn, useSignUp, useChangePassword
+└── context/auth.user.context.tsx        # AuthUserProvider (contexte custom si nécessaire)
 ```
 
-**Règles impératives** :
+**Règles d'import** :
 
 ```ts
-// ✅ Serveur (RSC, Server Action, API Route, Middleware)
-import { auth, signIn, signOut, handlers } from "@/lib/auth";
+// ✅ Server Component / API Route — session
+import { auth } from "@/lib/auth/next-auth/auth";
 const session = await auth();
-// session?.user.access_token | session?.user.role | session?.user.refresh_token
 
-// ✅ Client — appels HTTP vers les proxy API routes
-import { signIn, signUp, changeUserPassword } from "@/lib/auth/auth.client.service";
+// ✅ Server Action — appeler le service serveur
+import { signInAction, signUpAction } from "@/lib/auth/actions/auth.action";
 
-// ✅ Client — React Query hooks
-import { useSignIn, useSignUp, useChangePassword } from "@/lib/auth/hooks/use-auth";
-
-// ✅ Client — session Next.js
+// ✅ Client Component — session NextAuth
 import { useSession } from "next-auth/react";
+
+// ✅ Client Component — hooks React Query
+import { useSignIn, useSignUp } from "@/lib/auth/hooks/use-auth";
+
+// ✅ Client Component — appel direct service client
+import { signIn, signUp } from "@/lib/auth/services/auth.client";
 ```
 
 ---
@@ -246,9 +302,9 @@ ROUTES = {
   CHANGE_PASSWORD,
   SETTINGS,
   DASHBOARD,
-  CATEGORIES,
-  PRODUCTS,
   USERS,
+  POSTS,
+  COMMENTS,
   SIGN_IN,
   SIGN_UP,
   FORGOT_PASSWORD,
@@ -259,26 +315,26 @@ ROUTES = {
 Les routes CRUD dashboard se construisent comme :
 
 ```ts
-`${DASHBOARD}${PRODUCTS}` // /dashboard/products
-`${DASHBOARD}${PRODUCTS}/${id}` // /dashboard/products/123
-`${DASHBOARD}${PRODUCTS}/create` // /dashboard/products/create
-`${DASHBOARD}${PRODUCTS}/edit/${id}`; // /dashboard/products/edit/123
+`${DASHBOARD}${POSTS}` // /dashboard/posts
+`${DASHBOARD}${POSTS}/${id}` // /dashboard/posts/123
+`${DASHBOARD}${POSTS}/create` // /dashboard/posts/create
+`${DASHBOARD}${POSTS}/edit/${id}`; // /dashboard/posts/edit/123
 ```
 
 ---
 
 ## Adapter le projet à un autre domaine
 
-### Exemple : remplacer `products` par `hospitals`
+### Exemple : ajouter une entité `products`
 
-1. **Modèle** : créer `src/lib/hospitals/models/hospital.model.ts`
-2. **Services** : créer `hospital.service.ts` + `hospital.client.service.ts`
-3. **API routes** : créer `src/app/api/hospitals/route.ts` + `[id]/route.ts`
-4. **Pages** : créer `src/app/(dashboard)/dashboard/hospitals/` avec `page.tsx`, `[id]/page.tsx`, `create/page.tsx`, `edit/[id]/page.tsx`
-5. **Composants** : créer `src/components/features/dashboard/hospitals/` avec list, detail, create-form, edit-form
-6. **Routes** : ajouter `HOSPITALS: "/hospitals"` dans `utils/routes.ts`
+1. **Modèle** : créer `src/lib/products/models/product.model.ts`
+2. **Services** : créer `product.service.ts` + `product.client.service.ts`
+3. **API routes** : créer `src/app/api/products/route.ts` + `[id]/route.ts`
+4. **Pages** : créer `src/app/(website)/dashboard/products/` avec `page.tsx`, `[id]/page.tsx`, `create/page.tsx`, `edit/[id]/page.tsx`
+5. **Composants** : créer `src/components/features/dashboard/products/` avec list, detail, create-form, edit-form
+6. **Routes** : ajouter `PRODUCTS: "/products"` dans `utils/routes.ts`
 7. **Sidebar** : ajouter l'entrée dans `app-sidebar.tsx` > `data.navMain`
-8. **Couleur** : choisir une couleur (ex: `teal`, `cyan`, `amber`) et l'appliquer dans les composants
+8. **Couleur** : choisir une couleur (ex: `violet`, `teal`, `cyan`) et l'appliquer dans les composants
 
 ### Checklist par entité
 

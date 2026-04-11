@@ -1,5 +1,5 @@
+import { Token } from "@/lib/auth.utils";
 import { User } from "@/lib/users/models/user.model";
-import { Token } from "@/config/auth.utils";
 
 /**
  * Auth types — API contracts and session shapes (no validation)

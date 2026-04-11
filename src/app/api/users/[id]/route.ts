@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
-import { fetchUserById, updateUser, deleteUser } from "@/lib/users/services/user.service";
+import { fetchUserById, updateUser, deleteUser } from "@/lib/users/services/user.server";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 
 const logger = getLogger("server");

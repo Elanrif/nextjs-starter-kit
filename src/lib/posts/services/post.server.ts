@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 import apiClient, { Config } from "@config/api.config";
 import environment from "@config/environment.config";
 import { getLogger } from "@config/logger.config";
-import { Post, PostCreate, PostUpdate } from "@/lib/posts/models/post.model";
+import { Post, PostCreate, PostFilters, PostUpdate } from "@/lib/posts/models/post.model";
 import { parsePostCreate, parsePostUpdate } from "@/lib/posts/schemas/post.schema";
 import { validateId } from "@/utils/utils.server";
 import { Page, Result } from "@/shared/models/response.model";
@@ -26,12 +26,6 @@ const {
 } = environment;
 
 const logger = getLogger("server");
-
-export type PostFilters = {
-  page?: number;
-  size?: number;
-  sort?: string;
-};
 
 /**
  * Fetch all posts

@@ -8,7 +8,7 @@ import {
   updateUser,
   deleteUser,
   searchUsersFilter,
-} from "@/lib/users/services/user.client.service";
+} from "@/lib/users/services/user.client";
 import type { UserSearchFilter } from "@/lib/users/models/user.model";
 
 // ─── Query keys ───────────────────────────────────────────────────────────────

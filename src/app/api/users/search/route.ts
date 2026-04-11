@@ -1,4 +1,4 @@
-import { searchUsersFilter } from "@lib/users/services/user.service";
+import { searchUsersFilter } from "@lib/users/services/user.server";
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";

@@ -6,9 +6,12 @@ import {
   updateCommentAction,
   deleteCommentAction,
 } from "@/lib/comments/actions/comment.action";
-import type { CommentCreate, CommentUpdate } from "@/lib/comments/models/comment.model";
-import { fetchCommentById, fetchComments } from "../services/comment.client.service";
-import { CommentFilters } from "../services/comment.service";
+import type {
+  CommentCreate,
+  CommentFilters,
+  CommentUpdate,
+} from "@/lib/comments/models/comment.model";
+import { fetchCommentById, fetchComments } from "@lib/comments/services/comment.client";
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 

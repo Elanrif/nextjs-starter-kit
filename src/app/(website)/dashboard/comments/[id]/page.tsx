@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { CommentDetail } from "@/components/features/dashboard/comments/comment-detail";
-import { fetchCommentById } from "@/lib/comments/services/comment.service";
+import { fetchCommentById } from "@/lib/comments/services/comment.server";
 
 export const metadata = {
   title: "Détail commentaire",

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createUser, deleteUser, updateUser } from "../services/user.service";
+import { createUser, deleteUser, updateUser } from "../services/user.server";
 import type { User, UserCreatePayload } from "../models/user.model";
 import { ApiError } from "@/shared/errors/api-error";
 import { Result } from "@/shared/models/response.model";
