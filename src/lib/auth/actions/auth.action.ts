@@ -16,6 +16,7 @@ import { signIn, signOut, auth } from "@/lib/auth";
 import { ApiErrorResponse } from "@/shared/errors/api-error.server";
 import { ApiError, unauthorizedApiError } from "@/shared/errors/api-error";
 import { generateResetToken, sendPasswordResetEmail } from "@/lib/mail";
+import environment from "@/config/environment.config";
 
 export async function signInAction(credentials: Login) {
   return await signIn("credentials", {
@@ -114,7 +115,7 @@ export async function sendPasswordResetAction(
     }
 
     const { resetToken, code } = generateResetToken();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = environment.app.url;
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}&code=${code}&email=${encodeURIComponent(email)}`;
 
     const emailSent = await sendPasswordResetEmail(email, resetToken, resetUrl);
